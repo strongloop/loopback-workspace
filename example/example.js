@@ -67,10 +67,15 @@ project.getConfig(function (err, config) {
 
 project.getConfig(function (err, config) {
 
-  var object = config.get('data-sources/inventory-db');
+  var object = config.get('models/weapon');
   
-  console.log(object.name); // inventory-db
-  console.log(object.module); // oracle-data-source
-  console.log(object.baseModule()); // data-source
-  console.log(object.inheritenceChain()); // ["oracle-data-source", "data-source"]
+  console.log(object.name); // weapon
+  console.log(object.module.name); // model
+  console.log(object.module.options); // {'name': {type: 'string'}, 'properties': {type: 'array'}}
+  console.log(object.module.dependencies); // {'data-source': {data-source-module}}
+  console.log(object.baseModule()); // model
+  console.log(object.inheritanceChain()); // ["model"]
+  console.log(object.dependencies()); // {"data-source": {...config.get('oracle-data-source')...}} 
+  console.log(object.options.name); // weapon
+  console.log(object.options.properties); // [{name: 'product_name', type: 'string'}, ...]
 });
