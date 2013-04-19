@@ -6,7 +6,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "debug": "latest"
+    "debug": "latest",
+    "asteroid": "0.0.1"
   },
   "devDependencies": {
     "mocha": "latest"

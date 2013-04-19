@@ -1,24 +1,22 @@
-var AsteroidProjectManager = require('../');
+var ProjectManager = require('../');
+var path = require('path');
+var TEST_PROJECTS = path.join(__dirname, 'support', 'example-projects-dir');
 
-describe('AsteroidProjectManager', function(){
-  var asteroidProjectManager;
+describe('ProjectManager', function(){
+  var projectManager;
   
   beforeEach(function(){
-    asteroidProjectManager = new AsteroidProjectManager;
+    projectManager = new ProjectManager;
   });
   
-  describe('.myMethod', function(){
+  describe('.listProjects', function(){
     // example sync test
-    it('should <description of behavior>', function() {
-      asteroidProjectManager.myMethod();
-    });
-    
-    // example async test
-    it('should <description of behavior>', function(done) {
-      setTimeout(function () {
-        asteroidProjectManager.myMethod();
-        done();
-      }, 0);
+    it('should list projects in the provided directory', function(done) {
+      projectManager.listProjects(TEST_PROJECTS, function (err, projects) {
+        assert(Array.isArray(projects), 'listProjects should callback with an array');
+        assert.deepEqual(projects, ['proj-a', 'proj-b'], 'projects names must match the data');
+        done(err);
+      });
     });
   });
 });

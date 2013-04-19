@@ -1,12 +1,5 @@
-/**
- * A generated `AsteroidProjectManager` example...
- *
- * Examples should show a working module api
- * and be used in tests to continously check
- * they function as expected.
- */
- 
 var ProjectManager = require('../');
+var Project = require('../lib/project');
 var projectManager = ProjectManager.create('.');
 
 projectManager.listProjects('~/' /* optional */ , function (err, projects) {
@@ -45,12 +38,11 @@ project.getConfig(function (err, config) {
       "data-sources/inventory-db": {
         "name": "inventory-db",
         "module": "oracle-data-source",
-        "base-module": "data-source"
+        "baseModule": "data-source"
       }
     }
   */
 });
-
 
 project.getConfig(function (err, config) {
   if(err) throw err;
@@ -69,8 +61,9 @@ project.getConfig(function (err, config) {
 
   var object = config.get('models/weapon');
   
+  // readable
   console.log(object.name); // weapon
-  console.log(object.module.name); // model
+  console.log(object.module.moduleName); // model
   console.log(object.module.options); // {'name': {type: 'string'}, 'properties': {type: 'array'}}
   console.log(object.module.dependencies); // {'data-source': {data-source-module}}
   console.log(object.baseModule()); // model
@@ -78,4 +71,11 @@ project.getConfig(function (err, config) {
   console.log(object.dependencies()); // {"data-source": {...config.get('oracle-data-source')...}} 
   console.log(object.options.name); // weapon
   console.log(object.options.properties); // [{name: 'product_name', type: 'string'}, ...]
+
+  // writeable
+  object.rename('guns', fn);
+  object.setOptions({name: 'foo'});
+  object.setDependencies({name: 'foo'});
+  object.setModule('my-model-module');
+  object.save(fn); // fn(err)
 });

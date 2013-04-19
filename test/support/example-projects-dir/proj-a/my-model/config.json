@@ -1,0 +1,12 @@
+{
+  "module": "model",
+  "options": {
+    "properties": [
+      {"name": "foo", "type": "string"}
+    ],
+    "name": "myModel"
+  },
+  "dependencies": {
+    "data-source": "my-data-source"
+  }
+}
