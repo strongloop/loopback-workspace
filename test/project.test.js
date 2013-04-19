@@ -14,13 +14,10 @@ describe('Project', function(){
     // example sync test
     it('should list all files for the project', function(done) {
       project.files(function (err, files) {
-        var testFiles = {
-          "my-model/config.json": {}
-        };
 
         assert(files && typeof files == 'object', 'files should be an array');
         assert(files['asteroid.json'], 'asteroid.json should be included');
-        assert(files['my-model/config.json'], 'my-module/config.json should be included');
+        assert(files[path.join('my-model', 'config.json')], 'my-module/config.json should be included');
         
         done(err);
       });
