@@ -50,6 +50,23 @@ describe('Project', function(){
       });
     });
   });
+
+  describe('.dependencyTree(fn)', function() {
+    it('should list object configs by dependency', function(done) {
+      project.dependencyTree(function(err, config) {
+        if (err) return done(err);
+
+        assert(Array.isArray(config), 'config should be an array');
+        assert.equal(config.length, 1, 'config should have one item');
+        assert.equal(config[0].name, 'my-model', 'my-model should be the top-level item');
+        assert.equal(config[0].dependencyList().length, 1, 'my-model should have one dependency');
+        assert.equal(config[0].dependencyList()[0].name, 'my-data-source', 'my-model\'s dependency should be my-data-source');
+
+        done();
+
+      });
+    });
+  });
   
   describe('.getConfig(fn)', function(){
     it('should callback with a loaded config', function(done) {
