@@ -67,6 +67,25 @@ describe('Project', function(){
       });
     });
   });
+
+  describe('.getConfigByType(fn)', function() {
+    it('should list objects by type', function(done) {
+      project.getConfigByType(function(err, config) {
+        if (err) return done(err);
+
+        assert(Array.isArray(config), 'config should be an array');
+        assert.equal(config.length, 2, 'config should list two types');
+        assert.equal(config[0].name, 'data-source', "first type should be data-source");
+        assert.equal(config[1].name, 'model', "second type should be model");
+        assert.equal(config[0].children.length, 1, "data-source should have one object");
+        assert.equal(config[0].children[0].name, 'my-data-source', "data-source should have an object called my-data-source");
+        assert.equal(config[1].children.length, 1, "model should have one object");
+        assert.equal(config[1].children[0].name, 'my-model', "model should have an object called my-model");
+
+        done();
+      });
+    });
+  });
   
   describe('.getConfig(fn)', function(){
     it('should callback with a loaded config', function(done) {

@@ -30,7 +30,7 @@ project.files(log);
 
 */
 
-project.filesTree(err);
+project.filesTree(log);
 
 /*
   [{
@@ -48,6 +48,53 @@ project.filesTree(err);
   }, {
     name: 'package.json'
   }]
+*/
+
+project.dependencyTree(log);
+
+/*
+  [
+    {
+      "name": "my-model",
+      "baseModule": "model",
+      "dependencies": {
+        "data-source": {
+          "name": "my-data-source",
+          "baseModule": "data-source",
+          "dependencies": {},
+          ...
+        }
+      },
+      ...
+    }
+  ]
+*/
+
+project.getConfigByType(log);
+
+/*
+  [
+    {
+      "name": "data-source",
+      "children": [
+        {
+          "name": "my-data-source",
+          "baseModule": "data-source",
+          ...
+        }
+      ]
+    },
+    {
+      "name": "model",
+      "children": [
+        {
+          "name": "my-model",
+          "baseModule": "model",
+          ...
+        }
+      ]
+    }
+  ]
 */
 
 project.getConfig(function (err, config) {
