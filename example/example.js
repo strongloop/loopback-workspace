@@ -130,6 +130,8 @@ project.getConfig(function (err, config) {
   
   // readable
   console.log(object.name); // weapon
+  console.log(object.dir); // models/weapon or models\\weapon
+  console.log(object.normalDir()); // models/weapon
   console.log(object.module.name); // model
   console.log(object.module.options); // {'name': {type: 'string'}, 'properties': {type: 'array'}}
   console.log(object.module.dependencies); // {'data-source': {data-source-module}}
