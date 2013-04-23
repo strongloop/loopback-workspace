@@ -36,12 +36,14 @@ project.filesTree(log);
   [{
     name: 'my-data-source',
     children: [{
-      name: 'config.json'
+      name: 'config.json',
+      obj: {...config.get('my-data-source')...}
     }]
   }, {
     name: 'my-model',
     children: [{
-      name: 'config.json'
+      name: 'config.json',
+      obj: {...config.get('my-model')...}
     }]
   }, {
     name: 'asteroid.json',

@@ -29,26 +29,35 @@ describe('Project', function(){
       project.filesTree(function(err, files) {
         if (err) return done(err);
 
-        assert.deepEqual(files, [{
-          name: 'my-data-source',
-          children: [{
-            name: 'config.json'
-          }]
-        }, {
-          name: 'my-model',
-          children: [{
-            name: 'config.json'
-          }]
-        }, {
-          name: 'asteroid.json',
-        }, {
-          name: 'package.json'
-        }]);
+        assert(Array.isArray(files), "files should be an array");
+        assert.equal(files.length, 4, "files should have 4 items");
+        assert.equal(files[0].name, 'my-data-source');
+        assert.equal(files[0].children.length, 1);
+        assert.equal(files[0].children[0].name, 'config.json');
 
+        assert.equal(files[1].name, 'my-model');
+        assert.equal(files[1].children.length, 1);
+        assert.equal(files[1].children[0].name, 'config.json');
+
+        assert.equal(files[2].name, 'asteroid.json');
+
+        assert.equal(files[3].name, 'package.json');
         done();
-
       });
     });
+
+    it('should list objects for config.json files', function(done) {
+      project.filesTree(function(err, files) {
+        if (err) return done(err);
+
+        assert(files[0].children[0].obj, "my-data-source/config.json should have an obj property");
+        assert.equal(files[0].children[0].obj.name, 'my-data-source', "should be the my-data-source object");
+
+        assert(files[1].children[0].obj, "my-model/config.json should have an obj property");
+        assert.equal(files[1].children[0].obj.name, 'my-model', "should be the my-model object");
+        done()
+      })
+    });  
   });
 
   describe('.dependencyTree(fn)', function() {
