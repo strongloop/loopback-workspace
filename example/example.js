@@ -30,6 +30,26 @@ project.files(log);
 
 */
 
+project.filesTree(err);
+
+/*
+  [{
+    name: 'my-data-source',
+    children: [{
+      name: 'config.json'
+    }]
+  }, {
+    name: 'my-model',
+    children: [{
+      name: 'config.json'
+    }]
+  }, {
+    name: 'asteroid.json',
+  }, {
+    name: 'package.json'
+  }]
+*/
+
 project.getConfig(function (err, config) {
   log(err, config.toJSON());
 

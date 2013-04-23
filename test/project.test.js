@@ -23,6 +23,33 @@ describe('Project', function(){
       });
     });
   });
+
+  describe('.filesTree(fn)', function() {
+    it('should list all files for the project in a tree', function(done) {
+      project.filesTree(function(err, files) {
+        if (err) return done(err);
+
+        assert.deepEqual(files, [{
+          name: 'my-data-source',
+          children: [{
+            name: 'config.json'
+          }]
+        }, {
+          name: 'my-model',
+          children: [{
+            name: 'config.json'
+          }]
+        }, {
+          name: 'asteroid.json',
+        }, {
+          name: 'package.json'
+        }]);
+
+        done();
+
+      });
+    });
+  });
   
   describe('.getConfig(fn)', function(){
     it('should callback with a loaded config', function(done) {

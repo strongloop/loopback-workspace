@@ -2,12 +2,13 @@
   "name": "asteroid-project-manager",
   "description": "asteroid-project-manager",
   "version": "0.0.1",
-  "scripts": { 
+  "scripts": {
     "test": "mocha"
   },
   "dependencies": {
     "debug": "latest",
-    "asteroid": "0.0.1"
+    "asteroid": "0.0.1",
+    "underscore": "~1.4.4"
   },
   "devDependencies": {
     "mocha": "latest"
