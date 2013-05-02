@@ -7,7 +7,9 @@
   },
   "dependencies": {
     "debug": "latest",
-    "asteroid": "0.0.1",
+    "asteroid": "git+ssh://git@github.com:strongloop/asteroid",
+    "asteroid-config-loader": "git+ssh://git@github.com:strongloop/asteroid-config-loader",
+    "task-emitter": "git+ssh://git@github.com:strongloop/task-emitter",
     "underscore": "~1.4.4"
   },
   "devDependencies": {
