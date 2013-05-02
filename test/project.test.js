@@ -95,6 +95,21 @@ describe('Project', function(){
       });
     });
   });
+
+  describe('.getObjectsOfType(type, fn)', function() {
+    it('should list objects of a given type', function(done) {
+
+      project.getObjectsOfType('data-source', function(err, objects) {
+        if (err) return done(err);
+
+        assert(Array.isArray(objects), 'objects should be an array');
+        assert.equal(objects.length, 1, 'should only find one data source');
+        assert.equal(objects[0].name, 'my-data-source');
+        done();
+      });
+
+    });
+  });
   
   describe('.getConfig(fn)', function(){
     it('should callback with a loaded config', function(done) {
