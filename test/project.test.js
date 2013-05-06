@@ -144,18 +144,35 @@ describe('Project', function(){
     });
   });
 
-  describe('.createConfig(name, options, fn)', function() {
-    it('should create a file', function() {
-      sh.cd(TEST_PROJECT_B);
-      "{}".to('foo.bar');
+  describe('.createObject(name, options, fn)', function() {
+    it('should create a file', function(done) {
+      var options = {
+        module: "data-source",
+        options: {
+          name: "oracle"
+        }
+      };
+      projectB.createObject('data-sources/db', options, function(err, obj) {
+        if (err) return done(err);
+        assert.equal(obj.name, 'db', "Object name should be db");
+        assert.equal(obj.module.name, 'data-source', "Object be of type data-source");
+        assert.equal(obj.options.name, 'oracle', "Object should have the options");
+        assert(sh.test('-f', path.join(TEST_PROJECT_B, 'data-sources/db/config.json')), "Should have created a config.json file");
+        assert.deepEqual(JSON.parse(sh.cat(path.join(TEST_PROJECT_B, 'data-sources/db/config.json'))), options, "Contents of file should equal the options given");
+        done();
+      });
     });
 
     afterEach(function() {
+      var pwd = sh.pwd();
       sh.cd(TEST_PROJECT_B);
       sh.ls().forEach(function(file) {
-        console.log(file);
         // delete all files but asteroid.json
+        if (file !== "asteroid.json") {
+          sh.rm("-rf", file);
+        }
       });
+      sh.cd(pwd);
     });
   });
 });
