@@ -151,3 +151,12 @@ project.getConfig(function (err, config) {
   object.setModule('my-model-module');
   object.save(fn); // fn(err)
 });
+
+project.createObject('db', {
+  module: 'oracle-data-source',
+  options: {
+    name: "my-data-source"
+  }
+}, function(err, obj) {
+  console.log(err || obj);
+});

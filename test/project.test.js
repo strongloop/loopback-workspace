@@ -2,12 +2,15 @@ var Project = require('../lib/project');
 var path = require('path');
 var TEST_PROJECTS = path.join(__dirname, 'support', 'example-projects-dir');
 var TEST_PROJECT = path.join(TEST_PROJECTS, 'proj-a');
+var TEST_PROJECT_B = path.join(TEST_PROJECTS, 'proj-b');
+var sh = require('shelljs');
 
 describe('Project', function(){
-  var project;
+  var project, projectB;
   
   beforeEach(function(){
     project = new Project({dir: TEST_PROJECT});
+    projectB = new Project({dir: TEST_PROJECT_B});
   });
   
   describe('.files(fn)', function(){
@@ -137,6 +140,21 @@ describe('Project', function(){
         assert.equal(json['my-data-source'].inheritanceChain[0], 'data-source');
         
         done();
+      });
+    });
+  });
+
+  describe('.createConfig(name, options, fn)', function() {
+    it('should create a file', function() {
+      sh.cd(TEST_PROJECT_B);
+      "{}".to('foo.bar');
+    });
+
+    afterEach(function() {
+      sh.cd(TEST_PROJECT_B);
+      sh.ls().forEach(function(file) {
+        console.log(file);
+        // delete all files but asteroid.json
       });
     });
   });
