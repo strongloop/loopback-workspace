@@ -141,6 +141,7 @@ project.getConfig(function (err, config) {
   console.log(object.inheritanceChain()); // ["model"]
   console.log(object.dependencies()); // {"data-source": {...config.get('oracle-data-source')...}} 
   console.log(object.dependencyList()); // [{...config.get('oracle-data-source')...}] 
+  console.log(object.dependents()); // [{...config.get('models/user')...}] 
   console.log(object.options.name); // weapon
   console.log(object.options.properties); // [{name: 'product_name', type: 'string'}, ...]
 
