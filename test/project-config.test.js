@@ -24,6 +24,7 @@ describe('ProjectConfig', function() {
       assert(Array.isArray(dependents), "should have a list");
       assert.equal(dependents.length, 1, "should have only 1 item");
       assert.equal(dependents[0].name, 'my-model', "should be 'my-model'");
+      assert.equal(dependents[0].normalDir(), 'my-model', "should have the right path");
     });
   });
 
