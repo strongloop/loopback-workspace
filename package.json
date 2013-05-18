@@ -9,7 +9,7 @@
     "debug": "latest",
     "asteroid": "git+ssh://git@github.com:strongloop/asteroid",
     "asteroid-config-loader": "git+ssh://git@github.com:strongloop/asteroid-config-loader",
-    "task-emitter": "git+ssh://git@github.com:strongloop/task-emitter",
+    "sl-task-emitter": "git+ssh://git@github.com:strongloop/sl-task-emitter",
     "underscore": "~1.4.4",
     "mkdirp": "~0.3.5"
   },
