@@ -8,10 +8,10 @@
   "dependencies": {
     "debug": "latest",
     "asteroid": "git+ssh://git@github.com:strongloop/asteroid",
-    "asteroid-config-loader": "git+ssh://git@github.com:strongloop/asteroid-config-loader",
     "sl-task-emitter": "git+ssh://git@github.com:strongloop/sl-task-emitter",
     "underscore": "~1.4.4",
-    "mkdirp": "~0.3.5"
+    "mkdirp": "~0.3.5",
+    "sl-config-loader": "0.0.2"
   },
   "devDependencies": {
     "mocha": "latest",
