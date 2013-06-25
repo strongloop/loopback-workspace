@@ -1,0 +1,176 @@
+#!/usr/bin/env node
+var http = require('http');
+
+try {
+  var express = require('express');
+  var optimist = require('optimist');
+} catch (e) {
+  console.error('Missing optional dependencies. To fix, please re-install.');
+  console.error('Otherwise, Asteroid Project Manager can only be used as a library.');
+  process.exit(1);
+}
+
+var app = express();
+var server = http.createServer(app);
+var argv = optimist.options({
+    port: {
+      description: 'The port number to listen on.',
+      'default': 3000
+    },
+    root: {
+      description: 'The root directory for projects.',
+      'default': process.cwd()
+    },
+    help: {
+      description: 'Show this help message, then exit.'
+    }
+  })
+  .argv;
+var manager = require('../lib').Manager({ root: argv.root });
+
+if (argv.help) {
+  optimist.showHelp();
+  process.exit();
+}
+
+app.use(express.json());
+app.use(express.logger());
+
+/**
+ * Retrieve a list of Project names.
+ */
+app.get('/projects', function (req, res, next) {
+  manager.projects(function (err, names) {
+    if (err) {
+      return next(err);
+    }
+
+    res.send({
+      names: names
+    });
+  });
+});
+
+/**
+ * Retrieve an existing project, :name.
+ */
+app.get('/projects/:name', function (req, res, next) {
+  var dir = req.params.name;
+
+  manager.get(dir, function (err, project) {
+    if (err) {
+      return next(err);
+    }
+
+    res.send(project);
+  });
+});
+
+/**
+ * Create a new Project, :name.
+ */
+app.put('/projects/:name', function (req, res, next) {
+  var options = req.body;
+  var dir = req.params.name;
+
+  manager.create(dir, options, function (err, project) {
+    if (err) {
+      return next(err);
+    }
+
+    project.load(function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      res.send(project);
+    });
+  });
+});
+
+/**
+ * Delete the :name Project.
+ */
+app.del('/projects/:name', function (req, res, next) {
+  var dir = req.params.name;
+
+  manager.get(dir, function (err, project) {
+    if (err) {
+      return next(err);
+    }
+
+    project.remove(function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      res.send(project);
+    });
+  });
+});
+
+/**
+ * Add a new module under :name.
+ */
+app.put('/projects/:name/modules/:subname', function (req, res, next) {
+  var factory = manager.factory(req.body.type);
+  var dir = req.params.name;
+  var subdir = req.params.subname;
+
+  if (!factory) {
+    return next(new Error('Factory ' + req.body.type + ' does not exist.'));
+  }
+
+  manager.get(dir, function (err, project) {
+    if (err) {
+      return next(err);
+    }
+
+    project.addModule(factory, subdir, req.body, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      res.send({});
+    });
+  });
+});
+
+/**
+ * Remove :subname module from :name.
+ */
+app.del('/projects/:name/modules/:subname', function (req, res, next) {
+  var dir = req.params.name;
+  var subdir = req.params.subname;
+
+  manager.get(dir, function (err, project) {
+    if (err) {
+      return next(err);
+    }
+
+    project.removeModule(subdir, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      res.send({});
+    });
+  });
+});
+
+app.use(function (err, req, res, next) {
+  // TODO: Real error handling.
+  res.send(400, {
+    error: err.message || err
+  });
+});
+
+server.listen(argv.port, function (err) {
+  if (err) {
+    console.error('Failed to listen on port %s with:', argv.port);
+    console.error(err.stack || err.message || err);
+    process.exit(2);
+  }
+
+  console.log('Listening on port %s...', argv.port);
+});
