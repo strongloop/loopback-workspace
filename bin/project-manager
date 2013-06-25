@@ -62,8 +62,7 @@ app.get('/projects/:name', function (req, res, next) {
       return next(err);
     }
 
-    // TODO: What should be the response?
-    res.send(200);
+    res.send(project);
   });
 });
 
@@ -79,8 +78,13 @@ app.put('/projects/:name', function (req, res, next) {
       return next(err);
     }
 
-    // TODO: What should be the response?
-    res.send(200);
+    project.load(function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      res.send(project);
+    });
   });
 });
 
@@ -100,8 +104,7 @@ app.del('/projects/:name', function (req, res, next) {
         return next(err);
       }
 
-      // TODO: What should be the response?
-      res.send(200);
+      res.send(project);
     });
   });
 });
