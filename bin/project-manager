@@ -112,9 +112,50 @@ app.del('/projects/:name', function (req, res, next) {
 /**
  * Add a new module under :name.
  */
-app.patch('/projects/:name', function (req, res, next) {
-  // TODO
-  res.send(400);
+app.put('/projects/:name/modules/:subname', function (req, res, next) {
+  var factory = manager.factory(req.body.type);
+  var dir = req.params.name;
+  var subdir = req.params.subname;
+
+  if (!factory) {
+    return next(new Error('Factory ' + req.body.type + ' does not exist.'));
+  }
+
+  manager.get(dir, function (err, project) {
+    if (err) {
+      return next(err);
+    }
+
+    project.addModule(factory, subdir, req.body, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      res.send({});
+    });
+  });
+});
+
+/**
+ * Remove :subname module from :name.
+ */
+app.del('/projects/:name/modules/:subname', function (req, res, next) {
+  var dir = req.params.name;
+  var subdir = req.params.subname;
+
+  manager.get(dir, function (err, project) {
+    if (err) {
+      return next(err);
+    }
+
+    project.removeModule(subdir, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      res.send({});
+    });
+  });
 });
 
 app.use(function (err, req, res, next) {
