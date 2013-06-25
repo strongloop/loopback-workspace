@@ -3,7 +3,7 @@
   "description": "asteroid-project-manager",
   "version": "0.0.1",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --reporter spec"
   },
   "dependencies": {
     "debug": "~0.7.2",
