@@ -1,6 +1,5 @@
-/**
- * asteroid-project-manager ~ public api
- */
- 
-module.exports = require('./lib/project-manager');
-module.exports.Project = require('./lib/project');
+if (require.main === module) {
+  require('./bin/project-manager');
+} else {
+  module.exports = require('./lib');
+}

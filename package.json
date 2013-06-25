@@ -6,15 +6,24 @@
     "test": "mocha"
   },
   "dependencies": {
-    "debug": "latest",
+    "debug": "~0.7.2",
     "asteroid": "git+ssh://git@github.com:strongloop/asteroid",
     "sl-task-emitter": "git+ssh://git@github.com:strongloop/sl-task-emitter",
     "underscore": "~1.4.4",
     "mkdirp": "~0.3.5",
-    "sl-config-loader": "0.0.2"
+    "rimraf": "~2.2.0",
+    "sl-config-loader": "0.0.2",
+    "async": "~0.2.9",
+    "findit": "~0.1.2",
+    "hogan.js": "~2.0.0"
   },
   "devDependencies": {
-    "mocha": "latest",
-    "shelljs": "latest"
+    "mocha": "~1.11.0",
+    "chai": "~1.7.0",
+    "temp": "~0.5.0"
+  },
+  "optionalDependencies": {
+    "express": "~3.2.6",
+    "optimist": "~0.5.2"
   }
 }
