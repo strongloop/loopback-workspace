@@ -1,13 +1,17 @@
-# asteroid-project-manager
-v0.0.1
+# Asteroid Workspace
 
-## Install
+Each Workspace manages a directory of Asteroid Projects for a user, team, or organization. Workspace can be used either
+programmatically, or through a built-in REST interface.
 
-    slnode install asteroid-project-manager
-    
-## Example
+## Running the REST server
 
-    var AsteroidProjectManager = require('asteroid-project-manager');
-    var asteroidProjectManager = AsteroidProjectManager.create();
+After cloning the Workspace repository, run the following:
 
-    asteroidProjectManager.myMethod();
+    node workspace --root `~/my-asteroid-workspace`
+
+Of course, this example assumes the repo is cloned at `./workspace`, and that the desired root directory for projects is
+`~/my-asteroid-workspace`. Please make any appropriate changes for your own use.
+
+## Using Workspaces programmatically
+
+TODO
