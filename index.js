@@ -1,5 +1,5 @@
 if (require.main === module) {
-  require('./bin/project-manager');
+  require('./bin/server');
 } else {
   module.exports = require('./lib');
 }

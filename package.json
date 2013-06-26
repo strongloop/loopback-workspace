@@ -1,6 +1,6 @@
 {
-  "name": "asteroid-project-manager",
-  "description": "asteroid-project-manager",
+  "name": "asteroid-workspace",
+  "description": "A library and server implementation for managing Asteroid Projects.",
   "version": "0.0.1",
   "scripts": {
     "test": "mocha --reporter spec"
