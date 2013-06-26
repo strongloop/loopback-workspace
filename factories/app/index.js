@@ -6,21 +6,21 @@ var util = require('util');
 var ModuleFactory = require('../../lib/factory');
 
 /**
- * Creates a new instance of RestAdapterFactory.
+ * Creates a new instance of ApplicationFactory.
  */
-function RestAdapterFactory() {
-  if (!(this instanceof RestAdapterFactory)) {
-    return new RestAdapterFactory();
+function ApplicationFactory() {
+  if (!(this instanceof ApplicationFactory)) {
+    return new ApplicationFactory();
   }
 
   ModuleFactory.call(this);
 }
-util.inherits(RestAdapterFactory, ModuleFactory);
+util.inherits(ApplicationFactory, ModuleFactory);
 
 /**
  * See ModuleFactory.render.
  */
-RestAdapterFactory.prototype.render = render;
+ApplicationFactory.prototype.render = render;
 function render(root, options, callback) {
   var self = this;
 
@@ -32,12 +32,12 @@ function render(root, options, callback) {
 /**
  * See ModuleFactory.dependencies.
  */
-RestAdapterFactory.prototype.dependencies = dependencies;
+ApplicationFactory.prototype.dependencies = dependencies;
 function dependencies() {
   return {};
 }
 
 /*!
- * Export `RestAdapterFactory`.
+ * Export `ApplicationFactory`.
  */
-module.exports = RestAdapterFactory;
+module.exports = ApplicationFactory;
