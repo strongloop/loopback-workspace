@@ -1,0 +1,7 @@
+{
+  "editor": "/tools/app-edit/editor.html",
+  "data": {
+    "type": "app",
+    "description": "{{description}}"
+  }
+}
