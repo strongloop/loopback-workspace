@@ -3,7 +3,7 @@ try {
   var optimist = require('optimist');
 } catch (e) {
   console.error('Missing optional dependency, Optimist. To fix, please re-install.');
-  console.error('Otherwise, Asteroid Workspace can only be used as a library.');
+  console.error('Otherwise, Loopback Workspace can only be used as a library.');
   process.exit(1);
 }
 

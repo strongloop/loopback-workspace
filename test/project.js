@@ -1,13 +1,13 @@
 var fs = require('fs');
 var path = require('path');
-var debug = require('debug')('asteroid:ProjectTests');
+var debug = require('debug')('loopback:ProjectTests');
 var expect = require('chai').expect;
 var rimraf = require('rimraf');
 var temp = require('temp');
 var Project = require('../').Project;
 
 function tempPath() {
-  var retval = temp.path('asteroid-project-manager');
+  var retval = temp.path('loopback-project-manager');
   process.on('exit', function () {
     rimraf.sync(retval);
   });
@@ -51,7 +51,7 @@ describe('Project', function () {
     });
 
     it('should fail on empty directories', function (done) {
-      temp.mkdir('asteroid-project-manager', function (err, root) {
+      temp.mkdir('loopback-project-manager', function (err, root) {
         if (err) {
           return done(err);
         }

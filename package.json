@@ -1,6 +1,6 @@
 {
-  "name": "asteroid-workspace",
-  "description": "A library and server implementation for managing Asteroid Projects.",
+  "name": "loopback-workspace",
+  "description": "A library and server implementation for managing Loopback Projects.",
   "version": "0.0.1",
   "scripts": {
     "test": "mocha --reporter spec"

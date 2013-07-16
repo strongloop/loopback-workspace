@@ -1,19 +1,19 @@
 /*!
- * The Application module is responsible for attaching other modules to an Asteroid application.
+ * The Application module is responsible for attaching other modules to an Loopback application.
  */
-var asteroid = require('asteroid');
+var loopback = require('loopback');
 var config = require('./config');
-var app = asteroid();
+var app = loopback();
 var transports = config.transports || [];
 
 /**
  * If we've defined transports for remoting, attach those to the Application.
  */
 transports.forEach(function (name) {
-  var fn = asteroid[name];
+  var fn = loopback[name];
 
   if (typeof fn === 'function') {
-    app.use(fn.call(asteroid));
+    app.use(fn.call(loopback));
   } else {
     console.error('Invalid transport: %s', name);
   }
