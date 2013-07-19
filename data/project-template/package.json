@@ -1,10 +1,12 @@
 {
-  "name": "{{name}}",
-  "description": "{{description}}",
+  "name": "{name}",
+  "description": "{description}",
   "version": "0.0.0",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
+    "loopback": "git+ssh://git@github.com:strongloop/loopback.git"
   }
 }

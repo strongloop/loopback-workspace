@@ -26,5 +26,5 @@ function loadModules() {
   return modules;
 }
 
-console.log('Loading {{name}}...');
+console.log('Loading {name}...');
 loadModules();
