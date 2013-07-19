@@ -7,11 +7,9 @@
   },
   "dependencies": {
     "debug": "~0.7.2",
-    "mkdirp": "~0.3.5",
     "rimraf": "~2.2.0",
     "async": "~0.2.9",
-    "findit": "~0.1.2",
-    "hogan.js": "~2.0.0"
+    "strong-generator": "git+ssh://git@github.com:strongloop/strong-generator.git"
   },
   "devDependencies": {
     "mocha": "~1.11.0",
