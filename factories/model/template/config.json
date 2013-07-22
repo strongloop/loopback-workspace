@@ -1,0 +1,11 @@
+{
+  {?data-source}
+  "data-source": "{data-source}",
+  {/data-source}
+  "applications": [{#applications}"{.}"{@sep}, {/sep}{/applications}],
+  {?public}
+  "public": true
+  {:else}
+  "public": false
+  {/public}
+}
