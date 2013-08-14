@@ -1,5 +1,5 @@
 # Loopback Workspace
-#Test
+
 Each Workspace manages a directory of Loopback Projects for a user, team, or organization. Workspace can be used either
 programmatically, or through a built-in REST interface.
 
