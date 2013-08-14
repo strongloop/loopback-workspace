@@ -3,7 +3,11 @@
   "description": "A library and server implementation for managing Loopback Projects.",
   "version": "0.0.1",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "blanket": {
+      "pattern": "//^((?!(node_modules|test)).)*$/"
+    },
+    "coverage": "mocha -r blanket -R html-cov > coverage_loopback-workspace.html"
   },
   "dependencies": {
     "debug": "~0.7.2",
@@ -14,7 +18,8 @@
   "devDependencies": {
     "mocha": "~1.11.0",
     "chai": "~1.7.0",
-    "temp": "~0.5.0"
+    "temp": "~0.5.0", 
+    "blanket": "latest"
   },
   "optionalDependencies": {
     "express": "~3.2.6",
