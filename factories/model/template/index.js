@@ -16,11 +16,4 @@ applications.forEach(function (name) {
   app.model({name});
 });
 
-if (process.env.NODE_ENV === 'test') {
-  console.log('-----TEST-----');
-
-  // import data
-  require('../../../../../asteroid-sample-app/test-data/import')({name});
-}
-
 module.exports = {name};
