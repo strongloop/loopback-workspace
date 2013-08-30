@@ -2,6 +2,8 @@
  * App Dependencies.
  */
 
+require('strong-agent').profile();
+
 var control = require('strong-cluster-control');
 var options = control.loadOptions();
 
