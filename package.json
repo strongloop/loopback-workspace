@@ -13,7 +13,7 @@
     "debug": "~0.7.2",
     "rimraf": "~2.2.0",
     "async": "~0.2.9",
-    "strong-generator": "git+ssh://git@github.com:strongloop/strong-generator.git"
+    "strong-generator": "git+ssh://git@github.com:strongloop/strong-generator.git#v1.2.0"
   },
   "devDependencies": {
     "mocha": "~1.11.0",
