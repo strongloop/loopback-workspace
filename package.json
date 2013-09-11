@@ -1,6 +1,7 @@
 {
   "name": "loopback-workspace",
   "description": "A library and server implementation for managing Loopback Projects.",
+  "keywords": [ "StrongLoop", "LoopBack", "Workspace" ],
   "version": "1.0.0",
   "scripts": {
     "test": "mocha --reporter spec",
