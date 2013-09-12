@@ -24,6 +24,10 @@ ApplicationFactory.prototype.render = render;
 function render(root, options, callback) {
   var self = this;
 
+  if (!options.name) {
+    options.name = 'LoopBack';
+  }
+
   self.renderer.renderAll(path.join(__dirname, 'template'), root, options, callback);
 
   return self;
