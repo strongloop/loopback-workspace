@@ -22,7 +22,19 @@ transports.forEach(function (name) {
 /**
  * Start the server.
  */
-app.listen(config.port || 3000);
+var server = app.listen(config.port || 3000, function (err) {
+  if (err) {
+    console.error('Failed to start {name}.');
+    console.error(err.stack || err.message || err);
+    process.exit(1);
+  }
+
+  var info = server.address();
+  var base = 'http://' + info.address + ':' + info.port;
+
+  console.log('{name} running at %s.', base);
+  console.log('To see the available routes, open %s/routes', base);
+});
 
 /*!
  * Export `app` for use in other modules.
