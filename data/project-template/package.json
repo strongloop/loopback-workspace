@@ -11,6 +11,6 @@
   },
   "optionalDependencies": {
     "strong-cluster-control": "~0.1.0",
-    "strong-agent": "~0.2.10"
+    "strong-agent": "~0.2.15"
   }
 }
