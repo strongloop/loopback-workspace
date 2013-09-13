@@ -13,7 +13,13 @@ process.nextTick(function () {
     var app = require('../' + name);
 
     app.docs({ basePath: '/' });
-
+    app.get(explorerUrl, function (req, res, next) {
+      if (!/\/$/.test(req.url)) {
+        res.redirect(req.url + '/');
+      } else {
+        next();
+      }
+    });
     app.use(explorerUrl, loopback.static(STATIC_ROOT));
   });
 });
