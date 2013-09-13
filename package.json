@@ -1,7 +1,11 @@
 {
   "name": "loopback-workspace",
   "description": "A library and server implementation for managing Loopback Projects.",
-  "keywords": [ "StrongLoop", "LoopBack", "Workspace" ],
+  "keywords": [
+    "StrongLoop",
+    "LoopBack",
+    "Workspace"
+  ],
   "version": "1.0.0",
   "scripts": {
     "test": "mocha --reporter spec",
@@ -14,7 +18,8 @@
     "debug": "~0.7.2",
     "rimraf": "~2.2.0",
     "async": "~0.2.9",
-    "strong-generator": "git+ssh://git@github.com:strongloop/strong-generator.git"
+    "strong-generator": "git+ssh://git@github.com:strongloop/strong-generator.git",
+    "cpr": "~0.1.1"
   },
   "devDependencies": {
     "mocha": "~1.11.0",
