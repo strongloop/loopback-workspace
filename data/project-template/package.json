@@ -7,7 +7,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "loopback": "git+ssh://git@github.com:strongloop/loopback.git"
+    "loopback": "~1.0.0"
   },
   "optionalDependencies": {
     "strong-cluster-control": "~0.1.0",
