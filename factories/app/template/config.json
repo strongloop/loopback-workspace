@@ -4,5 +4,10 @@
   {:else}
   "port": 3000,
   {/port}
+  {?ip}
+  "ip": {ip},
+  {:else}
+  "ip": "0.0.0.0",
+  {/ip}
   "transports": ["rest"]
 }
