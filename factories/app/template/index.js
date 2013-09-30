@@ -24,8 +24,8 @@ transports.forEach(function (name) {
  * Start the server.
  */
 var port = process.env.PORT || config.port || 3000;
-var ip = process.env.IP || process.env.HOST || config.ip || '0.0.0.0';
-var server = app.listen(port, ip, function (err) {
+var hostname = process.env.HOSTNAME || process.env.HOST || process.env.IP || config.hostname || '0.0.0.0';
+var server = app.listen(port, hostname, function (err) {
   if (err) {
     console.error('Failed to start {name}.');
     console.error(err.stack || err.message || err);
