@@ -9,5 +9,12 @@
   {:else}
   "hostname": "0.0.0.0",
   {/hostname}
-  "transports": ["rest"]
+  "middleware": [
+    "compress",
+    "favicon",
+    "logger",
+    "bodyParser",
+    "methodOverride",
+    "rest"
+  ]
 }

@@ -4,19 +4,45 @@
 var loopback = require('loopback');
 var config = require('./config');
 var app = loopback();
-var transports = config.transports || [];
+var middleware = config.middleware || [];
+var models = config.models || [];
 var started = new Date();
 
 /**
- * If we've defined transports for remoting, attach those to the Application.
+ * Attach any middleware to the Application.
  */
-transports.forEach(function (name) {
+
+middleware.forEach(function (name) {
   var fn = loopback[name];
 
   if (typeof fn === 'function') {
     app.use(fn.call(loopback));
   } else {
-    console.error('Invalid transport: %s', name);
+    console.error('Invalid middleware: %s', name);
+  }
+});
+
+/**
+ * Attach any models to the Application.
+ */
+
+models.forEach(function (name) {
+  var model;
+
+  try {
+    model = require('../' + name)
+  } catch(e) {
+    if(e.code === 'MODULE_NOT_FOUND') {
+      console.error('Cannot find model: %s', name);
+    } else {
+      throw e;
+    }
+  }
+
+  if (typeof model === 'function') {
+    app.model(model);
+  } else {
+    console.error('Invalid model: %s', name);
   }
 });
 
