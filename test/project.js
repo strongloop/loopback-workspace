@@ -5,6 +5,7 @@ var expect = require('chai').expect;
 var rimraf = require('rimraf');
 var temp = require('temp');
 var Project = require('../').Project;
+var ModelFactory = require('../factories/model');
 
 function tempPath() {
   var retval = temp.path('loopback-project-manager');
@@ -145,4 +146,68 @@ describe('Project', function () {
       });
     });
   });
+
+  describe('getModuleConfig', function () {
+    before(createProjectWithModel);
+
+    it('should get the module config', function (done) {
+      var self = this;
+
+      expect(fs.existsSync(this.tempdir)).to.be.true;
+      this.project.getModuleConfig(this.modelName, function (err, config) {
+        if (err) {
+          return done(err);
+        }
+
+        expect(config).to.be.a.object;
+        expect(config['data-source']).to.equal(self.options['data-source']);
+        done();
+      });
+    });
+  });
+
+  describe('setModuleConfig', function () {
+    before(createProjectWithModel);
+
+    it('should set the module config', function (done) {
+      var self = this;
+      var config = {foo: 'bar'};
+      
+      expect(fs.existsSync(this.tempdir)).to.be.true;
+      this.project.setModuleConfig(this.modelName, config, function (err) {
+        if (err) {
+          return done(err);
+        }
+
+        self.project.getModuleConfig(self.modelName, function(err, gotConfig) {
+          if(err) {
+            return done(err);
+          }
+          expect(gotConfig).to.eql(config);
+          done();
+        });
+      });
+    });
+  });
 });
+
+function createProjectWithModel(done) {
+  var self = this;
+  self.modelName = 'test-model';
+  self.options = {
+    name: self.modelName,
+    'data-source': 'test-data-source'
+  };
+
+  self.tempdir = tempPath();
+
+  Project.create(self.tempdir, {
+    name: 'test',
+    description: 'This is just a test.'
+  }, function (err, project) {
+    if(err) return done(err);
+    self.project = project;
+
+    project.addModule(new ModelFactory, self.modelName, self.options, done);
+  });
+}
