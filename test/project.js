@@ -117,6 +117,32 @@ describe('Project', function () {
       });
     });
   });
+  
+  describe('renderTemplate', function () {
+    before(function () {
+      var self = this;
+
+      self.tempdir = tempPath();
+      fs.mkdirSync(self.tempdir);
+
+      this.project = new Project({
+        root: this.tempdir,
+        name: 'foo',
+        description: 'bar'
+      });
+    });
+    
+    it('should render a project with app and db', function(done) {
+      var tempdir = this.tempdir;
+      
+      this.project
+        .renderTemplate(require('../templates/empty'), function (err) {
+          console.log(fs.readdirSync(tempdir));
+          
+          done();
+        });
+    });
+  });
 
   describe('remove', function () {
     before(function (done) {

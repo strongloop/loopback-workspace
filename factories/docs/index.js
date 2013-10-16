@@ -10,12 +10,12 @@ var ModuleFactory = require('../../lib/factory');
 /**
  * Creates a new instance of DocsExplorerFactory.
  */
-function DocsExplorerFactory() {
+function DocsExplorerFactory(root) {
   if (!(this instanceof DocsExplorerFactory)) {
-    return new DocsExplorerFactory();
+    return new DocsExplorerFactory(root, __dirname);
   }
 
-  ModuleFactory.call(this);
+  ModuleFactory.call(this, root, __dirname);
 }
 util.inherits(DocsExplorerFactory, ModuleFactory);
 
@@ -32,7 +32,6 @@ function render(root, options, callback) {
       return;
     }
 
-    console.log(root);
     cpr(path.join(__dirname, 'explorer'), path.join(root, 'explorer'), {
       overwrite: true,
       confirm: true
@@ -47,14 +46,6 @@ function render(root, options, callback) {
   });
 
   return self;
-}
-
-/**
- * See ModuleFactory.dependencies.
- */
-DocsExplorerFactory.prototype.dependencies = dependencies;
-function dependencies() {
-  return {};
 }
 
 /*!

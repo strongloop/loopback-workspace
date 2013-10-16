@@ -3,25 +3,22 @@
  */
 var path = require('path');
 var loopback = require('loopback');
-var config = require('./config');
+var options = require('./module.json');
 var STATIC_ROOT = path.join(__dirname, 'explorer');
-var applications = config.applications || [];
-var explorerUrl = config.url || '/explorer';
+var explorerUrl = options.url || '/explorer';
 
 process.nextTick(function () {
-  applications.forEach(function (name) {
-    var app = require('../' + name);
+  var app = require('../app');
 
-    app.docs({ basePath: '/' });
-    app.get(explorerUrl, function (req, res, next) {
-      if (!/\/$/.test(req.url)) {
-        res.redirect(req.url + '/');
-      } else {
-        next();
-      }
-    });
-    app.use(explorerUrl, loopback.static(STATIC_ROOT));
+  app.docs({ basePath: '/' });
+  app.get(explorerUrl, function (req, res, next) {
+    if (!/\/$/.test(req.url)) {
+      res.redirect(req.url + '/');
+    } else {
+      next();
+    }
   });
+  app.use(explorerUrl, loopback.static(STATIC_ROOT));
 });
 
 module.exports = {};

@@ -3,10 +3,10 @@
  */
 var loopback = require('loopback');
 var options = require('./module.json');
-var {className} = loopback.Model.extend('{dashedName}',
-             options.properties, options.config);
+var {className} = loopback.Email.extend('{dashedName}',
+                  options.properties, options.config);
 
-if (config['data-source']) {
+if (options.config['data-source']) {
   {className}.attachTo(require('../' + config['data-source']));
 }
 
