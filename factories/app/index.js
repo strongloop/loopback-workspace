@@ -8,30 +8,28 @@ var ModuleFactory = require('../../lib/factory');
 /**
  * Creates a new instance of ApplicationFactory.
  */
-function ApplicationFactory() {
+function ApplicationFactory(root) {
   if (!(this instanceof ApplicationFactory)) {
-    return new ApplicationFactory();
+    return new ApplicationFactory(root, __dirname);
   }
 
-  ModuleFactory.call(this);
+  ModuleFactory.call(this, root, __dirname);
 }
 util.inherits(ApplicationFactory, ModuleFactory);
 
-/**
- * See ModuleFactory.render.
- */
-ApplicationFactory.prototype.render = render;
-function render(root, options, callback) {
-  var self = this;
-
-  if (!options.name) {
-    options.name = 'LoopBack';
-  }
-
-  self.renderer.renderAll(path.join(__dirname, 'template'), root, options, callback);
-
-  return self;
-}
+ApplicationFactory.defaults = {
+  "editor": "/tools/app-edit/editor.html",
+  "port": 3000,
+  "hostname": '0.0.0.0',
+  "middleware": [
+    "compress",
+    "favicon",
+    "logger",
+    "bodyParser",
+    "methodOverride",
+    "rest"
+  ]
+};
 
 /**
  * See ModuleFactory.dependencies.

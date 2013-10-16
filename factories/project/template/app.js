@@ -1,19 +1,20 @@
+/**
+ * Start profiling the app. See: http://docs.strongloop.com/strongops/
+ */
+require('strong-agent').profile();
+
 /*!
  * App Dependencies.
  */
-
-require('strong-agent').profile();
-
 var control = require('strong-cluster-control');
-var options = control.loadOptions();
-
-// If configured as a cluster master, just start controller
-if(options.clustered && options.isMaster) {
-  return control.start(options);
-}
-
+var clusterOptions = control.loadOptions();
 var fs = require('fs');
 var path = require('path');
+
+// If configured as a cluster master, just start controller
+if(clusterOptions.clustered && clusterOptions.isMaster) {
+  return control.start(clusterOptions);
+}
 
 /**
  * Synchronously loads all modules within the project.
