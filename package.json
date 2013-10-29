@@ -18,7 +18,7 @@
     "debug": "~0.7.2",
     "rimraf": "~2.2.0",
     "async": "~0.2.9",
-    "strong-generator": "git+ssh://git@github.com:strongloop/strong-generator.git",
+    "strong-generator": "~1.0.0",
     "cpr": "~0.1.1"
   },
   "devDependencies": {
