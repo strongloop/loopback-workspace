@@ -1,4 +1,0 @@
-{
-  "url": "{url}",
-  "applications": [{#applications}"{.}"{@sep}, {/sep}{/applications}]
-}

@@ -18,8 +18,9 @@
     "debug": "~0.7.3",
     "rimraf": "~2.2.2",
     "async": "~0.2.9",
-    "strong-generator": "~1.0.2",
-    "cpr": "~0.1.1"
+    "loopback": "git://github.com/strongloop/loopback.git#boot",
+    "temp": "~0.6.0",
+    "mkdirp": "~0.3.5"
   },
   "devDependencies": {
     "mocha": "~1.13.0",
