@@ -15,21 +15,21 @@
     "coverage": "mocha -r blanket -R html-cov > coverage_loopback-workspace.html"
   },
   "dependencies": {
-    "debug": "~0.7.2",
-    "rimraf": "~2.2.0",
+    "debug": "~0.7.3",
+    "rimraf": "~2.2.2",
     "async": "~0.2.9",
-    "strong-generator": "~1.0.0",
+    "strong-generator": "~1.0.2",
     "cpr": "~0.1.1"
   },
   "devDependencies": {
-    "mocha": "~1.11.0",
-    "chai": "~1.7.0",
-    "temp": "~0.5.0",
+    "mocha": "~1.13.0",
+    "chai": "~1.8.1",
+    "temp": "~0.6.0",
     "blanket": "~1.1.5"
   },
   "optionalDependencies": {
-    "express": "~3.4.0",
-    "optimist": "~0.5.2"
+    "express": "~3.4.4",
+    "optimist": "~0.6.0"
   },
   "license": "MIT"
 }
