@@ -21,9 +21,9 @@ module.exports = {
       options: {
         extends: 'Session',
         relationships: {
-          belongsTo: {
+          session: {
             model: 'user',
-            as: 'session',
+            type: 'belongsTo',
             foreignKey: 'uid'
           }
         }
