@@ -169,6 +169,48 @@ describe('Project', function () {
     });
   });
   
+  describe('project.getDataSourceByName(name, cb)', function () {
+    it('should return a data source by name', function (done) {
+      var dir = temp.mkdirSync();
+      var exampleDataSource = {name: 'foo', connector: 'mongodb', url: 'mongodb://foo:3333/bar'};
+
+      Project.createFromTemplate(dir, 'mobile', function(err) {
+        if(err) return done(err);
+
+        Project.loadFromFiles(dir, function(err, project) {
+          if(err) return done(err);
+
+          project.getDataSourceByName('mail', function(err, mail) {
+            expect(mail).to.have.property('name', 'mail');
+            expect(mail).to.have.property('connector', 'mail');
+            done();
+          });
+        });
+      });
+    });
+  });
+  
+  describe('project.getModelByName(name, cb)', function () {
+    it('should return a model by name', function (done) {
+      var dir = temp.mkdirSync();
+      var exampleDataSource = {name: 'foo', connector: 'mongodb', url: 'mongodb://foo:3333/bar'};
+
+      Project.createFromTemplate(dir, 'mobile', function(err) {
+        if(err) return done(err);
+
+        Project.loadFromFiles(dir, function(err, project) {
+          if(err) return done(err);
+
+          project.getModelByName('user', function(err, user) {
+            expect(user).to.have.property('name', 'user');
+            expect(user).to.have.property('dataSource', 'db');
+            done();
+          });
+        });
+      });
+    });
+  });
+
   describe('project.listUseableConnectors(cb)', function () {
     it('should return a list of connectors in package.json');
   });

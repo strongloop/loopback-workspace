@@ -168,6 +168,26 @@ Project.listTemplates = function() {
   });
 }
 
+Project.prototype.getDataSourceByName = function(name, cb) {
+  assert(typeof name === 'string');
+  assert(typeof cb === 'function');
+
+  this.dataSources({where: {name: name}, limit: 1}, function(err, results) {
+    if(err) return cb(err);
+    cb(null, results[0]);
+  });
+}
+
+Project.prototype.getModelByName = function(name, cb) {
+  assert(typeof name === 'string');
+  assert(typeof cb === 'function');
+
+  this.models({where: {name: name}, limit: 1}, function(err, results) {
+    if(err) return cb(err);
+    cb(null, results[0]);
+  });
+}
+
 function loadConfigFilesWithExt(dir, ext, cb) {
   assert(ext, 'cannot load config files without extension');
   var result = {name: path.basename(dir)};
