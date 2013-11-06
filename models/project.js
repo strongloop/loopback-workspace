@@ -265,7 +265,8 @@ var PACKAGE = {
   },
   "optionalDependencies": {
     "strong-cluster-control": "~0.1.0",
-    "strong-agent": "~0.2.15"
+    "strong-agent": "~0.2.15",
+    "loopback-explorer": "~1.0.0"
   }
 };
 
