@@ -5,22 +5,22 @@ module.exports = {
       dataSource: 'mail',
       public: false,
       options: {
-        extends: 'Email'
+        base: 'Email'
       }
     },
     user: {
       dataSource: 'db',
       public: true,
       options: {
-        extends: 'User'
+        base: 'User'
       }
     },
     session: {
       dataSource: 'db',
       public: false,
       options: {
-        extends: 'Session',
-        relationships: {
+        base: 'Session',
+        relations: {
           session: {
             model: 'user',
             type: 'belongsTo',
