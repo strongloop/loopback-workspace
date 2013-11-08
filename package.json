@@ -31,5 +31,9 @@
     "express": "~3.4.4",
     "optimist": "~0.6.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strongloop/loopback-workspace"
+  },
   "license": "MIT"
 }
