@@ -1,6 +1,7 @@
 var loopback = require('loopback');
 var path = require('path');
 var app = module.exports = loopback();
+var started = new Date();
 
 // operational dependencies
 try {
@@ -24,7 +25,7 @@ if(clusterOptions.clustered && clusterOptions.isMaster) {
  */
 
 app.use(loopback.favicon());
-app.use(loopback.logger(app.get('env') || 'dev'));
+app.use(loopback.logger(app.get('env')));
 app.use(loopback.bodyParser());
 app.use(loopback.methodOverride());
 
@@ -47,6 +48,7 @@ var explorer;
 try {
   explorer = require('loopback-explorer');
   app.use('/explorer', explorer(app));
+  console.log('Browse your REST API at http://%s:%s/explorer', app.get('host'), app.get('port'));
 } catch(e){
   // ignore errors, explorer stays disabled
 }
@@ -98,18 +100,27 @@ app.use(loopback.urlNotFound());
 app.use(loopback.errorHandler());
 
 /*
- * 4. Configure LoopBack models and datastores
+ * 4. Configure LoopBack models and datasources
  *
- * Read more at http://docs.strongloop.com/loopback#appbootoptions
+ * Read more at http://apidocs.strongloop.com/loopback#appbootoptions
  */
 
 app.boot(__dirname);
 
 /*
- * 5. Optionally start the server
+ * 5. Add a basic application status route at the root `/`.
+ *
+ * (remove this to handle `/` on your own)
+ */
+
+app.get('/', loopback.status());
+
+/*
+ * 6. Optionally start the server
  *
  * (only if this module is the main module)
  */
+
 if(require.main === module) {
   require('http').createServer(app).listen(app.get('port'), function(){
     if (explorer) {
