@@ -6,7 +6,7 @@
     "LoopBack",
     "Workspace"
   ],
-  "version": "1.1.0",
+  "version": "2.0.0",
   "scripts": {
     "test": "mocha --reporter spec",
     "blanket": {
@@ -18,8 +18,9 @@
     "debug": "~0.7.3",
     "rimraf": "~2.2.2",
     "async": "~0.2.9",
-    "strong-generator": "~1.0.2",
-    "cpr": "~0.1.1"
+    "loopback": "~1.2.0",
+    "temp": "~0.6.0",
+    "mkdirp": "~0.3.5"
   },
   "devDependencies": {
     "mocha": "~1.13.0",

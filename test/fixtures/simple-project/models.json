@@ -1,0 +1,11 @@
+{
+  "foo-bar": {
+    "dataSource": "db",
+    "options": {
+      "foo": "bar"
+    },
+    "properties": {
+      "name": "string"
+    }
+  }
+}
