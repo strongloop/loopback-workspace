@@ -6,13 +6,9 @@
     "LoopBack",
     "Workspace"
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
-    "test": "mocha --reporter spec",
-    "blanket": {
-      "pattern": "//^((?!(node_modules|test)).)*$/"
-    },
-    "coverage": "mocha -r blanket -R html-cov > coverage_loopback-workspace.html"
+    "test": "mocha --reporter spec"
   },
   "dependencies": {
     "debug": "~0.7.3",
@@ -25,8 +21,7 @@
   "devDependencies": {
     "mocha": "~1.13.0",
     "chai": "~1.8.1",
-    "temp": "~0.6.0",
-    "blanket": "~1.1.5"
+    "temp": "~0.6.0"
   },
   "optionalDependencies": {
     "express": "~3.4.4",
