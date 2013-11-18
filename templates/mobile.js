@@ -15,13 +15,13 @@ module.exports = {
         base: 'User'
       }
     },
-    session: {
+    accessToken: {
       dataSource: 'db',
       public: false,
       options: {
-        base: 'Session',
+        base: 'AccessToken',
         relations: {
-          session: {
+          user: {
             model: 'user',
             type: 'belongsTo',
             foreignKey: 'uid'
