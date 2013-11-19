@@ -17,37 +17,106 @@ if(clusterOptions.clustered && clusterOptions.isMaster) {
   return control.start(clusterOptions);
 }
 
-// express compatible middleware
+/*
+ * 1. Configure request preprocessing
+ *
+ *  LoopBack support all express-compatible middleware.
+ */
+
 app.use(loopback.favicon());
 app.use(loopback.logger(app.get('env') || 'dev'));
 app.use(loopback.bodyParser());
 app.use(loopback.methodOverride());
-app.use(app.router);
-app.use(loopback.static(path.join(__dirname, 'public')));
+
+/*
+ * EXTENSION POINT
+ * Add your custom request-preprocessing middleware here.
+ * Example:
+ *   app.use(loopback.limit('5.5mb'))
+ */
+
+/*
+ * 2. Setup request handlers.
+ */
+
+// LoopBack REST interface
 app.use(loopback.rest());
 
-// development only
-if ('development' == app.get('env')) {
-  app.use(loopback.errorHandler());
-}
-
-// configure the app
-// read more: http://docs.strongloop.com/loopback#appbootoptions
-app.boot();
-
-// explorer
+// API explorer (if present)
+var explorer;
 try {
-  var explorer = require('loopback-explorer');
+  explorer = require('loopback-explorer');
   app.use('/explorer', explorer(app));
-  console.log('Browse your REST API at http://%s:%s', app.get('host'), app.get('port'));
 } catch(e){
-  console.log('Run `npm install loopback-explorer` to enable the LoopBack explorer');
+  // ignore errors, explorer stays disabled
 }
 
-// only start the server if this module
-// is the main module...
+/*
+ * EXTENSION POINT
+ * Add your custom request-handling middleware here.
+ * Example:
+ *   app.use(function(req, resp, next) {
+ *     if (req.url == '/status') {
+ *       // send status response
+ *     } else {
+ *       next();
+ *     }
+ *   });
+ */
+
+// Let express routes handle requests that were not handled
+// by any of the middleware registered above.
+// This way LoopBack REST and API Explorer take precedence over
+// express routes.
+app.use(app.router);
+
+// The static file server should come after all other routes
+// Every request that goes through the static middleware hits
+// the file system to check if a file exists.
+app.use(loopback.static(path.join(__dirname, 'public')));
+
+// Requests that get this far won't be handled
+// by any middleware. Convert them into a 404 error
+// that will be handled later down the chain.
+app.use(loopback.urlNotFound());
+
+/*
+ * 3. Setup error handling strategy
+ */
+
+/*
+ * EXTENSION POINT
+ * Add your custom error reporting middleware here
+ * Example:
+ *   app.use(function(err, req, resp, next) {
+ *     console.log(req.url, ' failed: ', err.stack);
+ *     next(err);
+ *   });
+ */
+
+// The ultimate error handler.
+app.use(loopback.errorHandler());
+
+/*
+ * 4. Configure LoopBack models and datastores
+ *
+ * Read more at http://docs.strongloop.com/loopback#appbootoptions
+ */
+
+app.boot(__dirname);
+
+/*
+ * 5. Optionally start the server
+ *
+ * (only if this module is the main module)
+ */
 if(require.main === module) {
   require('http').createServer(app).listen(app.get('port'), function(){
+    if (explorer) {
+      console.log('Browse your REST API at http://%s:%s', app.get('host'), app.get('port'));
+    } else {
+      console.log('Run `npm install loopback-explorer` to enable the LoopBack explorer');
+    }
     console.log('LoopBack server listening @ http://%s:%s', app.get('host') || 'localhost', app.get('port'));
   });
 }
