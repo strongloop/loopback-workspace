@@ -43,7 +43,7 @@ describe('Generated project', function() {
       Project.createFromTemplate(SANDBOX, 'mobile', done);
     });
 
-    it.skip('starts', function(done) {
+    it('starts', function(done) {
       // This is a smoke test checking that the template generates
       // - a valid definition of models and datasources
       // - a valid configuration of express routes
