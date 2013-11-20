@@ -32,9 +32,11 @@ module.exports = {
   },
   dataSources: {
     db: {
+      defaultForType: 'db',
       connector: 'memory'
     },
     mail: {
+      defaultForType: 'mail',
       connector: 'mail'
     }
   },

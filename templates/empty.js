@@ -2,7 +2,12 @@ module.exports = {
   description: 'An empty backend',
   dataSources: {
     db: {
+      defaultForType: 'db',
       connector: 'memory'
+    },
+    mail: {
+      defaultForType: 'mail',
+      connector: 'mail'
     }
   },
   models: {
