@@ -19,7 +19,15 @@ if(clusterOptions.clustered && clusterOptions.isMaster) {
 }
 
 /*
- * 1. Configure request preprocessing
+ * 1. Configure LoopBack models and datasources
+ *
+ * Read more at http://apidocs.strongloop.com/loopback#appbootoptions
+ */
+
+app.boot(__dirname);
+
+/*
+ * 2. Configure request preprocessing
  *
  *  LoopBack support all express-compatible middleware.
  */
@@ -37,7 +45,7 @@ app.use(loopback.methodOverride());
  */
 
 /*
- * 2. Setup request handlers.
+ * 3. Setup request handlers.
  */
 
 // LoopBack REST interface
@@ -83,7 +91,7 @@ app.use(loopback.static(path.join(__dirname, 'public')));
 app.use(loopback.urlNotFound());
 
 /*
- * 3. Setup error handling strategy
+ * 4. Setup error handling strategy
  */
 
 /*
@@ -99,13 +107,6 @@ app.use(loopback.urlNotFound());
 // The ultimate error handler.
 app.use(loopback.errorHandler());
 
-/*
- * 4. Configure LoopBack models and datasources
- *
- * Read more at http://apidocs.strongloop.com/loopback#appbootoptions
- */
-
-app.boot(__dirname);
 
 /*
  * 5. Add a basic application status route at the root `/`.
