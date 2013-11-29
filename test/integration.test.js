@@ -6,7 +6,7 @@ var async = require('async');
 var Project = require('../').models.Project;
 
 var expect = require('chai').expect;
-var request = request = require('supertest');
+var request = require('supertest');
 
 describe('Generated project', function() {
   beforeEach(givenEmptySandbox);
@@ -66,7 +66,7 @@ describe('Generated project', function() {
 
     it('exposes swagger descriptors', function(done) {
       request(app)
-        .get('/swagger/resources')
+        .get('/api/swagger/resources')
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
