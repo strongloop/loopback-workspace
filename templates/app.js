@@ -33,7 +33,7 @@ app.boot(__dirname);
  */
 
 app.use(loopback.favicon());
-app.use(loopback.logger(app.get('env')));
+app.use(loopback.logger(app.get('env') === 'development' ? 'dev' : 'default'));
 app.use(loopback.bodyParser());
 app.use(loopback.methodOverride());
 
