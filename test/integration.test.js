@@ -6,7 +6,7 @@ var async = require('async');
 var Project = require('../').models.Project;
 
 var expect = require('chai').expect;
-var request = request = require('supertest');
+var request = require('supertest');
 
 describe('Generated project', function() {
   beforeEach(givenEmptySandbox);
@@ -39,19 +39,40 @@ describe('Generated project', function() {
   });
 
   describe('of type "mobile', function() {
+    var app;
     beforeEach(function(done) {
-      Project.createFromTemplate(SANDBOX, 'mobile', done);
+      Project.createFromTemplate(SANDBOX, 'mobile', function(err) {
+        if (err) return done(err);
+        app = require(SANDBOX);
+        done();
+      });
     });
 
-    it('starts', function(done) {
+    it('starts and servers Swagger HTML', function(done) {
       // This is a smoke test checking that the template generates
       // - a valid definition of models and datasources
       // - a valid configuration of express routes
-      var app = require(SANDBOX);
       request(app)
         .get('/explorer/')
         .expect(200)
-        .end(done);
+        .expect('Content-Type', /text\/html.*/)
+        .end(function(err, res) {
+          if (err) return done(err);
+
+          expect(res.text).to.contain('StrongLoop API Explorer');
+          done();
+        });
+    });
+
+    it('exposes swagger descriptors', function(done) {
+      request(app)
+        .get('/api/swagger/resources')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body.apis).to.have.length.least(1);
+          done();
+        });
     });
   });
-})
+});
