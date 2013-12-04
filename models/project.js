@@ -188,6 +188,145 @@ Project.prototype.getModelByName = function(name, cb) {
   });
 }
 
+var ACCESS_TYPES = ['all', 'read', 'write', 'execute'];
+var PERMISSIONS = ['allow', 'alarm', 'audit', 'deny'];
+var ROLE_IDS = ['owner', 'related', 'authenticated',
+                'unauthenticated', 'everyone'];
+
+/**
+ * Add an ACL to the given model(s), converting the options object into an
+ * ACL definition. All options are booleans unless otherwise noted.
+ *
+ * **options**
+ *
+ *  - `model` - the name of the model to add the permission to. May be ommitted
+ *  if the `all-models` option is provided
+ *  - `all-models` - apply the permission to all models. Canonot be used with `model`.
+ * 
+ * **options: access type**
+ *
+ *  - `all` - wildcard, matches all types of access
+ *  - `read` - read
+ *  - `write`- write
+ *  - `execute` - execute a method
+ *
+ * **options: properties and methods**
+ *
+ * - `property` - optional -  specify a specific property
+ * - `method` -  optional - specifcy a specific method name (matches both instance and
+ * static)
+ * 
+ * **options: role identifiers**
+ *
+ *  - `owner` - Owner of the object
+ *  - `related` Any user with a relationship to the object
+ *  - `authenticated` - Authenticated user
+ *  - `unauthenticated` - Unauthenticated user
+ *  - `everyone` Every user
+ *
+ * **options: permissions**
+ *
+ * - `alarm` - Generate an alarm, in a system dependent way, the access
+ * specified in the permissions component of the ACL entry.
+ * - `allow` - Explicitly grants access to the resource.
+ * - `audit` - Log, in a system dependent way, the access specified in the
+ * permissions component of the ACL entry.
+ * - `deny` - Explicitly denies access to the resource. 
+ *
+ * **notes:**
+ *
+ *  - you may only supply a single access type
+ *  - you may only supply a single role identifier
+ *  - you may only supply a single permission
+ * 
+ * @param {Object} options
+ * @param {Function} cb Will only include an error as the first argument if
+ * one occured. No additional arguments.
+ */
+
+Project.prototype.addPermission = function(options, cb) {
+  try {
+    var accessTypes = getOptionsFromKeys(options, ACCESS_TYPES);
+    var permissions = getOptionsFromKeys(options, PERMISSIONS);
+    var roleIdentifiers = getOptionsFromKeys(options, ROLE_IDS);
+
+    // model
+    assert(!(options.model && options['all-models']), 
+      'Cannot add a permission when `all` and `model` options are supplied!');
+    assert(options.model || options['all-models'], 
+      'You must supply `all-models` or `model`');
+    assert(options['all-models'] || (typeof options.model === 'string'),
+      '`model` must be a string');
+    assert(accessTypes.length <= 1, 'Cannot add permission with multiple '
+      + 'access types (eg. `all`, `read`, `write`, `exec`)!');
+    assert(permissions.length === 1, 'You must supply a single permission!');
+    assert(
+      roleIdentifiers.length === 1,
+      'You must supply a single role identifier!'
+    );
+  } catch(e) {
+    return cb(e);
+  }
+
+  var accessType = accessTypes[0] || {key: 'all'};
+  var permission = permissions[0];
+  var roleId = roleIdentifiers[0];
+  var acl = {};
+
+  switch(accessType.key) {
+    case 'all':
+      acl.accessType = '*';
+    break;
+    default:
+      acl.accessType = accessType.key.toUpperCase();
+    break;
+  }
+
+  acl.permission = permission.key.toUpperCase();
+  acl.principalType = 'ROLE';
+  acl.principalId = '$' + roleId.key;
+
+  if(options.property || options.method) {
+    acl.property = options.property || options.method;  
+  }
+  
+
+  if(options.model) {
+    async.waterfall([
+      this.getModelByName.bind(this, options.model),
+      function(model, callback) {
+        applyPermissions([model], acl, callback);
+      }
+    ], cb);
+  } else {
+    async.waterfall([
+      this.models.bind(this),
+      function(models, callback) {
+        applyPermissions(models, acl, callback);
+      }
+    ], cb);
+  }
+}
+
+function getOptionsFromKeys(options, keys) {
+  var result = [];
+
+  keys.forEach(function(key) {
+    if(options[key]) result.push({key: key, val: options[key]});
+  });
+
+  return result;
+}
+
+function applyPermissions(models, acl, cb) {
+  async.each(models, function(model, callback) {
+    model.options = model.options || {};
+    model.options.acls = model.options.acls || [];
+    model.options.acls.push(acl);
+    model.save(callback);
+  }, cb);
+}
+
 function loadConfigFilesWithExt(dir, ext, cb) {
   assert(ext, 'cannot load config files without extension');
   var result = {name: path.basename(dir)};
@@ -205,6 +344,16 @@ function loadConfigFilesWithExt(dir, ext, cb) {
     
     cb(null, result);
   });
+}
+
+/**
+ * Set the default ACL permission for the project.
+ *
+ * @param {String} permission allow|deny
+ */
+
+Project.prototype.setPermissionDefault = function(permission) {
+  this.app.defaultPermission = permission;
 }
 
 function readJSONFile(filePath, cb) {

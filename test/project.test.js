@@ -12,6 +12,9 @@ var SIMPLE_APP = path.join(FIXTURES, 'simple-project');
 var temp = require('temp');
 var sandbox = temp.mkdirSync();
 var async = require('async');
+var loopback = require('loopback');
+var ACL = loopback.ACL;
+var Role = loopback.Role;
 
 // auto-cleanup temp files / dirs
 temp.track();
@@ -213,6 +216,120 @@ describe('Project', function () {
       });
     });
   });
+
+  describe('permissions', function () {
+    beforeEach(function(done) {
+      var test = this;
+      var dir = test.dir = temp.mkdirSync();
+
+      Project.createFromTemplate(dir, 'mobile', function(err) {
+        if(err) return done(err);
+
+        Project.loadFromFiles(dir, function(err, project) {
+          if(err) return done(err);
+
+          test.project = project;
+          done();
+        });
+      });
+    });
+
+    describe('project.setPermissionDefault(default, cb)', function () {
+      it('set the default permission for the app', function () {
+        this.project.setPermissionDefault('DENY');
+        expect(this.project.app.defaultPermission).to.eql('DENY');
+      });
+    });
+
+    describe('project.addPermission(modelName, options, cb)', function () {
+      it('should add the given permission', function (done) {
+        var options = {
+          allow: true,
+          everyone: true,
+          read: true,
+          model: 'user'
+        };
+
+        var expectedACL = {
+          principalType: ACL.ROLE,
+          permission: ACL.ALLOW,
+          principalId: Role.EVERYONE,
+          accessType: ACL.READ
+        };
+
+        addAndCheckPermission.call(this, options, expectedACL, done);
+      });
+
+      describe('various permission permuations', function () {
+        it('deny all access to everyone and all models', function (done) {
+          var options = {
+            deny: true,
+            everyone: true,
+            all: true,
+            'all-models': true
+          };
+
+          var expectedACL = {
+            principalType: ACL.ROLE,
+            permission: ACL.DENY,
+            principalId: Role.EVERYONE,
+            accessType: ACL.ALL
+          };
+
+          addAndCheckPermission.call(this, options, expectedACL, done);
+        });
+        it('allow access to owners to execute remove for all models', function (done) {
+          var options = {
+            allow: true,
+            owner: true,
+            method: 'remove',
+            execute: true,
+            'all-models': true
+          };
+
+          var expectedACL = {
+            principalType: ACL.ROLE,
+            permission: ACL.ALLOW,
+            principalId: Role.OWNER,
+            property: options.method,
+            accessType: ACL.EXECUTE
+          };
+
+          addAndCheckPermission.call(this, options, expectedACL, done);
+        });
+      });
+    });
+  });
+
+  function addAndCheckPermission(options, expectedACL, done) {
+    var project = this.project;
+    project.addPermission(options, function(err) {
+      if(options.model) {
+        project.getModelByName(options.model, function(err, model) {
+          if(err) return done(err);
+          check(model, done);
+        });
+      } else {
+        project.models(function(err, models) {
+          if(err) return done(err);
+          async.each(models, check.bind(this), done);
+        });
+      }
+
+      function check(model, cb) {
+        if(err) return done(err);
+
+        var acls = model.options.acls;
+        var len = acls && acls.length;
+        var acl = acls && acls[len - 1];
+
+        expect(len).to.be.gte(1);
+        expect(acl).to.exist;
+        expect(acl).to.eql(expectedACL);
+        cb();
+      }
+    });
+  }
 
   describe('project.listUseableConnectors(cb)', function () {
     it('should return a list of connectors in package.json');
