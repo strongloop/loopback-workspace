@@ -7,7 +7,9 @@ app.dataSource('db', {
 });
 
 var Project = app.model('project', {dataSource: DEFAULT_DATASOURCE});
-var ModelDef = app.model('model-definition', {dataSource: DEFAULT_DATASOURCE});
+var ModelDef = app.model('model-definition', {dataSource: DEFAULT_DATASOURCE, properties: {
+  options: Object
+}});
 var DataSourceDef = app.model('datasource-definition', {dataSource: DEFAULT_DATASOURCE});
 var AppDef = app.model('app-definition', {dataSource: DEFAULT_DATASOURCE});
 

@@ -118,6 +118,7 @@ describe('Project', function () {
         assertJSONFileHas(app, 'host', '0.0.0.0');
 
         assertJSONFileHas(dataSources, 'db.connector', 'memory');
+        assertJSONFileHas(models, 'user.options.base', 'User');
         done();
       });
     });
@@ -142,6 +143,7 @@ describe('Project', function () {
     it('should save models', function (done) {
       var dir = temp.mkdirSync();
       var exModel = {name: 'foo', dataSource: 'db', properties: {name: 'string'}};
+      var models = path.join(dir, 'models.json');
 
       Project.createFromTemplate(dir, 'empty', function(err) {
         if(err) return done(err);
@@ -154,12 +156,13 @@ describe('Project', function () {
 
             project.saveToFiles(dir, function(err) {
               if(err) return done(err);
+              assertJSONFileHas(models, 'user.options.base', 'User');
 
               expectValidProjectAtDir(dir, function() {
                 if(err) return done(err);
 
-                assertJSONFileHas(path.join(dir, 'models.json'), 'foo.dataSource', 'db');
-                assertJSONFileHas(path.join(dir, 'models.json'), 'foo.properties.name', 'string');
+                assertJSONFileHas(models, 'foo.dataSource', 'db');
+                assertJSONFileHas(models, 'foo.properties.name', 'string');
                 done();
               });
             });

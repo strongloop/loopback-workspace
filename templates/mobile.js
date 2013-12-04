@@ -12,29 +12,31 @@ module.exports = {
       dataSource: 'db',
       public: true,
       options: {
-        base: 'User'
-      }
-    },
-    session: {
-      dataSource: 'db',
-      public: false,
-      options: {
-        base: 'Session',
+        base: 'User',
         relations: {
-          session: {
-            model: 'user',
-            type: 'belongsTo',
-            foreignKey: 'uid'
+          accessTokens: {
+            model: 'accessToken',
+            type: 'hasMany',
+            foreignKey: 'userId'
           }
         }
+      }
+    },
+    accessToken: {
+      dataSource: 'db',
+      public: true,
+      options: {
+        base: 'AccessToken'
       }
     }
   },
   dataSources: {
     db: {
+      defaultForType: 'db',
       connector: 'memory'
     },
     mail: {
+      defaultForType: 'mail',
       connector: 'mail'
     }
   },

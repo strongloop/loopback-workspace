@@ -83,14 +83,14 @@ Project.fromConfig = function (projectConfig, cb) {
   async.parallel([
     function(cb) {
       async.each(Object.keys(models), function (modelName, cb) {
-        var model = new Model(models[modelName]);
+        var model = models[modelName];
         model.name = modelName;
         project.models.create(model, cb);
       }, cb);
     },
     function(cb) {
       async.each(Object.keys(dataSources), function (dsName, cb) {
-        var ds = new DataSource(dataSources[dsName]);
+        var ds = dataSources[dsName];
         ds.name = dsName;
         project.dataSources.create(ds, cb);
       }, cb);
