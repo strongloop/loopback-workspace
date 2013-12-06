@@ -117,7 +117,14 @@ app.use(loopback.errorHandler());
 app.get('/', loopback.status());
 
 /*
- * 6. Optionally start the server
+ * 6. Enable access control and token based authentication.
+ */
+
+app.remotes().exports.swagger.requireToken = false;
+app.enableAuth();
+
+/*
+ * 7. Optionally start the server
  *
  * (only if this module is the main module)
  */
