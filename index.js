@@ -25,8 +25,6 @@ require('./models/datasource-definition');
 // server middleware
 app.use(loopback.favicon());
 app.use(loopback.logger('dev'));
-app.use(loopback.bodyParser());
-app.use(loopback.methodOverride());
 app.use(app.router);
 
 // development only
