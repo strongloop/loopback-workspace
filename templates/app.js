@@ -123,14 +123,17 @@ app.get('/', loopback.status());
  */
 
 if(require.main === module) {
-  require('http').createServer(app).listen(app.get('port'), function(){
-    var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
-    if (explorerPath) {
-      console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
-    } else {
-      console.log(
-        'Run `npm install loopback-explorer` to enable the LoopBack explorer');
+  require('http').createServer(app).listen(app.get('port'), app.get('host'),
+    function(){
+      var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
+      if (explorerPath) {
+        console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
+      } else {
+        console.log(
+          'Run `npm install loopback-explorer` to enable the LoopBack explorer'
+        );
+      }
+      console.log('LoopBack server listening @ %s%s', baseUrl, '/');
     }
-    console.log('LoopBack server listening @ %s%s', baseUrl, '/');
-  });
+  );
 }
