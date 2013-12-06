@@ -106,6 +106,7 @@ describe('Project', function () {
       var dir = path.join(sandbox, 'my-project');
       var app = path.join(dir, 'app.json');
       var appJS = path.join(dir, 'app.js');
+      var pkg = path.join(dir, 'package.json');
       var models = path.join(dir, 'models.json');
       var dataSources = path.join(dir, 'datasources.json');
 
@@ -116,9 +117,11 @@ describe('Project', function () {
         assertFileExists(models);
         assertFileExists(dataSources);
         assertFileExists(appJS);
+        assertFileExists(pkg);
 
         assertJSONFileHas(app, 'port', 3000);
         assertJSONFileHas(app, 'host', '0.0.0.0');
+        assertJSONFileHas(pkg, 'name', 'my-project');
 
         assertJSONFileHas(dataSources, 'db.connector', 'memory');
         assertJSONFileHas(models, 'user.options.base', 'User');

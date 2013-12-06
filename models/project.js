@@ -108,6 +108,8 @@ Project.createFromTemplate = function(dir, template, cb) {
     return cb(new Error(template + ' is not a valid template'));
   }
 
+  config.name = path.basename(dir);
+
   async.parallel([
     function(cb) {
       writeConfigToFiles(dir, DEFAULT_EXT, config, cb);
