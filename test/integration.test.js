@@ -38,7 +38,7 @@ describe('Generated project', function() {
     });
   });
 
-  describe('of type "mobile', function() {
+  describe('of type "mobile"', function() {
     var app;
     beforeEach(function(done) {
       Project.createFromTemplate(SANDBOX, 'mobile', function(err) {
