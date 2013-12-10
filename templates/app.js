@@ -54,9 +54,11 @@ app.use(apiPath, loopback.rest());
 
 // API explorer (if present)
 var explorerPath = '/explorer';
+var explorerConfigured = false;
 try {
   var explorer = require('loopback-explorer');
   app.use(explorerPath, explorer(app, { basePath: apiPath }));
+  explorerConfigured = true;
 } catch(e){
   // ignore errors, explorer stays disabled
 }
@@ -120,7 +122,9 @@ app.get('/', loopback.status());
  * 6. Enable access control and token based authentication.
  */
 
-app.remotes().exports.swagger.requireToken = false;
+var swaggerRemote = app.remotes().exports.swagger;
+if (swaggerRemote) swaggerRemote.requireToken = false;
+
 app.enableAuth();
 
 /*
@@ -133,7 +137,7 @@ if(require.main === module) {
   require('http').createServer(app).listen(app.get('port'), app.get('host'),
     function(){
       var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
-      if (explorerPath) {
+      if (explorerConfigured) {
         console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
       } else {
         console.log(
