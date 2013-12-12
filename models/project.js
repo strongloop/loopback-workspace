@@ -1,4 +1,5 @@
 var app = require('../');
+var uuid = require('uuid');
 var fs = require('fs');
 var Project = app.models.Project;
 var Model = app.models.ModelDefinition;
@@ -103,6 +104,10 @@ Project.fromConfig = function (projectConfig, cb) {
 
 Project.createFromTemplate = function(dir, template, cb) {
   var config = TEMPLATES[template];
+
+  if(config.app) {
+    config.app.cookieSecret = uuid.v4();
+  }
 
   if(!config) {
     return cb(new Error(template + ' is not a valid template'));
