@@ -26,7 +26,8 @@
     "strong-agent": "~0.2.18",
     "strong-cluster-control": "~0.2.1",
     "fs-tools": "~0.2.10",
-    "loopback-explorer": "~1.0.0"
+    "loopback-explorer": "~1.0.0",
+    "loopback-datasource-juggler": "~1.2.0"
   },
   "optionalDependencies": {
     "express": "~3.4.4",
