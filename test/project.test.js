@@ -121,6 +121,7 @@ describe('Project', function () {
 
         assertJSONFileHas(app, 'port', 3000);
         assertJSONFileHas(app, 'host', '0.0.0.0');
+        assertJSONFileHas(app, 'cookieSecret');
         assertJSONFileHas(pkg, 'name', 'my-project');
 
         assertJSONFileHas(dataSources, 'db.connector', 'memory');
