@@ -5,7 +5,7 @@ module.exports = {
     "start": "node app.js"
   },
   "dependencies": {
-    "loopback": "1.3.x"
+    "loopback": "1.4.x"
   },
   "optionalDependencies": {
     "strong-cluster-control": "~0.1.0",
