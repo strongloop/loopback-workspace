@@ -35,6 +35,7 @@ app.boot(__dirname);
 app.use(loopback.favicon());
 app.use(loopback.logger(app.get('env') === 'development' ? 'dev' : 'default'));
 app.use(loopback.cookieParser(app.get('cookieSecret')));
+app.use(loopback.token({model: app.models.accessToken}));
 app.use(loopback.bodyParser());
 app.use(loopback.methodOverride());
 
