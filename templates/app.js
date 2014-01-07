@@ -135,8 +135,8 @@ app.enableAuth();
  * (only if this module is the main module)
  */
 
-if(require.main === module) {
-  require('http').createServer(app).listen(app.get('port'), app.get('host'),
+app.start = function() {
+  return require('http').createServer(app).listen(app.get('port'), app.get('host'),
     function(){
       var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
       if (explorerConfigured) {
@@ -149,4 +149,8 @@ if(require.main === module) {
       console.log('LoopBack server listening @ %s%s', baseUrl, '/');
     }
   );
+}
+
+if(require.main === module) {
+  app.start();
 }

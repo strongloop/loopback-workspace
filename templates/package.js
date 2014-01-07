@@ -1,6 +1,7 @@
 module.exports = {
   "version": "0.0.0",
   "main": "app.js",
+  "bin": "server.js",
   "scripts": {
     "start": "node app.js"
   },
