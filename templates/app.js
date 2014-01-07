@@ -146,6 +146,7 @@ app.start = function() {
         );
       }
       console.log('LoopBack server listening @ %s%s', baseUrl, '/');
+      app.emit('start');
     }
   );
 }
