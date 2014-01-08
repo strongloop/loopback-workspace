@@ -51,8 +51,7 @@ app.use(loopback.methodOverride());
  */
 
 // LoopBack REST interface
-var apiPath = '/api';
-app.use(apiPath, loopback.rest());
+app.use(app.get('restApiRoot'), loopback.rest());
 
 // API explorer (if present)
 var explorerPath = '/explorer';
