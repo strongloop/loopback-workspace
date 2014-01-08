@@ -135,20 +135,18 @@ app.enableAuth();
  */
 
 app.start = function() {
-  return require('http').createServer(app).listen(app.get('port'), app.get('host'),
-    function(){
-      var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
-      if (explorerConfigured) {
-        console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
-      } else {
-        console.log(
-          'Run `npm install loopback-explorer` to enable the LoopBack explorer'
-        );
-      }
-      console.log('LoopBack server listening @ %s%s', baseUrl, '/');
+  return app.listen(function() {
+    var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
+    if (explorerConfigured) {
+      console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
+    } else {
+      console.log(
+        'Run `npm install loopback-explorer` to enable the LoopBack explorer'
+      );
     }
-  );
-}
+    console.log('LoopBack server listening @ %s%s', baseUrl, '/');
+  });
+};
 
 if(require.main === module) {
   app.start();
