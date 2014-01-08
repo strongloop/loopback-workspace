@@ -58,7 +58,7 @@ var explorerPath = '/explorer';
 var explorerConfigured = false;
 try {
   var explorer = require('loopback-explorer');
-  app.use(explorerPath, explorer(app, { basePath: apiPath }));
+  app.use(explorerPath, explorer(app));
   explorerConfigured = true;
 } catch(e){
   // ignore errors, explorer stays disabled
