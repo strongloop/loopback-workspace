@@ -38,6 +38,9 @@ module.exports = {
     },
     push: {
       dataSource: 'push',
+      options: {
+        plural: 'push'
+      }
     },
     installation: {
       dataSource: 'db',
