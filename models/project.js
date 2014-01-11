@@ -423,7 +423,7 @@ function stringify(obj, contentType) {
 
   switch(contentType) {
     case 'json':
-      return JSON.stringify(obj, null, 2);
+      return JSON.stringify(obj, null, 2) + '\n';
     break;
     default:
       throw new Error('cannot stringify unsupported contentType "' + contentType + '"');
