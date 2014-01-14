@@ -74,5 +74,69 @@ describe('Generated project', function() {
           done();
         });
     });
+
+    it('exposes installations', function(done) {
+      request(app)
+        .get('/api/installations')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('length', 0);
+          done();
+        });
+    });
+
+    it('can create installations', function(done) {
+      request(app)
+        .post('/api/installations')
+        .send({
+          appId: 'MyLoopbackApp',
+          appVersion: '1',
+          userId: 'raymond',
+          deviceToken: '756244503c9f95b49d7ff82120dc193ca1e3a7cb56f60c2ef2a19241e8f33305',
+          deviceType: 'ios',
+          created: new Date(),
+          modified: new Date(),
+          status: 'Active'
+        })
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('id', '1');
+          expect(res.body).to.have.property('deviceToken',
+            '756244503c9f95b49d7ff82120dc193ca1e3a7cb56f60c2ef2a19241e8f33305');
+          request(app)
+            .get('/api/installations')
+            .expect(200)
+            .end(function(err, res) {
+              if (err) return done(err);
+              expect(res.body).to.have.property('length', 1);
+              done();
+            });
+        });
+    });
+
+    it('exposes notifications', function(done) {
+      request(app)
+        .get('/api/notifications')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('length', 0);
+          done();
+        });
+    });
+
+    it('exposes applications', function(done) {
+      request(app)
+        .get('/api/applications')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('length', 0);
+          done();
+        });
+    });
+
   });
 });
