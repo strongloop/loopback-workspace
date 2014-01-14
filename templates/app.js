@@ -54,14 +54,16 @@ app.use(loopback.methodOverride());
 app.use(app.get('restApiRoot'), loopback.rest());
 
 // API explorer (if present)
-var explorerPath = '/explorer';
-var explorerConfigured = false;
 try {
-  var explorer = require('loopback-explorer');
-  app.use(explorerPath, explorer(app));
-  explorerConfigured = true;
+  var explorer = require('loopback-explorer')(app);
+  app.use('/explorer', explorer);
+  app.once('started', function(baseUrl) {
+    console.log('Browse your REST API at %s%s', baseUrl, explorer.route);
+  });
 } catch(e){
-  // ignore errors, explorer stays disabled
+  console.log(
+    'Run `npm install loopback-explorer` to enable the LoopBack explorer'
+  );
 }
 
 /*
@@ -135,20 +137,12 @@ app.enableAuth();
  */
 
 app.start = function() {
-  return require('http').createServer(app).listen(app.get('port'), app.get('host'),
-    function(){
-      var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
-      if (explorerConfigured) {
-        console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
-      } else {
-        console.log(
-          'Run `npm install loopback-explorer` to enable the LoopBack explorer'
-        );
-      }
-      console.log('LoopBack server listening @ %s%s', baseUrl, '/');
-    }
-  );
-}
+  return app.listen(function() {
+    var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
+    app.emit('started', baseUrl);
+    console.log('LoopBack server listening @ %s%s', baseUrl, '/');
+  });
+};
 
 if(require.main === module) {
   app.start();
