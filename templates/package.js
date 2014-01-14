@@ -6,11 +6,11 @@ module.exports = {
     "start": "node app.js"
   },
   "dependencies": {
-    "loopback": "1.4.x"
+    "loopback": "1.5.x"
   },
   "optionalDependencies": {
     "strong-cluster-control": "~0.1.0",
     "strong-agent": "~0.2.15",
-    "loopback-explorer": "~1.0.0"
+    "loopback-explorer": "~1.1.0"
   }
 };
