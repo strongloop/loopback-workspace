@@ -39,6 +39,7 @@ module.exports = {
     push: {
       dataSource: 'push',
       options: {
+        base: 'Push',
         plural: 'push'
       }
     },
