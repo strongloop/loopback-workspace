@@ -138,5 +138,15 @@ describe('Generated project', function() {
         });
     });
 
+    it('creates push data source', function() {
+      expect(app.dataSources).to.have.property('push');
+      expect(app.dataSources.push.settings).to.deep.equal(
+      { defaultForType: 'push',
+        connector: 'loopback-push-notification',
+        installation: 'installation',
+        notification: 'notification',
+        application: 'application' });
+    });
+
   });
 });
