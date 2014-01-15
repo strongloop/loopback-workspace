@@ -28,7 +28,7 @@
     "strong-cluster-control": "~0.2.1",
     "fs-tools": "~0.2.10",
     "loopback-explorer": "1.x >=1.1",
-    "loopback-push-notification": "~1.0.0",
+    "loopback-push-notification": "~1.1.0",
     "loopback-datasource-juggler": "~1.2.0"
   },
   "optionalDependencies": {
