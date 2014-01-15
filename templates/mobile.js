@@ -28,12 +28,47 @@ module.exports = {
       options: {
         base: 'AccessToken'
       }
+    },
+    application: {
+      dataSource: 'db',
+      public: true,
+      options: {
+        base: 'Application'
+      }
+    },
+    push: {
+      dataSource: 'push',
+      options: {
+        base: 'Push',
+        plural: 'push'
+      }
+    },
+    installation: {
+      dataSource: 'db',
+      public: true,
+      options: {
+        base: 'Installation'
+      }
+    },
+    notification: {
+      dataSource: 'db',
+      public: true,
+      options: {
+        base: 'Notification'
+      }
     }
   },
   dataSources: {
     db: {
       defaultForType: 'db',
       connector: 'memory'
+    },
+    push: {
+      defaultForType: 'push',
+      connector: 'loopback-push-notification',
+      installation: 'installation',
+      notification: 'notification',
+      application: 'application'
     },
     mail: {
       defaultForType: 'mail',
