@@ -116,6 +116,13 @@ describe('Generated project', function() {
         });
     });
 
+    it('creates ACL models', function() {
+      expect(app.models.acl).to.have.property('checkAccess');
+      expect(app.models.role).to.have.property('checkAccess');
+      expect(app.models.role.relations).to.have.property('principals');
+      expect(app.models.role.relations.principals.modelTo).to.equal(app.models.roleMapping);
+    });
+
     it('exposes notifications', function(done) {
       request(app)
         .get('/api/notifications')

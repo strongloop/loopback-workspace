@@ -36,6 +36,41 @@ module.exports = {
         base: 'Application'
       }
     },
+    acl: {
+      dataSource: 'db',
+      public: false,
+      options: {
+        base: 'ACL'
+      }
+    },
+    roleMapping: {
+      dataSource: 'db',
+      public: false,
+      options: {
+        base: 'RoleMapping'
+      }
+    },
+    role: {
+      dataSource: 'db',
+      public: false,
+      options: {
+        base: 'Role',
+        relations: {
+          principals: {
+            type: 'hasMany',
+            model: 'roleMapping',
+            foreignKey: 'roleId'
+          } 
+        }
+      }
+    },
+    scope: {
+      dataSource: 'db',
+      public: false,
+      options: {
+        base: 'Scope'
+      }
+    },
     push: {
       dataSource: 'push',
       options: {
