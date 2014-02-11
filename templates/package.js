@@ -6,7 +6,7 @@ module.exports = {
     "start": "node app.js"
   },
   "dependencies": {
-    "loopback": "1.6.x"
+    "loopback": "1.x >=1.6.1", 
   },
   "optionalDependencies": {
     "loopback-explorer": "~1.1.0",
