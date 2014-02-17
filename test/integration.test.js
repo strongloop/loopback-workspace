@@ -102,7 +102,7 @@ describe('Generated project', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          expect(res.body).to.have.property('id', '1');
+          expect(res.body).to.have.property('id', 1);
           expect(res.body).to.have.property('deviceToken',
             '756244503c9f95b49d7ff82120dc193ca1e3a7cb56f60c2ef2a19241e8f33305');
           request(app)
