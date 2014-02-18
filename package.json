@@ -39,5 +39,8 @@
     "type": "git",
     "url": "https://github.com/strongloop/loopback-workspace"
   },
-  "license": "MIT"
+  "license": {
+    "name": "Dual MIT/StrongLoop",
+    "url": "https://github.com/strongloop/loopback-workspace/blob/master/LICENSE"
+  }
 }
