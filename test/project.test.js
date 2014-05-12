@@ -1,5 +1,6 @@
 var app = require('../');
 var fs = require('fs');
+var fstools = require('fs-tools');
 var assert = require('assert');
 var expect = require('chai').expect;
 var Project = app.models.Project;
@@ -139,6 +140,38 @@ describe('Project', function () {
       });
     });
 
+    it('supports custom writeFile function', function(done) {
+      var filesWritten = [];
+      var filesFound = [];
+
+      // install a custom writeFile implementation
+      Project.writeFile = function(name, content, enc, cb) {
+        filesWritten.push(name);
+        fs.writeFile.apply(fs, arguments);
+      };
+
+      async.waterfall([
+       function createProject(next) {
+          Project.createFromTemplate(SANDBOX, 'empty', next);
+        },
+
+        function findAllFiles(next) {
+          fstools.walk(
+            SANDBOX,
+            function(name, stats, cb) {
+              filesFound.push(name);
+              cb();
+            },
+            next);
+        },
+
+        function verifyExpectations(next) {
+          expect(filesFound).to.have.members(filesWritten);
+          expect(filesFound).to.not.be.empty;
+          next();
+        }
+      ], done);
+    });
   });
   
   describe('project.saveToFiles(dir, cb)', function () {

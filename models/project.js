@@ -19,6 +19,13 @@ var PACKAGE = require('../templates/package');
 Project.validatesUniquenessOf('name');
 Project.validatesPresenceOf('name');
 
+/**
+ * Customization hook allowing users to provide own function for writing
+ * files (e.g. yeoman generator's this.write).
+ * @type {function(string, string, string, cb)
+ */
+Project.writeFile = fs.writeFile;
+
 Project.loadFromFiles = function (dir, cb) {
   async.waterfall([
     function (cb) {
@@ -134,7 +141,10 @@ Project.createFromTemplate = function(dir, name, template, cb) {
     function(cb) {
       writeAppFiles(dir, config, cb);
     }
-  ], cb)
+  ], function(err) {
+    // ignore the results of the async steps
+    cb(err);
+  });
 }
 
 Project.isValidProjectDir = function(dir, cb) {
@@ -406,7 +416,7 @@ function writeConfigToFiles(dir, ext, config, cb) {
           // skip non config file keys
           return cb();
         }
-        fs.writeFile(path.join(dir, file + '.' + ext), stringify(fileConfig, ext), 'utf8', cb);
+        Project.writeFile(path.join(dir, file + '.' + ext), stringify(fileConfig, ext), 'utf8', cb);
       }, cb);
     }
   ], cb);
@@ -418,7 +428,7 @@ function writeAppFiles(dir, config, cb) {
       fs.readFile(path.join(__dirname, '..', 'templates', 'app.js'), 'utf8', cb);
     },
     function(appTemplateStr, cb) {
-      fs.writeFile(path.join(dir, 'app.js'), appTemplateStr, 'utf8', cb);
+      Project.writeFile(path.join(dir, 'app.js'), appTemplateStr, 'utf8', cb);
     },
     function(cb) {
       mkdirp(path.join(dir, 'models'), cb);
@@ -446,5 +456,5 @@ function stringify(obj, contentType) {
 function writePackage(dir, config, cb) {
   var pkg = JSON.parse(JSON.stringify(PACKAGE));
   pkg.name = config.name;
-  fs.writeFile(path.join(dir, 'package.json'), stringify(pkg, 'json'), 'utf8', cb);
+  Project.writeFile(path.join(dir, 'package.json'), stringify(pkg, 'json'), 'utf8', cb);
 }
