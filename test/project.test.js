@@ -129,6 +129,16 @@ describe('Project', function () {
         done();
       });
     });
+
+    it('supports project name different from the directory name', function(done) {
+      Project.createFromTemplate(SANDBOX, 'my-name', 'empty', function(err) {
+        if (err) return done(err);
+        var packageJson = path.join(SANDBOX, 'package.json');
+        assertJSONFileHas(packageJson, 'name', 'my-name');
+        done();
+      });
+    });
+
   });
   
   describe('project.saveToFiles(dir, cb)', function () {

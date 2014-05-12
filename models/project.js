@@ -102,18 +102,30 @@ Project.fromConfig = function (projectConfig, cb) {
   });
 }
 
-Project.createFromTemplate = function(dir, template, cb) {
+/**
+ * Create a new project using the given template.
+ * @param {string} dir The project directory, will be created if needed.
+ * @param {string=} name Project name. Optional, defaults to `dir` basename.
+ * @param {string} template Name of the template to use.
+ * @param {function(err)} cb
+ */
+Project.createFromTemplate = function(dir, name, template, cb) {
+  if (cb === undefined && typeof template === 'function') {
+    cb = template;
+    template = name;
+    name = path.basename(dir);
+  }
+
   var config = TEMPLATES[template];
+  if(!config) {
+    return cb(new Error(template + ' is not a valid template'));
+  }
 
   if(config.app) {
     config.app.cookieSecret = uuid.v4();
   }
 
-  if(!config) {
-    return cb(new Error(template + ' is not a valid template'));
-  }
-
-  config.name = path.basename(dir);
+  config.name = name;
 
   async.parallel([
     function(cb) {
