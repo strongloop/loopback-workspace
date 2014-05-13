@@ -47,7 +47,7 @@ function loadProject(done) {
       done(err);
     }
     test.project = project;
-    done();
+    done(null, project);
   });
 }
 
@@ -175,18 +175,21 @@ describe('Project', function () {
   });
   
   describe('project.saveToFiles(dir, cb)', function () {
-    beforeEach(loadProject);
     it('should create and persist all project definitions', function(done) {
       var dir = temp.mkdirSync();
 
-      this.project.saveToFiles(dir, function(err) {
-        if(err) return done(err);
+      loadProject(function(err, project) {
+        if (err) return done(err);
 
-        // TODO(ritch) - remove faux file writing to validate project
-        fs.writeFileSync(path.join(dir, 'app.js'), '// ...', 'utf8');
-        fs.writeFileSync(path.join(dir, 'package.json'), '{}', 'utf8');
+        project.saveToFiles(dir, function(err) {
+          if (err) return done(err);
 
-        expectValidProjectAtDir(dir, done);
+          // TODO(ritch) - remove faux file writing to validate project
+          fs.writeFileSync(path.join(dir, 'app.js'), '// ...', 'utf8');
+          fs.writeFileSync(path.join(dir, 'package.json'), '{}', 'utf8');
+
+          expectValidProjectAtDir(dir, done);
+        });
       });
     });
 
@@ -197,7 +200,7 @@ describe('Project', function () {
 
       Project.createFromTemplate(dir, 'empty', function(err) {
         if(err) return done(err);
-
+        
         Project.loadFromFiles(dir, function(err, project) {
           if(err) return done(err);
 
