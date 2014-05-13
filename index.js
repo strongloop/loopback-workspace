@@ -8,9 +8,14 @@ app.dataSource('db', {
 
 var Project = app.model('project', {dataSource: DEFAULT_DATASOURCE});
 var ModelDef = app.model('model-definition', {dataSource: DEFAULT_DATASOURCE, properties: {
+  dataSource: String,
+  public: Boolean,
   options: Object
 }});
-var DataSourceDef = app.model('datasource-definition', {dataSource: DEFAULT_DATASOURCE});
+var DataSourceDef = app.model('datasource-definition', {dataSource: DEFAULT_DATASOURCE, properties: {
+  defaultForType: String,
+  connector: String
+}});
 var AppDef = app.model('app-definition', {dataSource: DEFAULT_DATASOURCE});
 
 // relationships

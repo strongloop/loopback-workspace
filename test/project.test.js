@@ -389,4 +389,34 @@ describe('Project', function () {
   describe('project.isValidProjectDir(cb)', function () {
     it('should callback with any errors from any definition');
   });
+
+
+  it('load & save should preserve models.json created from template', function(done) {
+    var dir = temp.mkdirSync();
+    var orig;
+
+    async.waterfall([
+      function(next) {
+        Project.createFromTemplate(dir, 'test-project', 'mobile', next);
+      },
+      function(next) {
+        orig = loadModelsJsonLines();
+        Project.loadFromFiles(dir, next);
+      },
+      function(project, next) {
+        project.saveToFiles(dir, next);
+      },
+      function(result, next) {
+        var saved = loadModelsJsonLines();
+        expect(saved).to.eql(orig);
+        next();
+      }
+    ], done);
+
+    function loadModelsJsonLines() {
+      var modelsJson = path.resolve(dir, 'models.json');
+      var content = fs.readFileSync(modelsJson, 'utf-8');
+      return content.split(/[\n\r]+/);
+    }
+  });
 });
