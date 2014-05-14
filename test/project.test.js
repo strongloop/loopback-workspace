@@ -223,6 +223,43 @@ describe('Project', function () {
         });
       });
     });
+
+    it('should ignore cached relations', function(done) {
+      var dir = SANDBOX;
+
+      async.waterfall([
+        function load(next) {
+          loadProject(next)
+        },
+        function fillProjectModelsCache(project, next) {
+          project.models(function(err) {
+            next(err, project);
+          });
+        },
+        function updateModelOptions(project, next) {
+          project.models(
+            { where: { name: 'foo-bar'}, limit: 1},
+            function(err, res) {
+              if (err) return done(err);
+              var model = res[0];
+              model.options.newOption = true;
+              model.save(function(err) {
+                next(err, project);
+              });
+            });
+        },
+        function save(project, next) {
+          project.saveToFiles(dir, function(err) {
+            next(err, project);
+          });
+        },
+        function verify(project, next) {
+          var modelsJson = path.join(dir, 'models.json');
+          assertJSONFileHas(modelsJson, 'foo-bar.options.newOption', true);
+          next();
+        },
+      ], done);
+    });
   });
   
   describe('project.getDataSourceByName(name, cb)', function () {

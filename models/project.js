@@ -63,7 +63,8 @@ Project.prototype.toConfig = function(cb) {
 
   function findAndReduce(type) {
     return function(cb) {
-      project[type](function(err, objects) {
+      var FORCE_RELOAD = true;
+      project[type](FORCE_RELOAD, function(err, objects) {
         if(err) return cb(err);
         config[type] = objects.reduce(reduce, {});
         cb();
