@@ -1,0 +1,53 @@
+{
+  "project": {
+    "dataSource": "db",
+    "properties": {
+    },
+    "options": {
+      "relations": {
+        "models": {
+          "model": "model-definition",
+          "type": "hasMany"
+        },
+        "dataSources": {
+          "model": "datasource-definition",
+          "type": "hasMany"
+        }
+      }
+    }
+  },
+  "model-definition": {
+    "dataSource": "db",
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": true
+      },
+      "dataSource": {
+        "type": "string",
+        "required": true
+      },
+      "public": "boolean",
+      "options": "object"
+    }
+  },
+  "datasource-definition": {
+    "dataSource": "db",
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": true
+      },
+      "connector": {
+        "type": "string",
+        "required": true
+      },
+      "defaultForType": "string"
+    }
+  },
+  "app-definition": {
+    "dataSource": "db",
+    "properties": {
+    }
+  }
+}
