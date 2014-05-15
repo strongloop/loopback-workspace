@@ -8,13 +8,15 @@ app.dataSource('db', {
 
 var Project = app.model('project', {dataSource: DEFAULT_DATASOURCE});
 var ModelDef = app.model('model-definition', {dataSource: DEFAULT_DATASOURCE, properties: {
-  dataSource: String,
+  name: { type: 'string', required: true },
+  dataSource: { type: 'string', required: true },
   public: Boolean,
   options: Object
 }});
 var DataSourceDef = app.model('datasource-definition', {dataSource: DEFAULT_DATASOURCE, properties: {
-  defaultForType: String,
-  connector: String
+  name: { type: 'string', required: true },
+  connector: { type: 'string', required: true },
+  defaultForType: String
 }});
 var AppDef = app.model('app-definition', {dataSource: DEFAULT_DATASOURCE});
 
