@@ -1,5 +1,6 @@
 var app = require('../');
 var fs = require('fs');
+var fstools = require('fs-tools');
 var assert = require('assert');
 var expect = require('chai').expect;
 var Project = app.models.Project;
@@ -46,7 +47,7 @@ function loadProject(done) {
       done(err);
     }
     test.project = project;
-    done();
+    done(null, project);
   });
 }
 
@@ -129,21 +130,66 @@ describe('Project', function () {
         done();
       });
     });
+
+    it('supports project name different from the directory name', function(done) {
+      Project.createFromTemplate(SANDBOX, 'my-name', 'empty', function(err) {
+        if (err) return done(err);
+        var packageJson = path.join(SANDBOX, 'package.json');
+        assertJSONFileHas(packageJson, 'name', 'my-name');
+        done();
+      });
+    });
+
+    it('supports custom writeFile function', function(done) {
+      var filesWritten = [];
+      var filesFound = [];
+
+      // install a custom writeFile implementation
+      Project.writeFile = function(name, content, enc, cb) {
+        filesWritten.push(name);
+        fs.writeFile.apply(fs, arguments);
+      };
+
+      async.waterfall([
+       function createProject(next) {
+          Project.createFromTemplate(SANDBOX, 'empty', next);
+        },
+
+        function findAllFiles(next) {
+          fstools.walk(
+            SANDBOX,
+            function(name, stats, cb) {
+              filesFound.push(name);
+              cb();
+            },
+            next);
+        },
+
+        function verifyExpectations(next) {
+          expect(filesFound).to.have.members(filesWritten);
+          expect(filesFound).to.not.be.empty;
+          next();
+        }
+      ], done);
+    });
   });
   
   describe('project.saveToFiles(dir, cb)', function () {
-    beforeEach(loadProject);
     it('should create and persist all project definitions', function(done) {
       var dir = temp.mkdirSync();
 
-      this.project.saveToFiles(dir, function(err) {
-        if(err) return done(err);
+      loadProject(function(err, project) {
+        if (err) return done(err);
 
-        // TODO(ritch) - remove faux file writing to validate project
-        fs.writeFileSync(path.join(dir, 'app.js'), '// ...', 'utf8');
-        fs.writeFileSync(path.join(dir, 'package.json'), '{}', 'utf8');
+        project.saveToFiles(dir, function(err) {
+          if (err) return done(err);
 
-        expectValidProjectAtDir(dir, done);
+          // TODO(ritch) - remove faux file writing to validate project
+          fs.writeFileSync(path.join(dir, 'app.js'), '// ...', 'utf8');
+          fs.writeFileSync(path.join(dir, 'package.json'), '{}', 'utf8');
+
+          expectValidProjectAtDir(dir, done);
+        });
       });
     });
 
@@ -154,7 +200,7 @@ describe('Project', function () {
 
       Project.createFromTemplate(dir, 'empty', function(err) {
         if(err) return done(err);
-
+        
         Project.loadFromFiles(dir, function(err, project) {
           if(err) return done(err);
 
@@ -176,6 +222,43 @@ describe('Project', function () {
           });
         });
       });
+    });
+
+    it('should ignore cached relations', function(done) {
+      var dir = SANDBOX;
+
+      async.waterfall([
+        function load(next) {
+          loadProject(next)
+        },
+        function fillProjectModelsCache(project, next) {
+          project.models(function(err) {
+            next(err, project);
+          });
+        },
+        function updateModelOptions(project, next) {
+          project.models(
+            { where: { name: 'foo-bar'}, limit: 1},
+            function(err, res) {
+              if (err) return done(err);
+              var model = res[0];
+              model.options.newOption = true;
+              model.save(function(err) {
+                next(err, project);
+              });
+            });
+        },
+        function save(project, next) {
+          project.saveToFiles(dir, function(err) {
+            next(err, project);
+          });
+        },
+        function verify(project, next) {
+          var modelsJson = path.join(dir, 'models.json');
+          assertJSONFileHas(modelsJson, 'foo-bar.options.newOption', true);
+          next();
+        },
+      ], done);
     });
   });
   
@@ -345,5 +428,35 @@ describe('Project', function () {
   
   describe('project.isValidProjectDir(cb)', function () {
     it('should callback with any errors from any definition');
+  });
+
+
+  it('load & save should preserve models.json created from template', function(done) {
+    var dir = temp.mkdirSync();
+    var orig;
+
+    async.waterfall([
+      function(next) {
+        Project.createFromTemplate(dir, 'test-project', 'mobile', next);
+      },
+      function(next) {
+        orig = loadModelsJsonLines();
+        Project.loadFromFiles(dir, next);
+      },
+      function(project, next) {
+        project.saveToFiles(dir, next);
+      },
+      function(result, next) {
+        var saved = loadModelsJsonLines();
+        expect(saved).to.eql(orig);
+        next();
+      }
+    ], done);
+
+    function loadModelsJsonLines() {
+      var modelsJson = path.resolve(dir, 'models.json');
+      var content = fs.readFileSync(modelsJson, 'utf-8');
+      return content.split(/[\n\r]+/);
+    }
   });
 });
