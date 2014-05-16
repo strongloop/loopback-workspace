@@ -15,10 +15,6 @@ var TEMPLATES = {
 };
 var PACKAGE = require('../templates/package');
 
-// validation
-Project.validatesUniquenessOf('name');
-Project.validatesPresenceOf('name');
-
 /**
  * Customization hook allowing users to provide own function for writing
  * files (e.g. yeoman generator's this.write).

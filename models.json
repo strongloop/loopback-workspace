@@ -2,6 +2,10 @@
   "project": {
     "dataSource": "db",
     "properties": {
+      "name": {
+        "type": "string",
+        "required": "true"
+      }
     },
     "options": {
       "relations": {
