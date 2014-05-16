@@ -194,34 +194,42 @@ describe('Project', function () {
     });
 
     it('should save models', function (done) {
-      var dir = temp.mkdirSync();
-      var exModel = {name: 'foo', dataSource: 'db', properties: {name: 'string'}};
+      var dir = SANDBOX;
+      var exModel = { name: 'foo', dataSource: 'db' };
       var models = path.join(dir, 'models.json');
+      var project;
 
-      Project.createFromTemplate(dir, 'empty', function(err) {
-        if(err) return done(err);
-        
-        Project.loadFromFiles(dir, function(err, project) {
-          if(err) return done(err);
-
-          project.models.create(exModel, function(err) {
-            if(err) return done(err);
-
-            project.saveToFiles(dir, function(err) {
-              if(err) return done(err);
-              assertJSONFileHas(models, 'user.options.base', 'User');
-
-              expectValidProjectAtDir(dir, function() {
-                if(err) return done(err);
-
-                assertJSONFileHas(models, 'foo.dataSource', 'db');
-                assertJSONFileHas(models, 'foo.properties.name', 'string');
-                done();
-              });
-            });
+      async.waterfall([
+        function(next) {
+          Project.createFromTemplate(dir, 'empty', next);
+        },
+        function(next) {
+          Project.loadFromFiles(dir, function(err, result) {
+            project = result;
+            next(err);
           });
-        });
-      });
+        },
+        function(next) {
+          project.models.create(exModel, next);
+        },
+        function(model, next) {
+          model.properties.create(
+            { name: 'name', type: 'string' },
+            function(err) { next(err); });
+        },
+        function(next) {
+          project.saveToFiles(dir, next);
+        },
+        function(next) {
+          assertJSONFileHas(models, 'user.options.base', 'User');
+          expectValidProjectAtDir(dir, next);
+        },
+        function(next) {
+          assertJSONFileHas(models, 'foo.dataSource', 'db');
+          assertJSONFileHas(models, 'foo.properties.name.type', 'string');
+          next();
+        }
+      ], done);
     });
 
     it('should ignore cached relations', function(done) {
@@ -446,7 +454,7 @@ describe('Project', function () {
       function(project, next) {
         project.saveToFiles(dir, next);
       },
-      function(result, next) {
+      function(next) {
         var saved = loadModelsJsonLines();
         expect(saved).to.eql(orig);
         next();

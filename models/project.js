@@ -33,14 +33,21 @@ Project.loadFromFiles = function (dir, cb) {
   ], cb);
 }
 
+/**
+ * @param {String} dir
+ * @param {function(Error=)} cb
+ */
 Project.prototype.saveToFiles = function (dir, cb) {
   async.waterfall([
     this.toConfig.bind(this),
     function (config, cb) {
       writeConfigToFiles(dir, DEFAULT_EXT, config, cb);
     }
-  ], cb);
-}
+  ], function(err) {
+    // drop the dummy result of async.waterfall
+    cb(err);
+  });
+};
 
 Project.prototype.toConfig = function(cb) {
   var project = this;
@@ -50,32 +57,37 @@ Project.prototype.toConfig = function(cb) {
   };
 
   async.parallel([
-    findAndReduce('models'),
-    findAndReduce('dataSources')
+    findAndConvertToConfig('models', Model.arrayToConfigObject),
+    findAndConvertToConfig('dataSources', arrayToConfigObject)
   ], function(err) {
     if(err) return cb(err);
     cb(null, config);
   });
 
-  function findAndReduce(type) {
+  function findAndConvertToConfig(type, reduceFn) {
     return function(cb) {
       var FORCE_RELOAD = true;
       project[type](FORCE_RELOAD, function(err, objects) {
         if(err) return cb(err);
-        config[type] = objects.reduce(reduce, {});
-        cb();
+        reduceFn(objects, function(err, obj) {
+          config[type] = obj;
+          cb(err);
+        });
       });
-    }
+    };
   }
 
-  function reduce(prev, cur) {
-    cur = prev[cur.name] = cur.toJSON();
-    delete cur.id;
-    delete cur.name;
-    delete cur.projectId;
-    return prev;
+  function arrayToConfigObject(list, cb) {
+    var result = list.reduce(function reduce(prev, cur) {
+      cur = prev[cur.name] = cur.toJSON();
+      delete cur.id;
+      delete cur.name;
+      delete cur.projectId;
+      return prev;
+    }, {});
+    cb(null, result);
   }
-}
+};
 
 Project.configFiles = ['app', 'models', 'datasources'];
 Project.appFiles = ['app.js', 'package.json'];
@@ -86,30 +98,43 @@ Project.createFromConfig = function (projectConfig, cb) {
   Project.create(data, function(err, project) {
     if (err) return cb(err);
 
-    var models = projectConfig.models;
-    var dataSources = projectConfig.datasources;
-
     async.parallel([
       function(cb) {
-        async.each(Object.keys(models), function(modelName, cb) {
-          var model = models[modelName];
-          model.name = modelName;
-          project.models.create(model, cb);
-        }, cb);
+        project._createModelsFromConfig(projectConfig.models, cb);
       },
       function(cb) {
-        async.each(Object.keys(dataSources), function(dsName, cb) {
-          var ds = dataSources[dsName];
-          ds.name = dsName;
-          project.dataSources.create(ds, cb);
-        }, cb);
+        project._createDataSourcesFromConfig(projectConfig.datasources, cb);
       }
     ], function(err) {
       if (err) return cb(err);
       cb(null, project);
     });
   });
-}
+};
+
+Project.prototype._createModelsFromConfig = function(modelsConfig, cb) {
+  console.log()
+  async.each(Object.keys(modelsConfig), function(modelName, cb) {
+    var model = modelsConfig[modelName];
+    model.name = modelName;
+
+    var properties = model.properties || {};
+    delete model.properties;
+
+    this.models.create(model, function(err, obj) {
+      if (err) return cb(err);
+      obj._createPropertiesFromConfig(properties, cb);
+    });
+  }.bind(this), cb);
+};
+
+Project.prototype._createDataSourcesFromConfig = function(dsConfig, cb) {
+  async.each(Object.keys(dsConfig), function(dsName, cb) {
+    var ds = dsConfig[dsName];
+    ds.name = dsName;
+    this.dataSources.create(ds, cb);
+  }.bind(this), cb);
+};
 
 /**
  * @deprecated Use Project.createFromConfig() instead.
@@ -372,12 +397,12 @@ function loadConfigFilesWithExt(dir, ext, cb) {
 
   async.map(filePaths, readJSONFile, function (err, configs) {
     if(err) return cb(err);
-    
+
     var result = configs.reduce(function (prev, cur, i) {
       prev[Project.configFiles[i]] = cur;
       return prev;
     }, initialResult);
-    
+
     cb(null, result);
   });
 }
