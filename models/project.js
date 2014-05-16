@@ -32,7 +32,7 @@ Project.loadFromFiles = function (dir, cb) {
       loadConfigFilesWithExt(dir, 'json', cb);
     },
     function (projectConfig, cb) {
-      Project.fromConfig(projectConfig, cb);
+      Project.createFromConfig(projectConfig, cb);
     }
   ], cb);
 }
@@ -76,6 +76,7 @@ Project.prototype.toConfig = function(cb) {
     cur = prev[cur.name] = cur.toJSON();
     delete cur.id;
     delete cur.name;
+    delete cur.projectId;
     return prev;
   }
 }
@@ -84,31 +85,40 @@ Project.configFiles = ['app', 'models', 'datasources'];
 Project.appFiles = ['app.js', 'package.json'];
 Project.supportedExtensions = ['json'];
 
-Project.fromConfig = function (projectConfig, cb) {
-  var project = new Project({name: projectConfig.name, app: projectConfig.app});
-  var models = projectConfig.models;
-  var dataSources = projectConfig.datasources;
+Project.createFromConfig = function (projectConfig, cb) {
+  var data = {name: projectConfig.name, app: projectConfig.app};
+  Project.create(data, function(err, project) {
+    if (err) return cb(err);
 
-  async.parallel([
-    function(cb) {
-      async.each(Object.keys(models), function (modelName, cb) {
-        var model = models[modelName];
-        model.name = modelName;
-        project.models.create(model, cb);
-      }, cb);
-    },
-    function(cb) {
-      async.each(Object.keys(dataSources), function (dsName, cb) {
-        var ds = dataSources[dsName];
-        ds.name = dsName;
-        project.dataSources.create(ds, cb);
-      }, cb);
-    }
-  ], function(err) {
-    if(err) return cb(err);
-    cb(null, project);
+    var models = projectConfig.models;
+    var dataSources = projectConfig.datasources;
+
+    async.parallel([
+      function(cb) {
+        async.each(Object.keys(models), function(modelName, cb) {
+          var model = models[modelName];
+          model.name = modelName;
+          project.models.create(model, cb);
+        }, cb);
+      },
+      function(cb) {
+        async.each(Object.keys(dataSources), function(dsName, cb) {
+          var ds = dataSources[dsName];
+          ds.name = dsName;
+          project.dataSources.create(ds, cb);
+        }, cb);
+      }
+    ], function(err) {
+      if (err) return cb(err);
+      cb(null, project);
+    });
   });
 }
+
+/**
+ * @deprecated Use Project.createFromConfig() instead.
+ */
+Project.fromConfig = Project.createFromConfig;
 
 /**
  * Create a new project using the given template.
@@ -359,7 +369,7 @@ function applyPermissions(models, acl, cb) {
 
 function loadConfigFilesWithExt(dir, ext, cb) {
   assert(ext, 'cannot load config files without extension');
-  var result = {name: path.basename(dir)};
+  var initialResult = {name: path.basename(dir)};
   var filePaths = Project.configFiles.map(function (file) {
     return path.join(dir, file + '.' + ext);
   });
@@ -370,7 +380,7 @@ function loadConfigFilesWithExt(dir, ext, cb) {
     var result = configs.reduce(function (prev, cur, i) {
       prev[Project.configFiles[i]] = cur;
       return prev;
-    }, {});
+    }, initialResult);
     
     cb(null, result);
   });
