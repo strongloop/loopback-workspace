@@ -22,7 +22,7 @@ Project.validatesPresenceOf('name');
 /**
  * Customization hook allowing users to provide own function for writing
  * files (e.g. yeoman generator's this.write).
- * @type {function(string, string, string, cb)
+ * @type {function(string, string, string, cb)}
  */
 Project.writeFile = fs.writeFile;
 
