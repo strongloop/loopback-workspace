@@ -2,7 +2,13 @@ var loopback = require('loopback');
 var app = module.exports = loopback();
 
 app.dataSource('db', {
-  connector: loopback.Memory
+  connector: loopback.Memory,
+  defaultForType: 'db'
+});
+
+app.dataSource('email', {
+  connector: loopback.Mail,
+  defaultForType: 'mail'
 });
 
 app.boot(__dirname);

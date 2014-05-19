@@ -24,3 +24,14 @@ PropertyDefinition.arrayToConfigObject = function(properties, cb) {
   }, {});
   cb(null, result);
 };
+
+PropertyDefinition.availableTypes = [
+  'string',
+  'number',
+  'boolean',
+  'object',
+  'array',
+  'date',
+  'buffer',
+  'geopoint'
+];

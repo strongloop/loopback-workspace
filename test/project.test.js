@@ -20,15 +20,6 @@ var Role = loopback.Role;
 // auto-cleanup temp files / dirs
 temp.track();
 
-// clear any persisting data
-beforeEach(function (done) {
-  async.parallel([
-    Project.destroyAll.bind(Project),
-    Model.destroyAll.bind(Model),
-    DataSource.destroyAll.bind(DataSource)
-  ], done);
-});
-
 // validate project
 function expectValidProjectAtDir(dir, done) {
   Project.isValidProjectDir(dir, function(err, isValid, msg) {
@@ -215,7 +206,18 @@ describe('Project', function () {
         function(model, next) {
           model.properties.create(
             { name: 'name', type: 'string' },
-            function(err) { next(err); });
+            function(err) { next(err, model); });
+        },
+        function(model, next) {
+          model.permissions.create(
+            {
+              accessType: '*',
+              permission: 'READ',
+              principalType: 'ROLE',
+              principalId: '$owner',
+              property: 'name'
+            },
+            function(err){ next(err); });
         },
         function(next) {
           project.saveToFiles(dir, next);
@@ -227,6 +229,9 @@ describe('Project', function () {
         function(next) {
           assertJSONFileHas(models, 'foo.dataSource', 'db');
           assertJSONFileHas(models, 'foo.properties.name.type', 'string');
+
+          assertJSONFileHas(models, 'foo.options.acls[0].accessType', '*');
+          assertJSONFileHas(models, 'foo.options.acls[0].permission', 'READ');
           next();
         }
       ], done);
@@ -315,7 +320,7 @@ describe('Project', function () {
   describe('permissions', function () {
     beforeEach(function(done) {
       var test = this;
-      var dir = test.dir = temp.mkdirSync();
+      var dir = test.dir = SANDBOX;
 
       Project.createFromTemplate(dir, 'mobile', function(err) {
         if(err) return done(err);
@@ -414,14 +419,18 @@ describe('Project', function () {
       function check(model, cb) {
         if(err) return done(err);
 
-        var acls = model.options.acls;
-        var len = acls && acls.length;
-        var acl = acls && acls[len - 1];
+        model._toConfigWithName(function(err, json) {
+          if (err) return cb(err);
 
-        expect(len).to.be.gte(1);
-        expect(acl).to.exist;
-        expect(acl).to.eql(expectedACL);
-        cb();
+          var acls = json.options.acls;
+          var len = acls && acls.length;
+          var acl = acls && acls[len - 1];
+
+          expect(len).to.be.gte(1);
+          expect(acl).to.exist;
+          expect(acl).to.eql(expectedACL);
+          cb();
+        });
       }
     });
   }
@@ -431,7 +440,17 @@ describe('Project', function () {
   });
   
   describe('project.listAvailableConnectors(cb)', function () {
-    it('should return a list of connectors available on npm');
+    before(function(done) {
+      Project.listAvailableConnectors(function(err, list) {
+        this.connectors = list;
+        done(err);
+      }.bind(this));
+    });
+
+    it('should include Memory connector', function() {
+      var names = this.connectors.map(function(it) { return it.name; });
+      expect(names).to.contain('memory');
+    });
   });
   
   describe('project.isValidProjectDir(cb)', function () {

@@ -40,6 +40,11 @@
           "model": "model-property-definition",
           "type": "hasMany",
           "foreignKey": "modelId"
+        },
+        "permissions": {
+          "model": "acl-definition",
+          "type": "hasMany",
+          "foreignKey": "modelId"
         }
       }
     }
@@ -76,6 +81,31 @@
       },
       "required": {
         "type": "boolean",
+        "required": false
+      }
+    }
+  },
+  "acl-definition": {
+    "dataSource": "db",
+    "properties": {
+      "accessType": {
+        "type": "string",
+        "required": true
+      },
+      "permission": {
+        "type": "string",
+        "required": true
+      },
+      "principalType": {
+        "type": "string",
+        "required": true
+      },
+      "principalId": {
+        "type": "string",
+        "required": true
+      },
+      "property": {
+        "type": "string",
         "required": false
       }
     }
