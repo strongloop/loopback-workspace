@@ -31,22 +31,48 @@ ModelDefinition.arrayToConfigObject = function(models, cb) {
 
 ModelDefinition.prototype._toConfigWithName = function(cb) {
   var FORCE_RELOAD = true;
-  this.properties(FORCE_RELOAD, function(err, properties) {
-    if (err) return cb(err);
+  var self = this;
 
-    PropertyDefinition.arrayToConfigObject(properties, function(err, propCfg) {
-      if (err) return cb(err);
+  var config = self.toObject();
+  delete config.id;
+  delete config.projectId;
 
-      var config = this.toObject();
-      delete config.id;
-      delete config.projectId;
+  async.parallel([
+    function convertProperties(next) {
+      self.properties(FORCE_RELOAD, function(err, properties) {
+        if (err) return next(err);
 
-      if (Object.keys(propCfg).length) {
-        config.properties = propCfg;
-      }
-      cb(null, config);
-    }.bind(this));
-  }.bind(this));
+        PropertyDefinition.arrayToConfigObject(properties, function(err, propCfg) {
+          if (err) return next(err);
+
+          if (Object.keys(propCfg).length) {
+            config.properties = propCfg;
+          }
+          next();
+        });
+      });
+    },
+
+    function convertPermissions(next) {
+      self.permissions(FORCE_RELOAD, function(err, permissions) {
+        if (err) return next(err);
+        async.map(
+          permissions,
+          function(p, cb) { p.toConfig(cb); },
+          function(err, acls) {
+            if (err) return next(err);
+            if (acls.length) {
+              config.options = config.options || {};
+              config.options.acls = acls;
+            }
+            next();
+          }
+        );
+      });
+    }
+  ], function(err) {
+    cb(err, config);
+  });
 };
 
 ModelDefinition.prototype._createPropertiesFromConfig = function(propCfg, cb) {

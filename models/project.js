@@ -303,6 +303,7 @@ var ROLE_IDS = ['owner', 'related', 'authenticated',
  * @param {Object} options
  * @param {Function} cb Will only include an error as the first argument if
  * one occured. No additional arguments.
+ * @deprecated Use `modelDefinition.permissions` collection instead.
  */
 
 Project.prototype.addPermission = function(options, cb) {
@@ -381,10 +382,7 @@ function getOptionsFromKeys(options, keys) {
 
 function applyPermissions(models, acl, cb) {
   async.each(models, function(model, callback) {
-    model.options = model.options || {};
-    model.options.acls = model.options.acls || [];
-    model.options.acls.push(acl);
-    model.save(callback);
+    model.permissions.create(acl, callback);
   }, cb);
 }
 

@@ -206,7 +206,18 @@ describe('Project', function () {
         function(model, next) {
           model.properties.create(
             { name: 'name', type: 'string' },
-            function(err) { next(err); });
+            function(err) { next(err, model); });
+        },
+        function(model, next) {
+          model.permissions.create(
+            {
+              accessType: '*',
+              permission: 'READ',
+              principalType: 'ROLE',
+              principalId: '$owner',
+              property: 'name'
+            },
+            function(err){ next(err); });
         },
         function(next) {
           project.saveToFiles(dir, next);
@@ -218,6 +229,9 @@ describe('Project', function () {
         function(next) {
           assertJSONFileHas(models, 'foo.dataSource', 'db');
           assertJSONFileHas(models, 'foo.properties.name.type', 'string');
+
+          assertJSONFileHas(models, 'foo.options.acls[0].accessType', '*');
+          assertJSONFileHas(models, 'foo.options.acls[0].permission', 'READ');
           next();
         }
       ], done);
@@ -306,7 +320,7 @@ describe('Project', function () {
   describe('permissions', function () {
     beforeEach(function(done) {
       var test = this;
-      var dir = test.dir = temp.mkdirSync();
+      var dir = test.dir = SANDBOX;
 
       Project.createFromTemplate(dir, 'mobile', function(err) {
         if(err) return done(err);
@@ -405,14 +419,18 @@ describe('Project', function () {
       function check(model, cb) {
         if(err) return done(err);
 
-        var acls = model.options.acls;
-        var len = acls && acls.length;
-        var acl = acls && acls[len - 1];
+        model._toConfigWithName(function(err, json) {
+          if (err) return cb(err);
 
-        expect(len).to.be.gte(1);
-        expect(acl).to.exist;
-        expect(acl).to.eql(expectedACL);
-        cb();
+          var acls = json.options.acls;
+          var len = acls && acls.length;
+          var acl = acls && acls[len - 1];
+
+          expect(len).to.be.gte(1);
+          expect(acl).to.exist;
+          expect(acl).to.eql(expectedACL);
+          cb();
+        });
       }
     });
   }
