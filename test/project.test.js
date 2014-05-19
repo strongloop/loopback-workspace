@@ -422,7 +422,17 @@ describe('Project', function () {
   });
   
   describe('project.listAvailableConnectors(cb)', function () {
-    it('should return a list of connectors available on npm');
+    before(function(done) {
+      Project.listAvailableConnectors(function(err, list) {
+        this.connectors = list;
+        done(err);
+      }.bind(this));
+    });
+
+    it('should include Memory connector', function() {
+      var names = this.connectors.map(function(it) { return it.name; });
+      expect(names).to.contain('memory');
+    });
   });
   
   describe('project.isValidProjectDir(cb)', function () {

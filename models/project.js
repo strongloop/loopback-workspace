@@ -417,6 +417,26 @@ Project.prototype.setPermissionDefault = function(permission) {
   this.app.defaultPermission = permission;
 }
 
+/**
+ * @typedef {{name, description,supportedByStrongLoop}} ConnectorMeta
+ */
+
+/**
+ * @type {Array.<ConnectorMeta>}
+ * @internal
+ */
+var staticConnectorList = require('../available-connectors');
+
+/**
+ * List of connectors available on npm.
+ * @param {function(Error=,Array.<ConnectorMeta>=)} cb
+ */
+Project.listAvailableConnectors = function(cb) {
+  cb(null, staticConnectorList);
+};
+
+/*-- HELPERS --*/
+
 function readJSONFile(filePath, cb) {
   async.waterfall([
     fs.readFile.bind(fs, filePath),
