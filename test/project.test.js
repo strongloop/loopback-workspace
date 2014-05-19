@@ -20,15 +20,6 @@ var Role = loopback.Role;
 // auto-cleanup temp files / dirs
 temp.track();
 
-// clear any persisting data
-beforeEach(function (done) {
-  async.parallel([
-    Project.destroyAll.bind(Project),
-    Model.destroyAll.bind(Model),
-    DataSource.destroyAll.bind(DataSource)
-  ], done);
-});
-
 // validate project
 function expectValidProjectAtDir(dir, done) {
   Project.isValidProjectDir(dir, function(err, isValid, msg) {
