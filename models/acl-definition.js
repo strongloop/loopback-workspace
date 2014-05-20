@@ -1,5 +1,6 @@
 var app = require('../');
 var AclDefinition = app.models.AclDefinition;
+var ACL = require('loopback').ACL;
 
 /**
  * Convert an AclDefinition to a JSON-like object to be used in
@@ -22,10 +23,10 @@ AclDefinition.prototype.toConfig = function(cb) {
  * @type {{name: string, value: string}[]}
  */
 AclDefinition.accessTypeValues = [
-  { name: 'All (match all types)', value: '*' },
-  { name: 'Read', value: 'READ' },
-  { name: 'Write', value: 'WRITE' },
-  { name: 'Execute', value: 'EXECUTE'},
+  { name: 'All (match all types)', value: ACL.ALL },
+  { name: 'Read', value: ACL.READ },
+  { name: 'Write', value: ACL.WRITE },
+  { name: 'Execute', value: ACL.EXECUTE },
 ];
 
 /**
@@ -52,8 +53,8 @@ AclDefinition.builtinRoleValues = [
  * @type {{name: string, value: string}[]}
  */
 AclDefinition.permissionValues = [
-  { name: 'Explicitly grant access', value: 'ALLOW' },
-  { name: 'Explicitly deny access', value: 'DENY' },
-  { name: 'Generate an alarm of the access', value: 'ALARM' },
-  { name: 'Log the access', value: 'AUDIT' },
+  { name: 'Explicitly grant access', value: ACL.ALLOW },
+  { name: 'Explicitly deny access', value: ACL.DENY },
+  { name: 'Generate an alarm of the access', value: ACL.ALARM },
+  { name: 'Log the access', value: ACL.AUDIT },
 ];

@@ -87,27 +87,8 @@
   },
   "acl-definition": {
     "dataSource": "db",
-    "properties": {
-      "accessType": {
-        "type": "string",
-        "required": true
-      },
-      "permission": {
-        "type": "string",
-        "required": true
-      },
-      "principalType": {
-        "type": "string",
-        "required": true
-      },
-      "principalId": {
-        "type": "string",
-        "required": true
-      },
-      "property": {
-        "type": "string",
-        "required": false
-      }
+    "options": {
+      "base": "ACL"
     }
   }
 }
