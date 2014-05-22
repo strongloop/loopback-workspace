@@ -6,35 +6,35 @@
     "LoopBack",
     "Workspace"
   ],
-  "version": "2.4.0",
+  "version": "2.5.0",
   "scripts": {
     "test": "mocha --reporter spec"
   },
   "dependencies": {
-    "debug": "~0.7.4",
-    "rimraf": "~2.2.6",
-    "async": "~0.2.10",
-    "loopback": "1.x >=1.7.0",
-    "loopback-datasource-juggler": "^1.5",
-    "temp": "~0.6.0",
-    "mkdirp": "~0.3.5",
+    "debug": "~0.8.1",
+    "rimraf": "~2.2.8",
+    "async": "~0.9.0",
+    "loopback": "~1.8.0",
+    "loopback-datasource-juggler": "~1.5.0",
+    "temp": "~0.7.0",
+    "mkdirp": "~0.5.0",
     "uuid": "~1.4.1"
   },
   "devDependencies": {
-    "mocha": "~1.17.1",
-    "chai": "~1.9.0",
-    "temp": "~0.6.0",
-    "supertest": "~0.9.0",
-    "strong-agent": "~0.3.2",
+    "mocha": "~1.19.0",
+    "chai": "~1.9.1",
+    "temp": "~0.7.0",
+    "supertest": "~0.12.1",
+    "strong-agent": "~0.4.4",
     "strong-cluster-control": "~0.4.0",
     "fs-tools": "~0.2.11",
     "loopback-explorer": "1.x >=1.1",
-    "loopback-push-notification": "~1.1.1",
-    "loopback-datasource-juggler": "^1.5",
-    "loopback-testing": "^0.1.2"
+    "loopback-push-notification": "~1.2.0",
+    "loopback-datasource-juggler": "~1.5.0",
+    "loopback-testing": "~0.1.2"
   },
   "optionalDependencies": {
-    "express": "~3.4.8",
+    "express": "~4.3.0",
     "optimist": "~0.6.1"
   },
   "repository": {
