@@ -1,48 +1,16 @@
 {
-  "name": "loopback-workspace",
-  "description": "A library and server implementation for managing Loopback Projects.",
-  "keywords": [
-    "StrongLoop",
-    "LoopBack",
-    "Workspace"
-  ],
-  "version": "2.4.0",
+  "version": "0.0.1",
+  "main": "app.js",
+  "bin": "server.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "start": "node app.js"
   },
   "dependencies": {
-    "debug": "~0.7.4",
-    "rimraf": "~2.2.6",
-    "async": "~0.2.10",
-    "loopback": "1.x >=1.7.0",
-    "loopback-datasource-juggler": "^1.5",
-    "temp": "~0.6.0",
-    "mkdirp": "~0.3.5",
-    "uuid": "~1.4.1"
-  },
-  "devDependencies": {
-    "mocha": "~1.17.1",
-    "chai": "~1.9.0",
-    "temp": "~0.6.0",
-    "supertest": "~0.9.0",
-    "strong-agent": "~0.3.2",
-    "strong-cluster-control": "~0.4.0",
-    "fs-tools": "~0.2.11",
-    "loopback-explorer": "1.x >=1.1",
-    "loopback-push-notification": "~1.1.1",
-    "loopback-datasource-juggler": "^1.5",
-    "loopback-testing": "^0.1.2"
+    "loopback": "1.x >=1.7.0"
   },
   "optionalDependencies": {
-    "express": "~3.4.8",
-    "optimist": "~0.6.1"
+    "loopback-explorer": "~1.1.0",
+    "loopback-push-notification": "~1.2.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/strongloop/loopback-workspace"
-  },
-  "license": {
-    "name": "Dual MIT/StrongLoop",
-    "url": "https://github.com/strongloop/loopback-workspace/blob/master/LICENSE"
-  }
+  "name": "models"
 }

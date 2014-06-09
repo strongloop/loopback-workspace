@@ -1,94 +1,121 @@
 {
-  "project": {
-    "dataSource": "db",
+  "WorkspaceEntity": {
+    "properties": {
+      "configFile": {"type": "string"},
+      "scriptFile": {"type": "string"},
+      "configLineNum": {"type": "number"},
+      "locked": {"type": "boolean"}
+    },
+    "public": false
+  },
+  "Definition": {
     "properties": {
       "name": {
         "type": "string",
-        "required": "true"
+        "id": true,
+        "required": true
+      },
+      "dir": {
+        "type": "string",
+        "desc": "the directory name where the definition is persisted"
       }
     },
+    "public": false,
     "options": {
+      "base": "WorkspaceEntity"
+    }
+  },
+  "AppDefinition": {
+    "properties": {
+      "template": "string"
+    },
+    "public": true,
+    "options": {
+      "base": "Definition",
       "relations": {
         "models": {
-          "model": "model-definition",
-          "type": "hasMany"
+          "type": "hasMany",
+          "model": "ModelDefinition",
+          "foreignKey": "appName"
         },
-        "dataSources": {
-          "model": "datasource-definition",
-          "type": "hasMany"
+        "datasources": {
+          "type": "hasMany",
+          "model": "DataSourceDefinition",
+          "foreignKey": "appName"
         }
       }
     }
   },
-  "model-definition": {
-    "dataSource": "db",
+  "ModelDefinition": {
     "properties": {
-      "name": {
-        "type": "string",
-        "required": true
-      },
-      "dataSource": {
-        "type": "string",
-        "required": true
-      },
-      "public": "boolean",
-      "options": "object"
     },
+    "public": true,
     "options": {
+      "base": "Definition",
       "relations": {
         "properties": {
-          "model": "model-property-definition",
           "type": "hasMany",
-          "foreignKey": "modelId"
+          "model": "ModelProperty",
+          "foreignKey": "modelName"
         },
-        "permissions": {
-          "model": "acl-definition",
+        "relations": {
           "type": "hasMany",
-          "foreignKey": "modelId"
+          "model": "ModelRelation",
+          "foreignKey": "fromModel"
+        },
+        "accessControls": {
+          "type": "hasMany",
+          "model": "ModelAccessControl",
+          "foreignKey": "model"
+        },
+        "methods": {
+          "type": "hasMany",
+          "model": "ModelMethod",
+          "foreignKey": "model"
+        },
+        "views": {
+          "type": "hasMany",
+          "model": "ViewDefinition",
+          "foreignKey": "model"
         }
       }
     }
   },
-  "datasource-definition": {
-    "dataSource": "db",
+  "ModelMethod": {
     "properties": {
-      "name": {
-        "type": "string",
-        "required": true
-      },
-      "connector": {
-        "type": "string",
-        "required": true
-      },
-      "defaultForType": "string"
-    }
-  },
-  "app-definition": {
-    "dataSource": "db",
-    "properties": {
-    }
-  },
-  "model-property-definition": {
-    "dataSource": "db",
-    "properties": {
-      "name": {
-        "type": "string",
-        "required": true
-      },
-      "type": {
-        "type": "string",
-        "required": true
-      },
-      "required": {
-        "type": "boolean",
-        "required": false
-      }
-    }
-  },
-  "acl-definition": {
-    "dataSource": "db",
+    },
+    "public": true,
     "options": {
-      "base": "ACL"
+      "base": "WorkspaceEntity"
+    }
+  },
+  "ViewDefinition": {
+    "properties": {
+    },
+    "public": true,
+    "options": {
+      "base": "Definition"
+    }
+  },
+  "DataSourceDefinition": {
+    "properties": {
+      "host": {"type": "string"},
+      "port": {"type": "number"},
+      "url": {"type": "string"},
+      "database": {"type": "string"},
+      "username": {"type": "string"},
+      "password": {"type": "string"}
+    },
+    "public": true,
+    "options": {
+      "base": "Definition",
+      "relations": {
+        "models": {
+          "type": "hasMany",
+          "model": "ModelDefinition",
+          "foreignKey": "datasource"
+        }
+      }
     }
   }
 }

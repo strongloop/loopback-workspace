@@ -1,40 +1,76 @@
-module.exports = {
-  description: 'An empty backend',
-  dataSources: {
-    db: {
-      defaultForType: 'db',
-      connector: 'memory'
+/**
+ * The empty template. Only contains the basic structure and a simple API server.
+ */
+
+var template = module.exports;
+
+template.apps = [
+  {
+    dir: '.', // the root application of the workspace
+    dev: {
+      port: 3000,
+      host: 'localhost',
     },
-    mail: {
-      defaultForType: 'mail',
-      connector: 'mail'
-    }
-  },
-  models: {
-    user: {
-      dataSource: 'db',
-      public: true,
-      options: {
-        base: 'User',
-        relations: {
-          accessTokens: {
-            model: 'accessToken',
-            type: 'hasMany',
-            foreignKey: 'userId'
-          }
-        }
+    staging: {
+      port: 80,
+      host: 'my.staging.com',
+      ssl: {
+        key: 'ssl-key.pem',
+        cert: 'ssl-cert.pem'
       }
     },
-    accessToken: {
-      dataSource: 'db',
-      public: false,
-      options: {
-        base: 'AccessToken'
+    production: {
+      port: 80,
+      host: 'my.production.com',
+      ssl: {
+        key: 'ssl-key.pem',
+        cert: 'ssl-cert.pem'
       }
     }
   },
-  app: {
-    port: 3000,
-    host: '0.0.0.0'
+  {
+    dir: 'api'
   }
-};
+];
+
+template.models = [
+  {
+    name: 'user',
+    plural: 'users',
+    url: '/users',
+    dataSource: 'db',
+    public: true,
+    base: 'User'
+  },
+  {
+    name: 'access-token',
+    plural: 'access-tokens',
+    url: '/access-tokens'
+    dataSource: 'db',
+    public: false,
+    options: {
+      base: 'AccessToken'
+    }
+  }
+];
+
+template.relations = [
+  {
+    fromModel: 'user',
+    model: 'access-token',
+    type: 'hasMany',
+    foreignKey: 'userId'
+  }
+];
+
+template.datasources = [
+  {
+    name: 'db',
+    defaultForType: 'db',
+    connector: 'memory'
+  },
+  {
+    name: 'mail',
+    defaultForType: 'mail'
+  }
+];
