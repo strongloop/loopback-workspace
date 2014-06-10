@@ -1,4 +1,18 @@
 {
+  "Workspace": {
+    "properties": {
+      "name": {"id": true, "type": "string"}
+    },
+    "public": true,
+    "dataSource": "db",
+    "relations": {
+      "models": {
+        "type": "hasMany",
+        "model": "AppDefinition",
+        "foreignKey": "workspace"
+      }
+    }
+  },
   "WorkspaceEntity": {
     "properties": {
       "configFile": {"type": "string"},
@@ -6,7 +20,8 @@
       "configLineNum": {"type": "number"},
       "locked": {"type": "boolean"}
     },
-    "public": false
+    "public": false,
+    "dataSource": "db"
   },
   "Definition": {
     "properties": {
@@ -21,15 +36,17 @@
       }
     },
     "public": false,
+    "dataSource": "db",
     "options": {
       "base": "WorkspaceEntity"
     }
   },
   "AppDefinition": {
     "properties": {
-      "template": "string"
+      "defaultPermission": {"type": "string"}
     },
     "public": true,
+    "dataSource": "db",
     "options": {
       "base": "Definition",
       "relations": {
@@ -48,8 +65,14 @@
   },
   "ModelDefinition": {
     "properties": {
+      "plural": "string",
+      "strict": "boolean",
+      "scopes": "array",
+      "public": "boolean",
+      "indexes": "array"
     },
     "public": true,
+    "dataSource": "db",
     "options": {
       "base": "Definition",
       "relations": {
@@ -83,18 +106,112 @@
   },
   "ModelMethod": {
     "properties": {
+      "aliases": {"type": "array"},
+      "isStatic": {"type": "boolean"},
+      "accepts": {"type": "array"},
+      "returns": {"type": "array"},
+      "description": {"type": "string"},
+      "http": {"type": "object"},
+      "shared": {"type": "boolean"}
     },
     "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "WorkspaceEntity"
+    }
+  },
+  "ModelRelation": {
+    "properties": {
+      "type": {"type": "string"},
+      "as": {"type": "string"},
+      "foreignKey": {"type": "string"},
+      "model": {"type": "string"}
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "WorkspaceEntity"
+    }
+  },
+  "ModelAccessControl": {
+    "properties": {
+      "method": {"type": "string", "default": "ALL"},
+      "route": {"type": "string"},
+      "principalId": {"type": "string"},
+      "principalType": {"type": "string"},
+      "permission": {"type": "string", "required": true}
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "WorkspaceEntity"
+    }
+  },
+  "ModelProperty": {
+    "properties": {
+      "type": {"type": "string"},
+      "name": {"type": "string"},
+      "generated": {"type": "boolean"},
+      "required": {"type": "boolean"},
+      "index": {"type": "boolean"},
+      "desc": {"type": "string"}
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "WorkspaceEntity",
+      "relations": {
+        "validations": {
+          "type": "hasMany",
+          "model": "PropertyValid",
+          "foreignKey": "property"
+        }
+      }
+    }
+  },
+  "DatabaseColumn": {
+    "connector": {"type": "string"},
+    "columnName": {"type": "string"},
+    "dataType": {"type": "string"},
+    "dataLength": {"type": "string"},
+    "nullable": {"type": "boolean"},
+    "options": {
+      "base": "WorkspaceEntity"
+    },
+    "public": true,
+    "dataSource": "db"
+  },
+  "PropertyValidation": {
+    "properties": {
+      "type": {"type": "string"},
+      "message": {"type": "string"},
+      "min": {"type": "number"},
+      "max": {"type": "string"},
+      "int": {"type": "string"},
+      "number": {"type": "string"},
+      "with": {"type": "string"}
+    },
+    "public": true,
+    "dataSource": "db",
     "options": {
       "base": "WorkspaceEntity"
     }
   },
   "ViewDefinition": {
     "properties": {
+      "model": "string"
     },
     "public": true,
+    "dataSource": "db",
     "options": {
-      "base": "Definition"
+      "base": "Definition",
+      "relations": {
+        "children": {
+          "type": "hasMany",
+          "model": "ViewDefinition",
+          "foreignKey": "parent"
+        }
+      }
     }
   },
   "DataSourceDefinition": {
@@ -107,6 +224,7 @@
       "password": {"type": "string"}
     },
     "public": true,
+    "dataSource": "db",
     "options": {
       "base": "Definition",
       "relations": {
@@ -114,6 +232,11 @@
           "type": "hasMany",
           "model": "ModelDefinition",
           "foreignKey": "datasource"
+        },
+        "app": {
+          "type": "belongsTo",
+          "model": "AppDefinition",
+          "foreignKey": "app"
         }
       }
     }

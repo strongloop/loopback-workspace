@@ -6,7 +6,7 @@ var template = module.exports;
 
 template.apps = [
   {
-    dir: '.', // the root application of the workspace
+    name: '.', // the root application of the workspace
     dev: {
       port: 3000,
       host: 'localhost',
@@ -29,7 +29,7 @@ template.apps = [
     }
   },
   {
-    dir: 'api'
+    name: 'api'
   }
 ];
 
@@ -45,7 +45,7 @@ template.models = [
   {
     name: 'access-token',
     plural: 'access-tokens',
-    url: '/access-tokens'
+    url: '/access-tokens',
     dataSource: 'db',
     public: false,
     options: {
@@ -71,6 +71,7 @@ template.datasources = [
   },
   {
     name: 'mail',
-    defaultForType: 'mail'
+    defaultForType: 'mail',
+    connector: 'mail'
   }
 ];

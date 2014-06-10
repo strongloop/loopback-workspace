@@ -1,4 +1,12 @@
 var app = require('../app');
+
+/**
+ * Base class for LoopBack definitions.
+ *
+ * @class Definition
+ * @inherits WorkspaceEntity
+ */
+
 var Definition = app.models.Definition;
 
 /**
@@ -36,13 +44,12 @@ Definition.prototype.touch = function() {
 
 }
 
+/**
+ * Get the absolute directory that contains the `Definition`.
+ *
+ * @returns {String} dir
+ */
+
 Definition.prototype.getDir = function() {
-  return path.join(WorkspaceEntity.getWorkspaceDir(), this.dir);
+  return path.join(WorkspaceEntity.getWorkspaceDir(), this.name);
 }
-
-Definition.prototype.getEnv = function() {
-  // TODO(ritch) this might change
-  return process.env.NODE_ENV;
-}
-
-

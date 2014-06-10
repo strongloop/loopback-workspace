@@ -1,16 +1,18 @@
 {
-  "version": "0.0.1",
+  "version": "3.0.0",
   "main": "app.js",
-  "bin": "server.js",
-  "scripts": {
-    "start": "node app.js"
-  },
+  "scripts": {},
   "dependencies": {
-    "loopback": "1.x >=1.7.0"
+    "loopback": "1.x >=1.7.0",
+    "fs-tools": "~0.2.11",
+    "async": "~0.9.0"
   },
   "optionalDependencies": {
-    "loopback-explorer": "~1.1.0",
-    "loopback-push-notification": "~1.2.0"
+    "loopback-explorer": "~1.1.0"
   },
-  "name": "models"
+  "name": "models",
+  "devDependencies": {
+    "loopback-testing": "~0.1.5",
+    "chai": "~1.9.1"
+  }
 }
