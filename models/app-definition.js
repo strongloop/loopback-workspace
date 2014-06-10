@@ -14,107 +14,16 @@ var availableTemplates = Object.keys(templates);
 
 var AppDefinition = app.models.AppDefinition;
 
-/**
- * Load runtime only defined objects from the running app into the attached
- * `dataSource`.
- * @callback {Function} callback
- * @param {Error} err
- */
 
-AppDefinition.prototype.loadFromRuntime = function(cb) {
-
+AppDefinition.findFiles = function(cb) {
+  // listFiles
+  // forEach =>
+  //   matches 'app.*.json'
 }
 
-/**
- * Load the app definition from a set of configuration files. The following
- * definitions will be loaded:
- *
- * - the app in the `app.name` directory
- * - any model definitions defined within the app's directory
- * - any datasource definitions defined within the app's directory
- * - any view definitions defined within the app's directory
- *
- * @callback {Function} callback
- * @param {Error} err
- */
-
-AppDefinition.prototype.loadFromConfig = function(cb) {
-  var rootDir = this.getDir();
-  var env = app.get('env');
-
-  // should delegate to loopback-boot's ConfigLoader
-  // for each discovered app
-    // load app config
-    // load models
-    // load datasources
-    // load views
-}
-
-/**
- * Save the app definition to a set of configuration files. The following
- * definitions will be save:
- *
- * - the app in the `app.name` directory
- * - any model definitions defined within the app's directory
- * - any datasource definitions defined within the app's directory
- * - any view definitions defined within the app's directory
- *
- * @callback {Function} callback
- * @param {Error} err
- */
-
-AppDefinition.prototype.saveToConfig = function(cb) {
-  // (TBD) should delegate to loopback-boot's ConfigWriter (not yet created)
-  // save app config
-  // save models
-  // save datasources
-  // save views
-}
-
-/**
- * Load app definitions into the attached `dataSource` from the configured
- * `app.get('app dirs')`.
- *
- * @callback {Function} callback
- * @param {Error} err
- */
-
-AppDefinition.loadApps = function(cb) {
-  var dirs = app.get('app dirs');
-  var apps = dirs.map(function(dir) {
-    return new AppDefinition({
-      name: dir
-    });
-  });
-
-  async.waterfall([
-    async.filter(apps, AppDefinition.exists, cb),
-    loadApps
-  ], cb);
-
-  function loadApps(apps, cb) {
-    async.each(apps, AppDefinition.load, cb);
-  }
-}
-
-/**
- * Save all app definitions in the attached `dataSource` to config files.
- *
- * @callback {Function} callback
- * @param {Error} err
- */
-
-AppDefinition.saveApps = function(cb) {
-  async.waterfall([
-    this.find.bind(this),
-    saveApps
-  ], cb);
-
-  function saveApps(apps, cb) {
-    async.each(apps, function(app, cb) {
-      app.saveToConfig(cb);
-    }, cb);
-  }
+AppDefinition.fromFile = function(file, data) {
+  data.name = data.name || path.dirname(file);
+  return data;
 }
 
 /**
@@ -142,18 +51,6 @@ AppDefinition.prototype.exists = function(cb) {
     if(err) return cb(err);
     cb(null, stat.isDirectory());
   });
-}
-
-/**
- * Alias for `app.loadFromConfig()`.
- *
- * @param {AppDefinition} app
- * @callback {Function} callback
- * @param {Error} err
- */
-
-AppDefinition.load = function(app, cb) {
-  app.loadFromConfig(cb);
 }
 
 /**

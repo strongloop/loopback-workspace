@@ -49,6 +49,10 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "configFiles": [
+        "app.json",
+        "app.*.json"
+      ],
       "relations": {
         "models": {
           "type": "hasMany",
@@ -75,23 +79,31 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "configFiles": [
+        "models.json",
+        "models/*.json"
+      ],
       "relations": {
         "properties": {
+          "embed": true,
           "type": "hasMany",
           "model": "ModelProperty",
           "foreignKey": "modelName"
         },
         "relations": {
+          "embed": true,
           "type": "hasMany",
           "model": "ModelRelation",
           "foreignKey": "fromModel"
         },
         "accessControls": {
+          "embed": true,
           "type": "hasMany",
           "model": "ModelAccessControl",
           "foreignKey": "model"
         },
         "methods": {
+          "embed": true,
           "type": "hasMany",
           "model": "ModelMethod",
           "foreignKey": "model"
@@ -205,6 +217,10 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "configFiles": [
+        "views.json",
+        "views/*.json"
+      ],
       "relations": {
         "children": {
           "type": "hasMany",
@@ -227,6 +243,10 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "configFiles": [
+        "datasources.json",
+        "datasources.*.json"
+      ],
       "relations": {
         "models": {
           "type": "hasMany",

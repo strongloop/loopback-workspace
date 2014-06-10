@@ -18,6 +18,17 @@ var DataSourceDefinition = app.models.DataSourceDefinition;
 DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 DataSourceDefinition.validatesPresenceOf('name', 'connector');
 
+
+DataSourceDefinition.findFiles = function(cb) {
+  // listFiles
+  // forEach =>
+  //   matches 'datasources.*.json', 'datasource.json'
+}
+
+DataSourceDefinition.fromFile = function(file, data) {
+  return data;
+}
+
 /**
  * Test the datasource definition connection.
  *
