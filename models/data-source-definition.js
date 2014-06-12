@@ -65,3 +65,27 @@ DataSourceDefinition.prototype.getSchema = function(name, cb) {
 DataSourceDefinition.prototype.discoverModelDefinitions = function(cb) {
 
 }
+
+/**
+ * Run a migration on the data source. Creates indexes, tables, collections, etc.
+ *
+ * **NOTE: this will destroy any existing data**
+ *
+ * @callback {Function} callback
+ * @param {Error} err
+ */
+
+DataSourceDefinition.prototype.automigrate = function() {
+
+}
+
+/**
+ * Update existing tables / collections.
+ *
+ * @callback {Function} callback
+ * @param {Error} err
+ */
+
+DataSourceDefinition.prototype.autoupdate = function() {
+  
+}

@@ -3,6 +3,19 @@ var path = require('path');
 var app = module.exports = loopback();
 var started = new Date();
 
+// long stack traces
+require('longjohn');
+
+// custom connector
+app.dataSource('db', {
+  connector: require('./connectors/workspace-connector')
+});
+
+// must define base models first
+// see: https://github.com/strongloop/loopback/issues/324
+require('./models/workspace-entity');
+require('./models/definition');
+
 /*
  * 1. Configure LoopBack models and datasources
  *

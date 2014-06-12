@@ -13,32 +13,17 @@
       }
     }
   },
-  "WorkspaceEntity": {
+  "PackageDefinition": {
     "properties": {
-      "configFile": {"type": "string"},
-      "scriptFile": {"type": "string"},
-      "configLineNum": {"type": "number"},
-      "locked": {"type": "boolean"}
-    },
-    "public": false,
-    "dataSource": "db"
-  },
-  "Definition": {
-    "properties": {
-      "name": {
-        "type": "string",
-        "id": true,
-        "required": true
-      },
-      "dir": {
-        "type": "string",
-        "desc": "the directory name where the definition is persisted"
-      }
     },
     "public": false,
     "dataSource": "db",
     "options": {
-      "base": "WorkspaceEntity"
+      "base": "Definition",
+      "defaultConfigFile": "package.json",
+      "configFiles": [
+        "package.json"
+      ]
     }
   },
   "AppDefinition": {
@@ -79,6 +64,7 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "defaultConfigFile": "models/$id.json",
       "configFiles": [
         "models.json",
         "models/*.json"
@@ -88,6 +74,12 @@
           "embed": true,
           "type": "hasMany",
           "model": "ModelProperty",
+          "foreignKey": "modelName"
+        },
+        "validations": {
+          "embed": true,
+          "type": "hasMany",
+          "model": "PropertyValidation",
           "foreignKey": "modelName"
         },
         "relations": {
@@ -217,6 +209,7 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "defaultConfigFile": "views/$id.json",
       "configFiles": [
         "views.json",
         "views/*.json"
@@ -256,7 +249,7 @@
         "app": {
           "type": "belongsTo",
           "model": "AppDefinition",
-          "foreignKey": "app"
+          "foreignKey": "appName"
         }
       }
     }

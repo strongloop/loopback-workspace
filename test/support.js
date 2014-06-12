@@ -1,9 +1,8 @@
 var assert = require('assert');
 var async = require('async');
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
-var expect = require('chai').expect;
-var fstools = require('fs-tools');
+expect = require('chai').expect;
 var workspace = require('../app');
 var models = workspace.models;
 
@@ -23,7 +22,7 @@ SANDBOX = path.resolve(__dirname, 'sandbox/');
 process.env.WORKSPACE_DIR = SANDBOX;
 
 givenEmptySandbox = function(cb) {
-  fstools.remove(SANDBOX, cb);
+  fs.remove(SANDBOX, cb);
 
   // Remove any cached modules from SANDBOX
   for (var key in require.cache) {
@@ -33,14 +32,16 @@ givenEmptySandbox = function(cb) {
 }
 
 resetWorkspace = function(cb) {
-  workspace.set('workspace dir', null);
   async.each(workspace.models(), function(model, cb) {
     model.destroyAll(cb);
   }, cb);
 }
 
 givenEmptyWorkspace = function(cb) {
-  givenWorkspaceFromTemplate('empty', cb);
+  resetWorkspace(function(err) {
+    if(err) return cb(err);
+    givenWorkspaceFromTemplate('empty', cb);  
+  });
 }
 
 givenWorkspaceFromTemplate = function(template, cb) {
@@ -55,6 +56,7 @@ function findOfType(name, type) {
   assert(name);
   assert(type);
   return function(query, cb) {
+    var test = this;
     if(typeof query === 'function') {
       cb = query;
       query = {};
@@ -62,9 +64,6 @@ function findOfType(name, type) {
     type.find(query, function(err, entities) {
       if(err) return cb(err);
       test[name] = entities;
-      test[name + 'Names'] = entities.map(function(entity) {
-        return entity.name;
-      });
       cb();
     });
   };
@@ -82,7 +81,8 @@ findPropertyValidations = findOfType('validations', models.PropertyValidation);
 findDatabaseColumns = findOfType('columns', models.DatabaseColumn);
 
 findAllEntities = function(cb) {
-  async.parallel([
+  var test = this;
+  var steps = [
     findAppDefinitions,
     findDataSourceDefinitions,
     findModelDefinitions,
@@ -93,7 +93,19 @@ findAllEntities = function(cb) {
     findModelAccessControls,
     findPropertyValidations,
     findDatabaseColumns
-  ], cb);
+  ];
+
+  steps = steps.map(function(fn) {
+    return fn.bind(test);
+  });
+  
+  async.parallel(steps, cb);
+}
+
+toNames = function(arr) {
+  return arr.map(function(entity) {
+    return entity.name;
+  });
 }
 
 // Let express know that we are runing from unit-tests

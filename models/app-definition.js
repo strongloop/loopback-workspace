@@ -1,5 +1,7 @@
+var path = require('path');
 var app = require('../app');
 var async = require('async');
+var PackageDefinition = app.models.PackageDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
 var ViewDefinition = app.models.ViewDefinition;
@@ -13,18 +15,6 @@ var availableTemplates = Object.keys(templates);
  */
 
 var AppDefinition = app.models.AppDefinition;
-
-
-AppDefinition.findFiles = function(cb) {
-  // listFiles
-  // forEach =>
-  //   matches 'app.*.json'
-}
-
-AppDefinition.fromFile = function(file, data) {
-  data.name = data.name || path.dirname(file);
-  return data;
-}
 
 /**
  * Does the given `app` exist on disk as a directory?
@@ -85,14 +75,39 @@ AppDefinition.createFromTemplate = function(templateName, cb) {
     return cb(err);
   }
 
+  // add the root package
+  var rootPackage = require('../templates/common/base-package')();
+
+  // set the app as root
+  rootPackage.app = '.';
+
+  // set the root package name
+  rootPackage.name = path.basename(process.env.WORKSPACE_DIR || process.cwd());
+
+  // include all apps to simplify app definition loading
+  rootPackage.loopback.apps = template.apps.map(function(app) {
+    return app.name;
+  });
+
+  // include the root package, others are allowed
+  template.packages.push(rootPackage);
+
   var steps = [
+    createPackages,
     createApps,
     createDataSources,
     createModels,
     createViews
   ];
 
-  async.parallel(steps, cb);
+  async.parallel(steps, function(err) {
+    cb(err);
+  });
+
+  function createPackages(cb) {
+    async.each(template.packages || [],
+      PackageDefinition.create.bind(PackageDefinition), cb);
+  }
 
   function createApps(cb) {
     async.each(template.apps || [],
@@ -115,3 +130,6 @@ AppDefinition.createFromTemplate = function(templateName, cb) {
   }
 }
 
+AppDefinition.prototype.getAppDir = function() {
+  return this.name;
+}

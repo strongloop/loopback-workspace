@@ -4,6 +4,8 @@
 
 var template = module.exports;
 
+template.packages = [];
+
 template.apps = [
   {
     name: '.', // the root application of the workspace
@@ -35,6 +37,7 @@ template.apps = [
 
 template.models = [
   {
+    app: 'api',
     name: 'user',
     plural: 'users',
     url: '/users',
@@ -43,6 +46,7 @@ template.models = [
     base: 'User'
   },
   {
+    app: 'api',
     name: 'access-token',
     plural: 'access-tokens',
     url: '/access-tokens',
@@ -65,11 +69,13 @@ template.relations = [
 
 template.datasources = [
   {
+    appName: 'api',
     name: 'db',
     defaultForType: 'db',
     connector: 'memory'
   },
   {
+    appName: 'api',
     name: 'mail',
     defaultForType: 'mail',
     connector: 'mail'

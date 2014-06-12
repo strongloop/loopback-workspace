@@ -4,8 +4,12 @@
   "scripts": {},
   "dependencies": {
     "loopback": "1.x >=1.7.0",
-    "fs-tools": "~0.2.11",
-    "async": "~0.9.0"
+    "async": "~0.9.0",
+    "glob": "~4.0.2",
+    "fs-extra": "~0.9.1",
+    "longjohn": "~0.2.4",
+    "debug": "~1.0.1",
+    "underscore": "~1.6.0"
   },
   "optionalDependencies": {
     "loopback-explorer": "~1.1.0"

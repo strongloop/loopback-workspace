@@ -1,5 +1,14 @@
 var app = require('../app');
-var WorkspaceEntity = app.models.WorkspaceEntity;
+var WorkspaceEntity = app.model('WorkspaceEntity', {
+  "properties": {
+    "configFile": {"type": "string"},
+    "scriptFile": {"type": "string"},
+    "configLineNum": {"type": "number"},
+    "locked": {"type": "boolean"}
+  },
+  "public": false,
+  "dataSource": "db"
+});
 
 /**
  * Get the file location of the entity.
