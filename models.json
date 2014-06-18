@@ -64,11 +64,12 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
-      "defaultConfigFile": "models/$id.json",
+      "defaultConfigFile": "models.json",
       "configFiles": [
         "models.json",
         "models/*.json"
       ],
+      "configExtensions": ["json"],
       "relations": {
         "properties": {
           "embed": true,

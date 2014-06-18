@@ -28,49 +28,163 @@ var Definition = app.model('Definition', {
   }
 });
 
-/**
- * Return the object in its form to be written to config.
- * 
- * **Note:** sub-classes should override this method to customize
- * how they are written to a config file.
- *
- * @returns {Object}
- */
-
-Definition.prototype.toConfig = function() {
-  return this.toJSON();
+Definition.findFiles = function(patterns, cb) {
+  this.findFilesIn('.', patterns, cb);
 }
 
-/**
- * Constructs the `Definition` from the serialized config value.
- * 
- * **Note:** sub-classes should override this method to customize
- * how they are read to from config file.
- *
- * @returns {Object}
- */
-
-Definition.fromConfig = function(config) {
-  var Constructor = this;
-  return new Constructor(config);
+Definition.findFilesIn = function(dir, patterns, cb) {
+  glob(patterns, { cwd: Definition.absolutePathFor(dir) }, cb);
 }
 
-/**
- * Called internally when underlying config has been `touched`.
- */
-
-Definition.prototype.touch = function() {
-
+Definition.findRelativeFiles = function(root, paths, name, extensions, cb) {
+  var patterns = [];
+  paths.forEach(function(pattern) {
+    var file = path.join(pattern, name);
+    extensions.forEach(function(ext) {
+      patterns.push(file + ext);
+    });
+  });
+  this.findFilesIn(root, patterns, cb);
 }
 
-/**
- * Get the absolute directory that contains the `Definition`.
- *
- * @returns {String} dir
- */
+Definition.absolutePathFor = function(file) {
+  var workspaceDir = process.env.WORKSPACE_DIR || process.cwd();
+  return path.join(workspaceDir, file);
+}
 
-Definition.prototype.getDir = function() {
-  return path.join(WorkspaceEntity.getWorkspaceDir(), this.name);
+Definition.loadDefinitionsFromFs = function() {
+  var Definition = this;
+
+  // find apps in the workspace
+  async.waterfall([
+    AppDefinition.findAppDirs,
+    loadConfigs,
+    cacheConfigs
+  ]);
+
+  function loadConfigs(appDirs, cb) {
+    async.map(appDirs, loadConfig, cb);
+  }
+
+  function loadConfig(dir, cb) {
+    var file = path.join(dir, Definition.settings.defaultConfigFile);
+    Definition.loadFile(file, function(err, config) {
+      if(err) return cb(err);
+      if(config) {
+        config._configFile = file;
+      } else {
+        config = {};
+      }
+      config.dir = dir;
+      cb(null, config);
+    });
+  }
+
+  function cacheConfigs(configs, cb) {
+    async.each(configs, function(config) {
+      Definition.populateCacheFromConfig(config, cb);
+    });
+  }
+}
+Definition.saveToFs = function(defs, cb) {
+  // 
+}
+
+Definition.clearCache = function() {
+  this.dataSource.connector.cache[this.modelName] = {};
+  this.dataSource.connector.ids[this.modelName] = {};
+}
+
+Definition.addToCache = function(id, val) {
+  this.dataSource.connector.cache[this.modelName][id] = val;
+}
+
+Definition.findAppFiles = function(patterns, cb) {
+  async.waterfall([
+    Definition.findAppDirs,
+    function(dirs, cb) {
+      async.each(dirs, function() {
+
+      })
+    }
+  ], cb);
+  glob(patterns, cb);
+}
+
+Definition.findAppDirs = function(cb) {
+  async.waterfall([
+    findModelsJSON,
+    function(modelFiles) {
+      cb(null, modelFiles.map(function(file) {
+        return path
+          .dirname(file)
+          .replace(WORKSPACE_DIR, '');
+      });
+    }
+  ], cb);
+
+  function findModelsJSON(cb) {
+    var modelConfigFileName = 'models.json';
+    var nested = path.join('*', modelConfigFileName);
+    var root = modelConfigFileName;
+
+    Definition.findFiles([nested, root], cb);
+  }
+}
+
+Definition.getRelatedModels = function() {
+  var relations = this.settings.relations || {};
+  var models = [];
+
+  Object.keys(relations).forEach(function(modelName) {
+    loopback
+  });
+
+  return models;
+}
+
+Definition.setup = function() {
+  var Definition = this;
+  var Base = Definition.super_;
+  Base.setup.apply(this, arguments);
+  Definition.on('dataSourceAttached', function() {
+    var originalFind = Definition.find;
+    Definition.findFromCache = originalFind;
+
+    // ensure we are finding data from disk
+    Definition.find = function() {
+      var args = arguments;
+      var self = this;
+      var cb = args[args.length - 1];
+      if(typeof cb !== 'function') cb = noop;
+
+      Definition.loadDefinitionsFromFs(function(err) {
+        if(err) return cb(err);
+        originalFind.apply(self, args);
+      });
+    }
+  });
+
+  function setupHooks(Model) {
+    Model.afterSave = function(inst, next) {
+      Definition.findFromCache(function(err, definitions) {
+        if(err) return next(err);
+        Definition.saveToFs(inst, definitions, next);
+      });
+    }
+    Model.beforeDestroy = function(inst, next) {
+      Definition.removeFromFs(inst, next);
+    }
+  }
+}
+
+Definition.toArray = function(obj) {
+  if(!obj) return [];
+  if(Array.isArray(obj)) {
+    return obj;
+  }
+
+
 }
 
 Definition.getEmbededRelations = function() {
@@ -94,72 +208,20 @@ Definition.getEmbededRelations = function() {
   return results;
 }
 
-Definition.prototype.toConfig = function(cb) {
-  var config = this.toJSON();
-  config.configFile = this.getConfigFile();
-  process.nextTick(function() {
-    cb(null, config);
-  });
-}
-
-Definition.toConfig = function(def, cb) {
-  def.toConfig(cb);
-}
-
-Definition.mergeConfigs = function(configs, file) {
-  var merged = {configFile: file};
-  configs.forEach(function(config) {
-    merged[config.name] = config;
-  });
-  return merged;
-}
-
-Definition.prototype.getConfigFile = function(cb) {
-  var settings = this.constructor.settings;
-  var defaultConfigFile = settings.defaultConfigFile || settings.configFiles[0];
-
-  if(defaultConfigFile) {
-    defaultConfigFile = defaultConfigFile.replace('$id', this.getConfigFilename());
-  }
-
-  return this.configFile
-    || path.join(this.getAppDir(), defaultConfigFile);
-}
-
-Definition.prototype.getConfigFilename = function() {
-  return this.name || this.dir;
-}
-
-Definition.toFileData = function(configs, file) {
-  // if in a multiple file => convert to object
-  //  remove name
-  // otherwise return the first in the array
-}
-
-Definition.fromFileData = function(fileData, file) {
-  // if in a multiple file => convert from object to array
-  //  add name
-  // otherwise return the first in the array
-}
-
-Definition.prototype.getAppDir = function() {
-  var app = this.app;
-
-  if(typeof app !== 'string') {
-    app = this.appName;
-  }
-
-  return app;
-}
-
-Definition.relatedToConfig = function(relation, related) {
-  var result = {};
-  if(relation.storeAsObject) {
-    related.forEach(function() {
-      result[obj.name] = obj;
+Definition.addRelatedDataToCache = function(name, fileData, cb) {
+  var Definition = this;
+  try {
+    this.getEmbededRelations().forEach(function(relation) {
+      Definition.toArray(fileData[relation.as]).forEach(function(config) {
+        Definition.addToModelCache(relation.model, config);
+      });
     });
-  } else {
-    result = related;
+  } catch(e) {
+    return cb(e);
   }
-  return result;
+
+  cb();
 }
+
+function noop() {};
+

@@ -28,3 +28,51 @@ Here is a list of TODOs before this is ready to be released:
 **Project Saving**
 
  - [ ] Persist a workspace to disk
+
+## About
+
+The `loopback-workspace` module provides node.js and REST APIs for interacting
+with a set of loopback applications. Applications are organized in the following
+basic directory structure:
+
+```txt
+  /my-workspace
+    /my-app-a
+    /my-app-b
+    /my-app-c
+    package.json
+```
+
+Each app has the following basic structure:
+
+```txt
+  /my-app
+    app.json
+    datasources.json
+    models.json
+    /models
+      my-model.json
+      my-model.js
+```
+
+## Usage
+
+**Basic**
+
+The `loopback-workspace` itself if a loopback application. The following
+will load the workspace in the current working directory (`process.cwd()`).
+
+```js
+// workspace is a loopback `app` object
+var workspace = require('loopback-workspace');
+```
+
+**Custom Workspace Directory**
+
+To start the workspace in a specific directory, you must specify the
+`WORKSPACE_DIR` env variable.
+
+**REST**
+
+In order to use the REST api, you must mount the app on an existing express app
+or call `workspace.listen(PORT)`.

@@ -48,3 +48,46 @@ ModelDefinition.prototype.toConfig = function(cb) {
     }
   }
 }
+
+ModelDefinition.loadModelConfig = function(models, name, cb) {
+  var dir = path.dirname(models._configFile);
+  var meta = models._meta;
+  var sources = (meta && meta.modelSources) || ['./models'];
+
+  async.waterfall([
+    find,
+    load,
+    cache
+  ], cb);
+
+  function find(cb) {
+    ModelDefinition.findRelativeFiles(dir, sources, name,
+      ModelDefinition.settings.configExtensions, cb);
+  }
+  function load(files, cb) {
+    async.map(files, ModelDefinition.loadFile, cb);
+  }
+  function cache(files, cb) {
+    async.each(files, funciton(fileData) {
+      // this means model names must be globally unique
+      // we should look into a workaround for this
+      ModelDefinition.addToCache(name, fileData);
+      ModelDefinition.addRelatedDataToCache(name, fileData, cb);
+    }, cb);
+  }
+}
+
+ModelDefinition.populateCacheFromConfig = function(config, cb) {
+  var names = Object.keys(config);
+  var ModelDefinition = this;
+
+  async.each(names, function(name, cb) {
+    if(name[0] !== '_') return;
+    ModelDefinition.loadModelConfig(models, name, cb);
+  }, cb);
+}
+
+Definition.prototype.saveToFs = function() {
+  // save to source/$name.json
+  // and models.json
+}

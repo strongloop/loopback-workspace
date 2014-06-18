@@ -19,14 +19,27 @@ DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 DataSourceDefinition.validatesPresenceOf('name', 'connector');
 
 
+DataSourceDefinition.populateCacheFromConfig = function(config, cb) {
+  var names = Object.keys(config);
+  names = names.filter(function(name) {
+    return name[0] !== '_';
+  });
+  names.forEach(function(name) {
+    DataSourceDefinition.addToCache(name, config[name]);
+  });
+  cb();
+}
+
 DataSourceDefinition.findFiles = function(cb) {
   // listFiles
   // forEach =>
   //   matches 'datasources.*.json', 'datasource.json'
 }
 
-DataSourceDefinition.fromFile = function(file, data) {
-  return data;
+
+DataSourceDefinition.saveToFs = function(dataSources) {
+  // merge datasources that belong to the same app
+  // save each merged object to object.configFile
 }
 
 /**
