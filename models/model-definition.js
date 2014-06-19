@@ -68,7 +68,7 @@ ModelDefinition.loadModelConfig = function(models, name, cb) {
     async.map(files, ModelDefinition.loadFile, cb);
   }
   function cache(files, cb) {
-    async.each(files, funciton(fileData) {
+    async.each(files, function(fileData) {
       // this means model names must be globally unique
       // we should look into a workaround for this
       ModelDefinition.addToCache(name, fileData);
@@ -87,7 +87,7 @@ ModelDefinition.populateCacheFromConfig = function(config, cb) {
   }, cb);
 }
 
-Definition.prototype.saveToFs = function() {
+ModelDefinition.prototype.saveToFs = function() {
   // save to source/$name.json
   // and models.json
 }

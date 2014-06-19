@@ -1,14 +1,14 @@
 var loopback = require('loopback');
 var path = require('path');
 var app = module.exports = loopback();
+var boot = require('loopback-boot');
 var started = new Date();
 
 // long stack traces
 require('longjohn');
 
-// custom connector
 app.dataSource('db', {
-  connector: require('./connectors/workspace-connector')
+  connector: loopback.Memory
 });
 
 // must define base models first
@@ -22,7 +22,7 @@ require('./models/definition');
  * Read more at http://apidocs.strongloop.com/loopback#appbootoptions
  */
 
-app.boot(__dirname);
+boot(app, __dirname);
 
 /*
  * 2. Configure request preprocessing
