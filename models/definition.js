@@ -1,6 +1,6 @@
+var loopback = require('loopback');
 var path = require('path');
 var app = require('../app');
-var models = require('../models.json');
 
 /**
  * Base class for LoopBack definitions.
@@ -119,7 +119,7 @@ Definition.findAppDirs = function(cb) {
         return path
           .dirname(file)
           .replace(WORKSPACE_DIR, '');
-      });
+      }));
     }
   ], cb);
 
@@ -144,8 +144,8 @@ Definition.getRelatedModels = function() {
 }
 
 Definition.setup = function() {
+  var Base = loopback.Model;
   var Definition = this;
-  var Base = Definition.super_;
   Base.setup.apply(this, arguments);
   Definition.on('dataSourceAttached', function() {
     var originalFind = Definition.find;

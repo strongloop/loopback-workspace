@@ -1,4 +1,11 @@
 {
+  "ConfigFile": {
+    "properties": {
+      "path": {"type": "string", "id": true},
+      "data": {"type": "any"}
+    },
+    "dataSource": "db"
+  },
   "Workspace": {
     "properties": {
       "name": {"id": true, "type": "string"}
