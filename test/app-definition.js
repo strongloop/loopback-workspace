@@ -1,28 +1,16 @@
 var app = require('../app');
 var async = require('async');
-var AppDefinition = app.models.AppDefinition;
+var Workspace = app.models.Workspace;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 
-describe('AppDefinition', function() {
-  describe('AppDefinition.exists(app, callback)', function() {
-    it('Does the given `app` exist on disk as a directory?', function() {
-
-    });
-  });
-
-  describe('appDefinition.exists(callback)', function() {
-    it('Does the given `app` exist on disk as a directory?', function() {
-
-    });
-  });
-
-  describe('AppDefinition.getAvailableTemplates(callback)', function() {
+describe('Workspace', function() {
+  describe('Workspace.getAvailableTemplates(callback)', function() {
     it('Get an array of available template names.', function() {
 
     });
   });
 
-  describe('AppDefinition.createFromTemplate(templateName, callback)', function() {
+  describe('Workspace.createFromTemplate(templateName, callback)', function() {
     beforeEach(givenEmptyWorkspace);
     beforeEach(findAllEntities);
 
@@ -45,7 +33,7 @@ describe('AppDefinition', function() {
     });
   });
 
-  describe('AppDefinition.listUseableConnectors(cb)', function () {
+  describe('Workspace.listUseableConnectors(cb)', function () {
     it('should return a list of connectors in package.json');
   });
 });

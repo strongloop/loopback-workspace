@@ -1,5 +1,14 @@
 var app = require('../app');
 
+/*
+ TODOs
+
+ - implement discovery
+ - implement connection testing
+ - add a flag indicating if discover is supported
+ 
+*/
+
 /**
  * Defines a `DataSource` configuration.
  * @class DataSourceDefinition
@@ -17,30 +26,6 @@ var DataSourceDefinition = app.models.DataSourceDefinition;
 
 DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 DataSourceDefinition.validatesPresenceOf('name', 'connector');
-
-
-DataSourceDefinition.populateCacheFromConfig = function(config, cb) {
-  var names = Object.keys(config);
-  names = names.filter(function(name) {
-    return name[0] !== '_';
-  });
-  names.forEach(function(name) {
-    DataSourceDefinition.addToCache(name, config[name]);
-  });
-  cb();
-}
-
-DataSourceDefinition.findFiles = function(cb) {
-  // listFiles
-  // forEach =>
-  //   matches 'datasources.*.json', 'datasource.json'
-}
-
-
-DataSourceDefinition.saveToFs = function(dataSources) {
-  // merge datasources that belong to the same app
-  // save each merged object to object.configFile
-}
 
 /**
  * Test the datasource definition connection.

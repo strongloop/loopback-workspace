@@ -1,5 +1,7 @@
+var assert = require('assert');
 var app = require('../app');
 var async = require('async');
+var dasherize = require('underscore.string').dasherize;
 
 /**
  * Defines a LoopBack `Model`.
@@ -18,6 +20,49 @@ var ModelDefinition = app.models.ModelDefinition;
 
 ModelDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 ModelDefinition.validatesPresenceOf('name');
+
+ModelDefinition.getConfigData = function(modelDef) {
+  var configData = {};
+  var relations = this.getEmbededRelations();
+
+  relations.forEach(function(relation) {
+    var relatedData = getRelated(id, relation);
+    configData[relation.as] = formatRelatedData(relation, relatedData);
+  });
+
+  return configData;
+}
+
+function getRelated(id, relation) {
+  var Definition = app.models[relation.model];
+  var cachedData = Definition.allFromCache();
+  assert(relation.type === 'hasMany', 'embed only supports hasMany');
+  assert(relation.foreignKey, 'embed requires foreignKey');
+  return cachedData.filter(function(cached) {
+    return cached[relation.foreignKey] === id;
+  });
+}
+
+function formatRelatedData(relation, relatedData) {
+  var result;
+  assert(relation.embed && relation.embed.as, 'embed requires "as"');
+  switch(relation.embed.as) {
+    case 'object':
+      assert(relation.embed.key, 'embed as object requires "key"');
+      result = {};
+      relatedData.forEach(function(related) {
+        var key = related[relation.embed.key];
+        result[related[key]] = related;
+        delete related[key];
+      });
+      return result
+    break;
+    case 'array':
+      return relatedData;
+    break;
+  }
+  assert(false, relation.embed.as + ' is not supported by embed');
+}
 
 ModelDefinition.prototype.toConfig = function(cb) {
   var config = this.toJSON();
@@ -49,45 +94,15 @@ ModelDefinition.prototype.toConfig = function(cb) {
   }
 }
 
-ModelDefinition.loadModelConfig = function(models, name, cb) {
-  var dir = path.dirname(models._configFile);
-  var meta = models._meta;
-  var sources = (meta && meta.modelSources) || ['./models'];
-
-  async.waterfall([
-    find,
-    load,
-    cache
-  ], cb);
-
-  function find(cb) {
-    ModelDefinition.findRelativeFiles(dir, sources, name,
-      ModelDefinition.settings.configExtensions, cb);
-  }
-  function load(files, cb) {
-    async.map(files, ModelDefinition.loadFile, cb);
-  }
-  function cache(files, cb) {
-    async.each(files, function(fileData) {
-      // this means model names must be globally unique
-      // we should look into a workaround for this
-      ModelDefinition.addToCache(name, fileData);
-      ModelDefinition.addRelatedDataToCache(name, fileData, cb);
-    }, cb);
-  }
+ModelDefinition.getPath = function(app, obj) {
+  if(obj.configFile) return obj.configFile;
+  return path.join(app, ModelDefinition.toFilename(obj.name) + '.json');
 }
 
-ModelDefinition.populateCacheFromConfig = function(config, cb) {
-  var names = Object.keys(config);
-  var ModelDefinition = this;
+ModelDefinition.toFilename = function(name) {
+  var dashed = dasherize(name);
+  var split = dashed.split();
+  if(split[0] === '-') dashed.shift();
 
-  async.each(names, function(name, cb) {
-    if(name[0] !== '_') return;
-    ModelDefinition.loadModelConfig(models, name, cb);
-  }, cb);
-}
-
-ModelDefinition.prototype.saveToFs = function() {
-  // save to source/$name.json
-  // and models.json
+  return dashed.join('');
 }

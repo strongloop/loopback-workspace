@@ -2,6 +2,7 @@ var path = require('path');
 var app = require('../app');
 var async = require('async');
 var PackageDefinition = app.models.PackageDefinition;
+var AppDefinition = app.models.AppDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
 var ViewDefinition = app.models.ViewDefinition;

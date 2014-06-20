@@ -41,6 +41,7 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "defaultConfigFile": "app.json",
       "configFiles": [
         "app.json",
         "app.*.json"
@@ -79,31 +80,31 @@
       "configExtensions": ["json"],
       "relations": {
         "properties": {
-          "embed": true,
+          "embed": {"as": "object", "key": "name"},
           "type": "hasMany",
           "model": "ModelProperty",
           "foreignKey": "modelName"
         },
         "validations": {
-          "embed": true,
+          "embed": {"as": "array"},
           "type": "hasMany",
           "model": "PropertyValidation",
           "foreignKey": "modelName"
         },
         "relations": {
-          "embed": true,
+          "embed": {"as": "object", "key": "as"},
           "type": "hasMany",
           "model": "ModelRelation",
           "foreignKey": "fromModel"
         },
         "accessControls": {
-          "embed": true,
+          "embed": {"as": "array"},
           "type": "hasMany",
           "model": "ModelAccessControl",
           "foreignKey": "model"
         },
         "methods": {
-          "embed": true,
+          "embed": {"as": "array"},
           "type": "hasMany",
           "model": "ModelMethod",
           "foreignKey": "model"
@@ -244,6 +245,7 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
+      "defaultConfigFile": "datasources.json",
       "configFiles": [
         "datasources.json",
         "datasources.*.json"

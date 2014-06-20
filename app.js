@@ -7,8 +7,10 @@ var started = new Date();
 // long stack traces
 require('longjohn');
 
+// required to support base models
 app.dataSource('db', {
-  connector: loopback.Memory
+  connector: loopback.Memory,
+  defaultForType: 'db'
 });
 
 // must define base models first
@@ -24,6 +26,9 @@ require('./models/definition');
 
 boot(app, __dirname);
 
+// file persistence
+require('./connector');
+
 /*
  * 2. Configure request preprocessing
  *
@@ -34,7 +39,6 @@ app.use(loopback.favicon());
 app.use(loopback.logger(app.get('env') === 'development' ? 'dev' : 'default'));
 app.use(loopback.cookieParser(app.get('cookieSecret')));
 app.use(loopback.token({model: app.models.accessToken}));
-app.use(loopback.bodyParser());
 app.use(loopback.methodOverride());
 
 /*

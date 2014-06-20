@@ -5,6 +5,7 @@ var assert = require('assert');
 var testData;
 
 describe('ConfigFile', function() {
+  beforeEach(givenEmptySandbox);
   beforeEach(function(done) {
     testData = {hello: 'world'};
     ConfigFile.create({
@@ -153,10 +154,63 @@ describe('ConfigFile', function() {
     });
   });
 
+  describe('configFile.getBase()', function() {
+    it('should be the extension of the file at the given path', function() {
+      var configFile = new ConfigFile({
+        path: 'foo/bar.bat.baz.json'
+      });
+      expect(configFile.getBase()).to.equal('bar.bat.baz');
+    });
+  });
+
+
   describe('ConfigFile.toAbsolutePath(relativePath)', function() {
     it('should resolve a relative workspace path to an absolute path', function() {
       var abs = ConfigFile.toAbsolutePath('.');
       expect(abs).to.equal(SANDBOX);
+    });
+  });
+
+  describe('ConfigFile.findAppFiles(cb)', function () {
+    beforeEach(function(done) {
+      var files = this.testFiles = [
+        APP_JSON,
+        'app-a/datasources.json',
+        'app-b/models.json',
+        'app-c/models/todo.json',
+      ];
+
+      async.each(pathsToConfigFiles(files), ConfigFile.create, done);
+    });
+
+    beforeEach(function(done) {
+      var test = this;
+      ConfigFile.findAppFiles(function(err, apps) {
+        if(err) return done(err);
+        test.apps = apps;
+        done();
+      });
+    });
+
+    it('should find and group files by app', function () {
+      var apps = this.apps;
+      var flattenFoundFiles = [];
+      Object.keys(apps).forEach(function(app) {
+        flattenFoundFiles = flattenFoundFiles
+          .concat(configFilesToPaths(apps[app]));
+      });
+      expect(this.testFiles.sort()).to.eql(flattenFoundFiles.sort());
+    });
+  });
+
+  describe('ConfigFile.getFileByBase(configFiles, base)', function () {
+    it('should find the file with the given base', function() {
+      var configFiles = [
+        new ConfigFile({path: 'foo/bar/bat.json'}),
+        new ConfigFile({path: 'foo/bar/baz.json'})
+      ];
+
+      expect(ConfigFile.getFileByBase(configFiles, 'baz')).to.equal(configFiles[1]);
     });
   });
 });
@@ -169,3 +223,16 @@ function assertValidAppConfig(configFile) {
 function assertIsConfigFile(configFile) {
   assert(configFile instanceof ConfigFile);
 }
+
+function configFilesToPaths(configFiles) {
+  return configFiles.map(function(configFile) {
+    return configFile.path;
+  });
+}
+
+function pathsToConfigFiles(paths) {
+  return paths.map(function(path) {
+    return new ConfigFile({path: path});
+  });
+}
+

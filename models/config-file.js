@@ -1,3 +1,4 @@
+var assert = require('assert');
 var loopback = require('loopback');
 var app = require('../app');
 var path = require('path');
@@ -6,6 +7,7 @@ var fs = require('fs-extra');
 var models = require('../models.json');
 var glob = require('glob');
 var ROOT_APP = '.';
+var groupBy = require('underscore').groupBy;
 
 /**
  * Various definitions in the workspace are backed by a `ConfigFile`.
@@ -206,6 +208,53 @@ ConfigFile.prototype.getAppName = function() {
   } else {
     return baseDir;
   }
+}
+
+ConfigFile.findAppFiles = function(cb) {
+  ConfigFile.find(function(err, configFiles) {
+    if(err) return callback(err);
+
+    var result = 
+      groupBy(configFiles, function(configFile) {
+        return configFile.getAppName();
+      });
+
+    cb(null, result);
+  });
+}
+
+/**
+ * Get the filename exlcuding the extension.
+ *
+ * **Example:**
+ *
+ * `my-app/my-file.json` => `my-file`
+ *
+ * @returns {String}
+ */
+
+ConfigFile.prototype.getBase = function() {
+  return path.basename(this.path, this.getExtension());
+}
+
+
+/**
+ * From the given `configFiles`, get the first with a matching `base`
+ * (see: `configFile.getBase()`).
+ *
+ * @returns {ConfigFile}
+ */
+
+ConfigFile.getFileByBase = function(configFiles, base) {
+  assert(Array.isArray(configFiles));
+  var configFile;
+  for(var i = 0; i < configFiles.length; i++) {
+    configFile = configFiles[i];
+    if(configFile && configFile.getBase() === base) {
+      return configFile;
+    }
+  }
+  return null;
 }
 
 ConfigFile.ROOT_APP = ROOT_APP;

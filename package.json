@@ -10,7 +10,8 @@
     "longjohn": "~0.2.4",
     "debug": "~1.0.1",
     "underscore": "~1.6.0",
-    "loopback-boot": "^1.0.0"
+    "loopback-boot": "^1.0.0",
+    "underscore.string": "~2.3.3"
   },
   "optionalDependencies": {
     "loopback-explorer": "~1.1.0"

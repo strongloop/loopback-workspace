@@ -48,7 +48,7 @@ givenWorkspaceFromTemplate = function(template, cb) {
   givenEmptySandbox(function(err) {
     if(err) return cb(err);
     workspace.set('workspace dir', SANDBOX);
-    workspace.models.AppDefinition.createFromTemplate(template, cb);
+    workspace.models.Workspace.createFromTemplate(template, cb);
   });
 }
 
