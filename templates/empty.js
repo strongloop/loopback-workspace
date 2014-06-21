@@ -37,7 +37,7 @@ template.apps = [
 
 template.models = [
   {
-    app: 'api',
+    appName: 'api',
     name: 'user',
     plural: 'users',
     url: '/users',
@@ -46,7 +46,7 @@ template.models = [
     base: 'User'
   },
   {
-    app: 'api',
+    appName: 'api',
     name: 'access-token',
     plural: 'access-tokens',
     url: '/access-tokens',

@@ -8,6 +8,7 @@ var models = require('../models.json');
 var glob = require('glob');
 var ROOT_APP = '.';
 var groupBy = require('underscore').groupBy;
+var debug = require('debug')('workspace:config-file');
 
 /**
  * Various definitions in the workspace are backed by a `ConfigFile`.
@@ -75,6 +76,7 @@ ConfigFile.prototype.load = function(cb) {
   }
 
   function setup(data, cb) {
+    debug('loaded [%s] %j', configFile.path, data);
     configFile.data = data || {};
     cb();
   }
@@ -236,7 +238,6 @@ ConfigFile.findAppFiles = function(cb) {
 ConfigFile.prototype.getBase = function() {
   return path.basename(this.path, this.getExtension());
 }
-
 
 /**
  * From the given `configFiles`, get the first with a matching `base`

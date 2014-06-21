@@ -34,3 +34,24 @@ function throwMustImplement(name, constructor) {
 WorkspaceEntity.getWorkspaceDir = function() {
   return app.get('workspace dir');
 }
+
+
+
+WorkspaceEntity.clearCache = function(cache) {
+  // TODO(ritch) should this clear the ids cache?
+  cache[this.modelName] = {};
+}
+
+WorkspaceEntity.addToCache = function(cache, id, val) {
+  cache[this.modelName][id] = JSON.stringify(val);
+}
+
+WorkspaceEntity.getFromCache = function(cache, id) {
+  return JSON.parse(cache[this.modelName][id]);
+}
+
+WorkspaceEntity.allFromCache = function(cache) {
+  return Object.keys(cache[this.modelName])
+    .map(this.getFromCache.bind(this, cache));
+}
+

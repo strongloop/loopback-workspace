@@ -4,13 +4,14 @@
       "path": {"type": "string", "id": true},
       "data": {"type": "any"}
     },
-    "dataSource": "db"
+    "dataSource": "db",
+    "public": false
   },
   "Workspace": {
     "properties": {
       "name": {"id": true, "type": "string"}
     },
-    "public": true,
+    "public": false,
     "dataSource": "db",
     "relations": {
       "models": {
@@ -73,6 +74,7 @@
     "options": {
       "base": "Definition",
       "defaultConfigFile": "models.json",
+      "defaultDir": "models",
       "configFiles": [
         "models.json",
         "models/*.json"

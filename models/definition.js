@@ -29,10 +29,6 @@ var Definition = app.model('Definition', {
   }
 });
 
-Definition.getCache = function() {
-  return this.dataSource.connector.cache;
-}
-
 Definition.loadFromFs = function() {
   throw new Error('not implemented in ' + this.modelName);
 }
@@ -41,41 +37,14 @@ Definition.saveToFs = function(defs, cb) {
   throw new Error('not implemented in ' + this.modelName);
 }
 
-Definition.clearCache = function() {
-  this.getCache()[this.modelName] = {};
-  this.dataSource.connector.ids[this.modelName] = {};
-}
-
-Definition.addToCache = function(id, val) {
-  this.getCache()[this.modelName][id] = JSON.stringify(val);
-}
-
-Definition.getFromCache = function(id) {
-  return JSON.parse(this.getCache()[this.modelName][id]);
-}
-
-Definition.allFromCache = function(id, val) {
-  var self = this;
-  return Object.keys(this.getCache()[this.modelName])
-    .map(self.getFromCache.bind(self));
-}
-
-Definition.getRelatedModels = function() {
-  var relations = this.settings.relations || {};
-  var models = [];
-
-  Object.keys(relations).forEach(function(modelName) {
-    loopback
-  });
-
-  return models;
-}
-
-
-Definition.toArray = function(obj) {
+Definition.toArray = function(obj, embed) {
   if(!obj) return [];
   if(Array.isArray(obj)) {
     return obj;
+  } else {
+    return Object.keys(obj).map(function(key) {
+      return obj[key];
+    });
   }
 }
 
@@ -126,7 +95,8 @@ Definition.getEmbededRelations = function() {
             embed: relation.embed,
             model: relation.model,
             as: name,
-            type: relation.type
+            type: relation.type,
+            foreignKey: relation.foreignKey
           });
         }
       });
@@ -135,11 +105,11 @@ Definition.getEmbededRelations = function() {
   return results;
 }
 
-Definition.addRelatedToCache = function(name, fileData) {
+Definition.addRelatedToCache = function(cache, name, fileData) {
   var Definition = this;
   this.getEmbededRelations().forEach(function(relation) {
-    Definition.toArray(fileData[relation.as]).forEach(function(config) {
-      Definition.addToCache(relation.model, config);
+    Definition.toArray(fileData[relation.as], relation.embed).forEach(function(config) {
+      Definition.addToCache(cache, relation.model, config);
     });
   });
 }

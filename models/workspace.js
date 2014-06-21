@@ -8,6 +8,7 @@ var ModelDefinition = app.models.ModelDefinition;
 var ViewDefinition = app.models.ViewDefinition;
 var templates = require('../templates');
 var availableTemplates = Object.keys(templates);
+var debug = require('debug')('workspace');
 
 /**
  * Groups related LoopBack applications.
@@ -40,6 +41,7 @@ Workspace.getAvailableTemplates = function(cb) {
 
 Workspace.createFromTemplate = function(templateName, cb) {
   var template = templates[templateName];
+  debug('create from template [%s]', templateName);
 
   if(!template) {
     var err = new Error('Invalid template...');

@@ -1,3 +1,4 @@
+var path = require('path');
 var assert = require('assert');
 var app = require('../app');
 var async = require('async');
@@ -21,21 +22,21 @@ var ModelDefinition = app.models.ModelDefinition;
 ModelDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 ModelDefinition.validatesPresenceOf('name');
 
-ModelDefinition.getConfigData = function(modelDef) {
+ModelDefinition.getConfigData = function(cache, modelDef) {
   var configData = {};
   var relations = this.getEmbededRelations();
 
   relations.forEach(function(relation) {
-    var relatedData = getRelated(id, relation);
+    var relatedData = getRelated(cache, modelDef.name, relation);
     configData[relation.as] = formatRelatedData(relation, relatedData);
   });
 
   return configData;
 }
 
-function getRelated(id, relation) {
+function getRelated(cache, id, relation) {
   var Definition = app.models[relation.model];
-  var cachedData = Definition.allFromCache();
+  var cachedData = Definition.allFromCache(cache);
   assert(relation.type === 'hasMany', 'embed only supports hasMany');
   assert(relation.foreignKey, 'embed requires foreignKey');
   return cachedData.filter(function(cached) {
@@ -96,7 +97,9 @@ ModelDefinition.prototype.toConfig = function(cb) {
 
 ModelDefinition.getPath = function(app, obj) {
   if(obj.configFile) return obj.configFile;
-  return path.join(app, ModelDefinition.toFilename(obj.name) + '.json');
+
+  // TODO(ritch) the path should be customizable
+  return path.join(app, ModelDefinition.settings.defaultDir, ModelDefinition.toFilename(obj.name) + '.json');
 }
 
 ModelDefinition.toFilename = function(name) {
@@ -104,5 +107,5 @@ ModelDefinition.toFilename = function(name) {
   var split = dashed.split();
   if(split[0] === '-') dashed.shift();
 
-  return dashed.join('');
+  return split.join('');
 }

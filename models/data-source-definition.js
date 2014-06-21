@@ -24,7 +24,7 @@ var DataSourceDefinition = app.models.DataSourceDefinition;
  * @header Property Validation
  */
 
-DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
+DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['appName'] });
 DataSourceDefinition.validatesPresenceOf('name', 'connector');
 
 /**
