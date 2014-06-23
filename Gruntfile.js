@@ -25,7 +25,6 @@ module.exports = function(grunt) {
         }
       ]
     }
-    // config of other tasks
   });
 
   grunt.loadNpmTasks('grunt-loopback-angular');

@@ -61,10 +61,7 @@ function findOfType(name, type) {
       cb = query;
       query = {};
     }
-    console.log('finding', name);
-    debugger;
     type.find(query, function(err, entities) {
-      console.log('find finsihed');
       if(err) return cb(err);
       test[name] = entities;
       cb();
