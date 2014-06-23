@@ -22,6 +22,8 @@
   "devDependencies": {
     "loopback-testing": "~0.1.5",
     "chai": "~1.9.1",
-    "grunt": "~0.4.5"
+    "grunt": "~0.4.5",
+    "grunt-loopback-angular": "~1.1.0",
+    "grunt-docular": "~0.1.2"
   }
 }
