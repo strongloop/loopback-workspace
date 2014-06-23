@@ -256,7 +256,7 @@
         "models": {
           "type": "hasMany",
           "model": "ModelDefinition",
-          "foreignKey": "datasource"
+          "foreignKey": "dataSource"
         },
         "app": {
           "type": "belongsTo",

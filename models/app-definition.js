@@ -52,10 +52,8 @@ AppDefinition.loadIntoCache = function(cache, appName, apps, cb) {
 
   if(models) {
     steps.push(function(cb) {
-      console.log('load models!!!')
       models.load(cb);
     }, function(cb) {
-      console.log('load loaded!!!')
       var modelDefs = models.data || {};
       var modelNames = Object.keys(modelDefs).filter(function(modelName) {
         // exclude _meta / other private properties
