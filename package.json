@@ -18,7 +18,7 @@
   "optionalDependencies": {
     "loopback-explorer": "~1.1.0"
   },
-  "name": "models",
+  "name": "loopback-workspace",
   "devDependencies": {
     "loopback-testing": "~0.1.5",
     "chai": "~1.9.1",
