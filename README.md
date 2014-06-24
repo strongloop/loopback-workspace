@@ -32,22 +32,22 @@ Here is a list of TODOs before this is ready to be released:
 ## About
 
 The `loopback-workspace` module provides node.js and REST APIs for interacting
-with a set of loopback applications. Applications are organized in the following
+with a set of loopback components. Components are organized in the following
 basic directory structure:
 
 ```txt
   /my-workspace
-    /my-app-a
-    /my-app-b
-    /my-app-c
+    /my-component-a
+    /my-component-b
+    /my-component-c
     package.json
 ```
 
-Each app has the following basic structure:
+Each component has the following basic structure:
 
 ```txt
-  /my-app
-    app.json
+  /my-component
+    config.json
     datasources.json
     models.json
     /models
@@ -59,7 +59,7 @@ Each app has the following basic structure:
 
 **Basic**
 
-The `loopback-workspace` itself if a loopback application. The following
+The `loopback-workspace` itself if a loopback component. The following
 will load the workspace in the current working directory (`process.cwd()`).
 
 ```js

@@ -18,13 +18,13 @@ var app = require('../app');
 var DataSourceDefinition = app.models.DataSourceDefinition;
 
 /**
- * - `name` must be unique per `AppDefinition`
+ * - `name` must be unique per `ComponentDefinition`
  * - `name` and `connector` are required
  * 
  * @header Property Validation
  */
 
-DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['appName'] });
+DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['componentName'] });
 DataSourceDefinition.validatesPresenceOf('name', 'connector');
 
 /**

@@ -79,7 +79,7 @@ function findOfType(name, type) {
   };
 }
 
-findAppDefinitions = findOfType('apps', models.AppDefinition);
+findComponentDefinitions = findOfType('components', models.ComponentDefinition);
 findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
 findModelDefinitions = findOfType('models', models.ModelDefinition);
 findViewDefinitions = findOfType('views', models.ViewDefinition);
@@ -93,7 +93,7 @@ findDatabaseColumns = findOfType('columns', models.DatabaseColumn);
 findAllEntities = function(cb) {
   var test = this;
   var steps = [
-    findAppDefinitions,
+    findComponentDefinitions,
     findDataSourceDefinitions,
     findModelDefinitions,
     findViewDefinitions,

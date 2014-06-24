@@ -6,7 +6,7 @@ var async = require('async');
 var fs = require('fs-extra');
 var models = require('../models.json');
 var glob = require('glob');
-var ROOT_APP = '.';
+var ROOT_COMPONENT = '.';
 var groupBy = require('underscore').groupBy;
 var debug = require('debug')('workspace:config-file');
 
@@ -199,26 +199,26 @@ ConfigFile.prototype.getDirName = function() {
   return path.basename(path.dirname(this.path));
 }
 
-ConfigFile.prototype.getAppName = function() {
+ConfigFile.prototype.getComponentName = function() {
   var dir = this.getDirName();
   var baseDir = this.path.split(path.sep)[0];
 
-  if(dir === ROOT_APP
+  if(dir === ROOT_COMPONENT
     || baseDir === this.path
     || baseDir === 'models') {
-    return ROOT_APP;
+    return ROOT_COMPONENT;
   } else {
     return baseDir;
   }
 }
 
-ConfigFile.findAppFiles = function(cb) {
+ConfigFile.findComponentFiles = function(cb) {
   ConfigFile.find(function(err, configFiles) {
     if(err) return callback(err);
 
     var result = 
       groupBy(configFiles, function(configFile) {
-        return configFile.getAppName();
+        return configFile.getComponentName();
       });
 
     cb(null, result);
@@ -258,4 +258,4 @@ ConfigFile.getFileByBase = function(configFiles, base) {
   return null;
 }
 
-ConfigFile.ROOT_APP = ROOT_APP;
+ConfigFile.ROOT_COMPONENT = ROOT_COMPONENT;

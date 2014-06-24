@@ -1,5 +1,5 @@
 var async = require('async');
-var APP_JSON = 'api/app.json';
+var COMPONENT_JSON = 'api/config.json';
 var ConfigFile = require('../app').models.ConfigFile;
 var assert = require('assert');
 var testData;
@@ -9,14 +9,14 @@ describe('ConfigFile', function() {
   beforeEach(function(done) {
     testData = {hello: 'world'};
     ConfigFile.create({
-      path: APP_JSON,
+      path: COMPONENT_JSON,
       data: testData
     }, done);
   });
 
   describe('ConfigFile.loadFromPath(path, cb)', function() {
     it('should load a config file at the given workspace relative path', function(done) {
-      ConfigFile.loadFromPath(APP_JSON, function(err, configFile) {
+      ConfigFile.loadFromPath(COMPONENT_JSON, function(err, configFile) {
         assertValidAppConfig(configFile);
         done();
       });
@@ -26,7 +26,7 @@ describe('ConfigFile', function() {
   describe('configFile.load(cb)', function() {
     it('should load the configFile data', function(done) {
       var configFile = new ConfigFile({
-        path: APP_JSON
+        path: COMPONENT_JSON
       });
 
       configFile.load(function(err) {
@@ -39,7 +39,7 @@ describe('ConfigFile', function() {
   describe('configFile.exists(cb)', function() {
     it('should return true if the file exists', function(done) {
       var configFile = new ConfigFile({
-        path: APP_JSON
+        path: COMPONENT_JSON
       });
 
       configFile.exists(function(err, exists) {
@@ -52,7 +52,7 @@ describe('ConfigFile', function() {
   describe('configFile.save(cb)', function() {
     it('should save the configFile data', function(done) {
       var configFile = new ConfigFile({
-        path: APP_JSON,
+        path: COMPONENT_JSON,
         data: {foo: 'bar'}
       });
 
@@ -70,7 +70,7 @@ describe('ConfigFile', function() {
   describe('configFile.remove(cb)', function() {
     it('should remove the configFile', function(done) {
       var configFile = new ConfigFile({
-        path: APP_JSON,
+        path: COMPONENT_JSON,
         data: {foo: 'bar'}
       });
 
@@ -88,7 +88,7 @@ describe('ConfigFile', function() {
   describe('ConfigFile.find(cb)', function() {
     beforeEach(function(done) {
       var files = this.testFiles = [
-        APP_JSON,
+        COMPONENT_JSON,
         'my-app/datasources.json',
         'my-app/models.json',
         'my-app/models/todo.json',
@@ -113,19 +113,19 @@ describe('ConfigFile', function() {
     });
   });
 
-  describe('configFile.getAppName()', function() {
+  describe('configFile.getComponentName()', function() {
     it('should be the name of the app', function() {
       
-      expectAppForPath('my-app', 'my-app/datasource.json');
-      expectAppForPath('my-app', 'my-app/models/todo.json');
-      expectAppForPath(ConfigFile.ROOT_APP, 'app.json');
+      expectComponentForPath('my-app', 'my-app/datasource.json');
+      expectComponentForPath('my-app', 'my-app/models/todo.json');
+      expectComponentForPath(ConfigFile.ROOT_COMPONENT, 'config.json');
 
-      function expectAppForPath(app, path) {
+      function expectComponentForPath(component, path) {
         var configFile = new ConfigFile({
           path: path
         });
 
-        expect(configFile.getAppName()).to.equal(app);
+        expect(configFile.getComponentName()).to.equal(component);
       }
     });
   });
@@ -171,10 +171,10 @@ describe('ConfigFile', function() {
     });
   });
 
-  describe('ConfigFile.findAppFiles(cb)', function () {
+  describe('ConfigFile.findComponentFiles(cb)', function () {
     beforeEach(function(done) {
       var files = this.testFiles = [
-        APP_JSON,
+        COMPONENT_JSON,
         'app-a/datasources.json',
         'app-b/models.json',
         'app-c/models/todo.json',
@@ -185,7 +185,7 @@ describe('ConfigFile', function() {
 
     beforeEach(function(done) {
       var test = this;
-      ConfigFile.findAppFiles(function(err, apps) {
+      ConfigFile.findComponentFiles(function(err, apps) {
         if(err) return done(err);
         test.apps = apps;
         done();

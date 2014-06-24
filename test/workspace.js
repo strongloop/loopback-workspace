@@ -20,9 +20,9 @@ describe('Workspace', function() {
     beforeEach(findAllEntities);
 
     it('it should create a set of app definitions', function() {
-      var appNames = toNames(this.apps);
-      expect(appNames).to.contain('api');
-      expect(appNames).to.contain('.');
+      var componentNames = toNames(this.components);
+      expect(componentNames).to.contain('api');
+      expect(componentNames).to.contain('.');
     });
 
     it('it should create a set of model definitions', function() {

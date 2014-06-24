@@ -3,7 +3,7 @@ var assert = require('assert');
 var path = require('path');
 var app = require('../app');
 var fs = require('fs');
-var debug = require('debug')('workspace:app');
+var debug = require('debug')('workspace:component');
 
 var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
@@ -11,43 +11,43 @@ var ConfigFile = app.models.ConfigFile;
 
 /**
  * Defines a `LoopBackApp` configuration.
- * @class AppDefinition
+ * @class ComponentDefinition
  * @inherits Definition
  */
 
-var AppDefinition = app.models.AppDefinition;
+var ComponentDefinition = app.models.ComponentDefinition;
 
 /**
  * Load the app with the given name into the connector cache.
  *
- * @param {String} appName
- * @param {Object} apps An `Object` keyed by appName containing arrays of 
+ * @param {String} componentName
+ * @param {Object} components An `Object` keyed by componentName containing arrays of 
  * config files.
  * @callback {Function} callback
  * @param {Error} err
  */
 
-AppDefinition.loadIntoCache = function(cache, appName, apps, cb) {
-  var debug = require('debug')('workspace:app:load:' + appName);
-  var configFiles = apps[appName];
-  var app = ConfigFile.getFileByBase(configFiles, 'app');
+ComponentDefinition.loadIntoCache = function(cache, componentName, components, cb) {
+  var debug = require('debug')('workspace:component:load:' + componentName);
+  var configFiles = components[componentName];
+  var component = ConfigFile.getFileByBase(configFiles, 'config');
   var models = ConfigFile.getFileByBase(configFiles, 'models');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
   var steps = [];
 
-  if(app) {
+  if(component) {
     steps.push(function(cb) {
-      app.load(cb);
+      component.load(cb);
     }, function(cb) {
-      app.data = app.data || {};
-      app.data.configFile = app.path;
-      app.data.name = appName;
-      debug('adding to cache app file [%s]', app.path);
-      AppDefinition.addToCache(cache, appName, app.data);
+      component.data = component.data || {};
+      component.data.configFile = component.path;
+      component.data.name = componentName;
+      debug('adding to cache component file [%s]', component.path);
+      ComponentDefinition.addToCache(cache, componentName, component.data);
       cb();
     });
   } else {
-    debug('app configFile does not exist');
+    debug('component configFile does not exist');
   }
 
   if(models) {
@@ -67,7 +67,7 @@ AppDefinition.loadIntoCache = function(cache, appName, apps, cb) {
         var configFile = ConfigFile
           .getFileByBase(configFiles, ModelDefinition.toFilename(modelName));
         def.name = modelName;
-        def.appName = appName;
+        def.componentName = componentName;
 
         if(configFile) {
           def.configFile = configFile.path;
@@ -100,7 +100,7 @@ AppDefinition.loadIntoCache = function(cache, appName, apps, cb) {
         var def = dataSourceDefs[dataSourceName];
         def.configFile = dataSources.path;
         def.name = dataSourceName;
-        def.appName = appName;
+        def.componentName = componentName;
         debug('loading [%s] dataSource into cache', dataSourceName);
         DataSourceDefinition.addToCache(cache, dataSourceName, def);
       });
@@ -116,30 +116,34 @@ AppDefinition.loadIntoCache = function(cache, appName, apps, cb) {
   });
 }
 
-AppDefinition.saveToFs = function(cache, appDef, cb) {
+var i = 0;
+var temp;
+
+ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
   // TODO(ritch) try and remove this hack...
   // ensure ModelDefinition methods are defined
   require('./model-definition');
 
   var filesToSave = [];
 
-  var appName = appDef.name;
-  assert(appName);
+  var componentName = componentDef.name;
+  assert(componentName);
 
-  var debug = require('debug')('workspace:app:save:' + appName);
+  var debug = require('debug')('workspace:component:save:' + componentName);
 
-  var configFile = AppDefinition.getConfigFile(appName, appDef);
+  var configFile = ComponentDefinition.getConfigFile(componentName, componentDef);
   // remove extra data that shouldn't be persisted to the fs
-  delete appDef.configFile;
-  configFile.data = appDef;
+  delete componentDef.configFile;
+  configFile.data = componentDef;
+
   filesToSave.push(configFile);
 
   var dataSoureConfig = {};
   var dataSourcePath;
 
   DataSourceDefinition.allFromCache(cache).forEach(function(dataSourceDef) {
-    if(dataSourceDef.appName === appName) {
-      dataSourcePath = DataSourceDefinition.getPath(appName, dataSourceDef);
+    if(dataSourceDef.componentName === componentName) {
+      dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
       dataSoureConfig[dataSourceDef.name] = dataSourceDef;
       delete dataSourceDef.name;
     }
@@ -158,15 +162,15 @@ AppDefinition.saveToFs = function(cache, appDef, cb) {
 
   cachedModels.forEach(function(modelDef) {
     debug('%j', modelDef);
-    if(modelDef.appName === appName) {
+    if(modelDef.componentName === componentName) {
       // TODO(ritch) should the model+datasource definitions (models.json)
-      // exist on the AppDefinition?
-      modelPath = path.join(appName, ModelDefinition.settings.defaultConfigFile);
+      // exist on the ComponentDefinition?
+      modelPath = path.join(componentName, ModelDefinition.settings.defaultConfigFile);
       modelConfig[modelDef.name] = {
         dataSource: modelDef.dataSource
       };
       delete modelDef.dataSource;
-      var modelConfigFile = ModelDefinition.getConfigFile(appName, modelDef);
+      var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigData(cache, modelDef);
       filesToSave.push(modelConfigFile);
     }

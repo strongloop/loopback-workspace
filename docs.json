@@ -1,7 +1,7 @@
 {
   "title": "LoopBack Workspace Documentation",
   "content": [
-    "models/app-definition.js",
+    "models/component-definition.js",
     "models/data-source-definition.js",
     "models/database-column.js",
     "models/definition.js",

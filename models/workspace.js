@@ -2,7 +2,7 @@ var path = require('path');
 var app = require('../app');
 var async = require('async');
 var PackageDefinition = app.models.PackageDefinition;
-var AppDefinition = app.models.AppDefinition;
+var ComponentDefinition = app.models.ComponentDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
 var ViewDefinition = app.models.ViewDefinition;
@@ -54,14 +54,14 @@ Workspace.createFromTemplate = function(templateName, cb) {
   // add the root package
   var rootPackage = require('../templates/common/base-package')();
 
-  // set the app as root
-  rootPackage.app = '.';
+  // set the component as root
+  rootPackage.component = '.';
 
   // set the root package name
   rootPackage.name = path.basename(process.env.WORKSPACE_DIR || process.cwd());
 
-  // include all apps to simplify app definition loading
-  rootPackage.loopback.apps = template.apps.map(function(app) {
+  // include all components to simplify app definition loading
+  rootPackage.loopback.components = template.components.map(function(app) {
     return app.name;
   });
 
@@ -70,7 +70,7 @@ Workspace.createFromTemplate = function(templateName, cb) {
 
   var steps = [
     createPackages,
-    createApps,
+    createComponents,
     createDataSources,
     createModels,
     createViews
@@ -83,9 +83,9 @@ Workspace.createFromTemplate = function(templateName, cb) {
       PackageDefinition.create.bind(PackageDefinition), cb);
   }
 
-  function createApps(cb) {
-    async.each(template.apps || [],
-      AppDefinition.create.bind(AppDefinition), cb);
+  function createComponents(cb) {
+    async.each(template.components || [],
+      ComponentDefinition.create.bind(ComponentDefinition), cb);
   }
 
   function createDataSources(cb) {

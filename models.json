@@ -16,7 +16,7 @@
     "relations": {
       "models": {
         "type": "hasMany",
-        "model": "AppDefinition",
+        "model": "ComponentDefinition",
         "foreignKey": "workspace"
       }
     }
@@ -34,7 +34,7 @@
       ]
     }
   },
-  "AppDefinition": {
+  "ComponentDefinition": {
     "properties": {
       "defaultPermission": {"type": "string"}
     },
@@ -42,21 +42,21 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
-      "defaultConfigFile": "app.json",
+      "defaultConfigFile": "config.json",
       "configFiles": [
-        "app.json",
-        "app.*.json"
+        "config.json",
+        "config.*.json"
       ],
       "relations": {
         "models": {
           "type": "hasMany",
           "model": "ModelDefinition",
-          "foreignKey": "appName"
+          "foreignKey": "componentName"
         },
         "datasources": {
           "type": "hasMany",
           "model": "DataSourceDefinition",
-          "foreignKey": "appName"
+          "foreignKey": "componentName"
         }
       }
     }
@@ -258,10 +258,10 @@
           "model": "ModelDefinition",
           "foreignKey": "dataSource"
         },
-        "app": {
+        "component": {
           "type": "belongsTo",
-          "model": "AppDefinition",
-          "foreignKey": "appName"
+          "model": "ComponentDefinition",
+          "foreignKey": "componentName"
         }
       }
     }

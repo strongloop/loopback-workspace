@@ -1,27 +1,27 @@
 var app = require('../app');
 var DataSourceDefinition = app.models.DataSourceDefinition;
-var AppDefinition = app.models.AppDefinition;
+var ComponentDefinition = app.models.ComponentDefinition;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 
 describe('DataSourceDefinition', function() {
 
- it('validates `name` uniqueness within the app only', function(done) {
+ it('validates `name` uniqueness within the component only', function(done) {
   var ref = TestDataBuilder.ref;
   new TestDataBuilder()
-    .define('app1', AppDefinition, {
-      name: 'app1'
+    .define('component1', ComponentDefinition, {
+      name: 'component1'
     })
-    .define('app2', AppDefinition, {
-      name: 'app2'
+    .define('component2', ComponentDefinition, {
+      name: 'component2'
     })
-    .define('app1datasource', DataSourceDefinition, {
+    .define('component1datasource', DataSourceDefinition, {
       name: 'dsname',
-      appName: ref('app1.name'),
+      componentName: ref('component1.name'),
       connector: 'foo'
     })
-    .define('app2datasource', DataSourceDefinition, {
-      name: ref('app1datasource.name'),
-      appName: ref('app2.name'),
+    .define('component2datasource', DataSourceDefinition, {
+      name: ref('component1datasource.name'),
+      componentName: ref('component2.name'),
       connector: 'foo'
     })
     .buildTo({}, function(err) {

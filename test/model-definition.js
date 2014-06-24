@@ -14,7 +14,7 @@ describe('ModelDefinition', function() {
       test.dataSourceName = 'test datasource';
       test.model = {
         name: test.modelName,
-        appName: '.', // root app
+        componentName: '.', // root app
         dataSource: test.dataSourceName
       };
       ModelDefinition.create(test.model, function(err, modelDef) {

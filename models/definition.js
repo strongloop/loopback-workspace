@@ -126,16 +126,15 @@ Definition.addRelatedToCache = function(cache, name, fileData) {
   });
 }
 
-
 Definition.getPath = function(app, obj) {
   if(obj.configFile) return obj.configFile;
   return path.join(app, this.settings.defaultConfigFile);
 }
 
-Definition.getConfigFile = function(appName, obj) {
+Definition.getConfigFile = function(componentName, obj) {
   // TODO(ritch) the bootstrapping of models requires this...
   var ConfigFile = app.models.ConfigFile;
-  return new ConfigFile({path: this.getPath(appName, obj)});
+  return new ConfigFile({path: this.getPath(componentName, obj)});
 }
 
 function noop() {};
