@@ -165,7 +165,7 @@
   "ModelProperty": {
     "properties": {
       "type": {"type": "string"},
-      "name": {"type": "string"},
+      "name": {"type": "string", "id": true},
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
       "index": {"type": "boolean"},

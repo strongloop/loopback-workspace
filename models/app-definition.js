@@ -155,7 +155,7 @@ AppDefinition.saveToFs = function(cache, appDef, cb) {
   var modelConfig = {};
   var modelPath;
   var cachedModels = ModelDefinition.allFromCache(cache);
-  
+
   cachedModels.forEach(function(modelDef) {
     debug('%j', modelDef);
     if(modelDef.appName === appName) {

@@ -49,14 +49,15 @@ function getRelated(cache, id, relation) {
 function formatRelatedData(relation, relatedData) {
   var result;
   assert(relation.embed && relation.embed.as, 'embed requires "as"');
+  cleanRelatedData(relatedData, relation);
   switch(relation.embed.as) {
     case 'object':
       assert(relation.embed.key, 'embed as object requires "key"');
       result = {};
       relatedData.forEach(function(related) {
         var key = related[relation.embed.key];
-        result[related[key]] = related;
-        delete related[key];
+        result[key] = related;
+        delete related[relation.embed.key];
       });
       return result
     break;
@@ -65,36 +66,6 @@ function formatRelatedData(relation, relatedData) {
     break;
   }
   assert(false, relation.embed.as + ' is not supported by embed');
-}
-
-ModelDefinition.prototype.toConfig = function(cb) {
-  var config = this.toJSON();
-  var modelDefinition = this;
-
-  config.configFile = this.getConfigFile();
-
-  var steps = [
-    get('properties'),
-    get('relations'),
-    get('validations'),
-    get('accessControls'),
-    get('methods')
-  ];
-
-  async.parallel(steps, function(err) {
-    if(err) return cb(err);
-    cb(null, config);
-  });
-
-  function get(relation) {
-    return function(cb) {
-      modelDefinition[relation](function(err, related) {
-        if(err) return cb(err);
-        config[relation] = related; // convert to object?
-        cb();
-      });
-    }
-  }
 }
 
 ModelDefinition.getPath = function(app, obj) {
@@ -112,4 +83,16 @@ ModelDefinition.toFilename = function(name) {
   if(split[0] === '-') split.shift();
 
   return split.join('');
+}
+
+/**
+ * Remove the foreign key from embeded data.
+ * @private
+ */
+
+function cleanRelatedData(relatedData, relation) {
+  relatedData.forEach(function(obj) {
+    assert(relation.foreignKey, 'embeded relation must have foreignKey');
+    delete obj[relation.foreignKey];
+  });
 }
