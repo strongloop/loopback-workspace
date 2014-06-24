@@ -40,7 +40,7 @@ describe('DataSourceDefinition', function() {
 
     it('should be defined', function () {
       this.dataSources.forEach(function(def) {
-        expect(def.configFile).to.equal('api/datasource.json');
+        expect(def.configFile).to.equal('api/datasources.json');
       });
     });
   });

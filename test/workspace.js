@@ -1,12 +1,17 @@
-var app = require('../app');
 var async = require('async');
-var Workspace = app.models.Workspace;
+var app = require('../app');
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var Workspace = app.models.Workspace;
+var ConfigFile = app.models.ConfigFile;
 
 describe('Workspace', function() {
   describe('Workspace.getAvailableTemplates(callback)', function() {
-    it('Get an array of available template names.', function() {
-
+    it('Get an array of available template names.', function(done) {
+      Workspace.getAvailableTemplates(function(err, templates) {
+        expect(templates).to.contain('default');
+        expect(templates).to.contain('empty');
+        done();
+      });
     });
   });
 

@@ -5,6 +5,7 @@ var path = require('path');
 expect = require('chai').expect;
 var workspace = require('../app');
 var models = workspace.models;
+var ConfigFile = models.ConfigFile;
 
 expectFileExists = function (file) {
   assert(fs.existsSync(file), file + ' does not exist');
@@ -35,6 +36,15 @@ resetWorkspace = function(cb) {
   async.each(workspace.models(), function(model, cb) {
     model.destroyAll(cb);
   }, cb);
+}
+
+givenFile = function(name, pathToFile) {
+  return function(done) {
+    var configFile = this[name] = new ConfigFile({
+      path: pathToFile
+    });
+    configFile.load(done);
+  }
 }
 
 givenEmptyWorkspace = function(cb) {

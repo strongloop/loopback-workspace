@@ -2,7 +2,9 @@ var path = require('path');
 var assert = require('assert');
 var app = require('../app');
 var async = require('async');
-var dasherize = require('underscore.string').dasherize;
+var underscoreString = require('underscore.string');
+var dasherize = underscoreString.dasherize;
+var camelize = underscoreString.camelize;
 
 /**
  * Defines a LoopBack `Model`.
@@ -103,9 +105,11 @@ ModelDefinition.getPath = function(app, obj) {
 }
 
 ModelDefinition.toFilename = function(name) {
+  if(name === name.toUpperCase()) return name.toLowerCase();
+  if(~name.indexOf('-')) return name.toLowerCase();
   var dashed = dasherize(name);
-  var split = dashed.split();
-  if(split[0] === '-') dashed.shift();
+  var split = dashed.split('');
+  if(split[0] === '-') split.shift();
 
   return split.join('');
 }
