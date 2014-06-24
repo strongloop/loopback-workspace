@@ -32,6 +32,16 @@ describe('ModelProperty', function() {
     });
   });
 
+  describe('ModelProperty.find(filter, cb)', function (done) {
+    it('should contain the property', function (done) {
+      ModelProperty.find(function(err, properties) {
+        expect(err).to.not.exist;
+        expect(toNames(properties)).to.contain(this.propertyName);
+        done();
+      }.bind(this));
+    });
+  });
+
   describe('modelProperty.remove(cb)', function () {
     beforeEach(function(done) {
       this.property.remove(done);
@@ -40,6 +50,18 @@ describe('ModelProperty', function() {
     it('should remove from $modelName.json file', function () {
       var properties = this.configFile.data.properties;
       expect(properties).to.not.have.property(this.propertyName);
+    });
+  });
+
+  describe('model.save()', function () {
+    beforeEach(function(done) {
+      this.property.type = 'Boolean';
+      this.property.save(done);
+    });
+    beforeEach(givenFile('configFile', 'api/models/user.json'));
+    it('should update the $modelName.json file', function () {
+      var properties = this.configFile.data.properties;
+      expect(properties[this.propertyName]).to.eql({type: 'Boolean'});
     });
   });
 });

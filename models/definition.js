@@ -108,9 +108,21 @@ Definition.getEmbededRelations = function() {
 Definition.addRelatedToCache = function(cache, name, fileData) {
   var Definition = this;
   this.getEmbededRelations().forEach(function(relation) {
-    Definition.toArray(fileData[relation.as], relation.embed).forEach(function(config) {
-      Definition.addToCache(cache, relation.model, config);
-    });
+    var relatedData = fileData[relation.as];
+    var Entity = loopback.getModel(relation.model);
+
+    if(Array.isArray(relatedData)) {
+      relatedData.forEach(function(config) {
+        var id = config[relation.foreignKey];
+        Entity.addToCache(cache, id, config);
+      });
+    } else if(relatedData) {
+      Object.keys(relatedData).forEach(function(id) {
+        var config = relatedData[id];
+        config[Entity.dataSource.idName(Entity.modelName)] = id;
+        Entity.addToCache(cache, id, config);
+      });
+    }
   });
 }
 
