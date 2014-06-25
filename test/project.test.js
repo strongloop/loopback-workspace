@@ -1,5 +1,6 @@
 var app = require('../');
 var fs = require('fs');
+var fstools = require('fs-tools');
 var assert = require('assert');
 var expect = require('chai').expect;
 var Project = app.models.Project;
@@ -19,15 +20,6 @@ var Role = loopback.Role;
 // auto-cleanup temp files / dirs
 temp.track();
 
-// clear any persisting data
-beforeEach(function (done) {
-  async.parallel([
-    Project.destroyAll.bind(Project),
-    Model.destroyAll.bind(Model),
-    DataSource.destroyAll.bind(DataSource)
-  ], done);
-});
-
 // validate project
 function expectValidProjectAtDir(dir, done) {
   Project.isValidProjectDir(dir, function(err, isValid, msg) {
@@ -46,7 +38,7 @@ function loadProject(done) {
       done(err);
     }
     test.project = project;
-    done();
+    done(null, project);
   });
 }
 
@@ -129,53 +121,157 @@ describe('Project', function () {
         done();
       });
     });
+
+    it('supports project name different from the directory name', function(done) {
+      Project.createFromTemplate(SANDBOX, 'my-name', 'empty', function(err) {
+        if (err) return done(err);
+        var packageJson = path.join(SANDBOX, 'package.json');
+        assertJSONFileHas(packageJson, 'name', 'my-name');
+        done();
+      });
+    });
+
+    it('supports custom writeFile function', function(done) {
+      var filesWritten = [];
+      var filesFound = [];
+
+      // install a custom writeFile implementation
+      Project.writeFile = function(name, content, enc, cb) {
+        filesWritten.push(name);
+        fs.writeFile.apply(fs, arguments);
+      };
+
+      async.waterfall([
+       function createProject(next) {
+          Project.createFromTemplate(SANDBOX, 'empty', next);
+        },
+
+        function findAllFiles(next) {
+          fstools.walk(
+            SANDBOX,
+            function(name, stats, cb) {
+              filesFound.push(name);
+              cb();
+            },
+            next);
+        },
+
+        function verifyExpectations(next) {
+          expect(filesFound).to.have.members(filesWritten);
+          expect(filesFound).to.not.be.empty;
+          next();
+        }
+      ], done);
+    });
   });
   
   describe('project.saveToFiles(dir, cb)', function () {
-    beforeEach(loadProject);
     it('should create and persist all project definitions', function(done) {
       var dir = temp.mkdirSync();
 
-      this.project.saveToFiles(dir, function(err) {
-        if(err) return done(err);
+      loadProject(function(err, project) {
+        if (err) return done(err);
 
-        // TODO(ritch) - remove faux file writing to validate project
-        fs.writeFileSync(path.join(dir, 'app.js'), '// ...', 'utf8');
-        fs.writeFileSync(path.join(dir, 'package.json'), '{}', 'utf8');
+        project.saveToFiles(dir, function(err) {
+          if (err) return done(err);
 
-        expectValidProjectAtDir(dir, done);
+          // TODO(ritch) - remove faux file writing to validate project
+          fs.writeFileSync(path.join(dir, 'app.js'), '// ...', 'utf8');
+          fs.writeFileSync(path.join(dir, 'package.json'), '{}', 'utf8');
+
+          expectValidProjectAtDir(dir, done);
+        });
       });
     });
 
     it('should save models', function (done) {
-      var dir = temp.mkdirSync();
-      var exModel = {name: 'foo', dataSource: 'db', properties: {name: 'string'}};
+      var dir = SANDBOX;
+      var exModel = { name: 'foo', dataSource: 'db' };
       var models = path.join(dir, 'models.json');
+      var project;
 
-      Project.createFromTemplate(dir, 'empty', function(err) {
-        if(err) return done(err);
+      async.waterfall([
+        function(next) {
+          Project.createFromTemplate(dir, 'empty', next);
+        },
+        function(next) {
+          Project.loadFromFiles(dir, function(err, result) {
+            project = result;
+            next(err);
+          });
+        },
+        function(next) {
+          project.models.create(exModel, next);
+        },
+        function(model, next) {
+          model.properties.create(
+            { name: 'name', type: 'string' },
+            function(err) { next(err, model); });
+        },
+        function(model, next) {
+          model.permissions.create(
+            {
+              accessType: '*',
+              permission: 'READ',
+              principalType: 'ROLE',
+              principalId: '$owner',
+              property: 'name'
+            },
+            function(err){ next(err); });
+        },
+        function(next) {
+          project.saveToFiles(dir, next);
+        },
+        function(next) {
+          assertJSONFileHas(models, 'user.options.base', 'User');
+          expectValidProjectAtDir(dir, next);
+        },
+        function(next) {
+          assertJSONFileHas(models, 'foo.dataSource', 'db');
+          assertJSONFileHas(models, 'foo.properties.name.type', 'string');
 
-        Project.loadFromFiles(dir, function(err, project) {
-          if(err) return done(err);
+          assertJSONFileHas(models, 'foo.options.acls[0].accessType', '*');
+          assertJSONFileHas(models, 'foo.options.acls[0].permission', 'READ');
+          next();
+        }
+      ], done);
+    });
 
-          project.models.create(exModel, function(err) {
-            if(err) return done(err);
+    it('should ignore cached relations', function(done) {
+      var dir = SANDBOX;
 
-            project.saveToFiles(dir, function(err) {
-              if(err) return done(err);
-              assertJSONFileHas(models, 'user.options.base', 'User');
-
-              expectValidProjectAtDir(dir, function() {
-                if(err) return done(err);
-
-                assertJSONFileHas(models, 'foo.dataSource', 'db');
-                assertJSONFileHas(models, 'foo.properties.name', 'string');
-                done();
+      async.waterfall([
+        function load(next) {
+          loadProject(next)
+        },
+        function fillProjectModelsCache(project, next) {
+          project.models(function(err) {
+            next(err, project);
+          });
+        },
+        function updateModelOptions(project, next) {
+          project.models(
+            { where: { name: 'foo-bar'}, limit: 1},
+            function(err, res) {
+              if (err) return done(err);
+              var model = res[0];
+              model.options.newOption = true;
+              model.save(function(err) {
+                next(err, project);
               });
             });
+        },
+        function save(project, next) {
+          project.saveToFiles(dir, function(err) {
+            next(err, project);
           });
-        });
-      });
+        },
+        function verify(project, next) {
+          var modelsJson = path.join(dir, 'models.json');
+          assertJSONFileHas(modelsJson, 'foo-bar.options.newOption', true);
+          next();
+        },
+      ], done);
     });
   });
   
@@ -224,7 +320,7 @@ describe('Project', function () {
   describe('permissions', function () {
     beforeEach(function(done) {
       var test = this;
-      var dir = test.dir = temp.mkdirSync();
+      var dir = test.dir = SANDBOX;
 
       Project.createFromTemplate(dir, 'mobile', function(err) {
         if(err) return done(err);
@@ -323,14 +419,18 @@ describe('Project', function () {
       function check(model, cb) {
         if(err) return done(err);
 
-        var acls = model.options.acls;
-        var len = acls && acls.length;
-        var acl = acls && acls[len - 1];
+        model._toConfigWithName(function(err, json) {
+          if (err) return cb(err);
 
-        expect(len).to.be.gte(1);
-        expect(acl).to.exist;
-        expect(acl).to.eql(expectedACL);
-        cb();
+          var acls = json.options.acls;
+          var len = acls && acls.length;
+          var acl = acls && acls[len - 1];
+
+          expect(len).to.be.gte(1);
+          expect(acl).to.exist;
+          expect(acl).to.eql(expectedACL);
+          cb();
+        });
       }
     });
   }
@@ -340,10 +440,50 @@ describe('Project', function () {
   });
   
   describe('project.listAvailableConnectors(cb)', function () {
-    it('should return a list of connectors available on npm');
+    before(function(done) {
+      Project.listAvailableConnectors(function(err, list) {
+        this.connectors = list;
+        done(err);
+      }.bind(this));
+    });
+
+    it('should include Memory connector', function() {
+      var names = this.connectors.map(function(it) { return it.name; });
+      expect(names).to.contain('memory');
+    });
   });
   
   describe('project.isValidProjectDir(cb)', function () {
     it('should callback with any errors from any definition');
+  });
+
+
+  it('load & save should preserve models.json created from template', function(done) {
+    var dir = temp.mkdirSync();
+    var orig;
+
+    async.waterfall([
+      function(next) {
+        Project.createFromTemplate(dir, 'test-project', 'mobile', next);
+      },
+      function(next) {
+        orig = loadModelsJsonLines();
+        Project.loadFromFiles(dir, next);
+      },
+      function(project, next) {
+        project.saveToFiles(dir, next);
+      },
+      function(next) {
+        var saved = loadModelsJsonLines();
+        expect(saved).to.eql(orig);
+        next();
+      }
+    ], done);
+
+    function loadModelsJsonLines() {
+      var modelsJson = path.resolve(dir, 'models.json');
+      var content = fs.readFileSync(modelsJson, 'utf-8');
+      return content.split(/[\n\r]+/);
+    }
   });
 });

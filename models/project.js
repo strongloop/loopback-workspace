@@ -15,9 +15,12 @@ var TEMPLATES = {
 };
 var PACKAGE = require('../templates/package');
 
-// validation
-Project.validatesUniquenessOf('name');
-Project.validatesPresenceOf('name');
+/**
+ * Customization hook allowing users to provide own function for writing
+ * files (e.g. yeoman generator's this.write).
+ * @type {function(string, string, string, cb)}
+ */
+Project.writeFile = fs.writeFile;
 
 Project.loadFromFiles = function (dir, cb) {
   async.waterfall([
@@ -25,19 +28,26 @@ Project.loadFromFiles = function (dir, cb) {
       loadConfigFilesWithExt(dir, 'json', cb);
     },
     function (projectConfig, cb) {
-      Project.fromConfig(projectConfig, cb);
+      Project.createFromConfig(projectConfig, cb);
     }
   ], cb);
 }
 
+/**
+ * @param {String} dir
+ * @param {function(Error=)} cb
+ */
 Project.prototype.saveToFiles = function (dir, cb) {
   async.waterfall([
     this.toConfig.bind(this),
     function (config, cb) {
       writeConfigToFiles(dir, DEFAULT_EXT, config, cb);
     }
-  ], cb);
-}
+  ], function(err) {
+    // drop the dummy result of async.waterfall
+    cb(err);
+  });
+};
 
 Project.prototype.toConfig = function(cb) {
   var project = this;
@@ -47,73 +57,114 @@ Project.prototype.toConfig = function(cb) {
   };
 
   async.parallel([
-    findAndReduce('models'),
-    findAndReduce('dataSources')
+    findAndConvertToConfig('models', Model.arrayToConfigObject),
+    findAndConvertToConfig('dataSources', arrayToConfigObject)
   ], function(err) {
     if(err) return cb(err);
     cb(null, config);
   });
 
-  function findAndReduce(type) {
+  function findAndConvertToConfig(type, reduceFn) {
     return function(cb) {
-      project[type](function(err, objects) {
+      var FORCE_RELOAD = true;
+      project[type](FORCE_RELOAD, function(err, objects) {
         if(err) return cb(err);
-        config[type] = objects.reduce(reduce, {});
-        cb();
+        reduceFn(objects, function(err, obj) {
+          config[type] = obj;
+          cb(err);
+        });
       });
-    }
+    };
   }
 
-  function reduce(prev, cur) {
-    cur = prev[cur.name] = cur.toJSON();
-    delete cur.id;
-    delete cur.name;
-    return prev;
+  function arrayToConfigObject(list, cb) {
+    var result = list.reduce(function reduce(prev, cur) {
+      cur = prev[cur.name] = cur.toJSON();
+      delete cur.id;
+      delete cur.name;
+      delete cur.projectId;
+      return prev;
+    }, {});
+    cb(null, result);
   }
-}
+};
 
 Project.configFiles = ['app', 'models', 'datasources'];
 Project.appFiles = ['app.js', 'package.json'];
 Project.supportedExtensions = ['json'];
 
-Project.fromConfig = function (projectConfig, cb) {
-  var project = new Project({name: projectConfig.name, app: projectConfig.app});
-  var models = projectConfig.models;
-  var dataSources = projectConfig.datasources;
+Project.createFromConfig = function (projectConfig, cb) {
+  var data = {name: projectConfig.name, app: projectConfig.app};
+  Project.create(data, function(err, project) {
+    if (err) return cb(err);
 
-  async.parallel([
-    function(cb) {
-      async.each(Object.keys(models), function (modelName, cb) {
-        var model = models[modelName];
-        model.name = modelName;
-        project.models.create(model, cb);
-      }, cb);
-    },
-    function(cb) {
-      async.each(Object.keys(dataSources), function (dsName, cb) {
-        var ds = dataSources[dsName];
-        ds.name = dsName;
-        project.dataSources.create(ds, cb);
-      }, cb);
-    }
-  ], function(err) {
-    if(err) return cb(err);
-    cb(null, project);
+    async.parallel([
+      function(cb) {
+        project._createModelsFromConfig(projectConfig.models, cb);
+      },
+      function(cb) {
+        project._createDataSourcesFromConfig(projectConfig.datasources, cb);
+      }
+    ], function(err) {
+      if (err) return cb(err);
+      cb(null, project);
+    });
   });
-}
+};
 
-Project.createFromTemplate = function(dir, template, cb) {
+Project.prototype._createModelsFromConfig = function(modelsConfig, cb) {
+  console.log()
+  async.each(Object.keys(modelsConfig), function(modelName, cb) {
+    var model = modelsConfig[modelName];
+    model.name = modelName;
+
+    var properties = model.properties || {};
+    delete model.properties;
+
+    this.models.create(model, function(err, obj) {
+      if (err) return cb(err);
+      obj._createPropertiesFromConfig(properties, cb);
+    });
+  }.bind(this), cb);
+};
+
+Project.prototype._createDataSourcesFromConfig = function(dsConfig, cb) {
+  async.each(Object.keys(dsConfig), function(dsName, cb) {
+    var ds = dsConfig[dsName];
+    ds.name = dsName;
+    this.dataSources.create(ds, cb);
+  }.bind(this), cb);
+};
+
+/**
+ * @deprecated Use Project.createFromConfig() instead.
+ */
+Project.fromConfig = Project.createFromConfig;
+
+/**
+ * Create a new project using the given template.
+ * @param {string} dir The project directory, will be created if needed.
+ * @param {string=} name Project name. Optional, defaults to `dir` basename.
+ * @param {string} template Name of the template to use.
+ * @param {function(err)} cb
+ */
+Project.createFromTemplate = function(dir, name, template, cb) {
+  if (cb === undefined && typeof template === 'function') {
+    cb = template;
+    template = name;
+    name = path.basename(dir);
+  }
+
   var config = TEMPLATES[template];
+  if(!config) {
+    return cb(new Error(template + ' is not a valid template'));
+  }
 
   if(config.app) {
     config.app.cookieSecret = uuid.v4();
   }
 
-  if(!config) {
-    return cb(new Error(template + ' is not a valid template'));
-  }
-
-  config.name = path.basename(dir);
+  config.name = name;
 
   async.parallel([
     function(cb) {
@@ -122,7 +173,10 @@ Project.createFromTemplate = function(dir, template, cb) {
     function(cb) {
       writeAppFiles(dir, config, cb);
     }
-  ], cb)
+  ], function(err) {
+    // ignore the results of the async steps
+    cb(err);
+  });
 }
 
 Project.isValidProjectDir = function(dir, cb) {
@@ -249,6 +303,7 @@ var ROLE_IDS = ['owner', 'related', 'authenticated',
  * @param {Object} options
  * @param {Function} cb Will only include an error as the first argument if
  * one occured. No additional arguments.
+ * @deprecated Use `modelDefinition.permissions` collection instead.
  */
 
 Project.prototype.addPermission = function(options, cb) {
@@ -327,28 +382,25 @@ function getOptionsFromKeys(options, keys) {
 
 function applyPermissions(models, acl, cb) {
   async.each(models, function(model, callback) {
-    model.options = model.options || {};
-    model.options.acls = model.options.acls || [];
-    model.options.acls.push(acl);
-    model.save(callback);
+    model.permissions.create(acl, callback);
   }, cb);
 }
 
 function loadConfigFilesWithExt(dir, ext, cb) {
   assert(ext, 'cannot load config files without extension');
-  var result = {name: path.basename(dir)};
+  var initialResult = {name: path.basename(dir)};
   var filePaths = Project.configFiles.map(function (file) {
     return path.join(dir, file + '.' + ext);
   });
 
   async.map(filePaths, readJSONFile, function (err, configs) {
     if(err) return cb(err);
-    
+
     var result = configs.reduce(function (prev, cur, i) {
       prev[Project.configFiles[i]] = cur;
       return prev;
-    }, {});
-    
+    }, initialResult);
+
     cb(null, result);
   });
 }
@@ -362,6 +414,26 @@ function loadConfigFilesWithExt(dir, ext, cb) {
 Project.prototype.setPermissionDefault = function(permission) {
   this.app.defaultPermission = permission;
 }
+
+/**
+ * @typedef {{name, description,supportedByStrongLoop}} ConnectorMeta
+ */
+
+/**
+ * @type {Array.<ConnectorMeta>}
+ * @internal
+ */
+var staticConnectorList = require('../available-connectors');
+
+/**
+ * List of connectors available on npm.
+ * @param {function(Error=,Array.<ConnectorMeta>=)} cb
+ */
+Project.listAvailableConnectors = function(cb) {
+  cb(null, staticConnectorList);
+};
+
+/*-- HELPERS --*/
 
 function readJSONFile(filePath, cb) {
   async.waterfall([
@@ -394,7 +466,7 @@ function writeConfigToFiles(dir, ext, config, cb) {
           // skip non config file keys
           return cb();
         }
-        fs.writeFile(path.join(dir, file + '.' + ext), stringify(fileConfig, ext), 'utf8', cb);
+        Project.writeFile(path.join(dir, file + '.' + ext), stringify(fileConfig, ext), 'utf8', cb);
       }, cb);
     }
   ], cb);
@@ -406,7 +478,7 @@ function writeAppFiles(dir, config, cb) {
       fs.readFile(path.join(__dirname, '..', 'templates', 'app.js'), 'utf8', cb);
     },
     function(appTemplateStr, cb) {
-      fs.writeFile(path.join(dir, 'app.js'), appTemplateStr, 'utf8', cb);
+      Project.writeFile(path.join(dir, 'app.js'), appTemplateStr, 'utf8', cb);
     },
     function(cb) {
       mkdirp(path.join(dir, 'models'), cb);
@@ -434,5 +506,5 @@ function stringify(obj, contentType) {
 function writePackage(dir, config, cb) {
   var pkg = JSON.parse(JSON.stringify(PACKAGE));
   pkg.name = config.name;
-  fs.writeFile(path.join(dir, 'package.json'), stringify(pkg, 'json'), 'utf8', cb);
+  Project.writeFile(path.join(dir, 'package.json'), stringify(pkg, 'json'), 'utf8', cb);
 }

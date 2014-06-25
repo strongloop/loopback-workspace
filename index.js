@@ -1,26 +1,17 @@
 var loopback = require('loopback');
 var app = module.exports = loopback();
-var DEFAULT_DATASOURCE = 'db';
 
 app.dataSource('db', {
-  connector: loopback.Memory
+  connector: loopback.Memory,
+  defaultForType: 'db'
 });
 
-var Project = app.model('project', {dataSource: DEFAULT_DATASOURCE});
-var ModelDef = app.model('model-definition', {dataSource: DEFAULT_DATASOURCE, properties: {
-  options: Object
-}});
-var DataSourceDef = app.model('datasource-definition', {dataSource: DEFAULT_DATASOURCE});
-var AppDef = app.model('app-definition', {dataSource: DEFAULT_DATASOURCE});
+app.dataSource('email', {
+  connector: loopback.Mail,
+  defaultForType: 'mail'
+});
 
-// relationships
-Project.hasMany('models', {model: ModelDef});
-Project.hasMany('dataSources', {model: DataSourceDef});
-
-// model extensions
-require('./models/project');
-require('./models/model-definition');
-require('./models/datasource-definition');
+app.boot(__dirname);
 
 // server middleware
 app.use(loopback.favicon());
