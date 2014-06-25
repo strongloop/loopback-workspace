@@ -111,7 +111,9 @@ app.get('/', loopback.status());
  */
 
 var swaggerRemote = app.remotes().exports.swagger;
-if (swaggerRemote) swaggerRemote.requireToken = false;
+if (swaggerRemote) {
+  swaggerRemote.requireToken = false;
+}
 
 app.enableAuth();
 
