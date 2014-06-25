@@ -1,7 +1,6 @@
 var loopback = require('loopback');
 var path = require('path');
 var app = module.exports = loopback();
-var started = new Date();
 
 /*
  * 1. Configure LoopBack models and datasources
@@ -21,7 +20,8 @@ app.use(loopback.favicon());
 app.use(loopback.logger(app.get('env') === 'development' ? 'dev' : 'default'));
 app.use(loopback.cookieParser(app.get('cookieSecret')));
 app.use(loopback.token({model: app.models.accessToken}));
-app.use(loopback.bodyParser());
+app.use(loopback.json());
+app.use(loopback.urlencoded());
 app.use(loopback.methodOverride());
 
 /*
@@ -111,7 +111,9 @@ app.get('/', loopback.status());
  */
 
 var swaggerRemote = app.remotes().exports.swagger;
-if (swaggerRemote) swaggerRemote.requireToken = false;
+if (swaggerRemote) {
+  swaggerRemote.requireToken = false;
+}
 
 app.enableAuth();
 
