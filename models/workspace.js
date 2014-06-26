@@ -1,7 +1,9 @@
+var ncp = require('ncp');
 var path = require('path');
 var app = require('../app');
 var async = require('async');
 var PackageDefinition = app.models.PackageDefinition;
+var ConfigFile = app.models.ConfigFile;
 var ComponentDefinition = app.models.ComponentDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
@@ -39,8 +41,15 @@ Workspace.getAvailableTemplates = function(cb) {
  * @param {Error} err
  */
 
-Workspace.createFromTemplate = function(templateName, cb) {
-  var template = templates[templateName];
+Workspace.createFromTemplate = function(componentName, name, cb) {
+  var template;
+  var fileTemplatesDir = path.join(__dirname, '..', 'templates',
+    componentName, 'template');
+
+  try {
+    template = require('../templates/' + componentName);
+  } catch(e) {}
+  
   debug('create from template [%s]', templateName);
 
   if(!template) {
@@ -51,55 +60,91 @@ Workspace.createFromTemplate = function(templateName, cb) {
     return cb(err);
   }
 
-  // add the root package
-  var rootPackage = require('../templates/common/base-package')();
+  var steps = [];
 
-  // set the component as root
-  rootPackage.component = '.';
+  if(template.component) {
+    steps.push(function(cb) {
+      ComponentDefinition.create(template.component, cb);
+    });
+    if(template.component.components) {
+      steps.push(function(cb) {
+        async.each(template.component.components, function(component, cb) {
+          Workspace.createFromTemplate(component, component, cb);
+        });
+      });
+    }
+  } else {
+    return cb(new Error('invalid template: does not include "component"'));
+  }
 
-  // set the root package name
-  rootPackage.name = path.basename(process.env.WORKSPACE_DIR || process.cwd());
+  if(template.package) {
+    template.package.componentName = template.component.name;
+    steps.push(function(cb) {
+      PackageDefinition.create(template.package, cb);
+    });
+  }
 
-  // include all components to simplify app definition loading
-  rootPackage.loopback.components = template.components.map(function(app) {
-    return app.name;
+  if(template.componentModels) {
+    setComponentName(template.componentModels);
+    steps.push(function(cb) {
+      async.each(template.componentModels, 
+        ComponentModel.create.bind(ComponentModel), cb);
+    });
+  }
+
+  if(template.models) {
+    setComponentName(template.models);
+    steps.push(function(cb) {
+      async.each(template.models, 
+        ModelDefinition.create.bind(ModelDefinition), cb);
+    });
+  }
+
+  if(template.models) {
+    setComponentName(template.models);
+    steps.push(function(cb) {
+      async.each(template.models, 
+        ModelDefinition.create.bind(ModelDefinition), cb);
+    });
+  }
+
+  if(template.datasources) {
+    setComponentName(template.datasources);
+    steps.push(function(cb) {
+      async.each(template.datasources, 
+        DataSourceDefinition.create.bind(DataSourceDefinition), cb);
+    });
+  }
+
+  if(template.relations) {
+    steps.push(function(cb) {
+      async.each(template.relations, 
+        ModelRelation.create.bind(ModelRelation), cb);
+    });
+  }
+
+  if(template.relations) {
+    steps.push(function(cb) {
+      async.each(template.relations, 
+        ModelRelation.create.bind(ModelRelation), cb);
+    });
+  }
+
+  steps.push(function(cb) {
+    fs.exists(fileTemplatesDir, function(exists) {
+      if(exists) {
+        steps.push(copyTemplateFiles);
+        cb();
+      } else {
+        cb();
+      }
+    });
   });
 
-  // include the root package, others are allowed
-  template.packages.push(rootPackage);
-
-  var steps = [
-    createPackages,
-    createComponents,
-    createDataSources,
-    createModels,
-    createViews
-  ];
+  function copyTemplateFiles(cb) {
+    var dest = path.join(ConfigFile.getWorkspaceDir(), template.component.name);
+    ncp(fileTemplatesDir, dest, cb);
+  }
 
   async.parallel(steps, cb);
-
-  function createPackages(cb) {
-    async.each(template.packages || [],
-      PackageDefinition.create.bind(PackageDefinition), cb);
-  }
-
-  function createComponents(cb) {
-    async.each(template.components || [],
-      ComponentDefinition.create.bind(ComponentDefinition), cb);
-  }
-
-  function createDataSources(cb) {
-    async.each(template.datasources || [],
-      DataSourceDefinition.create.bind(DataSourceDefinition), cb);
-  }
-
-  function createModels(cb) {
-    async.each(template.models || [],
-      ModelDefinition.create.bind(ModelDefinition), cb);
-  }
-
-  function createViews(cb) {
-    async.each(template.views || [],
-      ViewDefinition.create.bind(ViewDefinition), cb);
-  }
 }
