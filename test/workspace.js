@@ -19,6 +19,16 @@ describe('Workspace', function() {
   describe('Workspace.createFromTemplate(templateName, callback)', function() {
     beforeEach(givenBasicWorkspace);
     beforeEach(findAllEntities);
+    beforeEach(function(done) {
+      // TODO(ritch) this should not be required...
+      // there is most likely an issue with loading into cache in parallel
+      var test = this;
+      app.models.DataSourceDefinition.find(function(err, defs) {
+        if(err) return done(err);
+        test.dataSources = defs;
+        done();
+      });
+    });
 
     it('it should create a set of component definitions', function() {
       var componentNames = toNames(this.components);

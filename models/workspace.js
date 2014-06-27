@@ -146,11 +146,7 @@ Workspace.addComponent = function(options, cb) {
     }
   }
 
-  async.parallel(steps, function() {
-    
-    console.log(DataSourceDefinition.dataSource.connector.cache);
-    cb();
-  });
+  async.parallel(steps, cb);
 }
 
 /**

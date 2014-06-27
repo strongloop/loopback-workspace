@@ -22,7 +22,6 @@ describe('ModelProperty', function() {
     };
     ModelProperty.create(property, function(err, property) {
       if(err) return done(err);
-      console.log(property);
       test.property = property;
       done();
     });
@@ -53,7 +52,7 @@ describe('ModelProperty', function() {
     beforeEach(function(done) {
       this.property.remove(done);
     });
-    beforeEach(givenFile('configFile', 'api/models/user.json'));
+    beforeEach(givenFile('configFile', 'rest/models/user.json'));
     it('should remove from $modelName.json file', function () {
       var properties = this.configFile.data.properties;
       expect(properties).to.not.have.property(this.propertyName);
@@ -65,7 +64,7 @@ describe('ModelProperty', function() {
       this.property.type = 'Boolean';
       this.property.save(done);
     });
-    beforeEach(givenFile('configFile', 'api/models/user.json'));
+    beforeEach(givenFile('configFile', 'rest/models/user.json'));
     it('should update the $modelName.json file', function () {
       var properties = this.configFile.data.properties;
       expect(properties[this.propertyName]).to.eql({type: 'Boolean'});

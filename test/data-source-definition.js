@@ -1,9 +1,54 @@
+var async = require('async');
 var app = require('../app');
+var ConfigFile = app.models.ConfigFile;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ComponentDefinition = app.models.ComponentDefinition;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 
 describe('DataSourceDefinition', function() {
+
+  describe('DataSourceDefinition.create(def, cb)', function () {
+    beforeEach(givenEmptyWorkspace);
+    beforeEach(function(done) {
+      this.configFile = new ConfigFile({
+        path: 'datasources.json'
+      });
+      async.parallel([function(cb) {
+        DataSourceDefinition.create({
+          componentName: '.',
+          name: 'foo',
+          connector: 'memory'
+        }, cb);
+      }, function(cb) {
+        DataSourceDefinition.create({
+          componentName: '.',
+          name: 'bar',
+          connector: 'memory'
+        }, cb);
+      }], done);
+    });
+    beforeEach(function(done) {
+      this.configFile.load(done);
+    });
+    it('shoulb be able to create multiple', function (done) {
+      DataSourceDefinition.find(function(err, defs) {
+        expect(defs).to.have.length(2);
+        done();
+      });
+    });
+    it('should create a config file', function(done) {
+      this.configFile.exists(function(err, exists) {
+        expect(err).to.not.exist;
+        expect(exists).to.equal(true);
+        done();
+      });
+    });
+    it('shoulb be persist multiple to the config file', function (done) {
+      var defs = Object.keys(this.configFile.data).sort();
+      expect(defs).to.eql(['bar', 'foo'].sort());
+      done();
+    });
+  });
 
  it('validates `name` uniqueness within the component only', function(done) {
   var ref = TestDataBuilder.ref;

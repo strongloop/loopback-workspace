@@ -177,12 +177,10 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     }
   });
 
-  if(dataSourcePath) {
-    filesToSave.push(new ConfigFile({
-      path: dataSourcePath,
-      data: dataSoureConfig
-    }));
-  }
+  filesToSave.push(new ConfigFile({
+    path: dataSourcePath,
+    data: dataSoureConfig
+  }));
 
   var cachedComponentModels = ComponentModel.allFromCache(cache);
   var componentModelsPath = path.join(componentName, ComponentModel.settings.defaultConfigFile);

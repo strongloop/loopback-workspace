@@ -6,6 +6,7 @@ expect = require('chai').expect;
 var workspace = require('../app');
 var models = workspace.models;
 var ConfigFile = models.ConfigFile;
+var debug = require('debug')('workspace:test:support');
 
 expectFileExists = function (file) {
   assert(fs.existsSync(file), file + ' does not exist');
@@ -23,7 +24,10 @@ SANDBOX = path.resolve(__dirname, 'sandbox/');
 process.env.WORKSPACE_DIR = SANDBOX;
 
 givenEmptySandbox = function(cb) {
-  fs.remove(SANDBOX, cb);
+  fs.remove(SANDBOX, function(err) {
+    if(err) return cb(err);
+    fs.mkdir(SANDBOX, cb);
+  });
 
   // Remove any cached modules from SANDBOX
   for (var key in require.cache) {
@@ -45,6 +49,18 @@ givenFile = function(name, pathToFile) {
     });
     configFile.load(done);
   }
+}
+
+givenEmptyWorkspace = function(cb) {
+  resetWorkspace(function(err) {
+    if(err) return cb(err);
+    givenEmptySandbox(function(err) {
+      if(err) return cb(err);
+      models.ComponentDefinition.create({
+        name: '.'
+      }, cb);
+    });
+  });
 }
 
 givenBasicWorkspace = function(cb) {
@@ -71,10 +87,13 @@ function findOfType(name, type) {
       cb = query;
       query = {};
     }
-    type.find(query, function(err, entities) {
+    type.find(function(err, entities) {
       if(err) return cb(err);
-      test[name] = entities;
-      cb();
+      type.find(function() {
+        debug('found %s => %j', name, entities);
+        test[name] = entities;
+        cb();
+      });
     });
   };
 }
