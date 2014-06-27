@@ -6,7 +6,7 @@ var ConfigFile = app.models.ConfigFile;
 describe('ModelDefinition', function() {
   
   describe('CRUD', function () {
-    beforeEach(givenEmptyWorkspace);
+    beforeEach(givenBasicWorkspace);
 
     beforeEach(function(done) {
       var test = this;
@@ -30,15 +30,6 @@ describe('ModelDefinition', function() {
     beforeEach(findAllEntities);
 
     describe('ModelDefinition.create(modelDef, cb)', function () {
-      it('should create an entry in models.json', function () {
-        var models = this.modelsConfigFile.data;
-        expect(models).to.have.property(this.modelName);
-        var modelDef = models[this.modelName];
-        expect(modelDef).to.eql({
-          dataSource: this.dataSourceName
-        });
-      });
-
       it('should create a models/$name.json file', function (done) {
         this.modelConfigFile.exists(function(err, exists) {
           expect(exists).to.equal(true);

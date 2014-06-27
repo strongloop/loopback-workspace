@@ -8,27 +8,37 @@ describe('Workspace', function() {
   describe('Workspace.getAvailableTemplates(callback)', function() {
     it('Get an array of available template names.', function(done) {
       Workspace.getAvailableTemplates(function(err, templates) {
-        expect(templates).to.contain('default');
-        expect(templates).to.contain('empty');
+        expect(templates).to.contain('api-server');
+        expect(templates).to.contain('rest');
+        expect(templates).to.contain('server');
         done();
       });
     });
   });
 
   describe('Workspace.createFromTemplate(templateName, callback)', function() {
-    beforeEach(givenEmptyWorkspace);
+    beforeEach(givenBasicWorkspace);
     beforeEach(findAllEntities);
-
-    it('it should create a set of app definitions', function() {
-      var componentNames = toNames(this.components);
-      expect(componentNames).to.contain('api');
-      expect(componentNames).to.contain('.');
+    beforeEach(function(done) {
+      // TODO(ritch) this should not be required...
+      // there is most likely an issue with loading into cache in parallel
+      var test = this;
+      app.models.DataSourceDefinition.find(function(err, defs) {
+        if(err) return done(err);
+        test.dataSources = defs;
+        done();
+      });
     });
 
-    it('it should create a set of model definitions', function() {
-      var modelNames = toNames(this.models);
-      expect(modelNames).to.contain('access-token');
-      expect(modelNames).to.contain('user');
+    it('it should create a set of component definitions', function() {
+      var componentNames = toNames(this.components);
+      expect(componentNames).to.contain('rest');
+      expect(componentNames).to.contain('.');
+      expect(componentNames).to.contain('server');
+    });
+
+    it('it should not create a set of model definitions', function() {
+      expect(this.models).to.be.empty;
     });
 
     it('it should create a set of data source definitions', function() {

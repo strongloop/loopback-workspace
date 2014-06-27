@@ -6,6 +6,7 @@ expect = require('chai').expect;
 var workspace = require('../app');
 var models = workspace.models;
 var ConfigFile = models.ConfigFile;
+var debug = require('debug')('workspace:test:support');
 
 expectFileExists = function (file) {
   assert(fs.existsSync(file), file + ' does not exist');
@@ -23,7 +24,10 @@ SANDBOX = path.resolve(__dirname, 'sandbox/');
 process.env.WORKSPACE_DIR = SANDBOX;
 
 givenEmptySandbox = function(cb) {
-  fs.remove(SANDBOX, cb);
+  fs.remove(SANDBOX, function(err) {
+    if(err) return cb(err);
+    fs.mkdir(SANDBOX, cb);
+  });
 
   // Remove any cached modules from SANDBOX
   for (var key in require.cache) {
@@ -50,7 +54,19 @@ givenFile = function(name, pathToFile) {
 givenEmptyWorkspace = function(cb) {
   resetWorkspace(function(err) {
     if(err) return cb(err);
-    givenWorkspaceFromTemplate('empty', cb);  
+    givenEmptySandbox(function(err) {
+      if(err) return cb(err);
+      models.ComponentDefinition.create({
+        name: '.'
+      }, cb);
+    });
+  });
+}
+
+givenBasicWorkspace = function(cb) {
+  resetWorkspace(function(err) {
+    if(err) return cb(err);
+    givenWorkspaceFromTemplate('api-server', cb);  
   });
 }
 
@@ -58,7 +74,7 @@ givenWorkspaceFromTemplate = function(template, cb) {
   givenEmptySandbox(function(err) {
     if(err) return cb(err);
     workspace.set('workspace dir', SANDBOX);
-    workspace.models.Workspace.createFromTemplate(template, cb);
+    workspace.models.Workspace.createFromTemplate(template, 'sandbox', cb);
   });
 }
 
@@ -71,16 +87,20 @@ function findOfType(name, type) {
       cb = query;
       query = {};
     }
-    type.find(query, function(err, entities) {
+    type.find(function(err, entities) {
       if(err) return cb(err);
-      test[name] = entities;
-      cb();
+      type.find(function() {
+        debug('found %s => %j', name, entities);
+        test[name] = entities;
+        cb();
+      });
     });
   };
 }
 
 findComponentDefinitions = findOfType('components', models.ComponentDefinition);
 findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
+findComponentModels = findOfType('componentModels', models.ComponentModel);
 findModelDefinitions = findOfType('models', models.ModelDefinition);
 findViewDefinitions = findOfType('views', models.ViewDefinition);
 findModelProperties = findOfType('properties', models.ModelProperty);
@@ -96,6 +116,7 @@ findAllEntities = function(cb) {
     findComponentDefinitions,
     findDataSourceDefinitions,
     findModelDefinitions,
+    findComponentModels,
     findViewDefinitions,
     findModelProperties,
     findModelMethods,

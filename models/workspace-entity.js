@@ -1,3 +1,4 @@
+var path = require('path');
 var app = require('../app');
 var WorkspaceEntity = app.model('WorkspaceEntity', {
   "properties": {
@@ -35,8 +36,6 @@ WorkspaceEntity.getWorkspaceDir = function() {
   return app.get('workspace dir');
 }
 
-
-
 WorkspaceEntity.clearCache = function(cache) {
   // TODO(ritch) should this clear the ids cache?
   cache[this.modelName] = {};
@@ -55,3 +54,13 @@ WorkspaceEntity.allFromCache = function(cache) {
     .map(this.getFromCache.bind(this, cache));
 }
 
+WorkspaceEntity.getPath = function(app, obj) {
+  if(obj.configFile) return obj.configFile;
+  return path.join(app, this.settings.defaultConfigFile);
+}
+
+WorkspaceEntity.getConfigFile = function(componentName, obj) {
+  // TODO(ritch) the bootstrapping of models requires this...
+  var ConfigFile = app.models.ConfigFile;
+  return new ConfigFile({path: this.getPath(componentName, obj)});
+}

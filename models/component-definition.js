@@ -7,7 +7,9 @@ var debug = require('debug')('workspace:component');
 
 var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
+var ComponentModel = app.models.ComponentModel;
 var ConfigFile = app.models.ConfigFile;
+var PackageDefinition = app.models.PackageDefinition;
 
 /**
  * Defines a `LoopBackApp` configuration.
@@ -31,9 +33,21 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
   var debug = require('debug')('workspace:component:load:' + componentName);
   var configFiles = components[componentName];
   var component = ConfigFile.getFileByBase(configFiles, 'config');
-  var models = ConfigFile.getFileByBase(configFiles, 'models');
+  var componentModels = ConfigFile.getFileByBase(configFiles, 'models');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
+  var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, componentName);
+  var packageFile = ConfigFile.getFileByBase(configFiles, 'package');
   var steps = [];
+
+  if(packageFile) {
+    steps.push(function(cb) {
+      packageFile.load(cb);
+    }, function(cb) {
+      packageFile.data.componentName = componentName;
+      PackageDefinition.addToCache(cache, componentName, packageFile.data || {});
+      cb();
+    });
+  }
 
   if(component) {
     steps.push(function(cb) {
@@ -50,43 +64,45 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
     debug('component configFile does not exist');
   }
 
-  if(models) {
+  if(componentModels) {
     steps.push(function(cb) {
-      models.load(cb);
+      componentModels.load(cb);
     }, function(cb) {
-      var modelDefs = models.data || {};
+      var modelDefs = componentModels.data || {};
       var modelNames = Object.keys(modelDefs).filter(function(modelName) {
         // exclude _meta / other private properties
         return modelName.charAt(0) !== '_';
       });
 
-      debug('loading models from [%s] %j', models.path, modelDefs);
+      modelNames.forEach(function(modelName) {
+        var componentModel = modelDefs[modelName];
+        componentModel.componentName = componentName;
+        componentModel.name = modelName;
+        ComponentModel.addToCache(cache, modelName, componentModel);
+      });
 
-      async.each(modelNames, function(modelName, cb) {
-        var def = modelDefs[modelName];
-        var configFile = ConfigFile
-          .getFileByBase(configFiles, ModelDefinition.toFilename(modelName));
-        def.name = modelName;
-        def.componentName = componentName;
-
-        if(configFile) {
-          def.configFile = configFile.path;
-          debug('loading [%s] model into cache', modelName);
-          ModelDefinition.addToCache(cache, modelName, def);
-          configFile.load(function(err) {
-            if(err) return cb(err);
-            ModelDefinition.addRelatedToCache(cache, modelName, configFile.data);
-            cb();
-          });
-        } else {
-          debug('configFile not found for [%s]', modelName);
-          ModelDefinition.addToCache(cache, modelName, def);
-          cb();
-        }
-      }, cb);
+      cb();
     });
-  } else {
-    debug('no models file found (eg. models.json)');
+  }
+
+  modelDefinitionFiles.forEach(function(configFile) {
+    steps.push(configFile.load.bind(configFile));
+  });
+
+  if(modelDefinitionFiles.length) {
+    steps.push(function(cb) {
+      modelDefinitionFiles.forEach(function(configFile) {
+        var def = configFile.data || {};
+        def.componentName = componentName;
+        def.configFile = configFile.path;
+
+        debug('loading [%s] model definition into cache', def.name);
+
+        ModelDefinition.addToCache(cache, def.name, def);
+        ModelDefinition.addRelatedToCache(cache, def.name, def);
+      });
+      cb();
+    });
   }
 
   if(dataSources) {
@@ -138,10 +154,22 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
   filesToSave.push(configFile);
 
-  var dataSoureConfig = {};
-  var dataSourcePath;
+  PackageDefinition.allFromCache(cache).forEach(function(package) {
+    if(package.componentName === componentName) {
+      var packageFile = new ConfigFile({
+        path: PackageDefinition.getPath(componentName, package),
+        data: package
+      });
+      delete package.componentName;
+      filesToSave.push(packageFile);
+    }
+  });
 
-  DataSourceDefinition.allFromCache(cache).forEach(function(dataSourceDef) {
+  var dataSoureConfig = {};
+  var dataSourcePath = path.join(componentName, 'datasources.json');
+  var cachedDataSources = DataSourceDefinition.allFromCache(cache);
+
+  cachedDataSources.forEach(function(dataSourceDef) {
     if(dataSourceDef.componentName === componentName) {
       dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
       dataSoureConfig[dataSourceDef.name] = dataSourceDef;
@@ -149,41 +177,34 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     }
   });
 
-  if(dataSourcePath) {
-    filesToSave.push(new ConfigFile({
-      path: dataSourcePath,
-      data: dataSoureConfig
-    }));
-  }
+  filesToSave.push(new ConfigFile({
+    path: dataSourcePath,
+    data: dataSoureConfig
+  }));
 
-  var modelConfig = {};
-  var modelPath;
+  var cachedComponentModels = ComponentModel.allFromCache(cache);
+  var componentModelsPath = path.join(componentName, ComponentModel.settings.defaultConfigFile);
+  var componentModelFile = new ConfigFile({path: componentModelsPath}); // models.json
+  var componentModelsConfig = componentModelFile.data = {};
+
+  cachedComponentModels.forEach(function(componentModel) {
+    componentModelsConfig[componentModel.name] = componentModel;
+    delete componentModel.name;
+  });
+
+  filesToSave.push(componentModelFile);
+
   var cachedModels = ModelDefinition.allFromCache(cache);
 
   cachedModels.forEach(function(modelDef) {
-    debug('%j', modelDef);
+    debug('model definition ~ %j', modelDef);
     if(modelDef.componentName === componentName) {
-      // TODO(ritch) should the model+datasource definitions (models.json)
-      // exist on the ComponentDefinition?
-      modelPath = path.join(componentName, ModelDefinition.settings.defaultConfigFile);
-      modelConfig[modelDef.name] = {
-        dataSource: modelDef.dataSource
-      };
       delete modelDef.dataSource;
       var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigData(cache, modelDef);
       filesToSave.push(modelConfigFile);
     }
   });
-
-  if(modelPath) {
-    filesToSave.push(new ConfigFile({
-      path: modelPath,
-      data: modelConfig
-    }));
-  } else {
-    debug('not saving models to files [cachedModels.length => %s]', cachedModels.length);
-  }
 
   // TODO(ritch) files that exist without data in the cache should be deleted
   async.each(filesToSave, function(configFile, cb) {
