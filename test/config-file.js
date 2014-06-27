@@ -1,5 +1,5 @@
 var async = require('async');
-var COMPONENT_JSON = 'api/config.json';
+var COMPONENT_JSON = 'rest/config.json';
 var ConfigFile = require('../app').models.ConfigFile;
 var assert = require('assert');
 var testData;
@@ -211,6 +211,26 @@ describe('ConfigFile', function() {
       ];
 
       expect(ConfigFile.getFileByBase(configFiles, 'baz')).to.equal(configFiles[1]);
+    });
+  });
+
+  describe('ConfigFile.getModelDefFiles(configFiles, componentName)', function() {
+    it('should find model files in the given component', function() {
+      var configFiles = [
+        new ConfigFile({path: 'component-a/models/foo.json'}),
+        new ConfigFile({path: 'component-a/models/bar.json'}),
+        new ConfigFile({path: 'component-b/models/foo.json'}),
+        new ConfigFile({path: 'models/foo.json'})
+      ];
+
+      var aModels = ConfigFile.getModelDefFiles(configFiles, 'component-a');
+      var bModels = ConfigFile.getModelDefFiles(configFiles, 'component-b');
+      var rootModels = ConfigFile.getModelDefFiles(configFiles, '.');
+
+      expect(configFilesToPaths(aModels).sort())
+        .to.eql(['component-a/models/foo.json', 'component-a/models/bar.json' ].sort());
+      expect(configFilesToPaths(bModels)).to.eql(['component-b/models/foo.json']);
+      expect(configFilesToPaths(rootModels)).to.eql(['models/foo.json']);
     });
   });
 });

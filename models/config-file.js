@@ -69,7 +69,9 @@ ConfigFile.prototype.load = function(cb) {
 
   function load(exists, cb) {
     if(exists) {
-      fs.readJson(absolutePath, cb);
+      fs.readJson(absolutePath, function(err, data) {
+        cb(err, err ? undefined : data);
+      });
     } else {
       cb(null, null);
     }
@@ -95,7 +97,11 @@ ConfigFile.prototype.save = function(cb) {
   var absolutePath = configFile.getAbsolutePath();
   configFile.data = configFile.data || {};
 
-  fs.outputJson(absolutePath, configFile.data, cb);
+  debug('output [%s] %j', absolutePath, configFile.data);
+  fs.mkdirp(path.dirname(absolutePath), function(err) {
+    if(err) return cb(err);
+    fs.writeJson(absolutePath, configFile.data, cb);
+  });
 }
 
 /**
@@ -256,6 +262,29 @@ ConfigFile.getFileByBase = function(configFiles, base) {
     }
   }
   return null;
+}
+
+
+/**
+ * From the given `configFiles`, get an array of files that represent
+ * `ModelDefinition`s.
+ *
+ * @returns {ConfigFile[]}
+ */
+
+ConfigFile.getModelDefFiles = function(configFiles, componentName) {
+  assert(Array.isArray(configFiles));
+  var configFile;
+  var results = [];
+  for(var i = 0; i < configFiles.length; i++) {
+    configFile = configFiles[i];
+    // TODO(ritch) support other directories
+    if(configFile && configFile.getComponentName() === componentName
+      && configFile.getDirName() === 'models') {
+      results.push(configFile);
+    }
+  }
+  return results;
 }
 
 ConfigFile.ROOT_COMPONENT = ROOT_COMPONENT;

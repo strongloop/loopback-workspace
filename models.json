@@ -12,14 +12,7 @@
       "name": {"id": true, "type": "string"}
     },
     "public": false,
-    "dataSource": "db",
-    "relations": {
-      "models": {
-        "type": "hasMany",
-        "model": "ComponentDefinition",
-        "foreignKey": "workspace"
-      }
-    }
+    "dataSource": "db"
   },
   "PackageDefinition": {
     "properties": {
@@ -61,22 +54,51 @@
       }
     }
   },
+  "ComponentModel": {
+    "properties": {
+      "name": {"type": "string", "id": true}
+    },
+    "dataSource": "db",
+    "options": {
+      "base": "WorkspaceEntity",
+      "defaultConfigFile": "models.json",
+      "configFiles": ["models.json"],
+      "relations": {
+        "component": {
+          "type": "belongsTo",
+          "model": "ComponentDefinition",
+          "foreignKey": "componentName"
+        },
+        "dataSource": {
+          "type": "belongsTo",
+          "model": "DataSourceDefinition",
+          "foreignKey": "dataSource"
+        },
+        "definition": {
+          "type": "hasOne",
+          "model": "ModelDefinition",
+          "foreignKey": "name"
+        }
+      }
+    }
+  },
   "ModelDefinition": {
     "properties": {
       "plural": "string",
       "strict": "boolean",
       "scopes": "array",
       "public": "boolean",
-      "indexes": "array"
+      "indexes": "array",
+      "componentName": "string",
+      "dataSource": "string"
     },
     "public": true,
     "dataSource": "db",
     "options": {
       "base": "Definition",
-      "defaultConfigFile": "models.json",
       "defaultDir": "models",
+      "defaultConfigFile": "models/$name.json",
       "configFiles": [
-        "models.json",
         "models/*.json"
       ],
       "configExtensions": ["json"],
@@ -169,6 +191,7 @@
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
       "index": {"type": "boolean"},
+      "modelName": "string",
       "desc": {"type": "string"}
     },
     "public": true,

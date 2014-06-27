@@ -47,10 +47,10 @@ givenFile = function(name, pathToFile) {
   }
 }
 
-givenEmptyWorkspace = function(cb) {
+givenBasicWorkspace = function(cb) {
   resetWorkspace(function(err) {
     if(err) return cb(err);
-    givenWorkspaceFromTemplate('empty', cb);  
+    givenWorkspaceFromTemplate('api-server', cb);  
   });
 }
 
@@ -58,7 +58,7 @@ givenWorkspaceFromTemplate = function(template, cb) {
   givenEmptySandbox(function(err) {
     if(err) return cb(err);
     workspace.set('workspace dir', SANDBOX);
-    workspace.models.Workspace.createFromTemplate(template, cb);
+    workspace.models.Workspace.createFromTemplate(template, 'sandbox', cb);
   });
 }
 
@@ -81,6 +81,7 @@ function findOfType(name, type) {
 
 findComponentDefinitions = findOfType('components', models.ComponentDefinition);
 findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
+findComponentModels = findOfType('componentModels', models.ComponentModel);
 findModelDefinitions = findOfType('models', models.ModelDefinition);
 findViewDefinitions = findOfType('views', models.ViewDefinition);
 findModelProperties = findOfType('properties', models.ModelProperty);
@@ -96,6 +97,7 @@ findAllEntities = function(cb) {
     findComponentDefinitions,
     findDataSourceDefinitions,
     findModelDefinitions,
+    findComponentModels,
     findViewDefinitions,
     findModelProperties,
     findModelMethods,

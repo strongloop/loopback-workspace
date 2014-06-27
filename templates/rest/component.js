@@ -3,10 +3,7 @@
  */
 
 var template = module.exports;
-var component = template.component = {
-  name: 'rest',
-  type: 'service' // placeholder
-};
+var component = template.component = {};
 
 template.package = {
   "name": "rest",
@@ -23,7 +20,7 @@ template.componentModels = [
     dataSource: 'db'
   },
   {
-    name: 'acl'
+    name: 'acl',
     dataSource: 'db'
   },
   {

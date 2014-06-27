@@ -59,7 +59,7 @@ function formatRelatedData(relation, relatedData) {
         result[key] = related;
         delete related[relation.embed.key];
       });
-      return result
+      return result;
     break;
     case 'array':
       return relatedData;

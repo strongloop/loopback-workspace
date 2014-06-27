@@ -35,12 +35,12 @@ describe('DataSourceDefinition', function() {
   });
 
   describe('dataSourceDefinition.configFile', function () {
-    beforeEach(givenEmptyWorkspace);
+    beforeEach(givenBasicWorkspace);
     beforeEach(findDataSourceDefinitions);
 
     it('should be defined', function () {
       this.dataSources.forEach(function(def) {
-        expect(def.configFile).to.equal('api/datasources.json');
+        expect(def.configFile).to.equal('rest/datasources.json');
       });
     });
   });
