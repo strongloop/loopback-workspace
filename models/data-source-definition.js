@@ -1,10 +1,9 @@
 var app = require('../app');
+var loopback = require('loopback');
 
 /*
  TODOs
-
- - implement discovery
- - implement connection testing
+ 
  - add a flag indicating if discover is supported
  
 */
@@ -36,32 +35,53 @@ DataSourceDefinition.validatesPresenceOf('name', 'connector');
  */
 
 DataSourceDefinition.prototype.testConnection = function(cb) {
-
+  var dataSource = this.toDataSource();
+  var timeout = DataSourceDefinition.settings.testConnectionTimeout || 60000;
+  dataSource.once('connected', function() {
+    clearTimeout(timer);
+    cb(null, true);
+  });
+  dataSource.once('error', cb);
+  var timer = setTimeout(function() {
+    cb(new Error('connection timed out after ' + timeout + 'ms'));
+  }, timeout);
+  dataSource.connect();
 }
 
 /**
- * Get the schema for the given table / collection name.
+ * Discover the model definition by table name from this data source. Use the `name`
+ * provided by items from returned from `DataSourceDefinition.getSchema()`.
  *
- * @param {String} name The collection / table name.
- * @callback {Function} callback
- * @param {Error} err
- * @param {DatabaseColumn[]} columns An array of columns
+ * @param {String} modelName The model name (usually from `DataSourceDefinition.getSchema()`.
+ * @options {Object} [options] Options; see below.
+ * @property {String} owner|schema Database owner or schema name.
+ * @property {Boolean} relations True if relations (primary key/foreign key) are navigated; false otherwise.
+ * @property {Boolean} all True if all owners are included; false otherwise.
+ * @property {Boolean} views True if views are included; false otherwise.
  */
 
-DataSourceDefinition.prototype.getSchema = function(name, cb) {
-
+DataSourceDefinition.prototype.discoverModelDefinition = function(name, options, cb) {
+  this.toDataSource().discoverSchemas(name, options, cb);
 }
 
 /**
- * Discover model definitions available from this data source.
+ * Get a list of table / collection names, owners and types.
  *
+ * @param {Object} options The options
+ * @param {Function} Callback function.  Optional.
+ * @options {Object} options Discovery options.  See below.
+ * @property {Boolean} all If true, discover all models; if false, discover only
+ * models owned by the current user.
+ * @property {Boolean} views If true, nclude views; if false, only tables.
+ * @property {Number} limit Page size
+ * @property {Number} offset Starting index
  * @callback {Function} callback
  * @param {Error} err
  * @param {ModelDefinition[]} models An array of model definitions
  */
 
-DataSourceDefinition.prototype.discoverModelDefinitions = function(cb) {
-
+DataSourceDefinition.prototype.getSchema = function(options, cb) {
+  this.toDataSource().discoverModelDefinitions(options, cb);
 }
 
 /**
@@ -86,4 +106,14 @@ DataSourceDefinition.prototype.automigrate = function() {
 
 DataSourceDefinition.prototype.autoupdate = function() {
   
+}
+
+/**
+ * Create a `loopback.DataSource` object from the `DataSourceDefinition`.
+ *
+ * @returns {DataSource}
+ */
+
+DataSourceDefinition.prototype.toDataSource = function() {
+  return loopback.createDataSource(this.name, this);
 }
