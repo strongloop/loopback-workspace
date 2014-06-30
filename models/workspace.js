@@ -165,3 +165,21 @@ Workspace.createFromTemplate = function(templateName, name, cb) {
     template: templateName
   }, cb);
 }
+
+/**
+ * @typedef {{name, description,supportedByStrongLoop}} ConnectorMeta
+ */
+
+/**
+ * @type {Array.<ConnectorMeta>}
+ * @internal
+ */
+var staticConnectorList = require('../available-connectors');
+
+/**
+ * List of connectors available on npm.
+ * @param {function(Error=,Array.<ConnectorMeta>=)} cb
+ */
+Workspace.listAvailableConnectors = function(cb) {
+  cb(null, staticConnectorList);
+};
