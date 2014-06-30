@@ -14,6 +14,7 @@ var ViewDefinition = app.models.ViewDefinition;
 var TEMPLATE_DIR = path.join(__dirname, '..', 'templates');
 var DEFAULT_TEMPLATE = 'api-server';
 var debug = require('debug')('workspace');
+var loopback = require('loopback');
 
 /**
  * Groups related LoopBack applications.
@@ -34,6 +35,10 @@ var Workspace = app.models.Workspace;
 Workspace.getAvailableTemplates = function(cb) {
   fs.readdir(TEMPLATE_DIR, cb);
 }
+
+loopback.remoteMethod(Workspace.getAvailableTemplates, {
+  http: {verb: 'get', path: '/component-templates'}
+});
 
 Workspace.addComponent = function(options, cb) {
   var template;
@@ -149,6 +154,11 @@ Workspace.addComponent = function(options, cb) {
   async.parallel(steps, cb);
 }
 
+loopback.remoteMethod(Workspace.addComponent, {
+  http: {verb: 'post', path: '/component'},
+  accepts: {arg: 'options', type: 'object', {http: { source: 'body' }}}]
+});
+
 /**
  * In the attached `dataSource`, create a set of app definitions and
  * corresponding workspace entities using the given template.
@@ -165,6 +175,15 @@ Workspace.createFromTemplate = function(templateName, name, cb) {
     template: templateName
   }, cb);
 }
+
+loopback.remoteMethod(Workspace.createFromTemplate, {
+  http: {verb: 'post', path: '/'},
+  accepts: [{
+    arg: 'templateName', type: 'string'
+  }, {
+    arg: 'name', type: 'string'
+  }]
+});
 
 /**
  * @typedef {{name, description,supportedByStrongLoop}} ConnectorMeta
@@ -183,3 +202,8 @@ var staticConnectorList = require('../available-connectors');
 Workspace.listAvailableConnectors = function(cb) {
   cb(null, staticConnectorList);
 };
+
+loopback.remoteMethod(Workspace.listAvailableConnectors, {
+  http: {verb: 'get', path: '/connectors'},
+  returns: {type: 'array'}
+});

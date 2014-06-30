@@ -11,7 +11,7 @@
     "properties": {
       "name": {"id": true, "type": "string"}
     },
-    "public": false,
+    "public": true,
     "dataSource": "db"
   },
   "PackageDefinition": {
