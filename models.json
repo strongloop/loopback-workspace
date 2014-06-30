@@ -122,7 +122,7 @@
           "foreignKey": "fromModel"
         },
         "accessControls": {
-          "embed": {"as": "array"},
+          "embed": {"name": "acls", "as": "array"},
           "type": "hasMany",
           "model": "ModelAccessControl",
           "foreignKey": "model"

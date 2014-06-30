@@ -1,6 +1,8 @@
 var app = require('../app');
 var ModelDefinition = app.models.ModelDefinition;
+var ModelAccessControl = app.models.ModelAccessControl;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var ref = TestDataBuilder.ref;
 var ConfigFile = app.models.ConfigFile;
 
 describe('ModelDefinition', function() {
@@ -72,8 +74,14 @@ describe('ModelDefinition', function() {
   });
 
   describe('ModelDefinition.getConfigData(cache, modelDef)', function() {
-    beforeEach(function() {
-      this.cache = app.dataSources.db.connector.cache;
+    beforeEach(givenEmptyWorkspace);
+
+    before(function() {
+      Object.defineProperty(this, 'cache', {
+        get: function() {
+          return app.dataSources.db.connector.cache;
+        }
+      });
     });
 
     it('includes `name` property', function(done) {
@@ -85,6 +93,26 @@ describe('ModelDefinition', function() {
           if (err) return done(err);
           var data = ModelDefinition.getConfigData(this.cache, this.model);
           expect(data).to.have.property('name', this.modelName);
+          done();
+        }.bind(this));
+    });
+
+    it('includes access-control configuration', function(done) {
+      new TestDataBuilder()
+        .define('model', ModelDefinition, {
+          name: 'Car',
+          componentName: '.'
+        })
+        .define('aclx', ModelAccessControl, {
+          method: 'ALL',
+          model: ref('model.name')
+        })
+        .buildTo(this, function(err) {
+          if (err) return done(err);
+          var data = ModelDefinition.getConfigData(this.cache, this.model);
+          expect(data).to.have.property('acls');
+          expect(data.acls, 'acls').to.have.length(1);
+          expect(data.acls[0], 'acls[0]').to.have.property('method', 'ALL');
           done();
         }.bind(this));
     });
