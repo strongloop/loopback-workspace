@@ -172,7 +172,7 @@
   },
   "ModelAccessControl": {
     "properties": {
-      "method": {"type": "string", "default": "ALL"},
+      "property": {"type": "string"},
       "route": {"type": "string"},
       "principalId": {"type": "string"},
       "principalType": {"type": "string"},
