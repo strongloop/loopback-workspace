@@ -8,3 +8,18 @@ var app = require('../app');
  */
 
 var ModelProperty = app.models.ModelProperty;
+
+/**
+ * List of built-in types that can be used for `ModelProperty.type`.
+ * @type {string[]}
+ */
+ModelProperty.availableTypes = [
+  'string',
+  'number',
+  'boolean',
+  'object',
+  'array',
+  'date',
+  'buffer',
+  'geopoint'
+];

@@ -26,6 +26,15 @@ connector.loadFromFile = function() {
   }
 
   loader = connector.loader = new EventEmitter();
+  var done = function(err) {
+    if (err)
+      loader.emit('error', err);
+    else
+      loader.emit('complete');
+
+    connector.loader = null;
+    cb(err);
+  };
 
   // reset the cache
   var cacheKeys = Object.keys(connector.cache);
@@ -35,27 +44,24 @@ connector.loadFromFile = function() {
   }, {});
 
   ConfigFile.findComponentFiles(function(err, components) {
-    if(err) return cb(err);
+    if(err) return done(err);
     var componentNames = Object.keys(components);
 
-    async.each(componentNames, function(component, cb) {
+    async.each(componentNames, function(component, next) {
       ComponentDefinition.loadIntoCache(cache, component, components, function(err) {
         if(err) {
-          loader.emit('error', err);
-          return cb(err);
+          return next(err);
         }
         // commit the cache
         connector.cache = cache;
-        connector.loader = null;
-        loader.emit('complete');
         if(debug.enabled) {
           Object.keys(cache).forEach(function(model) {
             debug('setting cache %s => %j', model, Object.keys(cache[model]));
           });
         }
-        cb();
+        next();
       });
-    }, cb);
+    }, done);
   });
 }
 
@@ -67,6 +73,7 @@ connector.find = function(model) {
   var cb = args[args.length - 1];
   connector.loadFromFile(function(err) {
     if(err) return cb(err);
+    debug('reading from cache %s => %j', model, Object.keys(connector.cache[model]));
     originalFind.apply(connector, args);
   });
 }

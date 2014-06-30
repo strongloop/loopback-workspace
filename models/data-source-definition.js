@@ -64,6 +64,15 @@ DataSourceDefinition.prototype.discoverModelDefinition = function(name, options,
   this.toDataSource().discoverSchemas(name, options, cb);
 }
 
+loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
+  http: {verb: 'get', path: '/definitions/:name'},
+  accepts: [
+    { arg: 'name', type: 'string', http: { source: 'path' } },
+    { arg: 'options', type: 'object' }
+  ],
+  returns: { arg: 'definition', type: 'object' }
+});
+
 /**
  * Get a list of table / collection names, owners and types.
  *
@@ -84,6 +93,12 @@ DataSourceDefinition.prototype.getSchema = function(options, cb) {
   this.toDataSource().discoverModelDefinitions(options, cb);
 }
 
+loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
+  http: {verb: 'get', path: '/schema'},
+  accepts: { arg: 'options', type: 'object' },
+  returns: { arg: 'schema', type: 'object' }
+});
+
 /**
  * Run a migration on the data source. Creates indexes, tables, collections, etc.
  *
@@ -97,6 +112,8 @@ DataSourceDefinition.prototype.automigrate = function() {
 
 }
 
+loopback.remoteMethod(DataSourceDefinition.prototype.automigrate);
+
 /**
  * Update existing tables / collections.
  *
@@ -107,6 +124,8 @@ DataSourceDefinition.prototype.automigrate = function() {
 DataSourceDefinition.prototype.autoupdate = function() {
   
 }
+
+loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate);
 
 /**
  * Create a `loopback.DataSource` object from the `DataSourceDefinition`.
