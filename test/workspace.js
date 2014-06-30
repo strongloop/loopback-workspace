@@ -51,4 +51,19 @@ describe('Workspace', function() {
   describe('Workspace.listUseableConnectors(cb)', function () {
     it('should return a list of connectors in package.json');
   });
+
+
+  describe('project.listAvailableConnectors(cb)', function() {
+    before(function(done) {
+      Workspace.listAvailableConnectors(function(err, list) {
+        this.connectors = list;
+        done(err);
+      }.bind(this));
+    });
+
+    it('should include Memory connector', function() {
+      var names = this.connectors.map(function(it) { return it.name; });
+      expect(names).to.contain('memory');
+    });
+  });
 });

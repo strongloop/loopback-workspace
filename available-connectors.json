@@ -1,0 +1,53 @@
+[
+  {
+    "name": "memory",
+    "description": "In-memory db",
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "mysql",
+    "description": "MySQL",
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "postgresql",
+    "description": "PostgreSQL",
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "oracle",
+    "description": "Oracle",
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "mssql",
+    "description": "Microsoft SQL",
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "mongodb",
+    "description": "MongoDB",
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "soap",
+    "description": "SOAP webservices",
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "rest",
+    "description": "REST services",
+    "supportedByStrongLoop": true
+  },
+
+  {
+    "name": "neo4j",
+    "description": "Neo4j",
+    "supportedByStrongLoop": false
+  },
+  {
+    "name": "kafka",
+    "description": "Kafka",
+    "supportedByStrongLoop": false
+  }
+]

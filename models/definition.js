@@ -1,6 +1,7 @@
 var loopback = require('loopback');
 var path = require('path');
 var app = require('../app');
+var debug = require('debug')('workspace:definition');
 var ConfigFile = app.models.ConfigFile;
 
 /**
@@ -94,7 +95,7 @@ Definition.getEmbededRelations = function() {
           results.push({
             embed: relation.embed,
             model: relation.model,
-            as: name,
+            as: relation.embed.name || name,
             type: relation.type,
             foreignKey: relation.foreignKey
           });
@@ -113,13 +114,17 @@ Definition.addRelatedToCache = function(cache, name, fileData) {
 
     if(Array.isArray(relatedData)) {
       relatedData.forEach(function(config) {
-        var id = config[relation.foreignKey];
+        var id = config[relation.foreignKey] || config.id;
+        config[relation.foreignKey] = name;
+        debug('addRelatedToCache %s %s %j', relation.model, id, config);
         Entity.addToCache(cache, id, config);
       });
     } else if(relatedData) {
       Object.keys(relatedData).forEach(function(id) {
         var config = relatedData[id];
         config[Entity.dataSource.idName(Entity.modelName)] = id;
+        config[relation.foreignKey] = name;
+        debug('addRelatedToCache %s %s %j', relation.model, id, config);
         Entity.addToCache(cache, id, config);
       });
     }

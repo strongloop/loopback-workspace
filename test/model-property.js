@@ -70,4 +70,19 @@ describe('ModelProperty', function() {
       expect(properties[this.propertyName]).to.eql({type: 'Boolean'});
     });
   });
+
+  describe('modelProperty.load()', function() {
+    it('should restore model relation', function(done) {
+      // every query triggers a reload
+      ModelProperty.all(function(err, list) {
+        if (err) return done(err);
+        expect(list[0].toObject()).to.eql(new ModelProperty({
+          name: this.propertyName,
+          type: 'String',
+          modelName: 'user'
+        }).toObject());
+        done();
+      }.bind(this));
+    });
+  });
 });
