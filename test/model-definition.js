@@ -92,7 +92,7 @@ describe('ModelDefinition', function() {
         .buildTo(this, function(err) {
           if (err) return done(err);
           var data = ModelDefinition.getConfigData(this.cache, this.model);
-          expect(data).to.have.property('name', this.modelName);
+          expect(data).to.have.property('name', 'test-model');
           done();
         }.bind(this));
     });
