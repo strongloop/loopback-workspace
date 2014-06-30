@@ -216,3 +216,39 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     cb();
   });
 }
+
+/**
+ * Require the components main module.
+ *
+ * @callback {Function} callback
+ * @param {Error} err
+ * @param {Object} main The main module exports
+ */
+
+
+ComponentDefinition.prototype.exec = function(cb) {
+  var component = this;
+  this.package(function(err, package) {
+    if(err) return cb(err);
+    if(package) {
+      var main = path.join(
+        ComponentDefinition.getWorkspaceDir(),
+        ComponentDefinition.getDir(component.name, component),
+        package.main
+      );
+
+      // TODO(ritch) - should this be split into a separate process?
+      var exports;
+
+      try {
+        exports = require(main);
+      } catch(e) {
+        return cb(e);
+      }
+
+      cb(null, exports);
+    } else {
+      cb(new Error('no package defined for this component'));
+    }
+  });
+}

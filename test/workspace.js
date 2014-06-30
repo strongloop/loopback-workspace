@@ -3,6 +3,7 @@ var app = require('../app');
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var Workspace = app.models.Workspace;
 var ConfigFile = app.models.ConfigFile;
+var ComponentDefinition = app.models.ComponentDefinition;
 
 describe('Workspace', function() {
   describe('Workspace.getAvailableTemplates(callback)', function() {
@@ -13,6 +14,19 @@ describe('Workspace', function() {
         expect(templates).to.contain('server');
         done();
       });
+    });
+  });
+
+  describe('Workspace.addComponent(options, cb)', function () {
+    beforeEach(givenEmptySandbox);
+    beforeEach(function(done) {
+      Workspace.addComponent({
+        template: 'rest'
+      }, done);
+    });
+    it('should add the static component files', function () {
+      expectFileExists(getPath('rest/rest.js'));
+      expectFileExists(getPath('rest/boot/authentication.js'));
     });
   });
 
@@ -46,12 +60,24 @@ describe('Workspace', function() {
       expect(dataSourceNames).to.contain('mail');
       expect(dataSourceNames).to.contain('db');
     });
+
+    it('should create a runnable set of components', function (done) {
+      ComponentDefinition.findOne({
+        where: {
+          name: '.'
+        }
+      }, function(err, component) {
+        if(err) return done(err);
+        done();
+        // this requires the project to be installed
+        // component.exec(done);
+      });
+    });
   });
 
   describe('Workspace.listUseableConnectors(cb)', function () {
     it('should return a list of connectors in package.json');
   });
-
 
   describe('project.listAvailableConnectors(cb)', function() {
     before(function(done) {

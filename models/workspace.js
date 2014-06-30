@@ -125,17 +125,13 @@ Workspace.addComponent = function(options, cb) {
   steps.push(function(cb) {
     fs.exists(fileTemplatesDir, function(exists) {
       if(exists) {
-        steps.push(copyTemplateFiles);
-        cb();
+        ncp(fileTemplatesDir, dest, cb);
       } else {
         cb();
       }
     });
   });
 
-  function copyTemplateFiles(cb) {
-    ncp(fileTemplatesDir, dest, cb);
-  }
   function setComponentName(obj) {
     if(Array.isArray(obj)) {
       obj.forEach(function(item) {
