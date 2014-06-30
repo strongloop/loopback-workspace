@@ -31,6 +31,8 @@ connector.loadFromFile = function() {
       loader.emit('error', err);
     else
       loader.emit('complete');
+
+    connector.loader = null;
     cb(err);
   };
 
@@ -52,7 +54,6 @@ connector.loadFromFile = function() {
         }
         // commit the cache
         connector.cache = cache;
-        connector.loader = null;
         if(debug.enabled) {
           Object.keys(cache).forEach(function(model) {
             debug('setting cache %s => %j', model, Object.keys(cache[model]));
