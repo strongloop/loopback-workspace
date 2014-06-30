@@ -3,15 +3,13 @@ var WorkspaceEntity = app.models.WorkspaceEntity;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 
 describe('WorkspaceEntity', function() {
-  describe('workspaceEntity.getLocation()', function() {
-    it('Get the file location of the entity.', function() {
-
-    });
-  });
-
-  describe('WorkspaceEntity.getWorkspaceDir()', function() {
-    it('Get the Workspace directory.', function() {
-
+  describe('workspaceEntity.getUniqueId()', function() {
+    it('get the unique identifier of the entity', function() {
+      var bar = new WorkspaceEntity({
+        componentName: 'foo',
+        name: 'bar'
+      });
+      expect(bar.getUniqueId()).to.equal('foo.bar');
     });
   });
 });

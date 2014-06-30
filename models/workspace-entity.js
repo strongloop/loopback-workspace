@@ -3,27 +3,42 @@ var app = require('../app');
 var WorkspaceEntity = app.model('WorkspaceEntity', {
   "properties": {
     "configFile": {"type": "string"},
-    "scriptFile": {"type": "string"},
-    "configLineNum": {"type": "number"},
-    "locked": {"type": "boolean"}
+    "componentName": {"type": "string"} /* , required: true */
   },
   "public": false,
   "dataSource": "db"
 });
 
-/**
- * Get the file location of the entity.
- * 
- * @returns {String} location For example
- * `"/foo/bar/bat/baz.json:237"`
- */
-
-WorkspaceEntity.prototype.getLocation = function() {
-  throwMustImplement('getLocation', this.constructor);
+WorkspaceEntity.prototype.getUniqueId = function() {
+  var sep = this.constructor.settings.idSeparator || '.';
+  var parts = this.getUniqueIdParts();
+  if(parts.length >= 1) {
+    return parts.join(sep);
+  }
+  return null;
 }
 
-function throwMustImplement(name, constructor) {
-  throw new Error('must be implemented by ', constructor.name);
+WorkspaceEntity.prototype.getUniqueIdParts = function() {
+  var settings = this.constructor.settings;
+  var includeIdPart = settings.includeIdPart;
+  var parts = [];
+  var requiredParts = 2;
+
+  if(includeIdPart) requiredParts++;
+  if(this.componentName) {
+    if(this.componentName === '.') {
+      requiredParts--;
+    } else {
+      parts.push(this.componentName);
+    }
+  }
+  if(includeIdPart && this[includeIdPart]) {
+    parts.push(this[includeIdPart]);
+  }
+  if(this.name) parts.push(this.name);
+
+  if(parts.length === requiredParts) return parts;
+  return [];
 }
 
 /**
@@ -41,7 +56,10 @@ WorkspaceEntity.clearCache = function(cache) {
   cache[this.modelName] = {};
 }
 
-WorkspaceEntity.addToCache = function(cache, id, val) {
+WorkspaceEntity.addToCache = function(cache, val) {
+  var Entity = this;
+  var entity = new Entity(val);
+  var id = entity.getUniqueId();
   cache[this.modelName][id] = JSON.stringify(val);
 }
 

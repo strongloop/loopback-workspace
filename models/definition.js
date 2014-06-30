@@ -15,7 +15,6 @@ var Definition = app.model('Definition', {
   "properties": {
     "name": {
       "type": "string",
-      "id": true,
       "required": true
     },
     "dir": {
@@ -117,7 +116,7 @@ Definition.addRelatedToCache = function(cache, name, fileData) {
         var id = config[relation.foreignKey] || config.id;
         config[relation.foreignKey] = name;
         debug('addRelatedToCache %s %s %j', relation.model, id, config);
-        Entity.addToCache(cache, id, config);
+        Entity.addToCache(cache, config);
       });
     } else if(relatedData) {
       Object.keys(relatedData).forEach(function(id) {
@@ -125,7 +124,7 @@ Definition.addRelatedToCache = function(cache, name, fileData) {
         config[Entity.dataSource.idName(Entity.modelName)] = id;
         config[relation.foreignKey] = name;
         debug('addRelatedToCache %s %s %j', relation.model, id, config);
-        Entity.addToCache(cache, id, config);
+        Entity.addToCache(cache, config);
       });
     }
   });

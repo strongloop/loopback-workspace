@@ -44,7 +44,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
       packageFile.load(cb);
     }, function(cb) {
       packageFile.data.componentName = componentName;
-      PackageDefinition.addToCache(cache, componentName, packageFile.data || {});
+      PackageDefinition.addToCache(cache, packageFile.data || {});
       cb();
     });
   }
@@ -57,7 +57,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
       component.data.configFile = component.path;
       component.data.name = componentName;
       debug('adding to cache component file [%s]', component.path);
-      ComponentDefinition.addToCache(cache, componentName, component.data);
+      ComponentDefinition.addToCache(cache, component.data);
       cb();
     });
   } else {
@@ -86,7 +86,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         var componentModel = modelDefs[modelName];
         componentModel.componentName = componentName;
         componentModel.name = modelName;
-        ComponentModel.addToCache(cache, modelName, componentModel);
+        ComponentModel.addToCache(cache, componentModel);
       });
 
       cb();
@@ -106,8 +106,8 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
 
         debug('loading [%s] model definition into cache', def.name);
 
-        ModelDefinition.addToCache(cache, def.name, def);
-        ModelDefinition.addRelatedToCache(cache, def.name, def);
+        ModelDefinition.addToCache(cache, def);
+        ModelDefinition.addRelatedToCache(cache, def);
       });
       cb();
     });
@@ -126,7 +126,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         def.name = dataSourceName;
         def.componentName = componentName;
         debug('loading [%s] dataSource into cache', dataSourceName);
-        DataSourceDefinition.addToCache(cache, dataSourceName, def);
+        DataSourceDefinition.addToCache(cache, def);
       });
       
       cb();
@@ -244,3 +244,7 @@ ComponentDefinition.hasApp = function(componentDef) {
   // e.g. package.json > loopback-workspace > app: true|false
   return componentDef.name !== '.';
 };
+
+ComponentDefinition.prototype.getUniqueId = function() {
+  return this.name || null;
+}
