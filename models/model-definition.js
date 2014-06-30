@@ -28,6 +28,8 @@ ModelDefinition.getConfigData = function(cache, modelDef) {
   var configData = {};
   var relations = this.getEmbededRelations();
 
+  configData.name = modelDef.name;
+
   relations.forEach(function(relation) {
     var relatedData = getRelated(cache, modelDef.name, relation);
     configData[relation.as] = formatRelatedData(relation, relatedData);

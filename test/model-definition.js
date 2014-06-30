@@ -70,4 +70,23 @@ describe('ModelDefinition', function() {
       }}
     }
   });
+
+  describe('ModelDefinition.getConfigData(cache, modelDef)', function() {
+    beforeEach(function() {
+      this.cache = app.dataSources.db.connector.cache;
+    });
+
+    it('includes `name` property', function(done) {
+      new TestDataBuilder()
+        .define('model', ModelDefinition, {
+          name: 'test-model'
+        })
+        .buildTo(this, function(err) {
+          if (err) return done(err);
+          var data = ModelDefinition.getConfigData(this.cache, this.model);
+          expect(data).to.have.property('name', this.modelName);
+          done();
+        }.bind(this));
+    });
+  });
 });
