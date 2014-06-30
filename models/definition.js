@@ -123,6 +123,7 @@ Definition.addRelatedToCache = function(cache, name, fileData) {
       Object.keys(relatedData).forEach(function(id) {
         var config = relatedData[id];
         config[Entity.dataSource.idName(Entity.modelName)] = id;
+        config[relation.foreignKey] = name;
         debug('addRelatedToCache %s %s %j', relation.model, id, config);
         Entity.addToCache(cache, id, config);
       });
