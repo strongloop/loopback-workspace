@@ -3,6 +3,7 @@ var async = require('async');
 var fs = require('fs-extra');
 var path = require('path');
 expect = require('chai').expect;
+process.env.NODE_ENV = 'test';
 var workspace = require('../app');
 var models = workspace.models;
 var ConfigFile = models.ConfigFile;

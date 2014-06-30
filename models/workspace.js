@@ -179,9 +179,9 @@ Workspace.createFromTemplate = function(templateName, name, cb) {
 loopback.remoteMethod(Workspace.createFromTemplate, {
   http: {verb: 'post', path: '/'},
   accepts: [{
-    arg: 'templateName', type: 'string'
+    arg: 'templateName', type: 'string', http: {source: 'body'}
   }, {
-    arg: 'name', type: 'string'
+    arg: 'name', type: 'string', http: {source: 'body'}
   }]
 });
 
@@ -205,5 +205,5 @@ Workspace.listAvailableConnectors = function(cb) {
 
 loopback.remoteMethod(Workspace.listAvailableConnectors, {
   http: {verb: 'get', path: '/connectors'},
-  returns: {type: 'array'}
+  returns: {arg: 'connectors', type: 'array', root: true}
 });
