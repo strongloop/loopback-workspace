@@ -103,11 +103,13 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         var def = configFile.data || {};
         def.componentName = componentName;
         def.configFile = configFile.path;
+        var modelDef = new ModelDefinition(def);
 
         debug('loading [%s] model definition into cache', def.name);
 
         ModelDefinition.addToCache(cache, def);
-        ModelDefinition.addRelatedToCache(cache, def);
+        ModelDefinition.addRelatedToCache(cache, def, componentName
+          , modelDef.getUniqueId());
       });
       cb();
     });

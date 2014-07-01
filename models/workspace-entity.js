@@ -60,6 +60,7 @@ WorkspaceEntity.addToCache = function(cache, val) {
   var Entity = this;
   var entity = new Entity(val);
   var id = entity.getUniqueId();
+  val[this.dataSource.idName(Entity.modelName)] = id;
   cache[this.modelName][id] = JSON.stringify(val);
 }
 

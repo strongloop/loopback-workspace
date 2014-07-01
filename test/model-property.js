@@ -18,7 +18,8 @@ describe('ModelProperty', function() {
     var property = {
       name: test.propertyName,
       type: 'String',
-      modelName: 'user'
+      modelName: 'user',
+      componentName: 'rest'
     };
     ModelProperty.create(property, function(err, property) {
       if(err) return done(err);
@@ -35,6 +36,9 @@ describe('ModelProperty', function() {
       expect(this.property.name).to.equal(this.propertyName);
       expect(properties).to.have.property(this.propertyName);
       expect(properties[this.propertyName]).to.eql({type: type});
+    });
+    it('should have the correct id', function () {
+      expect(this.property.id).to.equal('rest.user.myProperty');
     });
   });
 
@@ -76,11 +80,16 @@ describe('ModelProperty', function() {
       // every query triggers a reload
       ModelProperty.all(function(err, list) {
         if (err) return done(err);
-        expect(list[0].toObject()).to.eql(new ModelProperty({
+        var actual = list[0].toObject();
+        var expected = new ModelProperty({
           name: this.propertyName,
           type: 'String',
-          modelName: 'user'
-        }).toObject());
+          modelName: 'rest.user',
+          componentName: 'rest',
+          id: 'rest.rest.user.myProperty'
+        }).toObject();
+
+        expect(actual).to.eql(expected);
         done();
       }.bind(this));
     });

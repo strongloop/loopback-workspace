@@ -51,7 +51,6 @@ function getRelated(cache, id, relation) {
 function formatRelatedData(relation, relatedData) {
   var result;
   assert(relation.embed && relation.embed.as, 'embed requires "as"');
-  cleanRelatedData(relatedData, relation);
   switch(relation.embed.as) {
     case 'object':
       assert(relation.embed.key, 'embed as object requires "key"');
@@ -59,11 +58,12 @@ function formatRelatedData(relation, relatedData) {
       relatedData.forEach(function(related) {
         var key = related[relation.embed.key];
         result[key] = related;
-        delete related[relation.embed.key];
       });
+      cleanRelatedData(relatedData, relation);
       return result;
     break;
     case 'array':
+      cleanRelatedData(relatedData, relation);
       return relatedData;
     break;
   }
@@ -95,6 +95,10 @@ ModelDefinition.toFilename = function(name) {
 function cleanRelatedData(relatedData, relation) {
   relatedData.forEach(function(obj) {
     assert(relation.foreignKey, 'embeded relation must have foreignKey');
-    delete obj[relation.foreignKey];
+    delete obj[relation.foreignKey];    
+    delete obj[relation.embed.key];
+    // TODO(ritch) we can probably generalize these
+    delete obj.id;
+    delete obj.componentName;
   });
 }

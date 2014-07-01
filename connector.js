@@ -1,4 +1,5 @@
 var app = require('./app');
+var loopback = require('loopback');
 var connector = app.dataSources.db.connector;
 var ComponentDefinition = app.models.ComponentDefinition;
 var ConfigFile = app.models.ConfigFile;
@@ -88,4 +89,35 @@ connector.all = function(model) {
     debug('reading from cache %s => %j', model, Object.keys(connector.cache[model]));
     originalAll.apply(connector, args);
   });
+}
+
+connector.getIdValue = function(model, data) {
+  var Entity = loopback.getModel(model);
+  var entity = new Entity(data);
+  return entity.getUniqueId();
+}
+
+connector.create = function create(model, data, callback) {
+  var Entity = loopback.getModel(model);
+  var entity = new Entity(data);
+  var id = entity.getUniqueId();
+
+  this.setIdValue(model, data, id);
+
+  if(!this.cache[model]) {
+    this.cache[model] = {};
+  }
+
+  this.cache[model][id] = serialize(data);
+  this.saveToFile(id, function(err) {
+    if(err) return callback(err);
+    callback(null, id);
+  });
+};
+
+function serialize(obj) {
+  if(obj === null || obj === undefined) {
+    return obj;
+  }
+  return JSON.stringify(obj);
 }

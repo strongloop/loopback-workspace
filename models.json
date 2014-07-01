@@ -64,7 +64,7 @@
   },
   "ComponentModel": {
     "properties": {
-      "id": {"type": "string"},
+      "id": {"type": "string", "id": true},
       "name": {"type": "string"}
     },
     "dataSource": "db",
@@ -93,7 +93,8 @@
   },
   "ModelDefinition": {
     "properties": {
-      "id": "string",
+      "id": {"type": "string", "id": true},
+      "name": "string",
       "plural": "string",
       "strict": "boolean",
       "scopes": "array",
@@ -153,7 +154,7 @@
   },
   "ModelMethod": {
     "properties": {
-      "id": "string",
+      "id": {"type": "string", "id": true},
       "aliases": {"type": "array"},
       "isStatic": {"type": "boolean"},
       "accepts": {"type": "array"},
@@ -171,7 +172,7 @@
   },
   "ModelRelation": {
     "properties": {
-      "id": {"type": "string"},
+      "id": {"type": "string", "id": true},
       "type": {"type": "string"},
       "as": {"type": "string"},
       "foreignKey": {"type": "string"},
@@ -186,7 +187,7 @@
   },
   "ModelAccessControl": {
     "properties": {
-      "id": "string",
+      "id": {"type": "string", "id": true},
       "property": {"type": "string"},
       "route": {"type": "string"},
       "principalId": {"type": "string"},
@@ -202,9 +203,9 @@
   },
   "ModelProperty": {
     "properties": {
-      "id": "string",
+      "id": {"type": "string", "id": true},
       "type": {"type": "string"},
-      "name": {"type": "string", "id": true},
+      "name": {"type": "string"},
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
       "index": {"type": "boolean"},
@@ -241,7 +242,7 @@
   },
   "PropertyValidation": {
     "properties": {
-      "id": {"type": "string"},
+      "id": {"type": "string", "id": true},
       "type": {"type": "string"},
       "message": {"type": "string"},
       "min": {"type": "number"},
@@ -281,7 +282,7 @@
   },
   "DataSourceDefinition": {
     "properties": {
-      "id": {"type": "string"},
+      "id": {"type": "string", "id": true},
       "host": {"type": "string"},
       "port": {"type": "number"},
       "url": {"type": "string"},
