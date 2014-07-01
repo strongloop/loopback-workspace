@@ -12,9 +12,11 @@ var ComponentModel = app.models.ComponentModel;
 
 /**
  * - `name` is required and must be unique per `ComponentDefinition`
+ * - `componentName` is required and must refer to an existing component
  * 
  * @header Property Validation
  */
 
 ComponentModel.validatesUniquenessOf('name', { scopedTo: ['component'] });
 ComponentModel.validatesPresenceOf('name');
+ComponentModel.validatesPresenceOf('componentName');
