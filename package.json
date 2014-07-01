@@ -6,7 +6,7 @@
     "LoopBack",
     "Workspace"
   ],
-  "version": "2.5.0",
+  "version": "2.5.1",
   "scripts": {
     "test": "mocha --reporter spec"
   },
@@ -29,7 +29,7 @@
     "strong-cluster-control": "~0.4.0",
     "fs-tools": "~0.2.11",
     "loopback-explorer": "1.x >=1.1",
-    "loopback-push-notification": "~1.2.1",
+    "loopback-component-push": "~1.2.2",
     "loopback-datasource-juggler": "~1.6.1",
     "loopback-testing": "~0.2.0"
   },
