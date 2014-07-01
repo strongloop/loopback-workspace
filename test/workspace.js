@@ -1,4 +1,5 @@
 var async = require('async');
+var fs = require('fs-extra');
 var app = require('../app');
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var Workspace = app.models.Workspace;
@@ -61,15 +62,10 @@ describe('Workspace', function() {
       expect(dataSourceNames).to.contain('db');
     });
 
-    it('should create a runnable set of components', function (done) {
-      ComponentDefinition.findOne({
-        where: {
-          name: '.'
-        }
-      }, function(err, component) {
-        if(err) return done(err);
-        done();
-      });
+    it('should set correct name in package.json', function() {
+      var pkg = fs.readJsonFileSync(SANDBOX + '/package.json');
+      // project name is hard-coded in support.js as 'sandbox'
+      expect(pkg.name).to.equal('sandbox');
     });
   });
 
