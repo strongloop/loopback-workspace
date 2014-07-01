@@ -150,6 +150,7 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
   var configFile = ComponentDefinition.getConfigFile(componentName, componentDef);
   // remove extra data that shouldn't be persisted to the fs
   delete componentDef.configFile;
+  delete componentDef.name;
   configFile.data = componentDef;
 
   filesToSave.push(configFile);
@@ -173,7 +174,9 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     if(dataSourceDef.componentName === componentName) {
       dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
       dataSoureConfig[dataSourceDef.name] = dataSourceDef;
+      // remove extra data that shouldn't be persisted to the fs
       delete dataSourceDef.name;
+      delete dataSourceDef.componentName;
     }
   });
 
@@ -189,7 +192,9 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
   cachedComponentModels.forEach(function(componentModel) {
     componentModelsConfig[componentModel.name] = componentModel;
+    // remove extra data that shouldn't be persisted to the fs
     delete componentModel.name;
+    delete componentModel.componentName;
   });
 
   filesToSave.push(componentModelFile);
