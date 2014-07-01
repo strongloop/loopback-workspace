@@ -4,7 +4,6 @@
 
 var template = module.exports;
 var component = template.component = {
-  restApiRoot: '/api'
 };
 
 template.config = {
