@@ -69,8 +69,6 @@ describe('Workspace', function() {
       }, function(err, component) {
         if(err) return done(err);
         done();
-        // this requires the project to be installed
-        // component.exec(done);
       });
     });
   });
