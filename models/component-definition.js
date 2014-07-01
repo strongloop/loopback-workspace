@@ -191,6 +191,7 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
   var componentModelsConfig = componentModelFile.data = {};
 
   cachedComponentModels.forEach(function(componentModel) {
+    if (componentModel.componentName !== componentName) return;
     componentModelsConfig[componentModel.name] = componentModel;
     // remove extra data that shouldn't be persisted to the fs
     delete componentModel.name;

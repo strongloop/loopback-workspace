@@ -17,5 +17,12 @@ describe('ComponentDefinition', function() {
       var content = fs.readJsonFileSync(SANDBOX + '/rest/datasources.json');
       expect(content.db).to.not.have.property('componentName');
     });
+
+    it('saves component models to correct file', function() {
+      var restModels = fs.readJsonFileSync(SANDBOX + '/rest/models.json');
+      var serverModels = fs.readJsonFileSync(SANDBOX + '/server/models.json');
+      expect(Object.keys(restModels), 'rest models').to.not.be.empty;
+      expect(Object.keys(serverModels), 'server models').to.be.empty;
+    });
   });
 });
