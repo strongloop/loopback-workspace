@@ -10,7 +10,7 @@ describe('ComponentDefinition', function() {
 
     it('omits `componentName` in models.json', function() {
       var content = fs.readJsonFileSync(SANDBOX + '/rest/models.json');
-      expect(content.user).to.not.have.property('componentName');
+      expect(content.User).to.not.have.property('componentName');
     });
 
     it('omits `componentName` in datasources.json', function() {

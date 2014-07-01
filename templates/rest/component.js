@@ -12,51 +12,37 @@ template.package = {
 
 template.componentModels = [
   {
-    name: 'user',
+    name: 'User',
     dataSource: 'db'
   },
   {
-    name: 'user',
-    dataSource: 'db'
+    name: 'AccessToken',
+    dataSource: 'db',
+    public: false
   },
   {
-    name: 'acl',
-    dataSource: 'db'
+    name: 'ACL',
+    dataSource: 'db',
+    public: false
   },
   {
-    name: 'roleMapping',
-    dataSource: 'db'
+    name: 'RoleMapping',
+    dataSource: 'db',
+    public: false
   },
   {
-    name: 'role',
-    dataSource: 'db'
+    name: 'Role',
+    dataSource: 'db',
+    public: false
   }
 ];
 
 template.relations = [
-  {
-    fromModel: 'user',
-    model: 'access-token',
-    type: 'hasMany',
-    foreignKey: 'userId'
-  },
-  {
-    fromModel: 'role',
-    type: 'hasMany',
-    model: 'roleMapping',
-    foreignKey: 'roleId'
-  }
 ];
 
 template.datasources = [
   {
     name: 'db',
-    defaultForType: 'db',
     connector: 'memory'
-  },
-  {
-    name: 'mail',
-    defaultForType: 'mail',
-    connector: 'mail'
   }
 ];

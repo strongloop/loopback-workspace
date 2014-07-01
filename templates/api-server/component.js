@@ -14,7 +14,10 @@ template.package = {
   "version": "0.0.0",
   "main": "server/server.js",
   "dependencies": {
+    "compression": "^1.0.3",
+    "errorhandler": "^1.1.1",
     "loopback": "~2.0.0-beta3",
+    "loopback-boot": "~2.0.0-beta1",
     "loopback-datasource-juggler": "~2.0.0-beta2"
   },
   "optionalDependencies": {

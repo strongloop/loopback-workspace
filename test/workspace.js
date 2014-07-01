@@ -58,7 +58,6 @@ describe('Workspace', function() {
 
     it('it should create a set of data source definitions', function() {
       var dataSourceNames = toNames(this.dataSources);
-      expect(dataSourceNames).to.contain('mail');
       expect(dataSourceNames).to.contain('db');
     });
 
