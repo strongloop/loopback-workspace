@@ -17,23 +17,25 @@ connector.saveToFile = function() {
 
 connector.loadFromFile = function() {
   var cb = arguments[arguments.length - 1];
-  var loader = connector.loader;
+  var recursiveCall = !!connector.loader;
 
-  if(loader) {
-    loader.once('complete', cb);
-    loader.once('error', cb);
-    return;
+  if (!recursiveCall) {
+    connector.loader = new EventEmitter();
+    connector.loader.setMaxListeners(100);
   }
 
-  loader = connector.loader = new EventEmitter();
+  var loader = connector.loader;
+  loader.once('complete', cb);
+  loader.once('error', cb);
+
+  if (recursiveCall) return;
+
   var done = function(err) {
     if (err)
       loader.emit('error', err);
     else
       loader.emit('complete');
-
     connector.loader = null;
-    cb(err);
   };
 
   // reset the cache

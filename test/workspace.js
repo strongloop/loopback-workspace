@@ -85,4 +85,36 @@ describe('Workspace', function() {
       expect(names).to.contain('memory');
     });
   });
+
+  describe('Workspace.isValidDir(cb)', function() {
+    beforeEach(resetWorkspace);
+    beforeEach(givenEmptySandbox);
+
+    it('returns no errors for a valid workspace dir', function(done) {
+      givenBasicWorkspace(function(err) {
+        if (err) return done(err);
+        Workspace.isValidDir(function(err) {
+          // the test passes when no error is reported
+          done(err);
+        });
+      });
+    });
+
+    it('should fail when the directory is empty', function(done) {
+      Workspace.isValidDir(function(err) {
+        expect(err && err.message)
+          .to.match(/Invalid workspace: no components found/);
+        done();
+      });
+    });
+
+    it('should fail when a json file is malformed', function(done) {
+      fs.writeFileSync(SANDBOX + '/package.json', '{malformed}', 'utf-8');
+      Workspace.isValidDir(function(err) {
+        expect(err && err.message)
+          .to.match(/Cannot parse package.json/);
+        done();
+      });
+    });
+  });
 });

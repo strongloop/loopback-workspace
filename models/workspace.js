@@ -180,3 +180,23 @@ var staticConnectorList = require('../available-connectors');
 Workspace.listAvailableConnectors = function(cb) {
   cb(null, staticConnectorList);
 };
+
+/**
+ * Check if the project is a valid directory.
+ * The callback is called with no arguments when the project is valid.
+ * @param {function(Error=)} cb
+ */
+Workspace.isValidDir = function(cb) {
+  // Every call of `Model.find()` triggers reload from the filesystem
+  // This allows us to catch basic errors in config files
+  ComponentDefinition.find(function(err, list) {
+    if (err) {
+      cb(err);
+    } else if (!list.length) {
+      cb(new Error('Invalid workspace: no components found.'));
+    } else {
+      // TODO(bajtos) Add more sophisticated validation based on component types
+      cb();
+    }
+  });
+};
