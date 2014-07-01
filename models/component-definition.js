@@ -61,7 +61,15 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
       cb();
     });
   } else {
-    debug('component configFile does not exist');
+    steps.push(function(cb) {
+      var componentData = {
+        name: componentName,
+        configFile: path.join(componentName, 'config.json')
+      };
+      debug('adding to cache component entry [%s]', componentData.configFile);
+      ComponentDefinition.addToCache(cache, componentName, componentData);
+      cb();
+    });
   }
 
   if(componentModels) {
@@ -147,13 +155,17 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
   var debug = require('debug')('workspace:component:save:' + componentName);
 
-  var configFile = ComponentDefinition.getConfigFile(componentName, componentDef);
-  // remove extra data that shouldn't be persisted to the fs
-  delete componentDef.configFile;
-  delete componentDef.name;
-  configFile.data = componentDef;
+  var hasApp = ComponentDefinition.hasApp(componentDef);
 
-  filesToSave.push(configFile);
+  if (hasApp) {
+    var configFile = ComponentDefinition.getConfigFile(componentName, componentDef);
+    // remove extra data that shouldn't be persisted to the fs
+    delete componentDef.configFile;
+    delete componentDef.name;
+    configFile.data = componentDef;
+
+    filesToSave.push(configFile);
+  }
 
   PackageDefinition.allFromCache(cache).forEach(function(package) {
     if(package.componentName === componentName) {
@@ -166,39 +178,41 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     }
   });
 
-  var dataSoureConfig = {};
-  var dataSourcePath = path.join(componentName, 'datasources.json');
-  var cachedDataSources = DataSourceDefinition.allFromCache(cache);
+  if (hasApp) {
+    var dataSoureConfig = {};
+    var dataSourcePath = path.join(componentName, 'datasources.json');
+    var cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
-  cachedDataSources.forEach(function(dataSourceDef) {
-    if(dataSourceDef.componentName === componentName) {
-      dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
-      dataSoureConfig[dataSourceDef.name] = dataSourceDef;
+    cachedDataSources.forEach(function(dataSourceDef) {
+      if (dataSourceDef.componentName === componentName) {
+        dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
+        dataSoureConfig[dataSourceDef.name] = dataSourceDef;
+        // remove extra data that shouldn't be persisted to the fs
+        delete dataSourceDef.name;
+        delete dataSourceDef.componentName;
+      }
+    });
+
+    filesToSave.push(new ConfigFile({
+      path: dataSourcePath,
+      data: dataSoureConfig
+    }));
+
+    var cachedComponentModels = ComponentModel.allFromCache(cache);
+    var componentModelsPath = path.join(componentName, ComponentModel.settings.defaultConfigFile);
+    var componentModelFile = new ConfigFile({path: componentModelsPath}); // models.json
+    var componentModelsConfig = componentModelFile.data = {};
+
+    cachedComponentModels.forEach(function(componentModel) {
+      if (componentModel.componentName !== componentName) return;
+      componentModelsConfig[componentModel.name] = componentModel;
       // remove extra data that shouldn't be persisted to the fs
-      delete dataSourceDef.name;
-      delete dataSourceDef.componentName;
-    }
-  });
+      delete componentModel.name;
+      delete componentModel.componentName;
+    });
 
-  filesToSave.push(new ConfigFile({
-    path: dataSourcePath,
-    data: dataSoureConfig
-  }));
-
-  var cachedComponentModels = ComponentModel.allFromCache(cache);
-  var componentModelsPath = path.join(componentName, ComponentModel.settings.defaultConfigFile);
-  var componentModelFile = new ConfigFile({path: componentModelsPath}); // models.json
-  var componentModelsConfig = componentModelFile.data = {};
-
-  cachedComponentModels.forEach(function(componentModel) {
-    if (componentModel.componentName !== componentName) return;
-    componentModelsConfig[componentModel.name] = componentModel;
-    // remove extra data that shouldn't be persisted to the fs
-    delete componentModel.name;
-    delete componentModel.componentName;
-  });
-
-  filesToSave.push(componentModelFile);
+    filesToSave.push(componentModelFile);
+  }
 
   var cachedModels = ModelDefinition.allFromCache(cache);
 
@@ -222,3 +236,11 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     cb();
   });
 }
+
+ComponentDefinition.hasApp = function(componentDef) {
+  // At the moment, the root component does not have `app.js`,
+  // all other components (rest, server) have their app.js
+  // In the future, we should read this from component,
+  // e.g. package.json > loopback-workspace > app: true|false
+  return componentDef.name !== '.';
+};

@@ -24,5 +24,14 @@ describe('ComponentDefinition', function() {
       expect(Object.keys(restModels), 'rest models').to.not.be.empty;
       expect(Object.keys(serverModels), 'server models').to.be.empty;
     });
+
+    it('omits json config files in the root of api-server component', function() {
+      var files = fs.readdirSync(SANDBOX);
+      expect(files).to.not.include.members([
+        'config.json',
+        'datasources.json',
+        'models.json']
+      );
+    });
   });
 });

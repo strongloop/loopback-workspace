@@ -56,12 +56,14 @@ givenFile = function(name, pathToFile) {
 }
 
 givenEmptyWorkspace = function(cb) {
+  var test = this;
+  test.emptyComponent = 'empty';
   resetWorkspace(function(err) {
     if(err) return cb(err);
     givenEmptySandbox(function(err) {
       if(err) return cb(err);
       models.ComponentDefinition.create({
-        name: '.'
+        name: test.emptyComponent
       }, cb);
     });
   });
