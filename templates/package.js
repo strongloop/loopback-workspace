@@ -11,6 +11,6 @@ module.exports = {
   },
   "optionalDependencies": {
     "loopback-explorer": "~1.1.0",
-    "loopback-push-notification": "~1.2.0"
+    "loopback-component-push": "~1.2.2"
   }
 };
