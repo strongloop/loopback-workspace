@@ -117,6 +117,7 @@ Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
         var entity = new Entity(config);
         config[relation.foreignKey] = fk;
         config.componentName = componentName;
+        debug('addRelatedToCache %s %j', relation.model, config);
         Entity.addToCache(cache, config);
       });
     } else if(relatedData) {
@@ -125,6 +126,7 @@ Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
         config[relation.foreignKey] = fk;
         config[relation.embed.key] = embedId;
         config.componentName = componentName;
+        debug('addRelatedToCache %s %j', relation.model, config);
         Entity.addToCache(cache, config);
       });
     }

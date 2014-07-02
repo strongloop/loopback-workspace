@@ -2,8 +2,7 @@ var path = require('path');
 var app = require('../app');
 var WorkspaceEntity = app.model('WorkspaceEntity', {
   "properties": {
-    "configFile": {"type": "string"},
-    "componentName": {"type": "string"} /* , required: true */
+    "configFile": {"type": "string"}
   },
   "public": false,
   "dataSource": "db"

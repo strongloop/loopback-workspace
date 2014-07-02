@@ -65,7 +65,8 @@
   "ComponentModel": {
     "properties": {
       "id": {"type": "string", "id": true},
-      "name": {"type": "string"}
+      "name": {"type": "string"},
+      "componentName": {"type": "string", "required": true}
     },
     "dataSource": "db",
     "options": {
@@ -161,7 +162,8 @@
       "returns": {"type": "array"},
       "description": {"type": "string"},
       "http": {"type": "object"},
-      "shared": {"type": "boolean"}
+      "shared": {"type": "boolean"},
+      "componentName": {"type": "string", "required": true}
     },
     "public": true,
     "dataSource": "db",
@@ -176,7 +178,8 @@
       "type": {"type": "string"},
       "as": {"type": "string"},
       "foreignKey": {"type": "string"},
-      "model": {"type": "string"}
+      "model": {"type": "string"},
+      "componentName": {"type": "string", "required": true}
     },
     "public": true,
     "dataSource": "db",
@@ -192,7 +195,8 @@
       "route": {"type": "string"},
       "principalId": {"type": "string"},
       "principalType": {"type": "string"},
-      "permission": {"type": "string", "required": true}
+      "permission": {"type": "string", "required": true},
+      "componentName": {"type": "string", "required": true}
     },
     "public": true,
     "dataSource": "db",
@@ -210,7 +214,8 @@
       "required": {"type": "boolean"},
       "index": {"type": "boolean"},
       "modelName": "string",
-      "desc": {"type": "string"}
+      "desc": {"type": "string"},
+      "componentName": {"type": "string", "required": true}
     },
     "public": true,
     "dataSource": "db",
@@ -249,7 +254,8 @@
       "max": {"type": "string"},
       "int": {"type": "string"},
       "number": {"type": "string"},
-      "with": {"type": "string"}
+      "with": {"type": "string"},
+      "componentName": {"type": "string", "required": true}
     },
     "public": true,
     "dataSource": "db",
@@ -288,7 +294,8 @@
       "url": {"type": "string"},
       "database": {"type": "string"},
       "username": {"type": "string"},
-      "password": {"type": "string"}
+      "password": {"type": "string"},
+      "componentName": {"type": "string", "required": true}
     },
     "public": true,
     "dataSource": "db",
