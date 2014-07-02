@@ -100,7 +100,7 @@ module.exports = {
     },
     push: {
       defaultForType: 'push',
-      connector: 'loopback-push-notification',
+      connector: 'loopback-component-push',
       installation: 'installation',
       notification: 'notification',
       application: 'application'
