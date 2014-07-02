@@ -19,12 +19,14 @@ var DataSourceDefinition = app.models.DataSourceDefinition;
 /**
  * - `name` must be unique per `ComponentDefinition`
  * - `name` and `connector` are required
- * 
+ * - `componentName` is required and must refer to an existing component
+ *
  * @header Property Validation
  */
 
 DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['componentName'] });
 DataSourceDefinition.validatesPresenceOf('name', 'connector');
+DataSourceDefinition.validatesPresenceOf('componentName');
 
 /**
  * Test the datasource definition connection.

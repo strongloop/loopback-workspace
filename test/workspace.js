@@ -1,4 +1,5 @@
 var async = require('async');
+var fs = require('fs-extra');
 var app = require('../app');
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var Workspace = app.models.Workspace;
@@ -57,19 +58,13 @@ describe('Workspace', function() {
 
     it('it should create a set of data source definitions', function() {
       var dataSourceNames = toNames(this.dataSources);
-      expect(dataSourceNames).to.contain('mail');
       expect(dataSourceNames).to.contain('db');
     });
 
-    it('should create a runnable set of components', function (done) {
-      ComponentDefinition.findOne({
-        where: {
-          name: '.'
-        }
-      }, function(err, component) {
-        if(err) return done(err);
-        done();
-      });
+    it('should set correct name in package.json', function() {
+      var pkg = fs.readJsonFileSync(SANDBOX + '/package.json');
+      // project name is hard-coded in support.js as 'sandbox'
+      expect(pkg.name).to.equal('sandbox');
     });
   });
 
@@ -88,6 +83,38 @@ describe('Workspace', function() {
     it('should include Memory connector', function() {
       var names = this.connectors.map(function(it) { return it.name; });
       expect(names).to.contain('memory');
+    });
+  });
+
+  describe('Workspace.isValidDir(cb)', function() {
+    beforeEach(resetWorkspace);
+    beforeEach(givenEmptySandbox);
+
+    it('returns no errors for a valid workspace dir', function(done) {
+      givenBasicWorkspace(function(err) {
+        if (err) return done(err);
+        Workspace.isValidDir(function(err) {
+          // the test passes when no error is reported
+          done(err);
+        });
+      });
+    });
+
+    it('should fail when the directory is empty', function(done) {
+      Workspace.isValidDir(function(err) {
+        expect(err && err.message)
+          .to.match(/Invalid workspace: no components found/);
+        done();
+      });
+    });
+
+    it('should fail when a json file is malformed', function(done) {
+      fs.writeFileSync(SANDBOX + '/package.json', '{malformed}', 'utf-8');
+      Workspace.isValidDir(function(err) {
+        expect(err && err.message)
+          .to.match(/Cannot parse package.json/);
+        done();
+      });
     });
   });
 });

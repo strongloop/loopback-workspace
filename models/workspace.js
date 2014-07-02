@@ -39,6 +39,7 @@ Workspace.addComponent = function(options, cb) {
   var template;
   var templateName = options.template || DEFAULT_TEMPLATE;
   var name = options.name || templateName;
+  var packageName = options.packageName || name;
   if(options.root) name = '.';
   var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
 
@@ -84,7 +85,7 @@ Workspace.addComponent = function(options, cb) {
   }
 
   if(template.package) {
-    template.package.name = name;
+    template.package.name = packageName;
     setComponentName(template.package);
     steps.push(function(cb) {
       PackageDefinition.create(template.package, cb);
@@ -178,4 +179,24 @@ var staticConnectorList = require('../available-connectors');
  */
 Workspace.listAvailableConnectors = function(cb) {
   cb(null, staticConnectorList);
+};
+
+/**
+ * Check if the project is a valid directory.
+ * The callback is called with no arguments when the project is valid.
+ * @param {function(Error=)} cb
+ */
+Workspace.isValidDir = function(cb) {
+  // Every call of `Model.find()` triggers reload from the filesystem
+  // This allows us to catch basic errors in config files
+  ComponentDefinition.find(function(err, list) {
+    if (err) {
+      cb(err);
+    } else if (!list.length) {
+      cb(new Error('Invalid workspace: no components found.'));
+    } else {
+      // TODO(bajtos) Add more sophisticated validation based on component types
+      cb();
+    }
+  });
 };

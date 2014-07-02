@@ -1,25 +1,21 @@
-var path = require('path');
 var loopback = require('loopback');
 var boot = require('loopback-boot');
-var explorer = require('loopback-explorer');
 
 var app = module.exports = loopback();
 
-boot(app, __dirname);
-
-// middleware
+// request pre-processing middleware
 app.use(loopback.compress());
 
-// mount the REST API and the API explorer
-var restApp = require('../rest');
-var restApiRoot = app.get('restApiRoot');
-app.use(restApiRoot, restApp);
+// -- Add your pre-processing middleware here --
 
-var explorerApp = explorer(restApp, { basePath: restApiRoot });
-app.use('/explorer', explorerApp);
-app.once('started', function(baseUrl) {
-  console.log('Browse your REST API at %s%s', baseUrl, explorerApp.mountpath);
-});
+// boot scripts mount components like REST API
+boot(app, __dirname);
+
+// -- Mount static files here--
+// All static middleware should be registered at the end, as all requests
+// passing the static middleware are hitting the file system
+// Example:
+//   app.use(loopback.static(path.resolve(__dirname', '../client-app')));
 
 // Requests that get this far won't be handled
 // by any middleware. Convert them into a 404 error

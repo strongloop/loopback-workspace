@@ -13,18 +13,19 @@ describe('DataSourceDefinition', function() {
   describe('DataSourceDefinition.create(def, cb)', function () {
     beforeEach(givenEmptyWorkspace);
     beforeEach(function(done) {
+      var emptyComponent = this.emptyComponent;
       this.configFile = new ConfigFile({
-        path: 'datasources.json'
+        path: emptyComponent + '/datasources.json'
       });
       async.parallel([function(cb) {
         DataSourceDefinition.create({
-          componentName: '.',
+          componentName: emptyComponent,
           name: 'foo',
           connector: 'memory'
         }, cb);
       }, function(cb) {
         DataSourceDefinition.create({
-          componentName: '.',
+          componentName: emptyComponent,
           name: 'bar',
           connector: 'memory'
         }, cb);
