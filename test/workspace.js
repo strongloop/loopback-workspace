@@ -29,6 +29,26 @@ describe('Workspace', function() {
       expectFileExists(getPath('rest/rest.js'));
       expectFileExists(getPath('rest/boot/authentication.js'));
     });
+
+    it('should provide a hook for custom of `cp -r`', function(done) {
+      var calls = [];
+      var ncp = Workspace.copyRecursive;
+      Workspace.copyRecursive = function(src, dest, cb) {
+        calls.push([src, dest]);
+        process.nextTick(cb);
+      };
+
+      Workspace.addComponent(
+        {
+          template: 'server'
+        },
+        function(err) {
+          Workspace.copyRecursive = ncp;
+          if (err) return done(err);
+          expect(calls).to.be.not.empty;
+          done();
+        });
+    });
   });
 
   describe('Workspace.createFromTemplate(templateName, callback)', function() {

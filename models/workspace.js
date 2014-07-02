@@ -35,6 +35,18 @@ Workspace.getAvailableTemplates = function(cb) {
   fs.readdir(TEMPLATE_DIR, cb);
 }
 
+/**
+ * Recursively copy files.
+ * API consumers may override this function, e.g. to detect existing files
+ * and provide conflict resolution.
+ * @param {String} source
+ * @param {String} destination
+ * @param {function(Error=)} cb
+ */
+Workspace.copyRecursive = function(source, destination, cb) {
+  ncp(source, destination, cb);
+};
+
 Workspace.addComponent = function(options, cb) {
   var template;
   var templateName = options.template || DEFAULT_TEMPLATE;
@@ -126,7 +138,7 @@ Workspace.addComponent = function(options, cb) {
   steps.push(function(cb) {
     fs.exists(fileTemplatesDir, function(exists) {
       if(exists) {
-        ncp(fileTemplatesDir, dest, cb);
+        Workspace.copyRecursive(fileTemplatesDir, dest, cb);
       } else {
         cb();
       }
