@@ -78,7 +78,7 @@ describe('end-to-end', function() {
 });
 
 function installSandboxPackages(cb) {
-  if (this && this.timeout) this.timeout(30000);
+  if (this && this.timeout) this.timeout(120*1000);
 
   var pkg = fs.readJsonFileSync(path.resolve(SANDBOX, 'package.json'));
   async.eachSeries(
