@@ -41,6 +41,11 @@
         "config.*.json"
       ],
       "relations": {
+        "package": {
+          "type": "hasOne",
+          "model": "PackageDefinition",
+          "foreignKey": "componentName"
+        },
         "models": {
           "type": "hasMany",
           "model": "ModelDefinition",

@@ -54,9 +54,13 @@ WorkspaceEntity.allFromCache = function(cache) {
     .map(this.getFromCache.bind(this, cache));
 }
 
-WorkspaceEntity.getPath = function(app, obj) {
+WorkspaceEntity.getPath = function(componentName, obj) {
   if(obj.configFile) return obj.configFile;
-  return path.join(app, this.settings.defaultConfigFile);
+  return path.join(componentName, this.settings.defaultConfigFile);
+}
+
+WorkspaceEntity.getDir = function(componentName, obj) {
+  return path.dirname(WorkspaceEntity.getPath(componentName, obj));
 }
 
 WorkspaceEntity.getConfigFile = function(componentName, obj) {

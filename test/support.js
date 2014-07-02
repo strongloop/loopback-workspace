@@ -12,6 +12,10 @@ expectFileExists = function (file) {
   assert(fs.existsSync(file), file + ' does not exist');
 }
 
+getPath = function(relativePath) {
+  return ConfigFile.toAbsolutePath(relativePath);
+}
+
 expectValueInJSONFile = function(file, propertyPath, val) {
   var contents = fs.readFileSync(file, 'utf8');
   var obj = JSON.parse(contents);
