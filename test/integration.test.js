@@ -149,7 +149,7 @@ describe('Generated project', function() {
       expect(app.dataSources).to.have.property('push');
       expect(app.dataSources.push.settings).to.deep.equal(
       { defaultForType: 'push',
-        connector: 'loopback-push-notification',
+        connector: 'loopback-component-push',
         debug: false,
         installation: 'installation',
         notification: 'notification',
