@@ -18,8 +18,7 @@ describe('ModelProperty', function() {
     var property = {
       name: test.propertyName,
       type: 'String',
-      modelName: 'user',
-      componentName: 'rest'
+      modelId: 'rest.user'
     };
     ModelProperty.create(property, function(err, property) {
       if(err) return done(err);
@@ -84,9 +83,9 @@ describe('ModelProperty', function() {
         var expected = new ModelProperty({
           name: this.propertyName,
           type: 'String',
-          modelName: 'rest.user',
           componentName: 'rest',
-          id: 'rest.rest.user.myProperty'
+          id: 'rest.user.myProperty',
+          modelId: 'rest.user'
         }).toObject();
 
         expect(actual).to.eql(expected);

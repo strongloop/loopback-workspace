@@ -40,11 +40,19 @@ describe('DataSourceDefinition', function() {
         done();
       });
     });
-    it('should create a config file', function(done) {
-      this.configFile.exists(function(err, exists) {
-        expect(err).to.not.exist;
-        expect(exists).to.equal(true);
-        done();
+    describe('config file', function () {
+      it('should be created', function(done) {
+        this.configFile.exists(function(err, exists) {
+          expect(err).to.not.exist;
+          expect(exists).to.equal(true);
+          done();
+        });
+      });
+      it('should not contain id properties', function () {
+        var configData = this.configFile.data;
+        var dsConfig = configData.foo;
+        expect(dsConfig).to.not.have.property('id');
+        expect(dsConfig).to.not.have.property('componentName');
       });
     });
     it('shoulb be persist multiple to the config file', function (done) {

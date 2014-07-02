@@ -31,7 +31,7 @@ ModelDefinition.getConfigData = function(cache, modelDef) {
   configData.name = modelDef.name;
 
   relations.forEach(function(relation) {
-    var relatedData = getRelated(cache, modelDef.name, relation);
+    var relatedData = getRelated(cache, modelDef.id, relation);
     configData[relation.as] = formatRelatedData(relation, relatedData);
   });
 
@@ -100,5 +100,6 @@ function cleanRelatedData(relatedData, relation) {
     // TODO(ritch) we can probably generalize these
     delete obj.id;
     delete obj.componentName;
+    delete obj.modelName;
   });
 }

@@ -19,25 +19,41 @@ WorkspaceEntity.prototype.getUniqueId = function() {
 
 WorkspaceEntity.prototype.getUniqueIdParts = function() {
   var settings = this.constructor.settings;
-  var includeIdPart = settings.includeIdPart;
+  var parentPropertyName = this.constructor.getParentPropertyName();
   var parts = [];
-  var requiredParts = 2;
+  var parentId = parentPropertyName && this[parentPropertyName];
+  var splitParentId = parentId && parentId.split('.');
+  var parentIdIsNotRootComponent = parentId !== '.';
 
-  if(includeIdPart) requiredParts++;
-  if(this.componentName) {
-    if(this.componentName === '.') {
-      requiredParts--;
+  if(parentPropertyName) {
+    if(parentId) {
+      if(parentIdIsNotRootComponent) {
+        parts.push.apply(parts, splitParentId);
+      }
     } else {
-      parts.push(this.componentName);
+      // cannot construct the id without the parent id
+      return [];
     }
   }
-  if(includeIdPart && this[includeIdPart]) {
-    parts.push(this[includeIdPart]);
-  }
+  
   if(this.name) parts.push(this.name);
 
-  if(parts.length === requiredParts) return parts;
-  return [];
+  return parts;
+}
+
+WorkspaceEntity.getParentPropertyName = function() {
+  var relations = this.relations;
+  if(!relations) return;
+
+  var relationNames = Object.keys(relations);
+  var relation;
+
+  for(var i = 0; i < relationNames.length; i++) {
+    relation = relations[relationNames[i]];
+    if(relation.type === 'belongsTo') {
+      return relation.keyFrom;
+    }
+  }
 }
 
 /**

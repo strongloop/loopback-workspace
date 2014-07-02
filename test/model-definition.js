@@ -105,7 +105,7 @@ describe('ModelDefinition', function() {
         })
         .define('aclx', ModelAccessControl, {
           method: 'ALL',
-          model: ref('model.name')
+          modelId: ref('model.id')
         })
         .buildTo(this, function(err) {
           if (err) return done(err);

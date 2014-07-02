@@ -186,11 +186,11 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     var cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
     cachedDataSources.forEach(function(dataSourceDef) {
-      if (dataSourceDef.componentName === componentName) {
+      if(dataSourceDef.componentName === componentName) {
         dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
         dataSoureConfig[dataSourceDef.name] = dataSourceDef;
-        // remove extra data that shouldn't be persisted to the fs
         delete dataSourceDef.name;
+        delete dataSourceDef.id;
         delete dataSourceDef.componentName;
       }
     });
@@ -206,10 +206,9 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     var componentModelsConfig = componentModelFile.data = {};
 
     cachedComponentModels.forEach(function(componentModel) {
-      if (componentModel.componentName !== componentName) return;
       componentModelsConfig[componentModel.name] = componentModel;
-      // remove extra data that shouldn't be persisted to the fs
       delete componentModel.name;
+      delete componentModel.id;
       delete componentModel.componentName;
     });
 
@@ -224,6 +223,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
       delete modelDef.dataSource;
       var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigData(cache, modelDef);
+      delete modelDef.componentName;
+      delete modelDef.id;
       filesToSave.push(modelConfigFile);
     }
   });
