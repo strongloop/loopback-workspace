@@ -29,6 +29,16 @@ describe('end-to-end', function() {
       app = require(SANDBOX);
     });
 
+    it('provides status on the root url', function(done) {
+      request(app)
+        .get('/')
+        .expect(200, function(err, res) {
+          if (err) done(err);
+          expect(res.body).to.have.property('uptime');
+          done();
+        });
+    });
+
     it('has authentication enabled', function(done) {
       request(app)
         .get('/api/users')
