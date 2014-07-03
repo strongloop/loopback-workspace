@@ -16,7 +16,10 @@ describe('WorkspaceEntity', function() {
         componentName: 'foo',
         name: 'bar'
       });
-      expect(bar.getUniqueId()).to.equal('foo.bar');
+      var expected = 'foo.bar';
+      expect(bar.getUniqueId()).to.equal(expected);
+      expect(MyWorkspaceEntity.getUniqueId(bar)).to.equal(expected);
+      expect(MyWorkspaceEntity.getUniqueId(bar.toObject())).to.equal(expected);
     });
   });
 });

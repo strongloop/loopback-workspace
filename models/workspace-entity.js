@@ -8,22 +8,27 @@ var WorkspaceEntity = app.model('WorkspaceEntity', {
   "dataSource": "db"
 });
 
-WorkspaceEntity.prototype.getUniqueId = function() {
-  var sep = this.constructor.settings.idSeparator || '.';
-  var parts = this.getUniqueIdParts();
+WorkspaceEntity.getUniqueId = function(data) {
+  var sep = this.settings.idSeparator || '.';
+  var parts = this.getUniqueIdParts(data);
   if(parts.length >= 1) {
     return parts.join(sep);
   }
   return null;
 }
 
-WorkspaceEntity.prototype.getUniqueIdParts = function() {
-  var settings = this.constructor.settings;
-  var parentPropertyName = this.constructor.getParentPropertyName();
+WorkspaceEntity.prototype.getUniqueId = function() {
+  return this.constructor.getUniqueId(this);
+}
+
+WorkspaceEntity.getUniqueIdParts = function(data) {
+  var settings = this.settings;
+  var parentPropertyName = this.getParentPropertyName();
   var parts = [];
-  var parentId = parentPropertyName && this[parentPropertyName];
+  var parentId = parentPropertyName && data[parentPropertyName];
   var splitParentId = parentId && parentId.split('.');
   var parentIdIsNotRootComponent = parentId !== '.';
+  var name = data.name;
 
   if(parentPropertyName) {
     if(parentId) {
@@ -36,7 +41,7 @@ WorkspaceEntity.prototype.getUniqueIdParts = function() {
     }
   }
   
-  if(this.name) parts.push(this.name);
+  if(name) parts.push(name);
 
   return parts;
 }
@@ -73,8 +78,7 @@ WorkspaceEntity.clearCache = function(cache) {
 
 WorkspaceEntity.addToCache = function(cache, val) {
   var Entity = this;
-  var entity = new Entity(val);
-  var id = entity.getUniqueId();
+  var id = Entity.getUniqueId(val);
   val[this.dataSource.idName(Entity.modelName)] = id;
   cache[this.modelName][id] = JSON.stringify(val);
 }

@@ -250,6 +250,6 @@ ComponentDefinition.hasApp = function(componentDef) {
   return componentDef.name !== '.';
 };
 
-ComponentDefinition.prototype.getUniqueId = function() {
-  return this.name || null;
+ComponentDefinition.getUniqueId = function(data) {
+  return data.name || null;
 }
