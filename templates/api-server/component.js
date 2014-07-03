@@ -16,7 +16,7 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "errorhandler": "^1.1.1",
-    "loopback": "~2.0.0-beta3",
+    "loopback": "~2.0.0-beta5",
     "loopback-boot": "~2.0.0-beta1",
     "loopback-datasource-juggler": "~2.0.0-beta2"
   },

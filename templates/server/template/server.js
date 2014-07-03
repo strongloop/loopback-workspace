@@ -28,10 +28,8 @@ app.use(loopback.errorHandler());
 app.start = function() {
   // start the web server
   return app.listen(function() {
-    var host = app.get('host') || '0.0.0.0';
-    var baseUrl = 'http://' + host + ':' + app.get('port');
-    app.emit('started', baseUrl);
-    console.log('Web server listening at: %s', baseUrl);
+    app.emit('started');
+    console.log('Web server listening at: %s', app.get('url'));
   });
 };
 
