@@ -114,7 +114,6 @@ Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
 
     if(Array.isArray(relatedData)) {
       relatedData.forEach(function(config) {
-        var entity = new Entity(config);
         config[relation.foreignKey] = fk;
         config.componentName = componentName;
         debug('addRelatedToCache %s %j', relation.model, config);

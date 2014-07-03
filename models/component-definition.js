@@ -67,7 +67,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         configFile: path.join(componentName, 'config.json')
       };
       debug('adding to cache component entry [%s]', componentData.configFile);
-      ComponentDefinition.addToCache(cache, componentName, componentData);
+      ComponentDefinition.addToCache(cache, componentData);
       cb();
     });
   }
@@ -206,10 +206,12 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     var componentModelsConfig = componentModelFile.data = {};
 
     cachedComponentModels.forEach(function(componentModel) {
-      componentModelsConfig[componentModel.name] = componentModel;
-      delete componentModel.name;
-      delete componentModel.id;
-      delete componentModel.componentName;
+      if(componentModel.componentName === componentName) {
+        componentModelsConfig[componentModel.name] = componentModel;
+        delete componentModel.name;
+        delete componentModel.id;
+        delete componentModel.componentName;
+      }
     });
 
     filesToSave.push(componentModelFile);
