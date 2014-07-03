@@ -15,7 +15,6 @@ var Definition = app.model('Definition', {
   "properties": {
     "name": {
       "type": "string",
-      "id": true,
       "required": true
     },
     "dir": {
@@ -106,26 +105,28 @@ Definition.getEmbededRelations = function() {
   return results;
 }
 
-Definition.addRelatedToCache = function(cache, name, fileData) {
+Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
   var Definition = this;
   this.getEmbededRelations().forEach(function(relation) {
     var relatedData = fileData[relation.as];
     var Entity = loopback.getModel(relation.model);
+    var entity;
 
     if(Array.isArray(relatedData)) {
       relatedData.forEach(function(config) {
-        var id = config[relation.foreignKey] || config.id;
-        config[relation.foreignKey] = name;
-        debug('addRelatedToCache %s %s %j', relation.model, id, config);
-        Entity.addToCache(cache, id, config);
+        config[relation.foreignKey] = fk;
+        config.componentName = componentName;
+        debug('addRelatedToCache %s %j', relation.model, config);
+        Entity.addToCache(cache, config);
       });
     } else if(relatedData) {
-      Object.keys(relatedData).forEach(function(id) {
-        var config = relatedData[id];
-        config[Entity.dataSource.idName(Entity.modelName)] = id;
-        config[relation.foreignKey] = name;
-        debug('addRelatedToCache %s %s %j', relation.model, id, config);
-        Entity.addToCache(cache, id, config);
+      Object.keys(relatedData).forEach(function(embedId) {
+        var config = relatedData[embedId];
+        config[relation.foreignKey] = fk;
+        config[relation.embed.key] = embedId;
+        config.componentName = componentName;
+        debug('addRelatedToCache %s %j', relation.model, config);
+        Entity.addToCache(cache, config);
       });
     }
   });

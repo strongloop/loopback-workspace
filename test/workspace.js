@@ -65,18 +65,18 @@ describe('Workspace', function() {
       });
     });
 
-    it('it should create a set of component definitions', function() {
+    it('should create a set of component definitions', function() {
       var componentNames = toNames(this.components);
       expect(componentNames).to.contain('rest');
       expect(componentNames).to.contain('.');
       expect(componentNames).to.contain('server');
     });
 
-    it('it should not create a set of model definitions', function() {
+    it('should not create a set of model definitions', function() {
       expect(this.models).to.be.empty;
     });
 
-    it('it should create a set of data source definitions', function() {
+    it('should create a set of data source definitions', function() {
       var dataSourceNames = toNames(this.dataSources);
       expect(dataSourceNames).to.contain('db');
     });
@@ -86,10 +86,6 @@ describe('Workspace', function() {
       // project name is hard-coded in support.js as 'sandbox'
       expect(pkg.name).to.equal('sandbox');
     });
-  });
-
-  describe('Workspace.listUseableConnectors(cb)', function () {
-    it('should return a list of connectors in package.json');
   });
 
   describe('project.listAvailableConnectors(cb)', function() {

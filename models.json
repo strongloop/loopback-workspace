@@ -16,7 +16,8 @@
   },
   "PackageDefinition": {
     "properties": {
-      "componentName": {"type": "string", "required": true}
+      "componentName": {"type": "string", "required": true},
+      "name": {"id": true, "type": "string"}
     },
     "public": false,
     "dataSource": "db",
@@ -30,6 +31,7 @@
   },
   "ComponentDefinition": {
     "properties": {
+      "name": {"id": true, "type": "string"},
       "defaultPermission": {"type": "string"}
     },
     "public": true,
@@ -62,7 +64,9 @@
   },
   "ComponentModel": {
     "properties": {
-      "name": {"type": "string", "id": true}
+      "id": {"type": "string", "id": true},
+      "name": {"type": "string"},
+      "componentName": {"type": "string", "required": true}
     },
     "dataSource": "db",
     "options": {
@@ -90,6 +94,8 @@
   },
   "ModelDefinition": {
     "properties": {
+      "id": {"type": "string", "id": true},
+      "name": "string",
       "plural": "string",
       "strict": "boolean",
       "scopes": "array",
@@ -109,46 +115,53 @@
       ],
       "configExtensions": ["json"],
       "relations": {
+        "component": {
+          "type": "belongsTo",
+          "model": "ComponentDefinition",
+          "foreignKey": "componentName"
+        },
         "properties": {
           "embed": {"as": "object", "key": "name"},
           "type": "hasMany",
           "model": "ModelProperty",
-          "foreignKey": "modelName"
+          "foreignKey": "modelId"
         },
         "validations": {
           "embed": {"as": "array"},
           "type": "hasMany",
           "model": "PropertyValidation",
-          "foreignKey": "modelName"
+          "foreignKey": "modelId"
         },
         "relations": {
           "embed": {"as": "object", "key": "as"},
           "type": "hasMany",
           "model": "ModelRelation",
-          "foreignKey": "fromModel"
+          "foreignKey": "fromModelId"
         },
         "accessControls": {
           "embed": {"name": "acls", "as": "array"},
           "type": "hasMany",
           "model": "ModelAccessControl",
-          "foreignKey": "model"
+          "foreignKey": "modelId"
         },
         "methods": {
           "embed": {"as": "array"},
           "type": "hasMany",
           "model": "ModelMethod",
-          "foreignKey": "model"
+          "foreignKey": "modelId"
         },
         "views": {
           "type": "hasMany",
           "model": "ViewDefinition",
-          "foreignKey": "model"
+          "foreignKey": "modelId"
         }
       }
     }
   },
   "ModelMethod": {
     "properties": {
+      "id": {"type": "string", "id": true},
+      "modelId": {"type": "string", "required": true},
       "aliases": {"type": "array"},
       "isStatic": {"type": "boolean"},
       "accepts": {"type": "array"},
@@ -165,6 +178,8 @@
   },
   "ModelRelation": {
     "properties": {
+      "id": {"type": "string", "id": true},
+      "modelId": {"type": "string", "required": true},
       "type": {"type": "string"},
       "as": {"type": "string"},
       "foreignKey": {"type": "string"},
@@ -173,11 +188,20 @@
     "public": true,
     "dataSource": "db",
     "options": {
-      "base": "WorkspaceEntity"
+      "base": "WorkspaceEntity",
+      "relations": {
+        "model": {
+          "type": "belongsTo",
+          "model": "ModelDefinition",
+          "foreignKey": "modelId"
+        }
+      }
     }
   },
   "ModelAccessControl": {
     "properties": {
+      "id": {"type": "string", "id": true},
+      "modelId": {"type": "string", "required": true},
       "property": {"type": "string"},
       "route": {"type": "string"},
       "principalId": {"type": "string"},
@@ -187,17 +211,25 @@
     "public": true,
     "dataSource": "db",
     "options": {
-      "base": "WorkspaceEntity"
+      "base": "WorkspaceEntity",
+      "relations": {
+        "model": {
+          "type": "belongsTo",
+          "model": "ModelDefinition",
+          "foreignKey": "modelId"
+        }
+      }
     }
   },
   "ModelProperty": {
     "properties": {
+      "id": {"type": "string", "id": true},
+      "modelId": {"type": "string", "required": true},
       "type": {"type": "string"},
-      "name": {"type": "string", "id": true},
+      "name": {"type": "string"},
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
       "index": {"type": "boolean"},
-      "modelName": "string",
       "desc": {"type": "string"}
     },
     "public": true,
@@ -209,16 +241,23 @@
           "type": "hasMany",
           "model": "PropertyValid",
           "foreignKey": "property"
+        },
+        "model": {
+          "type": "belongsTo",
+          "model": "ModelDefinition",
+          "foreignKey": "modelId"
         }
       }
     }
   },
   "DatabaseColumn": {
-    "connector": {"type": "string"},
-    "columnName": {"type": "string"},
-    "dataType": {"type": "string"},
-    "dataLength": {"type": "string"},
-    "nullable": {"type": "boolean"},
+    "properties": {
+      "connector": {"type": "string"},
+      "columnName": {"type": "string"},
+      "dataType": {"type": "string"},
+      "dataLength": {"type": "string"},
+      "nullable": {"type": "boolean"}
+    },
     "options": {
       "base": "WorkspaceEntity"
     },
@@ -227,6 +266,8 @@
   },
   "PropertyValidation": {
     "properties": {
+      "id": {"type": "string", "id": true},
+      "propertyId": {"type": "string", "required": true},
       "type": {"type": "string"},
       "message": {"type": "string"},
       "min": {"type": "number"},
@@ -238,7 +279,14 @@
     "public": true,
     "dataSource": "db",
     "options": {
-      "base": "WorkspaceEntity"
+      "base": "WorkspaceEntity",
+      "relations": {
+        "model": {
+          "type": "belongsTo",
+          "model": "ModelProperty",
+          "foreignKey": "propertyId"
+        }
+      }
     }
   },
   "ViewDefinition": {
@@ -265,12 +313,14 @@
   },
   "DataSourceDefinition": {
     "properties": {
+      "id": {"type": "string", "id": true},
       "host": {"type": "string"},
       "port": {"type": "number"},
       "url": {"type": "string"},
       "database": {"type": "string"},
       "username": {"type": "string"},
-      "password": {"type": "string"}
+      "password": {"type": "string"},
+      "componentName": {"type": "string", "required": true}
     },
     "public": true,
     "dataSource": "db",

@@ -44,7 +44,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
       packageFile.load(cb);
     }, function(cb) {
       packageFile.data.componentName = componentName;
-      PackageDefinition.addToCache(cache, componentName, packageFile.data || {});
+      PackageDefinition.addToCache(cache, packageFile.data || {});
       cb();
     });
   }
@@ -57,7 +57,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
       component.data.configFile = component.path;
       component.data.name = componentName;
       debug('adding to cache component file [%s]', component.path);
-      ComponentDefinition.addToCache(cache, componentName, component.data);
+      ComponentDefinition.addToCache(cache, component.data);
       cb();
     });
   } else {
@@ -67,7 +67,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         configFile: path.join(componentName, 'config.json')
       };
       debug('adding to cache component entry [%s]', componentData.configFile);
-      ComponentDefinition.addToCache(cache, componentName, componentData);
+      ComponentDefinition.addToCache(cache, componentData);
       cb();
     });
   }
@@ -86,7 +86,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         var componentModel = modelDefs[modelName];
         componentModel.componentName = componentName;
         componentModel.name = modelName;
-        ComponentModel.addToCache(cache, modelName, componentModel);
+        ComponentModel.addToCache(cache, componentModel);
       });
 
       cb();
@@ -103,11 +103,13 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         var def = configFile.data || {};
         def.componentName = componentName;
         def.configFile = configFile.path;
+        var modelDef = new ModelDefinition(def);
 
         debug('loading [%s] model definition into cache', def.name);
 
-        ModelDefinition.addToCache(cache, def.name, def);
-        ModelDefinition.addRelatedToCache(cache, def.name, def);
+        ModelDefinition.addToCache(cache, def);
+        ModelDefinition.addRelatedToCache(cache, def, componentName
+          , modelDef.getUniqueId());
       });
       cb();
     });
@@ -126,7 +128,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         def.name = dataSourceName;
         def.componentName = componentName;
         debug('loading [%s] dataSource into cache', dataSourceName);
-        DataSourceDefinition.addToCache(cache, dataSourceName, def);
+        DataSourceDefinition.addToCache(cache, def);
       });
       
       cb();
@@ -184,11 +186,11 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     var cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
     cachedDataSources.forEach(function(dataSourceDef) {
-      if (dataSourceDef.componentName === componentName) {
+      if(dataSourceDef.componentName === componentName) {
         dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
         dataSoureConfig[dataSourceDef.name] = dataSourceDef;
-        // remove extra data that shouldn't be persisted to the fs
         delete dataSourceDef.name;
+        delete dataSourceDef.id;
         delete dataSourceDef.componentName;
       }
     });
@@ -204,11 +206,12 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     var componentModelsConfig = componentModelFile.data = {};
 
     cachedComponentModels.forEach(function(componentModel) {
-      if (componentModel.componentName !== componentName) return;
-      componentModelsConfig[componentModel.name] = componentModel;
-      // remove extra data that shouldn't be persisted to the fs
-      delete componentModel.name;
-      delete componentModel.componentName;
+      if(componentModel.componentName === componentName) {
+        componentModelsConfig[componentModel.name] = componentModel;
+        delete componentModel.name;
+        delete componentModel.id;
+        delete componentModel.componentName;
+      }
     });
 
     filesToSave.push(componentModelFile);
@@ -222,6 +225,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
       delete modelDef.dataSource;
       var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigData(cache, modelDef);
+      delete modelDef.componentName;
+      delete modelDef.id;
       filesToSave.push(modelConfigFile);
     }
   });
@@ -244,3 +249,7 @@ ComponentDefinition.hasApp = function(componentDef) {
   // e.g. package.json > loopback-workspace > app: true|false
   return componentDef.name !== '.';
 };
+
+ComponentDefinition.getUniqueId = function(data) {
+  return data.name || null;
+}

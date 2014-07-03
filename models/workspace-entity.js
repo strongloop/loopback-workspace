@@ -2,28 +2,63 @@ var path = require('path');
 var app = require('../app');
 var WorkspaceEntity = app.model('WorkspaceEntity', {
   "properties": {
-    "configFile": {"type": "string"},
-    "scriptFile": {"type": "string"},
-    "configLineNum": {"type": "number"},
-    "locked": {"type": "boolean"}
+    "configFile": {"type": "string"}
   },
   "public": false,
   "dataSource": "db"
 });
 
-/**
- * Get the file location of the entity.
- * 
- * @returns {String} location For example
- * `"/foo/bar/bat/baz.json:237"`
- */
-
-WorkspaceEntity.prototype.getLocation = function() {
-  throwMustImplement('getLocation', this.constructor);
+WorkspaceEntity.getUniqueId = function(data) {
+  var sep = this.settings.idSeparator || '.';
+  var parts = this.getUniqueIdParts(data);
+  if(parts.length >= 1) {
+    return parts.join(sep);
+  }
+  return null;
 }
 
-function throwMustImplement(name, constructor) {
-  throw new Error('must be implemented by ', constructor.name);
+WorkspaceEntity.prototype.getUniqueId = function() {
+  return this.constructor.getUniqueId(this);
+}
+
+WorkspaceEntity.getUniqueIdParts = function(data) {
+  var settings = this.settings;
+  var parentPropertyName = this.getParentPropertyName();
+  var parts = [];
+  var parentId = parentPropertyName && data[parentPropertyName];
+  var splitParentId = parentId && parentId.split('.');
+  var parentIdIsNotRootComponent = parentId !== '.';
+  var name = data.name;
+
+  if(parentPropertyName) {
+    if(parentId) {
+      if(parentIdIsNotRootComponent) {
+        parts.push.apply(parts, splitParentId);
+      }
+    } else {
+      // cannot construct the id without the parent id
+      return [];
+    }
+  }
+  
+  if(name) parts.push(name);
+
+  return parts;
+}
+
+WorkspaceEntity.getParentPropertyName = function() {
+  var relations = this.relations;
+  if(!relations) return;
+
+  var relationNames = Object.keys(relations);
+  var relation;
+
+  for(var i = 0; i < relationNames.length; i++) {
+    relation = relations[relationNames[i]];
+    if(relation.type === 'belongsTo') {
+      return relation.keyFrom;
+    }
+  }
 }
 
 /**
@@ -41,7 +76,10 @@ WorkspaceEntity.clearCache = function(cache) {
   cache[this.modelName] = {};
 }
 
-WorkspaceEntity.addToCache = function(cache, id, val) {
+WorkspaceEntity.addToCache = function(cache, val) {
+  var Entity = this;
+  var id = Entity.getUniqueId(val);
+  val[this.dataSource.idName(Entity.modelName)] = id;
   cache[this.modelName][id] = JSON.stringify(val);
 }
 

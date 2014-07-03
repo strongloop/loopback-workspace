@@ -38,6 +38,20 @@ template.componentModels = [
 ];
 
 template.relations = [
+  {
+    fromModel: 'user',
+    model: 'access-token',
+    type: 'hasMany',
+    foreignKey: 'userId',
+    modelId: 'rest.user'
+  },
+  {
+    fromModel: 'role',
+    type: 'hasMany',
+    model: 'roleMapping',
+    foreignKey: 'roleId',
+    modelId: 'rest.role'
+  }
 ];
 
 template.datasources = [

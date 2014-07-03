@@ -129,6 +129,7 @@ Workspace.addComponent = function(options, cb) {
   }
 
   if(template.relations) {
+    setComponentName(template.relations);
     steps.push(function(cb) {
       async.each(template.relations, 
         ModelRelation.create.bind(ModelRelation), cb);

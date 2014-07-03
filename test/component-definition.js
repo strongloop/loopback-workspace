@@ -1,8 +1,21 @@
 var fs = require('fs-extra');
+var ComponentDefinition = require('../app').models.ComponentDefinition;
 
-describe('ComponentDefinition', function() {
-  describe('componentDefinition.saveToFs', function() {
+describe('ComponentDefinition', function () {
+  describe('ComponentDefinition.create(def, cb)', function () {
     beforeEach(givenBasicWorkspace);
+
+    it('should use name as the id', function (done) {
+      ComponentDefinition.create({
+        name: 'foo'
+      }, function(err, def) {
+        expect(err).to.not.exist;
+        expect(def).to.not.have.property('id');
+        expect(def.name).to.equal('foo');
+        done();
+      });
+    });
+    
     it('omits `name` in config.json', function() {
       var content = fs.readJsonFileSync(SANDBOX + '/rest/config.json');
       expect(content).to.not.have.property('name');
