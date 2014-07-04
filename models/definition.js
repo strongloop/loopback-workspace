@@ -110,7 +110,7 @@ Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
   this.getEmbededRelations().forEach(function(relation) {
     var relatedData = fileData[relation.as];
     var Entity = loopback.getModel(relation.model);
-    var entity;
+    var properties = Entity.definition.properties;
 
     if(Array.isArray(relatedData)) {
       relatedData.forEach(function(config) {
@@ -122,6 +122,17 @@ Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
     } else if(relatedData) {
       Object.keys(relatedData).forEach(function(embedId) {
         var config = relatedData[embedId];
+
+        // apply `json` config from LDL property definitions
+        Object.keys(properties).forEach(function(p) {
+          var json = properties[p].json;
+          if (json) {
+            config[p] = config[json];
+            delete config[json];
+          }
+        });
+
+        // add extra properties for relations
         config[relation.foreignKey] = fk;
         config[relation.embed.key] = embedId;
         config.componentName = componentName;

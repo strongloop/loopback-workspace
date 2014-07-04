@@ -18,6 +18,7 @@ describe('ModelProperty', function() {
     var property = {
       name: test.propertyName,
       type: 'String',
+      isId: false,
       modelId: 'rest.user'
     };
     ModelProperty.create(property, function(err, property) {
@@ -34,7 +35,7 @@ describe('ModelProperty', function() {
       var type = this.property.type;
       expect(this.property.name).to.equal(this.propertyName);
       expect(properties).to.have.property(this.propertyName);
-      expect(properties[this.propertyName]).to.eql({type: type});
+      expect(properties[this.propertyName]).to.eql({type: type, id: false});
     });
     it('should have the correct id', function () {
       expect(this.property.id).to.equal('rest.user.myProperty');
@@ -65,12 +66,13 @@ describe('ModelProperty', function() {
   describe('model.save()', function () {
     beforeEach(function(done) {
       this.property.type = 'Boolean';
+      this.property.isId = true;
       this.property.save(done);
     });
     beforeEach(givenFile('configFile', 'rest/models/user.json'));
     it('should update the $modelName.json file', function () {
       var properties = this.configFile.data.properties;
-      expect(properties[this.propertyName]).to.eql({type: 'Boolean'});
+      expect(properties[this.propertyName]).to.eql({type: 'Boolean', id: true});
     });
   });
 
@@ -83,6 +85,7 @@ describe('ModelProperty', function() {
         var expected = new ModelProperty({
           name: this.propertyName,
           type: 'String',
+          isId: false,
           componentName: 'rest',
           id: 'rest.user.myProperty',
           modelId: 'rest.user'

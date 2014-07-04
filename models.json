@@ -227,6 +227,7 @@
       "modelId": {"type": "string", "required": true},
       "type": {"type": "string"},
       "name": {"type": "string"},
+      "isId": {"type": "boolean", "json": "id"},
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
       "index": {"type": "boolean"},
