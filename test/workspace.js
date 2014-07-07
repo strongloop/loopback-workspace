@@ -19,8 +19,9 @@ describe('Workspace', function() {
   });
 
   describe('Workspace.addComponent(options, cb)', function () {
+    beforeEach(resetWorkspace);
     beforeEach(givenEmptySandbox);
-    beforeEach(function(done) {
+    beforeEach(function addRestComponent(done) {
       Workspace.addComponent({
         template: 'rest'
       }, done);

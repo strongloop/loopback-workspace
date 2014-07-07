@@ -7,8 +7,53 @@ var async = require('async');
 var debug = require('debug')('workspace:connector');
 var EventEmitter = require('events').EventEmitter;
 
+connector.writeCallbacks = [];
+var debugSync = require('debug')('workspace:connector:save-sync');
+
 connector.saveToFile = function() {
   var cb = arguments[arguments.length - 1];
+  connector.writeCallbacks.push(cb);
+
+  if (connector.writeCallbacks.length == 1) {
+    // The first write, nobody else is writing now
+    debugSync('write executing');
+    connector._saveToFile(saveDone);
+  } else {
+    debugSync('write scheduled at #%s', connector.writeCallbacks.length-1);
+    // wait for the current write to finish
+  }
+
+  function saveDone(err) {
+    var cb = connector.writeCallbacks.shift();
+    debugSync('write finished, %s calls in queue', connector.writeCallbacks.length);
+    mergeAndRunPendingWrites();
+    cb(err);
+  }
+
+  function mergeAndRunPendingWrites() {
+    if (connector.writeCallbacks.length === 0) {
+      // No more pending writes - we are done
+      debugSync('all writes were finished');
+      return;
+    }
+
+    // merge all pending writes into a single one.
+    var callbacks = connector.writeCallbacks;
+    connector.writeCallbacks = [];
+
+    var cb = function(err) {
+      callbacks.forEach(function(fn, ix) {
+        debugSync('write finished for #%s', ix+1);
+        fn(err);
+      });
+    };
+    cb.internal = true;
+
+    connector.saveToFile(cb);
+  }
+};
+
+connector._saveToFile = function(cb) {
   var cache = connector.cache;
 
   async.each(ComponentDefinition.allFromCache(cache), function(cachedComponent, cb) {
@@ -18,6 +63,13 @@ connector.saveToFile = function() {
 
 connector.loadFromFile = function() {
   var cb = arguments[arguments.length - 1];
+
+  if (connector.writeCallbacks.length) {
+    // There is no point in trying to load the files
+    // when we are writing new content at the same time
+    return cb();
+  }
+
   var recursiveCall = !!connector.loader;
 
   if (!recursiveCall) {
