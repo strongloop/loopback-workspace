@@ -64,15 +64,26 @@ describe('ModelProperty', function() {
   });
 
   describe('model.save()', function () {
+    var AN_ORACLE_CONFIG = {
+      columnName: 'ID',
+      dataType: 'VARCHAR2',
+      dataLength: 20,
+      nullable: 'N'
+    };
     beforeEach(function(done) {
       this.property.type = 'Boolean';
       this.property.isId = true;
+      this.property.oracle = AN_ORACLE_CONFIG;
       this.property.save(done);
     });
     beforeEach(givenFile('configFile', 'rest/models/user.json'));
+
     it('should update the $modelName.json file', function () {
       var properties = this.configFile.data.properties;
-      expect(properties[this.propertyName]).to.eql({type: 'Boolean', id: true});
+      expect(properties[this.propertyName]).to.eql({
+        type: 'Boolean',
+        id: true,
+        oracle: AN_ORACLE_CONFIG});
     });
   });
 

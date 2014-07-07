@@ -102,7 +102,8 @@
       "public": "boolean",
       "indexes": "array",
       "componentName": {"type": "string", "required": true},
-      "dataSource": "string"
+      "dataSource": "string",
+      "options": "object"
     },
     "public": true,
     "dataSource": "db",
