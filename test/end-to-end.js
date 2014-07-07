@@ -6,6 +6,8 @@ var path = require('path');
 var request = require('supertest');
 var debug = require('debug')('test:end-to-end');
 var ncp = require('ncp');
+var workspace = require('../app');
+var models = workspace.models;
 
 var Workspace = require('../app.js').models.Workspace;
 
@@ -21,6 +23,21 @@ describe('end-to-end', function() {
         debug('Created "api-server" in %s', SANDBOX);
         done(err);
       });
+    });
+
+    before(function createCustomModel(done) {
+      models.ModelDefinition.create({
+        componentName: '.',
+        name: 'Custom'
+      }, done);
+    });
+
+    before(function configureCustomModel(done) {
+      models.ComponentModel.create({
+        name: 'Custom',
+        dataSource: 'db',
+        componentName: 'rest'
+      }, done);
     });
 
     before(installSandboxPackages);

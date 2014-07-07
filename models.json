@@ -32,6 +32,7 @@
   "ComponentDefinition": {
     "properties": {
       "name": {"id": true, "type": "string"},
+      "modelsMetadata": "object",
       "defaultPermission": {"type": "string"}
     },
     "public": true,
