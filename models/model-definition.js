@@ -1,5 +1,6 @@
 var path = require('path');
 var assert = require('assert');
+var extend = require('util')._extend;
 var app = require('../app');
 var async = require('async');
 var underscoreString = require('underscore.string');
@@ -25,11 +26,14 @@ ModelDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 ModelDefinition.validatesPresenceOf('name');
 
 ModelDefinition.getConfigData = function(cache, modelDef) {
-  var configData = {};
+  var configData = extend({}, modelDef);
+  delete configData.id;
+  delete configData.componentName;
+  delete configData.configFile;
+  delete configData.dir;
+  delete configData.dataSource;
+
   var relations = this.getEmbededRelations();
-
-  configData.name = modelDef.name;
-
   relations.forEach(function(relation) {
     var relatedData = getRelated(cache, modelDef.id, relation);
     configData[relation.as] = formatRelatedData(relation, relatedData);

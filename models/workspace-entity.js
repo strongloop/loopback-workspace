@@ -80,11 +80,16 @@ WorkspaceEntity.addToCache = function(cache, val) {
   var Entity = this;
   var id = Entity.getUniqueId(val);
   val[this.dataSource.idName(Entity.modelName)] = id;
-  cache[this.modelName][id] = JSON.stringify(val);
+  this.updateInCache(cache, id, val);
+  return id;
 }
 
 WorkspaceEntity.getFromCache = function(cache, id) {
   return JSON.parse(cache[this.modelName][id]);
+}
+
+WorkspaceEntity.updateInCache = function(cache, id, data) {
+  cache[this.modelName][id] = JSON.stringify(data);
 }
 
 WorkspaceEntity.allFromCache = function(cache) {

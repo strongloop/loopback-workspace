@@ -13,11 +13,9 @@ describe('ModelDefinition', function() {
     beforeEach(function(done) {
       var test = this;
       test.modelName = 'TestModel';
-      test.dataSourceName = 'test datasource';
       test.model = {
         name: test.modelName,
         componentName: '.', // root app
-        dataSource: test.dataSourceName
       };
       ModelDefinition.create(test.model, function(err, modelDef) {
         if(err) return done(err);
@@ -91,7 +89,8 @@ describe('ModelDefinition', function() {
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
-          var data = ModelDefinition.getConfigData(this.cache, this.model);
+          var modelDef = this.model.toObject();
+          var data = ModelDefinition.getConfigData(this.cache, modelDef);
           expect(data).to.have.property('name', 'test-model');
           done();
         }.bind(this));
@@ -109,10 +108,52 @@ describe('ModelDefinition', function() {
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
-          var data = ModelDefinition.getConfigData(this.cache, this.model);
+          var modelDef = this.model.toObject();
+          var data = ModelDefinition.getConfigData(this.cache, modelDef);
           expect(data).to.have.property('acls');
           expect(data.acls, 'acls').to.have.length(1);
           expect(data.acls[0], 'acls[0]').to.have.property('method', 'ALL');
+          done();
+        }.bind(this));
+    });
+
+    it('includes all custom properties', function(done) {
+      new TestDataBuilder()
+        .define('model', ModelDefinition, {
+          name: 'test-model',
+          custom: 'custom'
+        })
+        .buildTo(this, function(err) {
+          if (err) return done(err);
+          var modelDef = this.model.toObject();
+          var data = ModelDefinition.getConfigData(this.cache, modelDef);
+          expect(data).to.have.property('custom', 'custom');
+          done();
+        }.bind(this));
+    });
+
+    it('excludes internal properties', function(done) {
+      new TestDataBuilder()
+        .define('model', ModelDefinition)
+        .buildTo(this, function(err) {
+          if (err) return done(err);
+          var modelDef = this.model.toObject();
+          var data = ModelDefinition.getConfigData(this.cache, modelDef);
+          expect(Object.keys(data)).to.have.members([
+            'name',
+            'plural',
+            'strict',
+            'base',
+            'public',
+            'properties',
+            'validations',
+            'relations',
+            'scopes',
+            'indexes',
+            'acls',
+            'methods',
+            'options',
+            ]);
           done();
         }.bind(this));
     });

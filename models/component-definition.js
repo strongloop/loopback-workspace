@@ -4,6 +4,7 @@ var path = require('path');
 var app = require('../app');
 var fs = require('fs');
 var debug = require('debug')('workspace:component');
+var extend = require('util')._extend;
 
 var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
@@ -38,6 +39,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
   var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, componentName);
   var packageFile = ConfigFile.getFileByBase(configFiles, 'package');
   var steps = [];
+  var componentId;
 
   if(packageFile) {
     steps.push(function(cb) {
@@ -57,7 +59,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
       component.data.configFile = component.path;
       component.data.name = componentName;
       debug('adding to cache component file [%s]', component.path);
-      ComponentDefinition.addToCache(cache, component.data);
+      componentId = ComponentDefinition.addToCache(cache, component.data);
       cb();
     });
   } else {
@@ -88,6 +90,12 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         componentModel.name = modelName;
         ComponentModel.addToCache(cache, componentModel);
       });
+
+      if (modelDefs._meta) {
+        var comp = ComponentDefinition.getFromCache(cache, componentId);
+        comp.modelsMetadata = modelDefs._meta;
+        ComponentDefinition.updateInCache(cache, componentId, comp);
+      }
 
       cb();
     });
@@ -161,10 +169,12 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
   if (hasApp) {
     var configFile = ComponentDefinition.getConfigFile(componentName, componentDef);
+    var data = require('util')._extend({}, componentDef);
     // remove extra data that shouldn't be persisted to the fs
-    delete componentDef.configFile;
-    delete componentDef.name;
-    configFile.data = componentDef;
+    delete data.configFile;
+    delete data.name;
+    delete data.modelsMetadata;
+    configFile.data = data;
 
     filesToSave.push(configFile);
   }
@@ -205,6 +215,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     var componentModelFile = new ConfigFile({path: componentModelsPath}); // models.json
     var componentModelsConfig = componentModelFile.data = {};
 
+    componentModelsConfig._meta = componentDef.modelsMetadata;
+
     cachedComponentModels.forEach(function(componentModel) {
       if(componentModel.componentName === componentName) {
         componentModelsConfig[componentModel.name] = componentModel;
@@ -222,11 +234,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
   cachedModels.forEach(function(modelDef) {
     debug('model definition ~ %j', modelDef);
     if(modelDef.componentName === componentName) {
-      delete modelDef.dataSource;
       var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigData(cache, modelDef);
-      delete modelDef.componentName;
-      delete modelDef.id;
       filesToSave.push(modelConfigFile);
     }
   });

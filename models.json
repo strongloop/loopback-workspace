@@ -32,6 +32,7 @@
   "ComponentDefinition": {
     "properties": {
       "name": {"id": true, "type": "string"},
+      "modelsMetadata": "object",
       "defaultPermission": {"type": "string"}
     },
     "public": true,
@@ -95,14 +96,15 @@
   "ModelDefinition": {
     "properties": {
       "id": {"type": "string", "id": true},
-      "name": "string",
+      "name": {"type": "string", "required": true},
       "plural": "string",
       "strict": "boolean",
+      "base": "string",
       "scopes": "array",
       "public": "boolean",
       "indexes": "array",
       "componentName": {"type": "string", "required": true},
-      "dataSource": "string"
+      "options": "object"
     },
     "public": true,
     "dataSource": "db",
@@ -133,10 +135,10 @@
           "foreignKey": "modelId"
         },
         "relations": {
-          "embed": {"as": "object", "key": "as"},
+          "embed": {"as": "object", "key": "name"},
           "type": "hasMany",
           "model": "ModelRelation",
-          "foreignKey": "fromModelId"
+          "foreignKey": "modelId"
         },
         "accessControls": {
           "embed": {"name": "acls", "as": "array"},

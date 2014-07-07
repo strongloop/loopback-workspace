@@ -3,7 +3,11 @@
  */
 
 var template = module.exports;
-var component = template.component = {};
+var component = template.component = {
+  modelsMetadata: {
+    sources: ['../models', './models']
+  }
+};
 
 template.package = {
   "name": "rest",
