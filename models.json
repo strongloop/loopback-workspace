@@ -95,7 +95,7 @@
   "ModelDefinition": {
     "properties": {
       "id": {"type": "string", "id": true},
-      "name": "string",
+      "name": {"type": "string", "required": true},
       "plural": "string",
       "strict": "boolean",
       "scopes": "array",
@@ -133,10 +133,10 @@
           "foreignKey": "modelId"
         },
         "relations": {
-          "embed": {"as": "object", "key": "as"},
+          "embed": {"as": "object", "key": "name"},
           "type": "hasMany",
           "model": "ModelRelation",
-          "foreignKey": "fromModelId"
+          "foreignKey": "modelId"
         },
         "accessControls": {
           "embed": {"name": "acls", "as": "array"},
