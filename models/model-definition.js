@@ -93,6 +93,8 @@ ModelDefinition.toFilename = function(name) {
  */
 
 function cleanRelatedData(relatedData, relation) {
+  var Entity = require('loopback').getModel(relation.model);
+  var properties = Entity.definition.properties;
   relatedData.forEach(function(obj) {
     assert(relation.foreignKey, 'embeded relation must have foreignKey');
     delete obj[relation.foreignKey];    
@@ -101,5 +103,14 @@ function cleanRelatedData(relatedData, relation) {
     delete obj.id;
     delete obj.componentName;
     delete obj.modelName;
+
+    // apply `json` config from LDL property definitions
+    Object.keys(properties).forEach(function(p) {
+      var json = properties[p].json;
+      if (json) {
+        obj[json] = obj[p];
+        delete obj[p];
+      }
+    });
   });
 }
