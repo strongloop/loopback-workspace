@@ -98,11 +98,11 @@
       "name": {"type": "string", "required": true},
       "plural": "string",
       "strict": "boolean",
+      "base": "string",
       "scopes": "array",
       "public": "boolean",
       "indexes": "array",
       "componentName": {"type": "string", "required": true},
-      "dataSource": "string",
       "options": "object"
     },
     "public": true,

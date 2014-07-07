@@ -222,11 +222,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
   cachedModels.forEach(function(modelDef) {
     debug('model definition ~ %j', modelDef);
     if(modelDef.componentName === componentName) {
-      delete modelDef.dataSource;
       var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigData(cache, modelDef);
-      delete modelDef.componentName;
-      delete modelDef.id;
       filesToSave.push(modelConfigFile);
     }
   });

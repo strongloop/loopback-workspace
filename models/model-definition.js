@@ -31,7 +31,7 @@ ModelDefinition.getConfigData = function(cache, modelDef) {
   delete configData.componentName;
   delete configData.configFile;
   delete configData.dir;
-
+  delete configData.dataSource;
 
   var relations = this.getEmbededRelations();
   relations.forEach(function(relation) {

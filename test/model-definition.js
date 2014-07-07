@@ -13,11 +13,9 @@ describe('ModelDefinition', function() {
     beforeEach(function(done) {
       var test = this;
       test.modelName = 'TestModel';
-      test.dataSourceName = 'test datasource';
       test.model = {
         name: test.modelName,
         componentName: '.', // root app
-        dataSource: test.dataSourceName
       };
       ModelDefinition.create(test.model, function(err, modelDef) {
         if(err) return done(err);
@@ -145,6 +143,7 @@ describe('ModelDefinition', function() {
             'name',
             'plural',
             'strict',
+            'base',
             'public',
             'properties',
             'validations',
@@ -154,7 +153,6 @@ describe('ModelDefinition', function() {
             'acls',
             'methods',
             'options',
-            'dataSource',
             ]);
           done();
         }.bind(this));
