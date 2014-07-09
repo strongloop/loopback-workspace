@@ -30,6 +30,7 @@
     "grunt-loopback-angular": "~1.1.0",
     "loopback-testing": "^0.2.0",
     "mocha": "^1.20.1",
+    "strong-cached-install": "^1.0.0",
     "supertest": "^0.13.0"
   }
 }
