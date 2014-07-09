@@ -202,6 +202,7 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
         delete dataSourceDef.name;
         delete dataSourceDef.id;
         delete dataSourceDef.componentName;
+        delete dataSourceDef.configFile;
       }
     });
 
