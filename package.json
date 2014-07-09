@@ -1,8 +1,17 @@
 {
+  "name": "loopback-workspace",
   "version": "3.0.0",
   "main": "app.js",
   "scripts": {
     "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strongloop/loopback-workspace.git"
+  },
+  "license": {
+    "name": "Dual MIT/StrongLoop",
+    "url": "https://github.com/strongloop/loopback-workspace/blob/master/LICENSE"
   },
   "dependencies": {
     "loopback": "1.x >=1.7.0",
@@ -21,7 +30,6 @@
   "optionalDependencies": {
     "loopback-explorer": "~1.1.0"
   },
-  "name": "loopback-workspace",
   "devDependencies": {
     "better-stack-traces": "^1.0.1",
     "chai": "~1.9.1",
