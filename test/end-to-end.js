@@ -2,14 +2,16 @@ var async = require('async');
 var exec = require('child_process').exec;
 var extend = require('util')._extend;
 var fs = require('fs-extra');
+var install = require('strong-cached-install');
 var path = require('path');
 var request = require('supertest');
 var debug = require('debug')('test:end-to-end');
-var ncp = require('ncp');
 var workspace = require('../app');
 var models = workspace.models;
 
 var Workspace = require('../app.js').models.Workspace;
+
+var PKG_CACHE = path.resolve(__dirname, '.pkgcache');
 
 describe('end-to-end', function() {
   describe('api-server template', function() {
@@ -40,7 +42,10 @@ describe('end-to-end', function() {
       }, done);
     });
 
-    before(installSandboxPackages);
+    before(function installSandboxPackages(cb) {
+      this.timeout(120 * 1000);
+      install(SANDBOX, PKG_CACHE, cb);
+    });
 
     before(function loadApp() {
       app = require(SANDBOX);
@@ -104,69 +109,3 @@ describe('end-to-end', function() {
   });
 });
 
-function installSandboxPackages(cb) {
-  if (this && this.timeout) this.timeout(120*1000);
-
-  var pkg = fs.readJsonFileSync(path.resolve(SANDBOX, 'package.json'));
-  async.eachSeries(
-    Object.keys(pkg.dependencies),
-    function install(dep, next) {
-      installPackage(dep, pkg.dependencies[dep], next);
-    },
-    cb);
-}
-
-var PKG_CACHE = path.resolve(__dirname, '.pkgcache');
-
-function installPackage(name, version, cb) {
-  var quotedVersion = version.replace(/^\^/, 'm-').replace(/^~/, 'p-');
-  var cachePath = path.join(PKG_CACHE, name, quotedVersion);
-  var dest = path.join(SANDBOX, 'node_modules', name);
-
-  if (fs.existsSync(cachePath)) {
-    debug('installing package %s@%s from cache', name, version);
-    fs.mkdirsSync(dest);
-    ncp(cachePath, dest, cb);
-    return;
-  }
-
-  debug('installing package %s@%s from npm', name, version);
-  execNpm(['install', name + '@' + version], { cwd: SANDBOX }, function(err) {
-    if (err) return cb(err);
-    fs.mkdirsSync(cachePath);
-    ncp(dest, cachePath, cb);
-  });
-}
-
-function execNpm(args, options, cb) {
-  options = options || {};
-  options.env = extend(
-    {
-      PATH: process.env.PATH,
-      HOME: process.env.HOME,
-      USERPROFILE: process.env.USERPROFILE,
-    },
-    options.env
-  );
-
-  var command = 'npm ' + args.map(quoteArg).join(' ');
-  debug(command);
-  return exec(command, options, function(err, stdout, stderr) {
-    debug('--npm install stdout--\n%s\n--npm install stderr--\n%s\n--end--',
-      stdout, stderr);
-    cb(err, stdout, stderr);
-  });
-}
-
-function quoteArg(arg) {
-  if (!/[ \t]/.test(arg))
-    return arg;
-  if (!/"/.test(arg))
-    return '"' + arg + '"';
-
-  // See strong-cli/lib/command for full implementation of windows quoting
-  // https://github.com/strongloop/strong-cli/blob/master/lib/command.js
-  // Since we don't expect " in npm arguments, let's skip full quoting
-  // and throw an error instead.
-  throw new Error('command line arguments must not contain \'"\' character');
-}
