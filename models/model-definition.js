@@ -25,14 +25,8 @@ var ModelDefinition = app.models.ModelDefinition;
 ModelDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 ModelDefinition.validatesPresenceOf('name');
 
-ModelDefinition.getConfigData = function(cache, modelDef) {
-  var configData = extend({}, modelDef);
-  delete configData.id;
-  delete configData.componentName;
-  delete configData.configFile;
-  delete configData.dir;
-  delete configData.dataSource;
-
+ModelDefinition.getConfigFromCache = function(cache, modelDef) {
+  var configData = this.getConfigFromData(modelDef);
   var relations = this.getEmbededRelations();
   relations.forEach(function(relation) {
     var relatedData = getRelated(cache, modelDef.id, relation);
@@ -63,7 +57,7 @@ function formatRelatedData(relation, relatedData) {
         var key = related[relation.embed.key];
         result[key] = related;
       });
-      cleanRelatedData(relatedData, relation);
+      cleanRelatedData(result, relation);
       return result;
     break;
     case 'array':
@@ -92,29 +86,19 @@ ModelDefinition.toFilename = function(name) {
 }
 
 /**
- * Remove the foreign key from embeded data.
+ * Remove the foreign key from embeded data and sort the properties in
+ * a well-defined order.
  * @private
  */
 
 function cleanRelatedData(relatedData, relation) {
-  var Entity = require('loopback').getModel(relation.model);
-  var properties = Entity.definition.properties;
-  relatedData.forEach(function(obj) {
-    assert(relation.foreignKey, 'embeded relation must have foreignKey');
-    delete obj[relation.foreignKey];    
-    delete obj[relation.embed.key];
-    // TODO(ritch) we can probably generalize these
-    delete obj.id;
-    delete obj.componentName;
-    delete obj.modelName;
+  assert(relation.foreignKey, 'embeded relation must have foreignKey');
 
-    // apply `json` config from LDL property definitions
-    Object.keys(properties).forEach(function(p) {
-      var json = properties[p].json;
-      if (json) {
-        obj[json] = obj[p];
-        delete obj[p];
-      }
-    });
-  });
+  var Entity = require('loopback').getModel(relation.model);
+  for (var ix in relatedData) {
+    var data = Entity.getConfigFromData(relatedData[ix]);
+    delete data[relation.foreignKey];
+    delete data[relation.embed.key];
+    relatedData[ix] = data;
+  }
 }

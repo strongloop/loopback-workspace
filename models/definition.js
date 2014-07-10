@@ -19,7 +19,8 @@ var Definition = app.model('Definition', {
     },
     "dir": {
       "type": "string",
-      "desc": "the directory name where the definition is persisted"
+      "desc": "the directory name where the definition is persisted",
+      "json": false
     }
   },
   "public": false,

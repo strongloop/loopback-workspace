@@ -169,12 +169,7 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
   if (hasApp) {
     var configFile = ComponentDefinition.getConfigFile(componentName, componentDef);
-    var data = require('util')._extend({}, componentDef);
-    // remove extra data that shouldn't be persisted to the fs
-    delete data.configFile;
-    delete data.name;
-    delete data.modelsMetadata;
-    configFile.data = data;
+    configFile.data = ComponentDefinition.getConfigFromData(componentDef);
 
     filesToSave.push(configFile);
   }
@@ -198,10 +193,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     cachedDataSources.forEach(function(dataSourceDef) {
       if(dataSourceDef.componentName === componentName) {
         dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
-        dataSoureConfig[dataSourceDef.name] = dataSourceDef;
-        delete dataSourceDef.name;
-        delete dataSourceDef.id;
-        delete dataSourceDef.componentName;
+        dataSoureConfig[dataSourceDef.name] =
+          DataSourceDefinition.getConfigFromData(dataSourceDef);
       }
     });
 
@@ -219,10 +212,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
     cachedComponentModels.forEach(function(componentModel) {
       if(componentModel.componentName === componentName) {
-        componentModelsConfig[componentModel.name] = componentModel;
-        delete componentModel.name;
-        delete componentModel.id;
-        delete componentModel.componentName;
+        componentModelsConfig[componentModel.name] =
+          ComponentModel.getConfigFromData(componentModel);
       }
     });
 
@@ -235,7 +226,7 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     debug('model definition ~ %j', modelDef);
     if(modelDef.componentName === componentName) {
       var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
-      modelConfigFile.data = ModelDefinition.getConfigData(cache, modelDef);
+      modelConfigFile.data = ModelDefinition.getConfigFromCache(cache, modelDef);
       filesToSave.push(modelConfigFile);
     }
   });

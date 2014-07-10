@@ -60,8 +60,25 @@ describe('DataSourceDefinition', function() {
       expect(defs).to.eql(['bar', 'foo'].sort());
       done();
     });
-  });
 
+    it('should not contain workspace-private properties', function(done) {
+      // This test is reproducing an issue discovered in generator-loopback
+      var configFile = this.configFile;
+      DataSourceDefinition.create({
+        name: 'another-ds',
+        connector: 'rest',
+        componentName: this.emptyComponent
+      }, function(err) {
+        if (err) return done(err);
+        configFile.load(function(err) {
+          if (err) done(err);
+          var datasources = configFile.data;
+          expect(Object.keys(datasources.foo)).to.not.contain('configFile');
+          done();
+        });
+      });
+    });
+  });
   it('validates `name` uniqueness within the component only', function(done) {
     var ref = TestDataBuilder.ref;
     new TestDataBuilder()

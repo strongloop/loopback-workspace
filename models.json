@@ -16,7 +16,7 @@
   },
   "PackageDefinition": {
     "properties": {
-      "componentName": {"type": "string", "required": true},
+      "componentName": {"type": "string", "required": true, "json": false},
       "name": {"id": true, "type": "string"}
     },
     "public": false,
@@ -31,8 +31,8 @@
   },
   "ComponentDefinition": {
     "properties": {
-      "name": {"id": true, "type": "string"},
-      "modelsMetadata": "object",
+      "name": {"id": true, "type": "string", "json": false},
+      "modelsMetadata": {"type": "object", "json": false},
       "defaultPermission": {"type": "string"}
     },
     "public": true,
@@ -65,9 +65,9 @@
   },
   "ComponentModel": {
     "properties": {
-      "id": {"type": "string", "id": true},
-      "name": {"type": "string"},
-      "componentName": {"type": "string", "required": true}
+      "id": {"type": "string", "id": true, "json": false},
+      "componentName": {"type": "string", "required": true, "json": false},
+      "name": {"type": "string", "json": false}
     },
     "dataSource": "db",
     "options": {
@@ -95,15 +95,16 @@
   },
   "ModelDefinition": {
     "properties": {
-      "id": {"type": "string", "id": true},
+      "id": {"type": "string", "id": true, "json": false},
+      "componentName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string", "required": true},
       "plural": "string",
-      "strict": "boolean",
       "base": "string",
-      "scopes": "array",
+      "strict": "boolean",
       "public": "boolean",
+      "idInjection": "boolean",
+      "scopes": "array",
       "indexes": "array",
-      "componentName": {"type": "string", "required": true},
       "options": "object"
     },
     "public": true,
@@ -162,8 +163,9 @@
   },
   "ModelMethod": {
     "properties": {
-      "id": {"type": "string", "id": true},
-      "modelId": {"type": "string", "required": true},
+      "id": {"type": "string", "id": true, "json": false},
+      "modelId": {"type": "string", "required": true, "json": false},
+      "componentName": {"type": "string", "required": true, "json": false},
       "aliases": {"type": "array"},
       "isStatic": {"type": "boolean"},
       "accepts": {"type": "array"},
@@ -180,12 +182,13 @@
   },
   "ModelRelation": {
     "properties": {
-      "id": {"type": "string", "id": true},
-      "modelId": {"type": "string", "required": true},
+      "id": {"type": "string", "id": true, "json": false},
+      "modelId": {"type": "string", "required": true, "json": false},
+      "componentName": {"type": "string", "required": true, "json": false},
       "type": {"type": "string"},
+      "model": {"type": "string"},
       "as": {"type": "string"},
-      "foreignKey": {"type": "string"},
-      "model": {"type": "string"}
+      "foreignKey": {"type": "string"}
     },
     "public": true,
     "dataSource": "db",
@@ -202,13 +205,14 @@
   },
   "ModelAccessControl": {
     "properties": {
-      "id": {"type": "string", "id": true},
-      "modelId": {"type": "string", "required": true},
-      "property": {"type": "string"},
-      "route": {"type": "string"},
-      "principalId": {"type": "string"},
+      "id": {"type": "string", "id": true, "json": false},
+      "modelId": {"type": "string", "required": true, "json": false},
+      "componentName": {"type": "string", "required": true, "json": false},
       "principalType": {"type": "string"},
-      "permission": {"type": "string", "required": true}
+      "principalId": {"type": "string"},
+      "permission": {"type": "string", "required": true},
+      "property": {"type": "string"},
+      "route": {"type": "string"}
     },
     "public": true,
     "dataSource": "db",
@@ -225,10 +229,11 @@
   },
   "ModelProperty": {
     "properties": {
-      "id": {"type": "string", "id": true},
-      "modelId": {"type": "string", "required": true},
-      "type": {"type": "string"},
+      "id": {"type": "string", "id": true, "json": false},
+      "modelId": {"type": "string", "required": true, "json": false},
+      "componentName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string"},
+      "type": {"type": "string"},
       "isId": {"type": "boolean", "json": "id"},
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
@@ -269,8 +274,8 @@
   },
   "PropertyValidation": {
     "properties": {
-      "id": {"type": "string", "id": true},
-      "propertyId": {"type": "string", "required": true},
+      "id": {"type": "string", "id": true, "json": false},
+      "propertyId": {"type": "string", "required": true, "json": false},
       "type": {"type": "string"},
       "message": {"type": "string"},
       "min": {"type": "number"},
@@ -316,14 +321,14 @@
   },
   "DataSourceDefinition": {
     "properties": {
-      "id": {"type": "string", "id": true},
+      "id": {"type": "string", "id": true, "json": false},
       "host": {"type": "string"},
       "port": {"type": "number"},
       "url": {"type": "string"},
       "database": {"type": "string"},
       "username": {"type": "string"},
       "password": {"type": "string"},
-      "componentName": {"type": "string", "required": true}
+      "componentName": {"type": "string", "required": true, "json": false}
     },
     "public": true,
     "dataSource": "db",
@@ -337,7 +342,7 @@
       "relations": {
         "models": {
           "type": "hasMany",
-          "model": "ModelDefinition",
+          "model": "ComponentModel",
           "foreignKey": "dataSource"
         },
         "component": {

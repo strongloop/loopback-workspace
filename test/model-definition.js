@@ -1,6 +1,8 @@
 var app = require('../app');
 var ModelDefinition = app.models.ModelDefinition;
 var ModelAccessControl = app.models.ModelAccessControl;
+var ModelProperty = app.models.ModelProperty;
+var ModelRelation = app.models.ModelRelation;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var ref = TestDataBuilder.ref;
 var ConfigFile = app.models.ConfigFile;
@@ -71,7 +73,7 @@ describe('ModelDefinition', function() {
     }
   });
 
-  describe('ModelDefinition.getConfigData(cache, modelDef)', function() {
+  describe('ModelDefinition.getConfigFromCache(cache, modelDef)', function() {
     beforeEach(givenEmptyWorkspace);
 
     before(function() {
@@ -90,7 +92,7 @@ describe('ModelDefinition', function() {
         .buildTo(this, function(err) {
           if (err) return done(err);
           var modelDef = this.model.toObject();
-          var data = ModelDefinition.getConfigData(this.cache, modelDef);
+          var data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
           expect(data).to.have.property('name', 'test-model');
           done();
         }.bind(this));
@@ -109,7 +111,7 @@ describe('ModelDefinition', function() {
         .buildTo(this, function(err) {
           if (err) return done(err);
           var modelDef = this.model.toObject();
-          var data = ModelDefinition.getConfigData(this.cache, modelDef);
+          var data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
           expect(data).to.have.property('acls');
           expect(data.acls, 'acls').to.have.length(1);
           expect(data.acls[0], 'acls[0]').to.have.property('method', 'ALL');
@@ -126,36 +128,100 @@ describe('ModelDefinition', function() {
         .buildTo(this, function(err) {
           if (err) return done(err);
           var modelDef = this.model.toObject();
-          var data = ModelDefinition.getConfigData(this.cache, modelDef);
+          var data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
           expect(data).to.have.property('custom', 'custom');
           done();
         }.bind(this));
     });
 
-    it('excludes internal properties', function(done) {
-      new TestDataBuilder()
-        .define('model', ModelDefinition)
-        .buildTo(this, function(err) {
-          if (err) return done(err);
-          var modelDef = this.model.toObject();
-          var data = ModelDefinition.getConfigData(this.cache, modelDef);
-          expect(Object.keys(data)).to.have.members([
-            'name',
-            'plural',
-            'strict',
-            'base',
-            'public',
-            'properties',
-            'validations',
-            'relations',
-            'scopes',
-            'indexes',
-            'acls',
-            'methods',
-            'options',
-            ]);
-          done();
-        }.bind(this));
+    describe('order of keys', function() {
+      before(function buildModelAndRelatedEntities(done) {
+        new TestDataBuilder()
+          .define('model', ModelDefinition, {
+            componentName: this.emptyComponent,
+            custom: true
+          })
+          .define('acl', ModelAccessControl, {
+            property: 'ALL',
+            modelId: ref('model.id'),
+            componentName: undefined, // do not auto-generate a value
+            custom: true
+          })
+          .define('property', ModelProperty, {
+            modelId: ref('model.id'),
+            componentName: undefined, // do not auto-generate a value
+            name: 'id',
+            isId: true,
+            custom: true
+          })
+          .define('relation', ModelRelation, {
+            modelId: ref('model.id'),
+            componentName: undefined, // do not auto-generate a value
+            name: 'self',
+            type: 'belongsTo',
+            model: ref('model.name'),
+            custom: true
+          })
+          .buildTo(this, function(err) {
+            if (err) return done(err);
+            var modelDef = this.model.toObject();
+            this.data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
+            done();
+          }.bind(this));
+      });
+
+      it('is correct for models', function() {
+        expect(Object.keys(this.data)).to.eql([
+          'name',
+          'plural',
+          'base',
+          'strict',
+          'public',
+          'idInjection',
+          'scopes',
+          'indexes',
+          'options',
+          'custom',
+          'properties',
+          'validations',
+          'relations',
+          'acls',
+          'methods',
+        ]);
+      });
+
+      it('is correct for properties', function() {
+        expect(Object.keys(this.data.properties.id)).to.eql([
+          'type',
+          'id',
+          'generated',
+          'required',
+          'index',
+          'desc',
+          'custom'
+        ]);
+      });
+
+      it('is correct for relations', function() {
+        expect(Object.keys(this.data.relations.self)).to.eql([
+          'type',
+          'model',
+          'as',
+          'foreignKey',
+          'custom'
+        ]);
+      });
+
+      it('is correct for acls', function() {
+        expect(Object.keys(this.data.acls[0])).to.eql([
+          'principalType',
+          'principalId',
+          'permission',
+          'property',
+          'route',
+          'custom'
+        ]);
+      });
     });
   });
 });
