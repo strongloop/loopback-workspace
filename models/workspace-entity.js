@@ -2,7 +2,7 @@ var path = require('path');
 var app = require('../app');
 var WorkspaceEntity = app.model('WorkspaceEntity', {
   "properties": {
-    "configFile": {"type": "string"}
+    "configFile": {"type": "string", "json": false}
   },
   "public": false,
   "dataSource": "db"
@@ -111,3 +111,55 @@ WorkspaceEntity.getConfigFile = function(componentName, obj) {
   var ConfigFile = app.models.ConfigFile;
   return new ConfigFile({path: this.getPath(componentName, obj)});
 }
+
+WorkspaceEntity.getConfigFromData = function(data) {
+  var properties = this.definition.properties;
+  var result = {};
+  var prop;
+
+  // add pre-defined properties in the order defined by LDL
+  // apply `json` config from LDL along the way
+  for (prop in properties) {
+    if (properties[prop].json === false) continue;
+    result[properties[prop].json || prop] = data[prop];
+  }
+
+  // add dynamic properties
+  for (prop in data) {
+    if (properties[prop]) continue;
+    result[prop] = data[prop];
+  }
+
+  return result;
+};
+
+// Automatically inject parent model's componentName when creating a new object
+// We have to perform this task before the validations are executed, since
+// the `componentName` is a required property
+WorkspaceEntity.beforeValidate = function injectComponentName(next) {
+  var Entity = this.constructor;
+  var properties = Entity.definition.properties;
+  var data = this.toObject();
+
+  if (!('componentName' in properties &&
+    'modelId' in properties &&
+    'modelId' in data)) {
+    return next();
+  }
+
+  Entity.app.models.ModelDefinition.findById(data.modelId, function(err, model) {
+    if (model && model.componentName) {
+      if (this.componentName && this.componentName !== model.componentName) {
+        console.warn(
+          'Warning: fixed %s[%s].componentName from %j to %j' +
+            ' to match the parent',
+          Entity.modelName,
+          this.id,
+          this.componentName,
+          model.componentName);
+      }
+      this.componentName = model.componentName;
+    }
+    next();
+  }.bind(this));
+};
