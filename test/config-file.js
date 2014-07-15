@@ -5,6 +5,7 @@ var assert = require('assert');
 var testData;
 
 describe('ConfigFile', function() {
+  beforeEach(resetWorkspace);
   beforeEach(givenEmptySandbox);
   beforeEach(function(done) {
     testData = {hello: 'world'};
@@ -90,7 +91,7 @@ describe('ConfigFile', function() {
       var files = this.testFiles = [
         COMPONENT_JSON,
         'my-app/datasources.json',
-        'my-app/models.json',
+        'my-app/model-config.json',
         'my-app/models/todo.json',
       ];
 
@@ -176,7 +177,7 @@ describe('ConfigFile', function() {
       var files = this.testFiles = [
         COMPONENT_JSON,
         'app-a/datasources.json',
-        'app-b/models.json',
+        'app-b/model-config.json',
         'app-c/models/todo.json',
       ];
 

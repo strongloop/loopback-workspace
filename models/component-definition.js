@@ -34,7 +34,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
   var debug = require('debug')('workspace:component:load:' + componentName);
   var configFiles = components[componentName];
   var component = ConfigFile.getFileByBase(configFiles, 'config');
-  var componentModels = ConfigFile.getFileByBase(configFiles, 'models');
+  var componentModels = ConfigFile.getFileByBase(configFiles, 'model-config');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
   var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, componentName);
   var packageFile = ConfigFile.getFileByBase(configFiles, 'package');
@@ -205,7 +205,7 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
     var cachedComponentModels = ComponentModel.allFromCache(cache);
     var componentModelsPath = path.join(componentName, ComponentModel.settings.defaultConfigFile);
-    var componentModelFile = new ConfigFile({path: componentModelsPath}); // models.json
+    var componentModelFile = new ConfigFile({path: componentModelsPath}); // model-config.json
     var componentModelsConfig = componentModelFile.data = {};
 
     componentModelsConfig._meta = componentDef.modelsMetadata;

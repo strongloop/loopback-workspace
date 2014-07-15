@@ -26,8 +26,8 @@ describe('ComponentDefinition', function () {
       expect(content).to.not.have.property('modelsMetadata');
     });
 
-    it('omits `componentName` in models.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/models.json');
+    it('omits `componentName` in model-config.json', function() {
+      var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
       expect(content.User).to.not.have.property('componentName');
     });
 
@@ -41,14 +41,14 @@ describe('ComponentDefinition', function () {
       expect(content.db).to.not.have.property('configFile');
     });
 
-    it('includes `_meta.source` in models.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/models.json');
+    it('includes `_meta.source` in model-config.json', function() {
+      var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
       expect(content).to.have.property('_meta');
       expect(content._meta).to.eql({ sources: ['../models', './models'] });
     });
 
     it('saves component models to correct file', function() {
-      var serverModels = fs.readJsonFileSync(SANDBOX + '/server/models.json');
+      var serverModels = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
       expect(Object.keys(serverModels), 'server models').to.not.be.empty;
     });
 
@@ -57,7 +57,7 @@ describe('ComponentDefinition', function () {
       expect(files).to.not.include.members([
         'config.json',
         'datasources.json',
-        'models.json']
+        'model-config.json']
       );
     });
   });

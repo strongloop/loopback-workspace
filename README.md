@@ -20,7 +20,7 @@ Each component has the following basic structure:
   /my-component
     config.json
     datasources.json
-    models.json
+    model-config.json
     /models
       my-model.json
       my-model.js
