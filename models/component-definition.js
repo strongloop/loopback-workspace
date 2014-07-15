@@ -244,7 +244,7 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
 ComponentDefinition.hasApp = function(componentDef) {
   // At the moment, the root component does not have `app.js`,
-  // all other components (rest, server) have their app.js
+  // all other components (server) have their app.js
   // In the future, we should read this from component,
   // e.g. package.json > loopback-workspace > app: true|false
   return componentDef.name !== '.';

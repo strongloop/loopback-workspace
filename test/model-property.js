@@ -9,7 +9,7 @@ describe('ModelProperty', function() {
   beforeEach(function(done) {
     ModelDefinition.create({
       name: 'user',
-      componentName: 'rest'
+      componentName: 'server'
     }, done);
   });
   beforeEach(function(done) {
@@ -19,7 +19,7 @@ describe('ModelProperty', function() {
       name: test.propertyName,
       type: 'String',
       isId: false,
-      modelId: 'rest.user'
+      modelId: 'server.user'
     };
     ModelProperty.create(property, function(err, property) {
       if(err) return done(err);
@@ -29,7 +29,7 @@ describe('ModelProperty', function() {
   });
 
   describe('ModelProperty.create(property, cb)', function () {
-    beforeEach(givenFile('configFile', 'rest/models/user.json'));
+    beforeEach(givenFile('configFile', 'server/models/user.json'));
     it('should update the correct $modelName.json file', function () {
       var properties = this.configFile.data.properties;
       var type = this.property.type;
@@ -38,7 +38,7 @@ describe('ModelProperty', function() {
       expect(properties[this.propertyName]).to.eql({type: type, id: false});
     });
     it('should have the correct id', function () {
-      expect(this.property.id).to.equal('rest.user.myProperty');
+      expect(this.property.id).to.equal('server.user.myProperty');
     });
   });
 
@@ -56,7 +56,7 @@ describe('ModelProperty', function() {
     beforeEach(function(done) {
       this.property.remove(done);
     });
-    beforeEach(givenFile('configFile', 'rest/models/user.json'));
+    beforeEach(givenFile('configFile', 'server/models/user.json'));
     it('should remove from $modelName.json file', function () {
       var properties = this.configFile.data.properties;
       expect(properties).to.not.have.property(this.propertyName);
@@ -76,7 +76,7 @@ describe('ModelProperty', function() {
       this.property.oracle = AN_ORACLE_CONFIG;
       this.property.save(done);
     });
-    beforeEach(givenFile('configFile', 'rest/models/user.json'));
+    beforeEach(givenFile('configFile', 'server/models/user.json'));
 
     it('should update the $modelName.json file', function () {
       var properties = this.configFile.data.properties;
@@ -97,9 +97,9 @@ describe('ModelProperty', function() {
           name: this.propertyName,
           type: 'String',
           isId: false,
-          componentName: 'rest',
-          id: 'rest.user.myProperty',
-          modelId: 'rest.user'
+          componentName: 'server',
+          id: 'server.user.myProperty',
+          modelId: 'server.user'
         }).toObject();
 
         expect(actual).to.eql(expected);

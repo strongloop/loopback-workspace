@@ -7,7 +7,7 @@ var component = template.component = {
 };
 
 template.config = {
-  components: ['rest', 'server']
+  components: ['server']
 };
 
 template.package = {

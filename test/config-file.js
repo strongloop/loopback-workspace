@@ -1,5 +1,5 @@
 var async = require('async');
-var COMPONENT_JSON = 'rest/config.json';
+var COMPONENT_JSON = 'server/config.json';
 var ConfigFile = require('../app').models.ConfigFile;
 var assert = require('assert');
 var testData;

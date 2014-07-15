@@ -10,9 +10,10 @@ describe('Workspace', function() {
   describe('Workspace.getAvailableTemplates(callback)', function() {
     it('Get an array of available template names.', function(done) {
       Workspace.getAvailableTemplates(function(err, templates) {
-        expect(templates).to.contain('api-server');
-        expect(templates).to.contain('rest');
-        expect(templates).to.contain('server');
+        expect(templates).to.have.members([
+          'api-server',
+          'server'
+        ]);
         done();
       });
     });
@@ -21,14 +22,16 @@ describe('Workspace', function() {
   describe('Workspace.addComponent(options, cb)', function () {
     beforeEach(resetWorkspace);
     beforeEach(givenEmptySandbox);
-    beforeEach(function addRestComponent(done) {
+
+    it('should add the static component files', function(done) {
       Workspace.addComponent({
-        template: 'rest'
-      }, done);
-    });
-    it('should add the static component files', function () {
-      expectFileExists(getPath('rest/rest.js'));
-      expectFileExists(getPath('rest/boot/authentication.js'));
+        template: 'server'
+      }, function(err) {
+        if (err) return done(err);
+        expectFileExists(getPath('server/server.js'));
+        expectFileExists(getPath('server/boot/authentication.js'));
+        done();
+      });
     });
 
     it('should provide a hook for custom of `cp -r`', function(done) {
@@ -68,9 +71,10 @@ describe('Workspace', function() {
 
     it('should create a set of component definitions', function() {
       var componentNames = toNames(this.components);
-      expect(componentNames).to.contain('rest');
-      expect(componentNames).to.contain('.');
-      expect(componentNames).to.contain('server');
+      expect(componentNames).to.have.members([
+        '.',
+        'server'
+      ]);
     });
 
     it('should not create a set of model definitions', function() {

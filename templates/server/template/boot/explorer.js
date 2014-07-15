@@ -9,10 +9,9 @@ module.exports = function mountLoopBackExplorer(server) {
     return;
   }
 
-  var restApp = require('../../rest');
   var restApiRoot = server.get('restApiRoot');
 
-  var explorerApp = explorer(restApp, { basePath: restApiRoot });
+  var explorerApp = explorer(server, { basePath: restApiRoot });
   server.use('/explorer', explorerApp);
   server.once('started', function() {
     var baseUrl = server.get('url').replace(/\/$/, '');
