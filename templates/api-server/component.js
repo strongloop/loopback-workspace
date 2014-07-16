@@ -3,12 +3,6 @@
  */
 
 var template = module.exports;
-var component = template.component = {
-};
-
-template.config = {
-  components: ['server']
-};
 
 template.package = {
   "version": "0.0.0",
@@ -24,3 +18,57 @@ template.package = {
     "loopback-explorer": "^1.1.0"
   }
 };
+
+template.common = {
+
+};
+
+template.server = {
+  facet: {
+    modelsMetadata: {
+      sources: ['../common/models', './models']
+    },
+  },
+
+  config: {
+    restApiRoot: '/api',
+    host: 'localhost'
+  },
+
+  modelConfigs: [
+    {
+      name: 'User',
+      dataSource: 'db'
+    },
+    {
+      name: 'AccessToken',
+      dataSource: 'db',
+      public: false
+    },
+    {
+      name: 'ACL',
+      dataSource: 'db',
+      public: false
+    },
+    {
+      name: 'RoleMapping',
+      dataSource: 'db',
+      public: false
+    },
+    {
+      name: 'Role',
+      dataSource: 'db',
+      public: false
+    }
+  ],
+
+  datasources: [
+    {
+      name: 'db',
+      connector: 'memory'
+    }
+  ],
+};
+
+// An API server has no client facet
+template.client = null;

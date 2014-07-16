@@ -58,7 +58,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
       facetConfig.data = facetConfig.data || {};
       facetConfig.data.configFile = facetConfig.path;
       facetConfig.data.name = facetName;
-      debug('adding to cache component file [%s]', facetConfig.path);
+      debug('adding to cache facet file [%s]', facetConfig.path);
       facetId = Facet.addToCache(cache, facetConfig.data);
       cb();
     });
@@ -68,7 +68,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
         name: facetName,
         configFile: path.join(facetName, 'config.json')
       };
-      debug('adding to cache component entry [%s]', facetData.configFile);
+      debug('adding to cache facet entry [%s]', facetData.configFile);
       Facet.addToCache(cache, facetData);
       cb();
     });
@@ -233,21 +233,21 @@ Facet.saveToFs = function(cache, facetData, cb) {
 
   // TODO(ritch) files that exist without data in the cache should be deleted
   async.each(filesToSave, function(configFile, cb) {
-    debug('file [%s]', configFile.path);  
+    debug('file [%s]', configFile.path);
     configFile.save(cb);
   }, function(err) {
-    if(err) return cb(err);
+    if (err) return cb(err);
     debug('saving finished');
     cb();
   });
 }
 
 Facet.hasApp = function(facetData) {
-  // At the moment, the root component does not have `app.js`,
-  // all other facets (server) have their app.js
-  // In the future, we should read this from component,
-  // e.g. package.json > loopback-workspace > app: true|false
-  return facetData.name !== '.';
+  // At the moment, the common facet does not have `app.js`,
+  // all other facets (server, client) have their app.js
+  // In the future, we should create subclasses of the Facet (ServerFacet,...)
+  // and override the value there.
+  return facetData.name !== 'common';
 };
 
 Facet.getUniqueId = function(data) {

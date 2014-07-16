@@ -1,3 +1,4 @@
+var extend = require('util')._extend;
 var fs = require('fs');
 var ncp = require('ncp');
 var path = require('path');
@@ -47,62 +48,91 @@ Workspace.copyRecursive = function(source, destination, cb) {
   ncp(source, destination, cb);
 };
 
-Workspace.addFacet = function(options, cb) {
+/**
+ * Add a new component from a template.
+ *
+ * @param {Object} options
+ * @option {String} name
+ * @param {function(Error=)} cb
+ */
+Workspace.addComponent = function(options, cb) {
+  if (!options.root) {
+    throw new Error('Non-root components are not supported yet.');
+  }
   var template;
   var templateName = options.template || DEFAULT_TEMPLATE;
   var name = options.name || templateName;
   var packageName = options.packageName || name;
-  if(options.root) name = '.';
+  if (options.root) name = ConfigFile.ROOT_COMPONENT;
   var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
 
   try {
     template = require('../templates/' + templateName + '/component');
     // create a clone to preserve the original
     template = JSON.parse(JSON.stringify(template));
-  } catch(e) {
+  } catch (e) {
     console.error(e);
   }
-  
+
   debug('create from template [%s]', templateName);
 
-  if(!template) {
-    var err = new Error('Invalid template...');
+  if (!template) {
+    var err = new Error('Unknown template ' + templateName);
     err.templateName = templateName;
     err.statusCode = 400;
     return cb(err);
   }
 
   var dest = path.join(ConfigFile.getWorkspaceDir(), name);
-  var config = template.config;
-  var subComponents = config && config.components;
   var steps = [];
 
-  if(template.component) {
-    steps.push(function(cb) {
-      template.component.name = name;
-      Facet.create(template.component, cb);
+  if (template.package) {
+    // TODO(bajtos) create a package definition
+    /*
+     template.package.name = packageName;
+     setFacetName(template.package);
+     steps.push(function(cb) {
+     PackageDefinition.create(template.package, cb);
+     });
+     */
+    template.package.name = packageName;
+    steps.push(function(next) {
+      new ConfigFile({
+        path: 'package.json',
+        data: template.package
+      }).save(next);
     });
-    if(subComponents) {
-      steps.push(function(cb) {
-        async.each(subComponents, function(component, cb) {
-          Workspace.addFacet({
-            name: component,
-            template: component
-          }, cb);
-        }, cb);
-      });
-    }
-  } else {
-    return cb(new Error('invalid template: does not include "component"'));
   }
 
-  if(template.package) {
-    template.package.name = packageName;
-    setFacetName(template.package);
-    steps.push(function(cb) {
-      PackageDefinition.create(template.package, cb);
+  ['common', 'server', 'client'].forEach(function(facetName) {
+    var facet = template[facetName];
+    if (!facet) return;
+    steps.push(function(next) {
+      createFacet(facetName, facet, next);
     });
-  }
+  });
+
+  steps.push(function(cb) {
+    fs.exists(fileTemplatesDir, function(exists) {
+      if (exists) {
+        Workspace.copyRecursive(fileTemplatesDir, dest, cb);
+      } else {
+        cb();
+      }
+    });
+  });
+
+  async.parallel(steps, cb);
+};
+
+function createFacet(name, template, cb) {
+  var steps = [];
+
+  steps.push(function(cb) {
+    var facet = extend(template.facet || {}, template.config);
+    facet.name = name;
+    Facet.create(facet, cb);
+  });
 
   if(template.modelConfigs) {
     setFacetName(template.modelConfigs);
@@ -115,7 +145,7 @@ Workspace.addFacet = function(options, cb) {
   if(template.models) {
     setFacetName(template.models);
     steps.push(function(cb) {
-      async.each(template.models, 
+      async.each(template.models,
         ModelDefinition.create.bind(ModelDefinition), cb);
     });
   }
@@ -123,7 +153,7 @@ Workspace.addFacet = function(options, cb) {
   if(template.datasources) {
     setFacetName(template.datasources);
     steps.push(function(cb) {
-      async.each(template.datasources, 
+      async.each(template.datasources,
         DataSourceDefinition.create.bind(DataSourceDefinition), cb);
     });
   }
@@ -131,20 +161,10 @@ Workspace.addFacet = function(options, cb) {
   if(template.relations) {
     setFacetName(template.relations);
     steps.push(function(cb) {
-      async.each(template.relations, 
+      async.each(template.relations,
         ModelRelation.create.bind(ModelRelation), cb);
     });
   }
-
-  steps.push(function(cb) {
-    fs.exists(fileTemplatesDir, function(exists) {
-      if(exists) {
-        Workspace.copyRecursive(fileTemplatesDir, dest, cb);
-      } else {
-        cb();
-      }
-    });
-  });
 
   function setFacetName(obj) {
     if(Array.isArray(obj)) {
@@ -169,7 +189,7 @@ Workspace.addFacet = function(options, cb) {
  */
 
 Workspace.createFromTemplate = function(templateName, name, cb) {
-  Workspace.addFacet({
+  Workspace.addComponent({
     root: true,
     name: name,
     template: templateName

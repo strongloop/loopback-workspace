@@ -44,7 +44,9 @@ describe('Facet', function () {
     it('includes `_meta.source` in model-config.json', function() {
       var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
       expect(content).to.have.property('_meta');
-      expect(content._meta).to.eql({ sources: ['../models', './models'] });
+      expect(content._meta).to.eql({
+        sources: ['../common/models', './models']
+      });
     });
 
     it('saves facet models to correct file', function() {

@@ -100,6 +100,15 @@ connector.loadFromFile = function() {
 
   ConfigFile.findFacetFiles(function(err, facetFiles) {
     if(err) return done(err);
+
+    if (!('common' in facetFiles) && (facetFiles.server || facetFiles.common)) {
+      // When there are no model defined in `common` facet,
+      // ConfigFile does not recognize it.
+      // Workaround - add the facet explicitly, but only if there are other
+      // facets like "server" already present.
+      facetFiles.common = [];
+    }
+
     var facetNames = Object.keys(facetFiles);
 
     async.each(facetNames, function(facet, next) {

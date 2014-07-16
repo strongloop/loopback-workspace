@@ -17,7 +17,7 @@ describe('ModelDefinition', function() {
       test.modelName = 'TestModel';
       test.model = {
         name: test.modelName,
-        facetName: '.', // root app
+        facetName: 'common'
       };
       ModelDefinition.create(test.model, function(err, modelDef) {
         if(err) return done(err);
@@ -26,14 +26,14 @@ describe('ModelDefinition', function() {
       });
     });
 
-    beforeEach(givenFile('modelsConfigFile', 'model-config.json'));
-    beforeEach(givenFile('modelConfigFile', 'models/test-model.json'));
+    beforeEach(givenFile('modelsConfigFile', 'common/model-config.json'));
+    beforeEach(givenFile('modelDefFile', 'common/models/test-model.json'));
 
     beforeEach(findAllEntities);
 
     describe('ModelDefinition.create(modelDef, cb)', function () {
-      it('should create a models/$name.json file', function (done) {
-        this.modelConfigFile.exists(function(err, exists) {
+      it('should create a common/models/$name.json file', function (done) {
+        this.modelDefFile.exists(function(err, exists) {
           expect(exists).to.equal(true);
           done();
         });
@@ -102,9 +102,10 @@ describe('ModelDefinition', function() {
       new TestDataBuilder()
         .define('model', ModelDefinition, {
           name: 'Car',
-          facetName: '.'
+          facetName: 'common'
         })
         .define('aclx', ModelAccessControl, {
+          facetName: undefined, // prevent data builder from filling this
           method: 'ALL',
           modelId: ref('model.id')
         })

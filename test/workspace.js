@@ -11,20 +11,20 @@ describe('Workspace', function() {
       Workspace.getAvailableTemplates(function(err, templates) {
         expect(templates).to.have.members([
           'api-server',
-          'server'
         ]);
         done();
       });
     });
   });
 
-  describe('Workspace.addFacet(options, cb)', function () {
+  describe('Workspace.addComponent(options, cb)', function () {
     beforeEach(resetWorkspace);
     beforeEach(givenEmptySandbox);
 
-    it('should add the static facet files', function(done) {
-      Workspace.addFacet({
-        template: 'server'
+    it('should add the static files', function(done) {
+      Workspace.addComponent({
+        template: 'api-server',
+        root: true
       }, function(err) {
         if (err) return done(err);
         expectFileExists(getPath('server/server.js'));
@@ -41,9 +41,10 @@ describe('Workspace', function() {
         process.nextTick(cb);
       };
 
-      Workspace.addFacet(
+      Workspace.addComponent(
         {
-          template: 'server'
+          template: 'api-server',
+          root: true
         },
         function(err) {
           Workspace.copyRecursive = ncp;
@@ -71,7 +72,8 @@ describe('Workspace', function() {
     it('should create a set of facets', function() {
       var facetNames = toNames(this.facets);
       expect(facetNames).to.have.members([
-        '.',
+        '.', // TODO(bajtos) Remove this once package.json is not in facets
+        'common',
         'server'
       ]);
     });

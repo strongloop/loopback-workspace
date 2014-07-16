@@ -29,7 +29,7 @@ describe('end-to-end', function() {
 
     before(function createCustomModel(done) {
       models.ModelDefinition.create({
-        facetName: '.',
+        facetName: 'common',
         name: 'Custom'
       }, done);
     });
