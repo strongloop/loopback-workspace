@@ -8,7 +8,7 @@ var extend = require('util')._extend;
 
 var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
-var ComponentModel = app.models.ComponentModel;
+var ModelConfig = app.models.ModelConfig;
 var ConfigFile = app.models.ConfigFile;
 var PackageDefinition = app.models.PackageDefinition;
 
@@ -34,7 +34,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   var debug = require('debug')('workspace:component:load:' + facetName);
   var configFiles = allConfigFiles[facetName];
   var facetConfig = ConfigFile.getFileByBase(configFiles, 'config');
-  var componentModels = ConfigFile.getFileByBase(configFiles, 'model-config');
+  var modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
   var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
   var packageFile = ConfigFile.getFileByBase(configFiles, 'package');
@@ -74,27 +74,27 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     });
   }
 
-  if(componentModels) {
+  if(modelConfigs) {
     steps.push(function(cb) {
-      componentModels.load(cb);
+      modelConfigs.load(cb);
     }, function(cb) {
-      var modelDefs = componentModels.data || {};
-      var modelNames = Object.keys(modelDefs).filter(function(modelName) {
+      var modelConfigJson = modelConfigs.data || {};
+      var modelNames = Object.keys(modelConfigJson).filter(function(modelName) {
         // exclude _meta / other private properties
         return modelName.charAt(0) !== '_';
       });
 
       modelNames.forEach(function(modelName) {
-        var componentModel = modelDefs[modelName];
-        componentModel.facetName = facetName;
-        componentModel.name = modelName;
-        ComponentModel.addToCache(cache, componentModel);
+        var modelConfig = modelConfigJson[modelName];
+        modelConfig.facetName = facetName;
+        modelConfig.name = modelName;
+        ModelConfig.addToCache(cache, modelConfig);
       });
 
-      if (modelDefs._meta) {
-        var comp = Facet.getFromCache(cache, facetId);
-        comp.modelsMetadata = modelDefs._meta;
-        Facet.updateInCache(cache, facetId, comp);
+      if (modelConfigJson._meta) {
+        var facetEntity = Facet.getFromCache(cache, facetId);
+        facetEntity.modelsMetadata = modelConfigJson._meta;
+        Facet.updateInCache(cache, facetId, facetEntity);
       }
 
       cb();
@@ -203,21 +203,21 @@ Facet.saveToFs = function(cache, facetData, cb) {
       data: dataSoureConfig
     }));
 
-    var cachedComponentModels = ComponentModel.allFromCache(cache);
-    var componentModelsPath = path.join(facetName, ComponentModel.settings.defaultConfigFile);
-    var componentModelFile = new ConfigFile({path: componentModelsPath}); // model-config.json
-    var componentModelsConfig = componentModelFile.data = {};
+    var cachedModelConfigs = ModelConfig.allFromCache(cache);
+    var modelConfigPath = path.join(facetName, ModelConfig.settings.defaultConfigFile);
+    var modelConfigFile = new ConfigFile({path: modelConfigPath}); // model-config.json
+    var modelConfigJson = modelConfigFile.data = {};
 
-    componentModelsConfig._meta = facetData.modelsMetadata;
+    modelConfigJson._meta = facetData.modelsMetadata;
 
-    cachedComponentModels.forEach(function(componentModel) {
-      if(componentModel.facetName === facetName) {
-        componentModelsConfig[componentModel.name] =
-          ComponentModel.getConfigFromData(componentModel);
+    cachedModelConfigs.forEach(function(modelConfig) {
+      if(modelConfig.facetName === facetName) {
+        modelConfigJson[modelConfig.name] =
+          ModelConfig.getConfigFromData(modelConfig);
       }
     });
 
-    filesToSave.push(componentModelFile);
+    filesToSave.push(modelConfigFile);
   }
 
   var cachedModels = ModelDefinition.allFromCache(cache);

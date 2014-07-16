@@ -16,7 +16,7 @@ template.package = {
   main: 'server.js'
 };
 
-template.componentModels = [
+template.modelConfigs = [
   {
     name: 'User',
     dataSource: 'db'

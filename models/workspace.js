@@ -6,7 +6,7 @@ var async = require('async');
 var PackageDefinition = app.models.PackageDefinition;
 var ConfigFile = app.models.ConfigFile;
 var Facet = app.models.Facet;
-var ComponentModel = app.models.ComponentModel;
+var ModelConfig = app.models.ModelConfig;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
 var ModelRelation = app.models.ModelRelation;
@@ -104,11 +104,11 @@ Workspace.addFacet = function(options, cb) {
     });
   }
 
-  if(template.componentModels) {
-    setFacetName(template.componentModels);
+  if(template.modelConfigs) {
+    setFacetName(template.modelConfigs);
     steps.push(function(cb) {
-      async.each(template.componentModels, 
-        ComponentModel.create.bind(ComponentModel), cb);
+      async.each(template.modelConfigs,
+        ModelConfig.create.bind(ModelConfig), cb);
     });
   }
 

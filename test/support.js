@@ -106,7 +106,7 @@ function findOfType(name, type) {
 
 findFacets = findOfType('facets', models.Facet);
 findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
-findComponentModels = findOfType('componentModels', models.ComponentModel);
+findModelConfigs = findOfType('modelConfigs', models.ModelConfig);
 findModelDefinitions = findOfType('models', models.ModelDefinition);
 findViewDefinitions = findOfType('views', models.ViewDefinition);
 findModelProperties = findOfType('properties', models.ModelProperty);
@@ -122,7 +122,7 @@ findAllEntities = function(cb) {
     findFacets,
     findDataSourceDefinitions,
     findModelDefinitions,
-    findComponentModels,
+    findModelConfigs,
     findViewDefinitions,
     findModelProperties,
     findModelMethods,

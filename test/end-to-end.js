@@ -35,7 +35,7 @@ describe('end-to-end', function() {
     });
 
     before(function configureCustomModel(done) {
-      models.ComponentModel.create({
+      models.ModelConfig.create({
         name: 'Custom',
         dataSource: 'db',
         facetName: 'server'

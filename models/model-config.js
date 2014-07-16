@@ -8,7 +8,7 @@ var app = require('../app');
  * @inherits Definition
  */
 
-var ComponentModel = app.models.ComponentModel;
+var ModelConfig = app.models.ModelConfig;
 
 /**
  * - `name` is required and must be unique per `Facet`
@@ -17,6 +17,6 @@ var ComponentModel = app.models.ComponentModel;
  * @header Property Validation
  */
 
-ComponentModel.validatesUniquenessOf('name', { scopedTo: ['component'] });
-ComponentModel.validatesPresenceOf('name');
-ComponentModel.validatesPresenceOf('facetName');
+ModelConfig.validatesUniquenessOf('name', { scopedTo: ['component'] });
+ModelConfig.validatesPresenceOf('name');
+ModelConfig.validatesPresenceOf('facetName');
