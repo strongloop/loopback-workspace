@@ -11,6 +11,7 @@ var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelConfig = app.models.ModelConfig;
 var ConfigFile = app.models.ConfigFile;
 var PackageDefinition = app.models.PackageDefinition;
+var FacetSetting = app.models.FacetSetting;
 
 /**
  * Defines a `LoopBackApp` configuration.
@@ -39,7 +40,12 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
   var packageFile = ConfigFile.getFileByBase(configFiles, 'package');
   var steps = [];
-  var facetId;
+
+  var facetData = {
+    name: facetName
+  };
+  debug('adding to cache facet [%s]');
+  var facetId = Facet.addToCache(cache, facetData);
 
   if(packageFile) {
     steps.push(function(cb) {
@@ -55,21 +61,16 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     steps.push(function(cb) {
       facetConfig.load(cb);
     }, function(cb) {
-      facetConfig.data = facetConfig.data || {};
-      facetConfig.data.configFile = facetConfig.path;
-      facetConfig.data.name = facetName;
       debug('adding to cache facet file [%s]', facetConfig.path);
-      facetId = Facet.addToCache(cache, facetConfig.data);
-      cb();
-    });
-  } else {
-    steps.push(function(cb) {
-      var facetData = {
-        name: facetName,
-        configFile: path.join(facetName, 'config.json')
-      };
-      debug('adding to cache facet entry [%s]', facetData.configFile);
-      Facet.addToCache(cache, facetData);
+      Object.keys(facetConfig.data).forEach(function(name) {
+        var value = {
+          name: name,
+          value: facetConfig.data[name],
+          configFile: facetConfig.path,
+          facetName: facetName
+        };
+        FacetSetting.addToCache(cache, value);
+      });
       cb();
     });
   }
@@ -168,10 +169,15 @@ Facet.saveToFs = function(cache, facetData, cb) {
   var hasApp = Facet.hasApp(facetData);
 
   if (hasApp) {
-    var configFile = Facet.getConfigFile(facetName, facetData);
-    configFile.data = Facet.getConfigFromData(facetData);
+    var facetConfigFile = FacetSetting.getConfigFile(facetName, {});
+    facetConfigFile.data = {};
 
-    filesToSave.push(configFile);
+    FacetSetting.allFromCache(cache).forEach(function(setting) {
+      if (setting.facetName !== facetName) return;
+      facetConfigFile.data[setting.name] = setting.value;
+    });
+
+    filesToSave.push(facetConfigFile);
   }
 
   PackageDefinition.allFromCache(cache).forEach(function(package) {

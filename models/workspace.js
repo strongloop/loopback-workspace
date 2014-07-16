@@ -7,6 +7,7 @@ var async = require('async');
 var PackageDefinition = app.models.PackageDefinition;
 var ConfigFile = app.models.ConfigFile;
 var Facet = app.models.Facet;
+var FacetSetting = app.models.FacetSetting;
 var ModelConfig = app.models.ModelConfig;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
@@ -118,10 +119,20 @@ function createFacet(name, template, cb) {
   var steps = [];
 
   steps.push(function(cb) {
-    var facet = extend(template.facet || {}, template.config);
+    var facet = template.facet || {};
     facet.name = name;
     Facet.create(facet, cb);
   });
+
+  if (template.config) {
+    setFacetName(template.config);
+    steps.push(function(next) {
+      async.each(
+        template.config,
+        FacetSetting.create.bind(FacetSetting),
+        next);
+    });
+  }
 
   if(template.modelConfigs) {
     setFacetName(template.modelConfigs);

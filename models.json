@@ -37,11 +37,6 @@
     "dataSource": "db",
     "options": {
       "base": "Definition",
-      "defaultConfigFile": "config.json",
-      "configFiles": [
-        "config.json",
-        "config.*.json"
-      ],
       "relations": {
         "package": {
           "type": "hasOne",
@@ -59,6 +54,22 @@
           "foreignKey": "facetName"
         }
       }
+    }
+  },
+  "FacetSetting": {
+    "properties": {
+      "id": {"type": "string", "id": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false}
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Definition",
+      "defaultConfigFile": "config.json",
+      "configFiles": [
+        "config.json",
+        "config.*.json"
+      ]
     }
   },
   "ModelConfig": {

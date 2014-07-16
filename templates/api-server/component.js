@@ -30,10 +30,10 @@ template.server = {
     },
   },
 
-  config: {
-    restApiRoot: '/api',
-    host: 'localhost'
-  },
+  config: [
+    { name: 'restApiRoot', value: '/api' },
+    { name: 'host', value: 'localhost' }
+  ],
 
   modelConfigs: [
     {

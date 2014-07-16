@@ -245,11 +245,7 @@ ConfigFile.findFacetFiles = function(cb) {
 }
 
 function entityBelongsToFacet(name, definition) {
-  // At the moment, the facet configuration (e.g. `server/config.json`) is
-  // stored on the Facet entity itself. Therefore we have to consider
-  // the Facet's config file when filtering facet files.
-  return name == 'Facet' ||
-    (definition && definition.properties && definition.properties.facetName);
+  return definition && definition.properties && definition.properties.facetName;
 }
 
 ConfigFile.findPackageDefinitions = function(cb) {
