@@ -66,7 +66,7 @@ describe('Generated project', function() {
 
     it('exposes swagger descriptors', function(done) {
       request(app)
-        .get('/api/swagger/resources')
+        .get('/explorer/resources')
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
