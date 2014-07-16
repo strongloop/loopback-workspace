@@ -16,8 +16,6 @@
   },
   "PackageDefinition": {
     "properties": {
-      "facetName": {"type": "string", "required": true, "json": false},
-      "name": {"id": true, "type": "string"}
     },
     "public": false,
     "dataSource": "db",

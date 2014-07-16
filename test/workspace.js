@@ -72,7 +72,6 @@ describe('Workspace', function() {
     it('should create a set of facets', function() {
       var facetNames = toNames(this.facets);
       expect(facetNames).to.have.members([
-        '.', // TODO(bajtos) Remove this once package.json is not in facets
         'common',
         'server'
       ]);

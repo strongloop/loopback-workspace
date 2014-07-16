@@ -3,6 +3,7 @@ var loopback = require('loopback');
 var connector = app.dataSources.db.connector;
 var Facet = app.models.Facet;
 var ConfigFile = app.models.ConfigFile;
+var PackageDefinition = app.models.PackageDefinition;
 var async = require('async');
 var debug = require('debug')('workspace:connector');
 var EventEmitter = require('events').EventEmitter;
@@ -56,10 +57,20 @@ connector.saveToFile = function() {
 connector._saveToFile = function(cb) {
   var cache = connector.cache;
 
-  async.each(Facet.allFromCache(cache), function(cachedFacet, cb) {
-    Facet.saveToFs(cache, cachedFacet, cb);
-  }, cb);
-}
+  var steps = []
+    .concat(saveAll(Facet))
+    .concat(saveAll(PackageDefinition));
+
+  async.parallel(steps, cb);
+
+  function saveAll(Entity) {
+    return Entity.allFromCache(cache).map(function(cachedData) {
+      return function(next) {
+        Entity.saveToFs(cache, cachedData, next);
+      };
+    });
+  }
+};
 
 connector.loadFromFile = function() {
   var cb = arguments[arguments.length - 1];
@@ -91,6 +102,12 @@ connector.loadFromFile = function() {
     connector.loader = null;
   };
 
+  connector._loadFromFile(done);
+}
+
+connector._loadFromFile = function(cb) {
+  var tasks = [];
+
   // reset the cache
   var cacheKeys = Object.keys(connector.cache);
   var cache = cacheKeys.reduce(function(prev, cur) {
@@ -98,35 +115,63 @@ connector.loadFromFile = function() {
     return prev;
   }, {});
 
-  ConfigFile.findFacetFiles(function(err, facetFiles) {
-    if(err) return done(err);
+  tasks.push(function(done) {
+    ConfigFile.findFacetFiles(function(err, facetFiles) {
+      if (err) return done(err);
 
-    if (!('common' in facetFiles) && (facetFiles.server || facetFiles.common)) {
-      // When there are no model defined in `common` facet,
-      // ConfigFile does not recognize it.
-      // Workaround - add the facet explicitly, but only if there are other
-      // facets like "server" already present.
-      facetFiles.common = [];
-    }
+      if (!('common' in facetFiles) && (facetFiles.server || facetFiles.common)) {
+        // When there are no model defined in `common` facet,
+        // ConfigFile does not recognize it.
+        // Workaround - add the facet explicitly, but only if there are other
+        // facets like "server" already present.
+        facetFiles.common = [];
+      }
 
-    var facetNames = Object.keys(facetFiles);
+      var facetNames = Object.keys(facetFiles);
 
-    async.each(facetNames, function(facet, next) {
-      Facet.loadIntoCache(cache, facet, facetFiles, function(err) {
-        if(err) {
-          return next(err);
-        }
-        // commit the cache
-        connector.cache = cache;
-        if(debug.enabled) {
-          Object.keys(cache).forEach(function(model) {
-            debug('setting cache %s => %j', model, Object.keys(cache[model]));
-          });
-        }
-        next();
-      });
-    }, done);
+      async.each(facetNames, function(facet, next) {
+        Facet.loadIntoCache(cache, facet, facetFiles, function(err) {
+          if (err) {
+            return next(err);
+          }
+          commit();
+          next();
+        });
+      }, done);
+    });
   });
+
+  tasks.push(function(done) {
+    ConfigFile.findPackageDefinitions(function(err, files) {
+      if (err) return done(err);
+      async.each(files, function(f, next) {
+        // TODO(bajtos) Generalize and move this code to WorkspaceEntity
+        f.load(function(err) {
+          if (err) return next(err);
+          PackageDefinition.addToCache(cache, f.data);
+          next();
+        });
+      }, function(err) {
+        if (err) {
+          return done(err);
+        }
+        commit();
+        done();
+      });
+    });
+  });
+
+  async.parallel(tasks, cb);
+
+  function commit() {
+    // commit the cache
+    connector.cache = cache;
+    if (debug.enabled) {
+      Object.keys(cache).forEach(function(model) {
+        debug('setting cache %s => %j', model, Object.keys(cache[model]));
+      });
+    }
+  }
 }
 
 var originalFind = connector.find;

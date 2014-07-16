@@ -4,11 +4,15 @@ var app = require('../app');
 var path = require('path');
 var async = require('async');
 var fs = require('fs-extra');
-var models = require('../models.json');
 var glob = require('glob');
 var ROOT_COMPONENT = '.';
 var groupBy = require('underscore').groupBy;
 var debug = require('debug')('workspace:config-file');
+
+// Use fs.read to ensure we get exactly what is in the JSON file
+// Some module is using `require('../models.json')` and changing
+// the content of the object afterwards (loopback-boot's executor ?)
+var models = fs.readJsonFileSync(require.resolve('../models.json'));
 
 /**
  * Various definitions in the workspace are backed by a `ConfigFile`.
@@ -167,11 +171,17 @@ ConfigFile.prototype.getAbsolutePath = function() {
   return ConfigFile.toAbsolutePath(this.path);
 }
 
-ConfigFile.find = function(cb) {
+ConfigFile.find = function(entityFilter, cb) {
+  if (!cb) {
+    cb = entityFilter;
+    entityFilter = function() { return true; };
+  }
+
   var patterns = [];
   var workspaceDir = this.getWorkspaceDir();
   Object.keys(models).forEach(function(modelName) {
     var model = models[modelName];
+    if (!entityFilter(modelName, model)) return;
     var options = model.options || {};
     if(options.configFiles) {
       patterns = patterns.concat(options.configFiles);
@@ -222,10 +232,10 @@ ConfigFile.prototype.getFacetName = function() {
 }
 
 ConfigFile.findFacetFiles = function(cb) {
-  ConfigFile.find(function(err, configFiles) {
+  ConfigFile.find(entityBelongsToFacet, function(err, configFiles) {
     if(err) return callback(err);
 
-    var result = 
+    var result =
       groupBy(configFiles, function(configFile) {
         return configFile.getFacetName();
       });
@@ -233,6 +243,20 @@ ConfigFile.findFacetFiles = function(cb) {
     cb(null, result);
   });
 }
+
+function entityBelongsToFacet(name, definition) {
+  // At the moment, the facet configuration (e.g. `server/config.json`) is
+  // stored on the Facet entity itself. Therefore we have to consider
+  // the Facet's config file when filtering facet files.
+  return name == 'Facet' ||
+    (definition && definition.properties && definition.properties.facetName);
+}
+
+ConfigFile.findPackageDefinitions = function(cb) {
+  ConfigFile.find(
+    function(name/*, definition*/) { return name === 'PackageDefinition'; },
+    cb);
+};
 
 /**
  * Get the filename exlcuding the extension.

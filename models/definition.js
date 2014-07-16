@@ -34,7 +34,7 @@ Definition.loadFromFs = function() {
   throw new Error('not implemented in ' + this.modelName);
 }
 
-Definition.saveToFs = function(defs, cb) {
+Definition.saveToFs = function(cache, definitionData, cb) {
   throw new Error('not implemented in ' + this.modelName);
 }
 

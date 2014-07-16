@@ -87,21 +87,10 @@ Workspace.addComponent = function(options, cb) {
   var steps = [];
 
   if (template.package) {
-    // TODO(bajtos) create a package definition
-    /*
      template.package.name = packageName;
-     setFacetName(template.package);
      steps.push(function(cb) {
-     PackageDefinition.create(template.package, cb);
+       PackageDefinition.create(template.package, cb);
      });
-     */
-    template.package.name = packageName;
-    steps.push(function(next) {
-      new ConfigFile({
-        path: 'package.json',
-        data: template.package
-      }).save(next);
-    });
   }
 
   ['common', 'server', 'client'].forEach(function(facetName) {
@@ -122,7 +111,7 @@ Workspace.addComponent = function(options, cb) {
     });
   });
 
-  async.parallel(steps, cb);
+  async.series(steps, cb);
 };
 
 function createFacet(name, template, cb) {
