@@ -38,7 +38,7 @@ describe('end-to-end', function() {
       models.ComponentModel.create({
         name: 'Custom',
         dataSource: 'db',
-        componentName: 'rest'
+        componentName: 'server'
       }, done);
     });
 

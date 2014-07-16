@@ -17,41 +17,39 @@ describe('ComponentDefinition', function () {
     });
     
     it('omits `name` in config.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/rest/config.json');
+      var content = fs.readJsonFileSync(SANDBOX + '/server/config.json');
       expect(content).to.not.have.property('name');
     });
 
     it('omits `modelsMetadata` in config.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/rest/config.json');
+      var content = fs.readJsonFileSync(SANDBOX + '/server/config.json');
       expect(content).to.not.have.property('modelsMetadata');
     });
 
-    it('omits `componentName` in models.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/rest/models.json');
+    it('omits `componentName` in model-config.json', function() {
+      var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
       expect(content.User).to.not.have.property('componentName');
     });
 
     it('omits `componentName` in datasources.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/rest/datasources.json');
+      var content = fs.readJsonFileSync(SANDBOX + '/server/datasources.json');
       expect(content.db).to.not.have.property('componentName');
     });
 
     it('omits `configFile` in datasources.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/rest/datasources.json');
+      var content = fs.readJsonFileSync(SANDBOX + '/server/datasources.json');
       expect(content.db).to.not.have.property('configFile');
     });
 
-    it('includes `_meta.source` in models.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/rest/models.json');
+    it('includes `_meta.source` in model-config.json', function() {
+      var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
       expect(content).to.have.property('_meta');
       expect(content._meta).to.eql({ sources: ['../models', './models'] });
     });
 
     it('saves component models to correct file', function() {
-      var restModels = fs.readJsonFileSync(SANDBOX + '/rest/models.json');
-      var serverModels = fs.readJsonFileSync(SANDBOX + '/server/models.json');
-      expect(Object.keys(restModels), 'rest models').to.not.be.empty;
-      expect(Object.keys(serverModels), 'server models').to.be.empty;
+      var serverModels = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
+      expect(Object.keys(serverModels), 'server models').to.not.be.empty;
     });
 
     it('omits json config files in the root of api-server component', function() {
@@ -59,7 +57,7 @@ describe('ComponentDefinition', function () {
       expect(files).to.not.include.members([
         'config.json',
         'datasources.json',
-        'models.json']
+        'model-config.json']
       );
     });
   });

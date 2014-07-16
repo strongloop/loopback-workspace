@@ -114,7 +114,7 @@ describe('DataSourceDefinition', function() {
 
     it('should be defined', function () {
       this.dataSources.forEach(function(def) {
-        expect(def.configFile).to.equal('rest/datasources.json');
+        expect(def.configFile).to.equal('server/datasources.json');
       });
     });
   });

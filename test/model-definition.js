@@ -26,7 +26,7 @@ describe('ModelDefinition', function() {
       });
     });
 
-    beforeEach(givenFile('modelsConfigFile', 'models.json'));
+    beforeEach(givenFile('modelsConfigFile', 'model-config.json'));
     beforeEach(givenFile('modelConfigFile', 'models/test-model.json'));
 
     beforeEach(findAllEntities);

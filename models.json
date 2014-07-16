@@ -72,8 +72,8 @@
     "dataSource": "db",
     "options": {
       "base": "WorkspaceEntity",
-      "defaultConfigFile": "models.json",
-      "configFiles": ["models.json"],
+      "defaultConfigFile": "model-config.json",
+      "configFiles": ["model-config.json"],
       "relations": {
         "component": {
           "type": "belongsTo",
