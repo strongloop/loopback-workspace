@@ -1,0 +1,6 @@
+{
+  "mail": {
+    "defaultForType": "mail",
+    "connector": "mail"
+  }
+}
