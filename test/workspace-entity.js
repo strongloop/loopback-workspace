@@ -1,6 +1,6 @@
 var app = require('../app');
 var WorkspaceEntity = app.models.WorkspaceEntity;
-var ComponentDefinition = app.models.ComponentDefinition;
+var Facet = app.models.Facet;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 
 describe('WorkspaceEntity', function() {
@@ -8,12 +8,12 @@ describe('WorkspaceEntity', function() {
     it('gets the unique identifier of the entity', function() {
       var MyWorkspaceEntity = WorkspaceEntity.extend('MyWorkspaceEntity');
       MyWorkspaceEntity.attachTo(app.dataSources.db);
-      MyWorkspaceEntity.belongsTo(ComponentDefinition, {
-        as: 'component',
-        foreignKey: 'componentName'
+      MyWorkspaceEntity.belongsTo(Facet, {
+        as: 'facet',
+        foreignKey: 'facetName'
       });
       var bar = new MyWorkspaceEntity({
-        componentName: 'foo',
+        facetName: 'foo',
         name: 'bar'
       });
       var expected = 'foo.bar';

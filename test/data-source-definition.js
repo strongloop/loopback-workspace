@@ -5,7 +5,7 @@ var loopback = require('loopback');
 var DataSource = loopback.DataSource;
 var ConfigFile = app.models.ConfigFile;
 var DataSourceDefinition = app.models.DataSourceDefinition;
-var ComponentDefinition = app.models.ComponentDefinition;
+var Facet = app.models.Facet;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 
 describe('DataSourceDefinition', function() {
@@ -13,19 +13,19 @@ describe('DataSourceDefinition', function() {
   describe('DataSourceDefinition.create(def, cb)', function () {
     beforeEach(givenEmptyWorkspace);
     beforeEach(function(done) {
-      var emptyComponent = this.emptyComponent;
+      var serverFacet = this.serverFacet;
       this.configFile = new ConfigFile({
-        path: emptyComponent + '/datasources.json'
+        path: serverFacet + '/datasources.json'
       });
       async.parallel([function(cb) {
         DataSourceDefinition.create({
-          componentName: emptyComponent,
+          facetName: serverFacet,
           name: 'foo',
           connector: 'memory'
         }, cb);
       }, function(cb) {
         DataSourceDefinition.create({
-          componentName: emptyComponent,
+          facetName: serverFacet,
           name: 'bar',
           connector: 'memory'
         }, cb);
@@ -52,7 +52,7 @@ describe('DataSourceDefinition', function() {
         var configData = this.configFile.data;
         var dsConfig = configData.foo;
         expect(dsConfig).to.not.have.property('id');
-        expect(dsConfig).to.not.have.property('componentName');
+        expect(dsConfig).to.not.have.property('facetName');
       });
     });
     it('shoulb be persist multiple to the config file', function (done) {
@@ -67,7 +67,7 @@ describe('DataSourceDefinition', function() {
       DataSourceDefinition.create({
         name: 'another-ds',
         connector: 'rest',
-        componentName: this.emptyComponent
+        facetName: this.serverFacet
       }, function(err) {
         if (err) return done(err);
         configFile.load(function(err) {
@@ -79,23 +79,23 @@ describe('DataSourceDefinition', function() {
       });
     });
   });
-  it('validates `name` uniqueness within the component only', function(done) {
+  it('validates `name` uniqueness within the facet only', function(done) {
     var ref = TestDataBuilder.ref;
     new TestDataBuilder()
-      .define('component1', ComponentDefinition, {
-        name: 'component1'
+      .define('facet1', Facet, {
+        name: 'facet1'
       })
-      .define('component2', ComponentDefinition, {
-        name: 'component2'
+      .define('facet2', Facet, {
+        name: 'facet2'
       })
-      .define('component1datasource', DataSourceDefinition, {
+      .define('facet1datasource', DataSourceDefinition, {
         name: 'dsname',
-        componentName: ref('component1.name'),
+        facetName: ref('facet1.name'),
         connector: 'foo'
       })
-      .define('component2datasource', DataSourceDefinition, {
-        name: ref('component1datasource.name'),
-        componentName: ref('component2.name'),
+      .define('facet2datasource', DataSourceDefinition, {
+        name: ref('facet1datasource.name'),
+        facetName: ref('facet2.name'),
         connector: 'foo'
       })
       .buildTo({}, function(err) {

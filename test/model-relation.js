@@ -16,7 +16,7 @@ describe('ModelRelation', function() {
     new TestDataBuilder()
       .define('modelDef', app.models.ModelDefinition, {
         name: 'TestModel',
-        componentName: '.'
+        facetName: 'common'
       })
       .buildTo(test, function(err) {
         if (err) return done(err);
@@ -29,7 +29,7 @@ describe('ModelRelation', function() {
         }, function(err) {
           if (err) return done(err);
           var json = fs.readJsonFileSync(
-            path.resolve(SANDBOX, 'models/test-model.json'));
+            path.resolve(SANDBOX, 'common/models/test-model.json'));
           expect(json.relations).to.eql({
             boss: {
               type: 'belongsTo',

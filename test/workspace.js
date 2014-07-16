@@ -4,7 +4,6 @@ var app = require('../app');
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var Workspace = app.models.Workspace;
 var ConfigFile = app.models.ConfigFile;
-var ComponentDefinition = app.models.ComponentDefinition;
 
 describe('Workspace', function() {
   describe('Workspace.getAvailableTemplates(callback)', function() {
@@ -12,7 +11,6 @@ describe('Workspace', function() {
       Workspace.getAvailableTemplates(function(err, templates) {
         expect(templates).to.have.members([
           'api-server',
-          'server'
         ]);
         done();
       });
@@ -23,9 +21,10 @@ describe('Workspace', function() {
     beforeEach(resetWorkspace);
     beforeEach(givenEmptySandbox);
 
-    it('should add the static component files', function(done) {
+    it('should add the static files', function(done) {
       Workspace.addComponent({
-        template: 'server'
+        template: 'api-server',
+        root: true
       }, function(err) {
         if (err) return done(err);
         expectFileExists(getPath('server/server.js'));
@@ -44,7 +43,8 @@ describe('Workspace', function() {
 
       Workspace.addComponent(
         {
-          template: 'server'
+          template: 'api-server',
+          root: true
         },
         function(err) {
           Workspace.copyRecursive = ncp;
@@ -69,10 +69,10 @@ describe('Workspace', function() {
       });
     });
 
-    it('should create a set of component definitions', function() {
-      var componentNames = toNames(this.components);
-      expect(componentNames).to.have.members([
-        '.',
+    it('should create a set of facets', function() {
+      var facetNames = toNames(this.facets);
+      expect(facetNames).to.have.members([
+        'common',
         'server'
       ]);
     });
@@ -124,7 +124,7 @@ describe('Workspace', function() {
     it('should fail when the directory is empty', function(done) {
       Workspace.isValidDir(function(err) {
         expect(err && err.message)
-          .to.match(/Invalid workspace: no components found/);
+          .to.match(/Invalid workspace: no facets found/);
         done();
       });
     });

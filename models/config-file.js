@@ -4,11 +4,15 @@ var app = require('../app');
 var path = require('path');
 var async = require('async');
 var fs = require('fs-extra');
-var models = require('../models.json');
 var glob = require('glob');
 var ROOT_COMPONENT = '.';
 var groupBy = require('underscore').groupBy;
 var debug = require('debug')('workspace:config-file');
+
+// Use fs.read to ensure we get exactly what is in the JSON file
+// Some module is using `require('../models.json')` and changing
+// the content of the object afterwards (loopback-boot's executor ?)
+var models = fs.readJsonFileSync(require.resolve('../models.json'));
 
 /**
  * Various definitions in the workspace are backed by a `ConfigFile`.
@@ -167,11 +171,17 @@ ConfigFile.prototype.getAbsolutePath = function() {
   return ConfigFile.toAbsolutePath(this.path);
 }
 
-ConfigFile.find = function(cb) {
+ConfigFile.find = function(entityFilter, cb) {
+  if (!cb) {
+    cb = entityFilter;
+    entityFilter = function() { return true; };
+  }
+
   var patterns = [];
   var workspaceDir = this.getWorkspaceDir();
   Object.keys(models).forEach(function(modelName) {
     var model = models[modelName];
+    if (!entityFilter(modelName, model)) return;
     var options = model.options || {};
     if(options.configFiles) {
       patterns = patterns.concat(options.configFiles);
@@ -208,7 +218,7 @@ ConfigFile.prototype.getDirName = function() {
   return path.basename(path.dirname(this.path));
 }
 
-ConfigFile.prototype.getComponentName = function() {
+ConfigFile.prototype.getFacetName = function() {
   var dir = this.getDirName();
   var baseDir = this.path.split(path.sep)[0];
 
@@ -221,18 +231,28 @@ ConfigFile.prototype.getComponentName = function() {
   }
 }
 
-ConfigFile.findComponentFiles = function(cb) {
-  ConfigFile.find(function(err, configFiles) {
+ConfigFile.findFacetFiles = function(cb) {
+  ConfigFile.find(entityBelongsToFacet, function(err, configFiles) {
     if(err) return callback(err);
 
-    var result = 
+    var result =
       groupBy(configFiles, function(configFile) {
-        return configFile.getComponentName();
+        return configFile.getFacetName();
       });
 
     cb(null, result);
   });
 }
+
+function entityBelongsToFacet(name, definition) {
+  return definition && definition.properties && definition.properties.facetName;
+}
+
+ConfigFile.findPackageDefinitions = function(cb) {
+  ConfigFile.find(
+    function(name/*, definition*/) { return name === 'PackageDefinition'; },
+    cb);
+};
 
 /**
  * Get the filename exlcuding the extension.
@@ -275,14 +295,14 @@ ConfigFile.getFileByBase = function(configFiles, base) {
  * @returns {ConfigFile[]}
  */
 
-ConfigFile.getModelDefFiles = function(configFiles, componentName) {
+ConfigFile.getModelDefFiles = function(configFiles, facetName) {
   assert(Array.isArray(configFiles));
   var configFile;
   var results = [];
   for(var i = 0; i < configFiles.length; i++) {
     configFile = configFiles[i];
     // TODO(ritch) support other directories
-    if(configFile && configFile.getComponentName() === componentName
+    if(configFile && configFile.getFacetName() === facetName
       && configFile.getDirName() === 'models') {
       results.push(configFile);
     }

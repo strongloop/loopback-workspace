@@ -57,13 +57,13 @@ givenFile = function(name, pathToFile) {
 
 givenEmptyWorkspace = function(cb) {
   var test = this;
-  test.emptyComponent = 'empty';
+  test.serverFacet = 'server';
   resetWorkspace(function(err) {
     if(err) return cb(err);
     givenEmptySandbox(function(err) {
       if(err) return cb(err);
-      models.ComponentDefinition.create({
-        name: test.emptyComponent
+      models.Facet.create({
+        name: test.serverFacet
       }, cb);
     });
   });
@@ -104,9 +104,10 @@ function findOfType(name, type) {
   };
 }
 
-findComponentDefinitions = findOfType('components', models.ComponentDefinition);
+findFacets = findOfType('facets', models.Facet);
+findFacetSettings = findOfType('facetSettings', models.FacetSetting);
 findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
-findComponentModels = findOfType('componentModels', models.ComponentModel);
+findModelConfigs = findOfType('modelConfigs', models.ModelConfig);
 findModelDefinitions = findOfType('models', models.ModelDefinition);
 findViewDefinitions = findOfType('views', models.ViewDefinition);
 findModelProperties = findOfType('properties', models.ModelProperty);
@@ -119,10 +120,10 @@ findDatabaseColumns = findOfType('columns', models.DatabaseColumn);
 findAllEntities = function(cb) {
   var test = this;
   var steps = [
-    findComponentDefinitions,
+    findFacets,
     findDataSourceDefinitions,
     findModelDefinitions,
-    findComponentModels,
+    findModelConfigs,
     findViewDefinitions,
     findModelProperties,
     findModelMethods,

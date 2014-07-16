@@ -29,16 +29,16 @@ describe('end-to-end', function() {
 
     before(function createCustomModel(done) {
       models.ModelDefinition.create({
-        componentName: '.',
+        facetName: 'common',
         name: 'Custom'
       }, done);
     });
 
     before(function configureCustomModel(done) {
-      models.ComponentModel.create({
+      models.ModelConfig.create({
         name: 'Custom',
         dataSource: 'db',
-        componentName: 'server'
+        facetName: 'server'
       }, done);
     });
 

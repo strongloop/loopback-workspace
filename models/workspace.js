@@ -1,3 +1,4 @@
+var extend = require('util')._extend;
 var fs = require('fs');
 var ncp = require('ncp');
 var path = require('path');
@@ -5,8 +6,9 @@ var app = require('../app');
 var async = require('async');
 var PackageDefinition = app.models.PackageDefinition;
 var ConfigFile = app.models.ConfigFile;
-var ComponentDefinition = app.models.ComponentDefinition;
-var ComponentModel = app.models.ComponentModel;
+var Facet = app.models.Facet;
+var FacetSetting = app.models.FacetSetting;
+var ModelConfig = app.models.ModelConfig;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
 var ModelRelation = app.models.ModelRelation;
@@ -47,98 +49,62 @@ Workspace.copyRecursive = function(source, destination, cb) {
   ncp(source, destination, cb);
 };
 
+/**
+ * Add a new component from a template.
+ *
+ * @param {Object} options
+ * @option {String} name
+ * @param {function(Error=)} cb
+ */
 Workspace.addComponent = function(options, cb) {
+  if (!options.root) {
+    throw new Error('Non-root components are not supported yet.');
+  }
   var template;
   var templateName = options.template || DEFAULT_TEMPLATE;
   var name = options.name || templateName;
   var packageName = options.packageName || name;
-  if(options.root) name = '.';
+  if (options.root) name = ConfigFile.ROOT_COMPONENT;
   var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
 
   try {
     template = require('../templates/' + templateName + '/component');
     // create a clone to preserve the original
     template = JSON.parse(JSON.stringify(template));
-  } catch(e) {
+  } catch (e) {
     console.error(e);
   }
-  
+
   debug('create from template [%s]', templateName);
 
-  if(!template) {
-    var err = new Error('Invalid template...');
+  if (!template) {
+    var err = new Error('Unknown template ' + templateName);
     err.templateName = templateName;
     err.statusCode = 400;
     return cb(err);
   }
 
   var dest = path.join(ConfigFile.getWorkspaceDir(), name);
-  var config = template.config;
-  var subComponents = config && config.components;
   var steps = [];
 
-  if(template.component) {
-    steps.push(function(cb) {
-      template.component.name = name;
-      ComponentDefinition.create(template.component, cb);
-    });
-    if(subComponents) {
-      steps.push(function(cb) {
-        async.each(subComponents, function(component, cb) {
-          Workspace.addComponent({
-            name: component,
-            template: component
-          }, cb);
-        }, cb);
-      });
-    }
-  } else {
-    return cb(new Error('invalid template: does not include "component"'));
+  if (template.package) {
+     template.package.name = packageName;
+     steps.push(function(cb) {
+       PackageDefinition.create(template.package, cb);
+     });
   }
 
-  if(template.package) {
-    template.package.name = packageName;
-    setComponentName(template.package);
-    steps.push(function(cb) {
-      PackageDefinition.create(template.package, cb);
+  ['common', 'server', 'client'].forEach(function(facetName) {
+    var facet = template[facetName];
+    if (!facet) return;
+    steps.push(function(next) {
+      createFacet(facetName, facet, next);
     });
-  }
-
-  if(template.componentModels) {
-    setComponentName(template.componentModels);
-    steps.push(function(cb) {
-      async.each(template.componentModels, 
-        ComponentModel.create.bind(ComponentModel), cb);
-    });
-  }
-
-  if(template.models) {
-    setComponentName(template.models);
-    steps.push(function(cb) {
-      async.each(template.models, 
-        ModelDefinition.create.bind(ModelDefinition), cb);
-    });
-  }
-
-  if(template.datasources) {
-    setComponentName(template.datasources);
-    steps.push(function(cb) {
-      async.each(template.datasources, 
-        DataSourceDefinition.create.bind(DataSourceDefinition), cb);
-    });
-  }
-
-  if(template.relations) {
-    setComponentName(template.relations);
-    steps.push(function(cb) {
-      async.each(template.relations, 
-        ModelRelation.create.bind(ModelRelation), cb);
-    });
-  }
+  });
 
   steps.push(function(cb) {
     fs.exists(fileTemplatesDir, function(exists) {
-      if(exists) {
+      if (exists) {
         Workspace.copyRecursive(fileTemplatesDir, dest, cb);
       } else {
         cb();
@@ -146,13 +112,67 @@ Workspace.addComponent = function(options, cb) {
     });
   });
 
-  function setComponentName(obj) {
+  async.series(steps, cb);
+};
+
+function createFacet(name, template, cb) {
+  var steps = [];
+
+  steps.push(function(cb) {
+    var facet = template.facet || {};
+    facet.name = name;
+    Facet.create(facet, cb);
+  });
+
+  if (template.config) {
+    setFacetName(template.config);
+    steps.push(function(next) {
+      async.each(
+        template.config,
+        FacetSetting.create.bind(FacetSetting),
+        next);
+    });
+  }
+
+  if(template.modelConfigs) {
+    setFacetName(template.modelConfigs);
+    steps.push(function(cb) {
+      async.each(template.modelConfigs,
+        ModelConfig.create.bind(ModelConfig), cb);
+    });
+  }
+
+  if(template.models) {
+    setFacetName(template.models);
+    steps.push(function(cb) {
+      async.each(template.models,
+        ModelDefinition.create.bind(ModelDefinition), cb);
+    });
+  }
+
+  if(template.datasources) {
+    setFacetName(template.datasources);
+    steps.push(function(cb) {
+      async.each(template.datasources,
+        DataSourceDefinition.create.bind(DataSourceDefinition), cb);
+    });
+  }
+
+  if(template.relations) {
+    setFacetName(template.relations);
+    steps.push(function(cb) {
+      async.each(template.relations,
+        ModelRelation.create.bind(ModelRelation), cb);
+    });
+  }
+
+  function setFacetName(obj) {
     if(Array.isArray(obj)) {
       obj.forEach(function(item) {
-        item.componentName = name;
+        item.facetName = name;
       });
     } else if(obj) {
-      obj.componentName = name;
+      obj.facetName = name;
     }
   }
 
@@ -202,13 +222,13 @@ Workspace.listAvailableConnectors = function(cb) {
 Workspace.isValidDir = function(cb) {
   // Every call of `Model.find()` triggers reload from the filesystem
   // This allows us to catch basic errors in config files
-  ComponentDefinition.find(function(err, list) {
+  Facet.find(function(err, list) {
     if (err) {
       cb(err);
     } else if (!list.length) {
-      cb(new Error('Invalid workspace: no components found.'));
+      cb(new Error('Invalid workspace: no facets found.'));
     } else {
-      // TODO(bajtos) Add more sophisticated validation based on component types
+      // TODO(bajtos) Add more sophisticated validation based on facet types
       cb();
     }
   });

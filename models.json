@@ -16,8 +16,6 @@
   },
   "PackageDefinition": {
     "properties": {
-      "componentName": {"type": "string", "required": true, "json": false},
-      "name": {"id": true, "type": "string"}
     },
     "public": false,
     "dataSource": "db",
@@ -29,11 +27,44 @@
       ]
     }
   },
-  "ComponentDefinition": {
+  "Facet": {
     "properties": {
       "name": {"id": true, "type": "string", "json": false},
       "modelsMetadata": {"type": "object", "json": false},
       "defaultPermission": {"type": "string"}
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Definition",
+      "relations": {
+        "models": {
+          "type": "hasMany",
+          "model": "ModelDefinition",
+          "foreignKey": "facetName"
+        },
+        "datasources": {
+          "type": "hasMany",
+          "model": "DataSourceDefinition",
+          "foreignKey": "facetName"
+        },
+        "modelConfigs": {
+          "type": "hasMany",
+          "model": "ModelConfig",
+          "foreignKey": "facetName"
+        },
+        "settings": {
+          "type": "hasMany",
+          "model": "FacetSetting",
+          "foreignKey": "facetName"
+        }
+      }
+    }
+  },
+  "FacetSetting": {
+    "properties": {
+      "id": {"type": "string", "id": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false}
     },
     "public": true,
     "dataSource": "db",
@@ -45,28 +76,18 @@
         "config.*.json"
       ],
       "relations": {
-        "package": {
-          "type": "hasOne",
-          "model": "PackageDefinition",
-          "foreignKey": "componentName"
-        },
-        "models": {
-          "type": "hasMany",
-          "model": "ModelDefinition",
-          "foreignKey": "componentName"
-        },
-        "datasources": {
-          "type": "hasMany",
-          "model": "DataSourceDefinition",
-          "foreignKey": "componentName"
+        "facet": {
+          "type": "belongsTo",
+          "model": "Facet",
+          "foreignKey": "facetName"
         }
       }
     }
   },
-  "ComponentModel": {
+  "ModelConfig": {
     "properties": {
       "id": {"type": "string", "id": true, "json": false},
-      "componentName": {"type": "string", "required": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string", "json": false}
     },
     "dataSource": "db",
@@ -75,10 +96,10 @@
       "defaultConfigFile": "model-config.json",
       "configFiles": ["model-config.json"],
       "relations": {
-        "component": {
+        "facet": {
           "type": "belongsTo",
-          "model": "ComponentDefinition",
-          "foreignKey": "componentName"
+          "model": "Facet",
+          "foreignKey": "facetName"
         },
         "dataSource": {
           "type": "belongsTo",
@@ -96,7 +117,7 @@
   "ModelDefinition": {
     "properties": {
       "id": {"type": "string", "id": true, "json": false},
-      "componentName": {"type": "string", "required": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string", "required": true},
       "plural": "string",
       "base": "string",
@@ -118,10 +139,10 @@
       ],
       "configExtensions": ["json"],
       "relations": {
-        "component": {
+        "facet": {
           "type": "belongsTo",
-          "model": "ComponentDefinition",
-          "foreignKey": "componentName"
+          "model": "Facet",
+          "foreignKey": "facetName"
         },
         "properties": {
           "embed": {"as": "object", "key": "name"},
@@ -165,7 +186,7 @@
     "properties": {
       "id": {"type": "string", "id": true, "json": false},
       "modelId": {"type": "string", "required": true, "json": false},
-      "componentName": {"type": "string", "required": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false},
       "aliases": {"type": "array"},
       "isStatic": {"type": "boolean"},
       "accepts": {"type": "array"},
@@ -184,7 +205,7 @@
     "properties": {
       "id": {"type": "string", "id": true, "json": false},
       "modelId": {"type": "string", "required": true, "json": false},
-      "componentName": {"type": "string", "required": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false},
       "type": {"type": "string"},
       "model": {"type": "string"},
       "as": {"type": "string"},
@@ -207,7 +228,7 @@
     "properties": {
       "id": {"type": "string", "id": true, "json": false},
       "modelId": {"type": "string", "required": true, "json": false},
-      "componentName": {"type": "string", "required": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false},
       "principalType": {"type": "string"},
       "principalId": {"type": "string"},
       "permission": {"type": "string", "required": true},
@@ -231,7 +252,7 @@
     "properties": {
       "id": {"type": "string", "id": true, "json": false},
       "modelId": {"type": "string", "required": true, "json": false},
-      "componentName": {"type": "string", "required": true, "json": false},
+      "facetName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string"},
       "type": {"type": "string"},
       "isId": {"type": "boolean", "json": "id"},
@@ -328,7 +349,7 @@
       "database": {"type": "string"},
       "username": {"type": "string"},
       "password": {"type": "string"},
-      "componentName": {"type": "string", "required": true, "json": false}
+      "facetName": {"type": "string", "required": true, "json": false}
     },
     "public": true,
     "dataSource": "db",
@@ -342,13 +363,13 @@
       "relations": {
         "models": {
           "type": "hasMany",
-          "model": "ComponentModel",
+          "model": "ModelConfig",
           "foreignKey": "dataSource"
         },
-        "component": {
+        "facet": {
           "type": "belongsTo",
-          "model": "ComponentDefinition",
-          "foreignKey": "componentName"
+          "model": "Facet",
+          "foreignKey": "facetName"
         }
       }
     }
