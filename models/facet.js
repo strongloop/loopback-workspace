@@ -32,7 +32,7 @@ var Facet = app.models.Facet;
  */
 
 Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
-  var debug = require('debug')('workspace:component:load:' + facetName);
+  var debug = require('debug')('workspace:facet:load:' + facetName);
   var configFiles = allConfigFiles[facetName];
   var facetConfig = ConfigFile.getFileByBase(configFiles, 'config');
   var modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
@@ -164,7 +164,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
   var facetName = facetData.name;
   assert(facetName);
 
-  var debug = require('debug')('workspace:component:save:' + facetName);
+  var debug = require('debug')('workspace:facet:save:' + facetName);
 
   var hasApp = Facet.hasApp(facetData);
 

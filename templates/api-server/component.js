@@ -67,7 +67,7 @@ template.server = {
       name: 'db',
       connector: 'memory'
     }
-  ],
+  ]
 };
 
 // An API server has no client facet

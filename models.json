@@ -38,11 +38,6 @@
     "options": {
       "base": "Definition",
       "relations": {
-        "package": {
-          "type": "hasOne",
-          "model": "PackageDefinition",
-          "foreignKey": "facetName"
-        },
         "models": {
           "type": "hasMany",
           "model": "ModelDefinition",
@@ -51,6 +46,16 @@
         "datasources": {
           "type": "hasMany",
           "model": "DataSourceDefinition",
+          "foreignKey": "facetName"
+        },
+        "modelConfigs": {
+          "type": "hasMany",
+          "model": "ModelConfig",
+          "foreignKey": "facetName"
+        },
+        "settings": {
+          "type": "hasMany",
+          "model": "FacetSetting",
           "foreignKey": "facetName"
         }
       }
@@ -69,7 +74,14 @@
       "configFiles": [
         "config.json",
         "config.*.json"
-      ]
+      ],
+      "relations": {
+        "facet": {
+          "type": "belongsTo",
+          "model": "Facet",
+          "foreignKey": "facetName"
+        }
+      }
     }
   },
   "ModelConfig": {
