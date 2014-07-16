@@ -21,6 +21,7 @@
     "longjohn": "~0.2.4",
     "debug": "~1.0.1",
     "underscore": "~1.6.0",
+    "method-override": "^2.1.1",
     "loopback-boot": "^1.0.0",
     "underscore.string": "~2.3.3",
     "grunt": "~0.4.5",
@@ -37,7 +38,6 @@
     "grunt-docular": "~0.1.2",
     "grunt-loopback-angular": "~1.1.0",
     "loopback-testing": "^0.2.0",
-    "method-override": "^2.1.1",
     "mocha": "^1.20.1",
     "strong-cached-install": "^1.0.0",
     "supertest": "^0.13.0"
