@@ -9,7 +9,7 @@ describe('ModelProperty', function() {
   beforeEach(function(done) {
     ModelDefinition.create({
       name: 'user',
-      componentName: 'server'
+      facetName: 'server'
     }, done);
   });
   beforeEach(function(done) {
@@ -97,7 +97,7 @@ describe('ModelProperty', function() {
           name: this.propertyName,
           type: 'String',
           isId: false,
-          componentName: 'server',
+          facetName: 'server',
           id: 'server.user.myProperty',
           modelId: 'server.user'
         }).toObject();

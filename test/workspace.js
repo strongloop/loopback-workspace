@@ -4,7 +4,6 @@ var app = require('../app');
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var Workspace = app.models.Workspace;
 var ConfigFile = app.models.ConfigFile;
-var ComponentDefinition = app.models.ComponentDefinition;
 
 describe('Workspace', function() {
   describe('Workspace.getAvailableTemplates(callback)', function() {
@@ -19,12 +18,12 @@ describe('Workspace', function() {
     });
   });
 
-  describe('Workspace.addComponent(options, cb)', function () {
+  describe('Workspace.addFacet(options, cb)', function () {
     beforeEach(resetWorkspace);
     beforeEach(givenEmptySandbox);
 
-    it('should add the static component files', function(done) {
-      Workspace.addComponent({
+    it('should add the static facet files', function(done) {
+      Workspace.addFacet({
         template: 'server'
       }, function(err) {
         if (err) return done(err);
@@ -42,7 +41,7 @@ describe('Workspace', function() {
         process.nextTick(cb);
       };
 
-      Workspace.addComponent(
+      Workspace.addFacet(
         {
           template: 'server'
         },
@@ -69,9 +68,9 @@ describe('Workspace', function() {
       });
     });
 
-    it('should create a set of component definitions', function() {
-      var componentNames = toNames(this.components);
-      expect(componentNames).to.have.members([
+    it('should create a set of facets', function() {
+      var facetNames = toNames(this.facets);
+      expect(facetNames).to.have.members([
         '.',
         'server'
       ]);
@@ -124,7 +123,7 @@ describe('Workspace', function() {
     it('should fail when the directory is empty', function(done) {
       Workspace.isValidDir(function(err) {
         expect(err && err.message)
-          .to.match(/Invalid workspace: no components found/);
+          .to.match(/Invalid workspace: no facets found/);
         done();
       });
     });

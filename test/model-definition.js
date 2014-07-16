@@ -17,7 +17,7 @@ describe('ModelDefinition', function() {
       test.modelName = 'TestModel';
       test.model = {
         name: test.modelName,
-        componentName: '.', // root app
+        facetName: '.', // root app
       };
       ModelDefinition.create(test.model, function(err, modelDef) {
         if(err) return done(err);
@@ -102,7 +102,7 @@ describe('ModelDefinition', function() {
       new TestDataBuilder()
         .define('model', ModelDefinition, {
           name: 'Car',
-          componentName: '.'
+          facetName: '.'
         })
         .define('aclx', ModelAccessControl, {
           method: 'ALL',
@@ -138,25 +138,25 @@ describe('ModelDefinition', function() {
       before(function buildModelAndRelatedEntities(done) {
         new TestDataBuilder()
           .define('model', ModelDefinition, {
-            componentName: this.emptyComponent,
+            facetName: this.serverFacet,
             custom: true
           })
           .define('acl', ModelAccessControl, {
             property: 'ALL',
             modelId: ref('model.id'),
-            componentName: undefined, // do not auto-generate a value
+            facetName: undefined, // do not auto-generate a value
             custom: true
           })
           .define('property', ModelProperty, {
             modelId: ref('model.id'),
-            componentName: undefined, // do not auto-generate a value
+            facetName: undefined, // do not auto-generate a value
             name: 'id',
             isId: true,
             custom: true
           })
           .define('relation', ModelRelation, {
             modelId: ref('model.id'),
-            componentName: undefined, // do not auto-generate a value
+            facetName: undefined, // do not auto-generate a value
             name: 'self',
             type: 'belongsTo',
             model: ref('model.name'),

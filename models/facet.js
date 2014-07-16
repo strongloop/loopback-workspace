@@ -3,7 +3,7 @@ var assert = require('assert');
 var path = require('path');
 var app = require('../app');
 var fs = require('fs');
-var debug = require('debug')('workspace:component');
+var debug = require('debug')('workspace:facet');
 var extend = require('util')._extend;
 
 var ModelDefinition = app.models.ModelDefinition;
@@ -14,62 +14,62 @@ var PackageDefinition = app.models.PackageDefinition;
 
 /**
  * Defines a `LoopBackApp` configuration.
- * @class ComponentDefinition
+ * @class Facet
  * @inherits Definition
  */
 
-var ComponentDefinition = app.models.ComponentDefinition;
+var Facet = app.models.Facet;
 
 /**
  * Load the app with the given name into the connector cache.
  *
- * @param {String} componentName
- * @param {Object} components An `Object` keyed by componentName containing arrays of 
+ * @param {String} facetName
+ * @param {Object} allConfigFiles An `Object` keyed by facetName containing arrays of
  * config files.
  * @callback {Function} callback
  * @param {Error} err
  */
 
-ComponentDefinition.loadIntoCache = function(cache, componentName, components, cb) {
-  var debug = require('debug')('workspace:component:load:' + componentName);
-  var configFiles = components[componentName];
-  var component = ConfigFile.getFileByBase(configFiles, 'config');
+Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
+  var debug = require('debug')('workspace:component:load:' + facetName);
+  var configFiles = allConfigFiles[facetName];
+  var facetConfig = ConfigFile.getFileByBase(configFiles, 'config');
   var componentModels = ConfigFile.getFileByBase(configFiles, 'model-config');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
-  var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, componentName);
+  var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
   var packageFile = ConfigFile.getFileByBase(configFiles, 'package');
   var steps = [];
-  var componentId;
+  var facetId;
 
   if(packageFile) {
     steps.push(function(cb) {
       packageFile.load(cb);
     }, function(cb) {
-      packageFile.data.componentName = componentName;
+      packageFile.data.facetName = facetName;
       PackageDefinition.addToCache(cache, packageFile.data || {});
       cb();
     });
   }
 
-  if(component) {
+  if(facetConfig) {
     steps.push(function(cb) {
-      component.load(cb);
+      facetConfig.load(cb);
     }, function(cb) {
-      component.data = component.data || {};
-      component.data.configFile = component.path;
-      component.data.name = componentName;
-      debug('adding to cache component file [%s]', component.path);
-      componentId = ComponentDefinition.addToCache(cache, component.data);
+      facetConfig.data = facetConfig.data || {};
+      facetConfig.data.configFile = facetConfig.path;
+      facetConfig.data.name = facetName;
+      debug('adding to cache component file [%s]', facetConfig.path);
+      facetId = Facet.addToCache(cache, facetConfig.data);
       cb();
     });
   } else {
     steps.push(function(cb) {
-      var componentData = {
-        name: componentName,
-        configFile: path.join(componentName, 'config.json')
+      var facetData = {
+        name: facetName,
+        configFile: path.join(facetName, 'config.json')
       };
-      debug('adding to cache component entry [%s]', componentData.configFile);
-      ComponentDefinition.addToCache(cache, componentData);
+      debug('adding to cache component entry [%s]', facetData.configFile);
+      Facet.addToCache(cache, facetData);
       cb();
     });
   }
@@ -86,15 +86,15 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
 
       modelNames.forEach(function(modelName) {
         var componentModel = modelDefs[modelName];
-        componentModel.componentName = componentName;
+        componentModel.facetName = facetName;
         componentModel.name = modelName;
         ComponentModel.addToCache(cache, componentModel);
       });
 
       if (modelDefs._meta) {
-        var comp = ComponentDefinition.getFromCache(cache, componentId);
+        var comp = Facet.getFromCache(cache, facetId);
         comp.modelsMetadata = modelDefs._meta;
-        ComponentDefinition.updateInCache(cache, componentId, comp);
+        Facet.updateInCache(cache, facetId, comp);
       }
 
       cb();
@@ -109,14 +109,14 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
     steps.push(function(cb) {
       modelDefinitionFiles.forEach(function(configFile) {
         var def = configFile.data || {};
-        def.componentName = componentName;
+        def.facetName = facetName;
         def.configFile = configFile.path;
         var modelDef = new ModelDefinition(def);
 
         debug('loading [%s] model definition into cache', def.name);
 
         ModelDefinition.addToCache(cache, def);
-        ModelDefinition.addRelatedToCache(cache, def, componentName
+        ModelDefinition.addRelatedToCache(cache, def, facetName
           , modelDef.getUniqueId());
       });
       cb();
@@ -134,7 +134,7 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
         var def = dataSourceDefs[dataSourceName];
         def.configFile = dataSources.path;
         def.name = dataSourceName;
-        def.componentName = componentName;
+        def.facetName = facetName;
         debug('loading [%s] dataSource into cache', dataSourceName);
         DataSourceDefinition.addToCache(cache, def);
       });
@@ -153,46 +153,46 @@ ComponentDefinition.loadIntoCache = function(cache, componentName, components, c
 var i = 0;
 var temp;
 
-ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
+Facet.saveToFs = function(cache, facetData, cb) {
   // TODO(ritch) try and remove this hack...
   // ensure ModelDefinition methods are defined
   require('./model-definition');
 
   var filesToSave = [];
 
-  var componentName = componentDef.name;
-  assert(componentName);
+  var facetName = facetData.name;
+  assert(facetName);
 
-  var debug = require('debug')('workspace:component:save:' + componentName);
+  var debug = require('debug')('workspace:component:save:' + facetName);
 
-  var hasApp = ComponentDefinition.hasApp(componentDef);
+  var hasApp = Facet.hasApp(facetData);
 
   if (hasApp) {
-    var configFile = ComponentDefinition.getConfigFile(componentName, componentDef);
-    configFile.data = ComponentDefinition.getConfigFromData(componentDef);
+    var configFile = Facet.getConfigFile(facetName, facetData);
+    configFile.data = Facet.getConfigFromData(facetData);
 
     filesToSave.push(configFile);
   }
 
   PackageDefinition.allFromCache(cache).forEach(function(package) {
-    if(package.componentName === componentName) {
+    if(package.facetName === facetName) {
       var packageFile = new ConfigFile({
-        path: PackageDefinition.getPath(componentName, package),
+        path: PackageDefinition.getPath(facetName, package),
         data: package
       });
-      delete package.componentName;
+      delete package.facetName;
       filesToSave.push(packageFile);
     }
   });
 
   if (hasApp) {
     var dataSoureConfig = {};
-    var dataSourcePath = path.join(componentName, 'datasources.json');
+    var dataSourcePath = path.join(facetName, 'datasources.json');
     var cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
     cachedDataSources.forEach(function(dataSourceDef) {
-      if(dataSourceDef.componentName === componentName) {
-        dataSourcePath = DataSourceDefinition.getPath(componentName, dataSourceDef);
+      if(dataSourceDef.facetName === facetName) {
+        dataSourcePath = DataSourceDefinition.getPath(facetName, dataSourceDef);
         dataSoureConfig[dataSourceDef.name] =
           DataSourceDefinition.getConfigFromData(dataSourceDef);
       }
@@ -204,14 +204,14 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
     }));
 
     var cachedComponentModels = ComponentModel.allFromCache(cache);
-    var componentModelsPath = path.join(componentName, ComponentModel.settings.defaultConfigFile);
+    var componentModelsPath = path.join(facetName, ComponentModel.settings.defaultConfigFile);
     var componentModelFile = new ConfigFile({path: componentModelsPath}); // model-config.json
     var componentModelsConfig = componentModelFile.data = {};
 
-    componentModelsConfig._meta = componentDef.modelsMetadata;
+    componentModelsConfig._meta = facetData.modelsMetadata;
 
     cachedComponentModels.forEach(function(componentModel) {
-      if(componentModel.componentName === componentName) {
+      if(componentModel.facetName === facetName) {
         componentModelsConfig[componentModel.name] =
           ComponentModel.getConfigFromData(componentModel);
       }
@@ -224,8 +224,8 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
 
   cachedModels.forEach(function(modelDef) {
     debug('model definition ~ %j', modelDef);
-    if(modelDef.componentName === componentName) {
-      var modelConfigFile = ModelDefinition.getConfigFile(componentName, modelDef);
+    if(modelDef.facetName === facetName) {
+      var modelConfigFile = ModelDefinition.getConfigFile(facetName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigFromCache(cache, modelDef);
       filesToSave.push(modelConfigFile);
     }
@@ -242,14 +242,14 @@ ComponentDefinition.saveToFs = function(cache, componentDef, cb) {
   });
 }
 
-ComponentDefinition.hasApp = function(componentDef) {
+Facet.hasApp = function(facetData) {
   // At the moment, the root component does not have `app.js`,
-  // all other components (server) have their app.js
+  // all other facets (server) have their app.js
   // In the future, we should read this from component,
   // e.g. package.json > loopback-workspace > app: true|false
-  return componentDef.name !== '.';
+  return facetData.name !== '.';
 };
 
-ComponentDefinition.getUniqueId = function(data) {
+Facet.getUniqueId = function(data) {
   return data.name || null;
 }

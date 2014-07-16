@@ -208,7 +208,7 @@ ConfigFile.prototype.getDirName = function() {
   return path.basename(path.dirname(this.path));
 }
 
-ConfigFile.prototype.getComponentName = function() {
+ConfigFile.prototype.getFacetName = function() {
   var dir = this.getDirName();
   var baseDir = this.path.split(path.sep)[0];
 
@@ -221,13 +221,13 @@ ConfigFile.prototype.getComponentName = function() {
   }
 }
 
-ConfigFile.findComponentFiles = function(cb) {
+ConfigFile.findFacetFiles = function(cb) {
   ConfigFile.find(function(err, configFiles) {
     if(err) return callback(err);
 
     var result = 
       groupBy(configFiles, function(configFile) {
-        return configFile.getComponentName();
+        return configFile.getFacetName();
       });
 
     cb(null, result);
@@ -275,14 +275,14 @@ ConfigFile.getFileByBase = function(configFiles, base) {
  * @returns {ConfigFile[]}
  */
 
-ConfigFile.getModelDefFiles = function(configFiles, componentName) {
+ConfigFile.getModelDefFiles = function(configFiles, facetName) {
   assert(Array.isArray(configFiles));
   var configFile;
   var results = [];
   for(var i = 0; i < configFiles.length; i++) {
     configFile = configFiles[i];
     // TODO(ritch) support other directories
-    if(configFile && configFile.getComponentName() === componentName
+    if(configFile && configFile.getFacetName() === facetName
       && configFile.getDirName() === 'models') {
       results.push(configFile);
     }

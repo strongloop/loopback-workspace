@@ -29,7 +29,7 @@ describe('end-to-end', function() {
 
     before(function createCustomModel(done) {
       models.ModelDefinition.create({
-        componentName: '.',
+        facetName: '.',
         name: 'Custom'
       }, done);
     });
@@ -38,7 +38,7 @@ describe('end-to-end', function() {
       models.ComponentModel.create({
         name: 'Custom',
         dataSource: 'db',
-        componentName: 'server'
+        facetName: 'server'
       }, done);
     });
 

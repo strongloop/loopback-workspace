@@ -1,7 +1,7 @@
 var app = require('./app');
 var loopback = require('loopback');
 var connector = app.dataSources.db.connector;
-var ComponentDefinition = app.models.ComponentDefinition;
+var Facet = app.models.Facet;
 var ConfigFile = app.models.ConfigFile;
 var async = require('async');
 var debug = require('debug')('workspace:connector');
@@ -56,8 +56,8 @@ connector.saveToFile = function() {
 connector._saveToFile = function(cb) {
   var cache = connector.cache;
 
-  async.each(ComponentDefinition.allFromCache(cache), function(cachedComponent, cb) {
-    ComponentDefinition.saveToFs(cache, cachedComponent, cb);
+  async.each(Facet.allFromCache(cache), function(cachedFacet, cb) {
+    Facet.saveToFs(cache, cachedFacet, cb);
   }, cb);
 }
 
@@ -98,12 +98,12 @@ connector.loadFromFile = function() {
     return prev;
   }, {});
 
-  ConfigFile.findComponentFiles(function(err, components) {
+  ConfigFile.findFacetFiles(function(err, facetFiles) {
     if(err) return done(err);
-    var componentNames = Object.keys(components);
+    var facetNames = Object.keys(facetFiles);
 
-    async.each(componentNames, function(component, next) {
-      ComponentDefinition.loadIntoCache(cache, component, components, function(err) {
+    async.each(facetNames, function(facet, next) {
+      Facet.loadIntoCache(cache, facet, facetFiles, function(err) {
         if(err) {
           return next(err);
         }

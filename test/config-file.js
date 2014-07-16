@@ -114,19 +114,19 @@ describe('ConfigFile', function() {
     });
   });
 
-  describe('configFile.getComponentName()', function() {
+  describe('configFile.getFacetName()', function() {
     it('should be the name of the app', function() {
       
-      expectComponentForPath('my-app', 'my-app/datasource.json');
-      expectComponentForPath('my-app', 'my-app/models/todo.json');
-      expectComponentForPath(ConfigFile.ROOT_COMPONENT, 'config.json');
+      expectFacetNameForPath('my-app', 'my-app/datasource.json');
+      expectFacetNameForPath('my-app', 'my-app/models/todo.json');
+      expectFacetNameForPath(ConfigFile.ROOT_COMPONENT, 'config.json');
 
-      function expectComponentForPath(component, path) {
+      function expectFacetNameForPath(facetName, path) {
         var configFile = new ConfigFile({
           path: path
         });
 
-        expect(configFile.getComponentName()).to.equal(component);
+        expect(configFile.getFacetName()).to.equal(facetName);
       }
     });
   });
@@ -172,7 +172,7 @@ describe('ConfigFile', function() {
     });
   });
 
-  describe('ConfigFile.findComponentFiles(cb)', function () {
+  describe('ConfigFile.findFacetFiles(cb)', function () {
     beforeEach(function(done) {
       var files = this.testFiles = [
         COMPONENT_JSON,
@@ -186,7 +186,7 @@ describe('ConfigFile', function() {
 
     beforeEach(function(done) {
       var test = this;
-      ConfigFile.findComponentFiles(function(err, apps) {
+      ConfigFile.findFacetFiles(function(err, apps) {
         if(err) return done(err);
         test.apps = apps;
         done();
@@ -215,22 +215,22 @@ describe('ConfigFile', function() {
     });
   });
 
-  describe('ConfigFile.getModelDefFiles(configFiles, componentName)', function() {
-    it('should find model files in the given component', function() {
+  describe('ConfigFile.getModelDefFiles(configFiles, facetName)', function() {
+    it('should find model files in the given facet', function() {
       var configFiles = [
-        new ConfigFile({path: 'component-a/models/foo.json'}),
-        new ConfigFile({path: 'component-a/models/bar.json'}),
-        new ConfigFile({path: 'component-b/models/foo.json'}),
+        new ConfigFile({path: 'facet-a/models/foo.json'}),
+        new ConfigFile({path: 'facet-a/models/bar.json'}),
+        new ConfigFile({path: 'facet-b/models/foo.json'}),
         new ConfigFile({path: 'models/foo.json'})
       ];
 
-      var aModels = ConfigFile.getModelDefFiles(configFiles, 'component-a');
-      var bModels = ConfigFile.getModelDefFiles(configFiles, 'component-b');
+      var aModels = ConfigFile.getModelDefFiles(configFiles, 'facet-a');
+      var bModels = ConfigFile.getModelDefFiles(configFiles, 'facet-b');
       var rootModels = ConfigFile.getModelDefFiles(configFiles, '.');
 
       expect(configFilesToPaths(aModels).sort())
-        .to.eql(['component-a/models/foo.json', 'component-a/models/bar.json' ].sort());
-      expect(configFilesToPaths(bModels)).to.eql(['component-b/models/foo.json']);
+        .to.eql(['facet-a/models/foo.json', 'facet-a/models/bar.json' ].sort());
+      expect(configFilesToPaths(bModels)).to.eql(['facet-b/models/foo.json']);
       expect(configFilesToPaths(rootModels)).to.eql(['models/foo.json']);
     });
   });

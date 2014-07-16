@@ -16,7 +16,7 @@ describe('ModelRelation', function() {
     new TestDataBuilder()
       .define('modelDef', app.models.ModelDefinition, {
         name: 'TestModel',
-        componentName: '.'
+        facetName: '.'
       })
       .buildTo(test, function(err) {
         if (err) return done(err);

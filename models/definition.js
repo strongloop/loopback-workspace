@@ -106,7 +106,7 @@ Definition.getEmbededRelations = function() {
   return results;
 }
 
-Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
+Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
   var Definition = this;
   this.getEmbededRelations().forEach(function(relation) {
     var relatedData = fileData[relation.as];
@@ -116,7 +116,7 @@ Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
     if(Array.isArray(relatedData)) {
       relatedData.forEach(function(config) {
         config[relation.foreignKey] = fk;
-        config.componentName = componentName;
+        config.facetName = facetName;
         debug('addRelatedToCache %s %j', relation.model, config);
         Entity.addToCache(cache, config);
       });
@@ -136,7 +136,7 @@ Definition.addRelatedToCache = function(cache, fileData, componentName, fk) {
         // add extra properties for relations
         config[relation.foreignKey] = fk;
         config[relation.embed.key] = embedId;
-        config.componentName = componentName;
+        config.facetName = facetName;
         debug('addRelatedToCache %s %j', relation.model, config);
         Entity.addToCache(cache, config);
       });

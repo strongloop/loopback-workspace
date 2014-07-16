@@ -5,7 +5,7 @@ var app = require('../app');
 var async = require('async');
 var PackageDefinition = app.models.PackageDefinition;
 var ConfigFile = app.models.ConfigFile;
-var ComponentDefinition = app.models.ComponentDefinition;
+var Facet = app.models.Facet;
 var ComponentModel = app.models.ComponentModel;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
@@ -47,7 +47,7 @@ Workspace.copyRecursive = function(source, destination, cb) {
   ncp(source, destination, cb);
 };
 
-Workspace.addComponent = function(options, cb) {
+Workspace.addFacet = function(options, cb) {
   var template;
   var templateName = options.template || DEFAULT_TEMPLATE;
   var name = options.name || templateName;
@@ -80,12 +80,12 @@ Workspace.addComponent = function(options, cb) {
   if(template.component) {
     steps.push(function(cb) {
       template.component.name = name;
-      ComponentDefinition.create(template.component, cb);
+      Facet.create(template.component, cb);
     });
     if(subComponents) {
       steps.push(function(cb) {
         async.each(subComponents, function(component, cb) {
-          Workspace.addComponent({
+          Workspace.addFacet({
             name: component,
             template: component
           }, cb);
@@ -98,14 +98,14 @@ Workspace.addComponent = function(options, cb) {
 
   if(template.package) {
     template.package.name = packageName;
-    setComponentName(template.package);
+    setFacetName(template.package);
     steps.push(function(cb) {
       PackageDefinition.create(template.package, cb);
     });
   }
 
   if(template.componentModels) {
-    setComponentName(template.componentModels);
+    setFacetName(template.componentModels);
     steps.push(function(cb) {
       async.each(template.componentModels, 
         ComponentModel.create.bind(ComponentModel), cb);
@@ -113,7 +113,7 @@ Workspace.addComponent = function(options, cb) {
   }
 
   if(template.models) {
-    setComponentName(template.models);
+    setFacetName(template.models);
     steps.push(function(cb) {
       async.each(template.models, 
         ModelDefinition.create.bind(ModelDefinition), cb);
@@ -121,7 +121,7 @@ Workspace.addComponent = function(options, cb) {
   }
 
   if(template.datasources) {
-    setComponentName(template.datasources);
+    setFacetName(template.datasources);
     steps.push(function(cb) {
       async.each(template.datasources, 
         DataSourceDefinition.create.bind(DataSourceDefinition), cb);
@@ -129,7 +129,7 @@ Workspace.addComponent = function(options, cb) {
   }
 
   if(template.relations) {
-    setComponentName(template.relations);
+    setFacetName(template.relations);
     steps.push(function(cb) {
       async.each(template.relations, 
         ModelRelation.create.bind(ModelRelation), cb);
@@ -146,13 +146,13 @@ Workspace.addComponent = function(options, cb) {
     });
   });
 
-  function setComponentName(obj) {
+  function setFacetName(obj) {
     if(Array.isArray(obj)) {
       obj.forEach(function(item) {
-        item.componentName = name;
+        item.facetName = name;
       });
     } else if(obj) {
-      obj.componentName = name;
+      obj.facetName = name;
     }
   }
 
@@ -169,7 +169,7 @@ Workspace.addComponent = function(options, cb) {
  */
 
 Workspace.createFromTemplate = function(templateName, name, cb) {
-  Workspace.addComponent({
+  Workspace.addFacet({
     root: true,
     name: name,
     template: templateName
@@ -202,13 +202,13 @@ Workspace.listAvailableConnectors = function(cb) {
 Workspace.isValidDir = function(cb) {
   // Every call of `Model.find()` triggers reload from the filesystem
   // This allows us to catch basic errors in config files
-  ComponentDefinition.find(function(err, list) {
+  Facet.find(function(err, list) {
     if (err) {
       cb(err);
     } else if (!list.length) {
-      cb(new Error('Invalid workspace: no components found.'));
+      cb(new Error('Invalid workspace: no facets found.'));
     } else {
-      // TODO(bajtos) Add more sophisticated validation based on component types
+      // TODO(bajtos) Add more sophisticated validation based on facet types
       cb();
     }
   });

@@ -27,12 +27,12 @@ WorkspaceEntity.getUniqueIdParts = function(data) {
   var parts = [];
   var parentId = parentPropertyName && data[parentPropertyName];
   var splitParentId = parentId && parentId.split('.');
-  var parentIdIsNotRootComponent = parentId !== '.';
+  var parentIdIsNotRoot = parentId !== '.';
   var name = data.name;
 
   if(parentPropertyName) {
     if(parentId) {
-      if(parentIdIsNotRootComponent) {
+      if(parentIdIsNotRoot) {
         parts.push.apply(parts, splitParentId);
       }
     } else {
@@ -97,19 +97,19 @@ WorkspaceEntity.allFromCache = function(cache) {
     .map(this.getFromCache.bind(this, cache));
 }
 
-WorkspaceEntity.getPath = function(componentName, obj) {
+WorkspaceEntity.getPath = function(facetName, obj) {
   if(obj.configFile) return obj.configFile;
-  return path.join(componentName, this.settings.defaultConfigFile);
+  return path.join(facetName, this.settings.defaultConfigFile);
 }
 
-WorkspaceEntity.getDir = function(componentName, obj) {
-  return path.dirname(WorkspaceEntity.getPath(componentName, obj));
+WorkspaceEntity.getDir = function(facetName, obj) {
+  return path.dirname(WorkspaceEntity.getPath(facetName, obj));
 }
 
-WorkspaceEntity.getConfigFile = function(componentName, obj) {
+WorkspaceEntity.getConfigFile = function(facetName, obj) {
   // TODO(ritch) the bootstrapping of models requires this...
   var ConfigFile = app.models.ConfigFile;
-  return new ConfigFile({path: this.getPath(componentName, obj)});
+  return new ConfigFile({path: this.getPath(facetName, obj)});
 }
 
 WorkspaceEntity.getConfigFromData = function(data) {
@@ -133,32 +133,32 @@ WorkspaceEntity.getConfigFromData = function(data) {
   return result;
 };
 
-// Automatically inject parent model's componentName when creating a new object
+// Automatically inject parent model's facetName when creating a new object
 // We have to perform this task before the validations are executed, since
-// the `componentName` is a required property
-WorkspaceEntity.beforeValidate = function injectComponentName(next) {
+// the `facetName` is a required property
+WorkspaceEntity.beforeValidate = function injectFacetName(next) {
   var Entity = this.constructor;
   var properties = Entity.definition.properties;
   var data = this.toObject();
 
-  if (!('componentName' in properties &&
+  if (!('facetName' in properties &&
     'modelId' in properties &&
     'modelId' in data)) {
     return next();
   }
 
   Entity.app.models.ModelDefinition.findById(data.modelId, function(err, model) {
-    if (model && model.componentName) {
-      if (this.componentName && this.componentName !== model.componentName) {
+    if (model && model.facetName) {
+      if (this.facetName && this.facetName !== model.facetName) {
         console.warn(
-          'Warning: fixed %s[%s].componentName from %j to %j' +
+          'Warning: fixed %s[%s].facetName from %j to %j' +
             ' to match the parent',
           Entity.modelName,
           this.id,
-          this.componentName,
-          model.componentName);
+          this.facetName,
+          model.facetName);
       }
-      this.componentName = model.componentName;
+      this.facetName = model.facetName;
     }
     next();
   }.bind(this));

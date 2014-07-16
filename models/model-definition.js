@@ -17,7 +17,7 @@ var camelize = underscoreString.camelize;
 var ModelDefinition = app.models.ModelDefinition;
 
 /**
- * - `name` is required and must be unique per `ComponentDefinition`
+ * - `name` is required and must be unique per `Facet`
  * 
  * @header Property Validation
  */

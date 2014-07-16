@@ -11,12 +11,12 @@ var app = require('../app');
 var ComponentModel = app.models.ComponentModel;
 
 /**
- * - `name` is required and must be unique per `ComponentDefinition`
- * - `componentName` is required and must refer to an existing component
+ * - `name` is required and must be unique per `Facet`
+ * - `facetName` is required and must refer to an existing component
  * 
  * @header Property Validation
  */
 
 ComponentModel.validatesUniquenessOf('name', { scopedTo: ['component'] });
 ComponentModel.validatesPresenceOf('name');
-ComponentModel.validatesPresenceOf('componentName');
+ComponentModel.validatesPresenceOf('facetName');

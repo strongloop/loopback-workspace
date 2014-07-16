@@ -17,16 +17,16 @@ var loopback = require('loopback');
 var DataSourceDefinition = app.models.DataSourceDefinition;
 
 /**
- * - `name` must be unique per `ComponentDefinition`
+ * - `name` must be unique per `Facet`
  * - `name` and `connector` are required
- * - `componentName` is required and must refer to an existing component
+ * - `facetName` is required and must refer to an existing facet
  *
  * @header Property Validation
  */
 
-DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['componentName'] });
+DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['facetName'] });
 DataSourceDefinition.validatesPresenceOf('name', 'connector');
-DataSourceDefinition.validatesPresenceOf('componentName');
+DataSourceDefinition.validatesPresenceOf('facetName');
 
 /**
  * Test the datasource definition connection.
