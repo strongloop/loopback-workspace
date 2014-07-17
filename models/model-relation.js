@@ -34,8 +34,9 @@ ModelRelation.validatesPresenceOf('type');
 
 ModelRelation.getValidTypes = function(cb) {
   cb(null, [
-    {value: 'hasMany', humanized: 'has many'},
-    {value: 'belongsTo', humanized: 'belongs to'},
-    {value: 'hasManyAndBelongsTo', humanized: 'has many and belongs to'}
+    { name: 'has many', value: 'hasMany' },
+    { name: 'belongs to', value: 'belongsTo' },
+    { name: 'has many and belongs to', value: 'hasManyAndBelongsTo' },
+    { name: 'has one', value: 'hasOne' }
   ]);
 }
