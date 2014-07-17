@@ -52,8 +52,10 @@ ModelAccessControl.getPermissionTypes = function(cb) {
   cb(null, [
     { name: 'Explicitly grant access', value: ACL.ALLOW },
     { name: 'Explicitly deny access', value: ACL.DENY },
+    /* not supported by loopback yet
     { name: 'Generate an alarm of the access', value: ACL.ALARM },
     { name: 'Log the access', value: ACL.AUDIT },
+    */
   ]);
 };
 
@@ -98,7 +100,9 @@ ModelAccessControl.getBuiltinRoles = function(cb) {
     { name: 'All users', value: Role.EVERYONE },
     { name: 'Any unauthenticated user', value: Role.UNAUTHENTICATED },
     { name: 'Any authenticated user', value: Role.AUTHENTICATED },
+    /* not supported by loopback yet
     { name: 'Any user related to the object', value: Role.RELATED },
+    */
     { name: 'The user owning the object', value: Role.OWNER },
   ]);
 };
