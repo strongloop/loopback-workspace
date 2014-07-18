@@ -1,6 +1,6 @@
 {
   "name": "loopback-workspace",
-  "version": "3.0.0-beta2",
+  "version": "3.0.0-beta3",
   "main": "app.js",
   "scripts": {
     "test": "mocha"
