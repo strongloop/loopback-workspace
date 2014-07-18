@@ -255,7 +255,7 @@
       "modelId": {"type": "string", "required": true, "json": false},
       "facetName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string"},
-      "type": {"type": "object"},
+      "type": {"type": "any"},
       "isId": {"type": "boolean", "json": "id"},
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
