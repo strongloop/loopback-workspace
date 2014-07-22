@@ -12,7 +12,8 @@ template.package = {
     "errorhandler": "^1.1.1",
     "loopback": "~2.0.0-beta5",
     "loopback-boot": "2.0.0-beta2",
-    "loopback-datasource-juggler": "~2.0.0-beta2"
+    "loopback-datasource-juggler": "~2.0.0-beta2",
+    "serve-favicon": "^2.0.1"
   },
   "optionalDependencies": {
     "loopback-explorer": "^1.1.0"
@@ -27,12 +28,14 @@ template.server = {
   facet: {
     modelsMetadata: {
       sources: ['../common/models', './models']
-    },
+    }
   },
 
   config: [
     { name: 'restApiRoot', value: '/api' },
-    { name: 'host', value: 'localhost' }
+    { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
+    { name: 'port', value: 3000 },
+    { name: 'url', value: 'http://localhost:3000/' } // Informational
   ],
 
   modelConfigs: [

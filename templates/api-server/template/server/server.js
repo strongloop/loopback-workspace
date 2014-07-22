@@ -3,6 +3,9 @@ var boot = require('loopback-boot');
 
 var app = module.exports = loopback();
 
+// Set up the /favicon.ico
+app.use(loopback.favicon());
+
 // request pre-processing middleware
 app.use(loopback.compress());
 
