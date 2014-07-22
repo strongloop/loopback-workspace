@@ -27,12 +27,13 @@ template.server = {
   facet: {
     modelsMetadata: {
       sources: ['../common/models', './models']
-    },
+    }
   },
 
   config: [
     { name: 'restApiRoot', value: '/api' },
-    { name: 'host', value: 'localhost' }
+    { name: 'host', value: '0.0.0.0' },
+    { name: 'port', value: 3000 }
   ],
 
   modelConfigs: [
