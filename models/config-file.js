@@ -220,7 +220,9 @@ ConfigFile.prototype.getDirName = function() {
 
 ConfigFile.prototype.getFacetName = function() {
   var dir = this.getDirName();
-  var baseDir = this.path.split(path.sep)[0];
+  // NOTE: glob always returns the path using forward-slash even on Windows
+  // See: https://github.com/strongloop/generator-loopback/issues/12
+  var baseDir = this.path.split('/')[0];
 
   if(dir === ROOT_COMPONENT
     || baseDir === this.path
