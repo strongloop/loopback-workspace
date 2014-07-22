@@ -94,17 +94,29 @@ describe('Workspace', function() {
   });
 
   describe('project.listAvailableConnectors(cb)', function() {
+    var connectors;
     before(function(done) {
       Workspace.listAvailableConnectors(function(err, list) {
-        this.connectors = list;
+        connectors = list;
         done(err);
-      }.bind(this));
+      });
     });
 
     it('should include Memory connector', function() {
-      var names = this.connectors.map(function(it) { return it.name; });
+      var names = connectors.map(function(it) { return it.name; });
       expect(names).to.contain('memory');
     });
+
+    it('should include base model in metadata', function() {
+      var meta = findByName('memory');
+      expect(meta).to.have.property('baseModel', 'PersistedModel');
+    });
+
+    function findByName(name) {
+      return connectors.filter(function(c) {
+        return c.name === name;
+      })[0];
+    }
   });
 
   describe('Workspace.isValidDir(cb)', function() {

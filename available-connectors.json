@@ -2,52 +2,62 @@
   {
     "name": "memory",
     "description": "In-memory db",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": true
   },
   {
     "name": "mysql",
     "description": "MySQL",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": true
   },
   {
     "name": "postgresql",
     "description": "PostgreSQL",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": true
   },
   {
     "name": "oracle",
     "description": "Oracle",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": true
   },
   {
     "name": "mssql",
     "description": "Microsoft SQL",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": true
   },
   {
     "name": "mongodb",
     "description": "MongoDB",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": true
   },
   {
     "name": "soap",
     "description": "SOAP webservices",
+    "baseModel": "Model",
     "supportedByStrongLoop": true
   },
   {
     "name": "rest",
     "description": "REST services",
+    "baseModel": "Model",
     "supportedByStrongLoop": true
   },
 
   {
     "name": "neo4j",
     "description": "Neo4j",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": false
   },
   {
     "name": "kafka",
     "description": "Kafka",
+    "baseModel": "PersistedModel",
     "supportedByStrongLoop": false
   }
 ]
