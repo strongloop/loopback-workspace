@@ -33,8 +33,9 @@ template.server = {
 
   config: [
     { name: 'restApiRoot', value: '/api' },
-    { name: 'host', value: '0.0.0.0' },
-    { name: 'port', value: 3000 }
+    { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
+    { name: 'port', value: 3000 },
+    { name: 'url', value: 'http://localhost:3000/' } // Informational
   ],
 
   modelConfigs: [
