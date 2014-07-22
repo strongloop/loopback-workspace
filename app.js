@@ -82,12 +82,6 @@ try {
  *   });
  */
 
-// Let express routes handle requests that were not handled
-// by any of the middleware registered above.
-// This way LoopBack REST and API Explorer take precedence over
-// express routes.
-app.use(app.router);
-
 // The static file server should come after all other routes
 // Every request that goes through the static middleware hits
 // the file system to check if a file exists.
