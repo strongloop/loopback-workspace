@@ -10,10 +10,10 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "errorhandler": "^1.1.1",
-    "serve-favicon": "^2.0.1",
     "loopback": "~2.0.0-beta5",
     "loopback-boot": "2.0.0-beta2",
-    "loopback-datasource-juggler": "~2.0.0-beta2"
+    "loopback-datasource-juggler": "~2.0.0-beta2",
+    "serve-favicon": "^2.0.1"
   },
   "optionalDependencies": {
     "loopback-explorer": "^1.1.0"
