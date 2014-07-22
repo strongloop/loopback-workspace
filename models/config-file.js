@@ -1,5 +1,4 @@
 var assert = require('assert');
-var loopback = require('loopback');
 var app = require('../app');
 var path = require('path');
 var async = require('async');
@@ -220,7 +219,9 @@ ConfigFile.prototype.getDirName = function() {
 
 ConfigFile.prototype.getFacetName = function() {
   var dir = this.getDirName();
-  var baseDir = this.path.split(path.sep)[0];
+  // NOTE: glob always returns the path using forward-slash even on Windows
+  // See: https://github.com/strongloop/generator-loopback/issues/12
+  var baseDir = this.path.split('/')[0];
 
   if(dir === ROOT_COMPONENT
     || baseDir === this.path
@@ -233,7 +234,7 @@ ConfigFile.prototype.getFacetName = function() {
 
 ConfigFile.findFacetFiles = function(cb) {
   ConfigFile.find(entityBelongsToFacet, function(err, configFiles) {
-    if(err) return callback(err);
+    if(err) return cb(err);
 
     var result =
       groupBy(configFiles, function(configFile) {

@@ -67,6 +67,12 @@ describe('end-to-end', function() {
         .expect(401, done);
     });
 
+    it('has favicon enabled', function(done) {
+      request(app)
+        .get('/favicon.ico')
+        .expect(200, done);
+    });
+
     it('can create and login a user', function(done) {
       var credentials = { email: 'test@example.com', password: 'pass' };
       var userId, tokenId;
