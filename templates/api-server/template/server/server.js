@@ -3,6 +3,9 @@ var boot = require('loopback-boot');
 
 var app = module.exports = loopback();
 
+// Set up the /favicon.ico
+app.use(loopback.favicon());
+
 // request pre-processing middleware
 app.use(loopback.compress());
 
@@ -16,7 +19,6 @@ boot(app, __dirname);
 // passing the static middleware are hitting the file system
 // Example:
 //   app.use(loopback.static(path.resolve(__dirname', '../client')));
-app.use(loopback.favicon());
 
 // Requests that get this far won't be handled
 // by any middleware. Convert them into a 404 error
