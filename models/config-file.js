@@ -1,5 +1,4 @@
 var assert = require('assert');
-var loopback = require('loopback');
 var app = require('../app');
 var path = require('path');
 var async = require('async');
@@ -235,7 +234,7 @@ ConfigFile.prototype.getFacetName = function() {
 
 ConfigFile.findFacetFiles = function(cb) {
   ConfigFile.find(entityBelongsToFacet, function(err, configFiles) {
-    if(err) return callback(err);
+    if(err) return cb(err);
 
     var result =
       groupBy(configFiles, function(configFile) {
