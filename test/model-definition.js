@@ -38,6 +38,9 @@ describe('ModelDefinition', function() {
           done();
         });
       });
+      // it('should create a common/models/$name.js file', function (done) {
+      //   fs.existsSync()
+      // });
     });
   });
 

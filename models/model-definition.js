@@ -5,7 +5,8 @@ var app = require('../app');
 var async = require('async');
 var underscoreString = require('underscore.string');
 var dasherize = underscoreString.dasherize;
-var camelize = underscoreString.camelize;
+var classify = underscoreString.classify;
+var CodeFile = app.models.CodeFile;
 
 /**
  * Defines a LoopBack `Model`.
@@ -83,6 +84,29 @@ ModelDefinition.toFilename = function(name) {
   if(split[0] === '-') split.shift();
 
   return split.join('');
+}
+
+ModelDefinition.afterCreate = function(next) {
+  var def = this;
+  var script = def.getScriptFile();
+  script.exists(function(err, exists) {
+    if(err || exists) return next(err);
+    script.render({ model: def }, next);
+  });
+}
+
+ModelDefinition.prototype.getClassName = function() {
+  if(!this.name) return null;
+  return classify(dasherize(this.name));
+}
+
+ModelDefinition.prototype.getScriptFile = function() {
+  var script = ModelDefinition.toFilename(this.name) + '.js';
+  var file = path.join(this.facetName, ModelDefinition.settings.defaultDir, script);
+  return new CodeFile({
+    path: file,
+    template: 'model'
+  });
 }
 
 /**

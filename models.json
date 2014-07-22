@@ -1,4 +1,12 @@
 {
+  "CodeFile": {
+    "properties": {
+      "path": {"type": "string", "id": true},
+      "content": {"type": "string"}
+    },
+    "dataSource": "db",
+    "public": false
+  },
   "ConfigFile": {
     "properties": {
       "path": {"type": "string", "id": true},
