@@ -7,6 +7,9 @@ var template = module.exports;
 template.package = {
   "version": "0.0.0",
   "main": "server/server.js",
+  "scripts": {
+    "pretest": "jshint .",
+  },
   "dependencies": {
     "compression": "^1.0.3",
     "errorhandler": "^1.1.1",
