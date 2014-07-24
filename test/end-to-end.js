@@ -112,6 +112,32 @@ describe('end-to-end', function() {
         }
       ], done);
     });
+
+    it('passes scaffolded tests', function(done) {
+      execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
+        done(err);
+      });
+    });
   });
 });
 
+function execNpm(args, options, cb) {
+  var debug = require('debug')('test:exec-npm');
+  options = options || {};
+  options.env = extend(
+    {
+      PATH: process.env.PATH,
+      HOME: process.env.HOME,
+      USERPROFILE: process.env.USERPROFILE,
+    },
+    options.env
+  );
+
+  var command = 'npm ' + args.join(' ');
+  debug(command);
+  return exec(command, options, function(err, stdout, stderr) {
+    debug('--npm stdout--\n%s\n--npm stderr--\n%s\n--end--',
+      stdout, stderr);
+    cb(err, stdout, stderr);
+  });
+}
