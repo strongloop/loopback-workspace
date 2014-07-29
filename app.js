@@ -4,6 +4,7 @@ var methodOverride = require('method-override');
 var app = module.exports = loopback();
 var boot = require('loopback-boot');
 var started = new Date();
+var env = app.get('env');
 
 // long stack traces
 require('longjohn');
@@ -37,7 +38,9 @@ require('./connector');
  */
 
 app.use(loopback.favicon());
-app.use(loopback.logger(app.get('env') === 'development' ? 'dev' : 'default'));
+if(env !== 'test') {
+  app.use(loopback.logger(env === 'development' ? 'dev' : 'default'));
+}
 app.use(loopback.cookieParser(app.get('cookieSecret')));
 app.use(loopback.token({model: app.models.accessToken}));
 app.use(methodOverride());
