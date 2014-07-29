@@ -36,7 +36,7 @@ ModelRelation.getValidTypes = function(cb) {
   cb(null, [
     { name: 'has many', value: 'hasMany' },
     { name: 'belongs to', value: 'belongsTo' },
-    { name: 'has many and belongs to', value: 'hasManyAndBelongsTo' },
+    { name: 'has and belongs to many', value: 'hasAndBelongsToMany' },
     { name: 'has one', value: 'hasOne' }
   ]);
 }
