@@ -50,6 +50,10 @@ DataSourceDefinition.prototype.testConnection = function(cb) {
   dataSource.connect();
 }
 
+loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
+  returns: { arg: 'status', type: 'boolean' }
+});
+
 /**
  * Discover the model definition by table name from this data source. Use the `name`
  * provided by items from returned from `DataSourceDefinition.getSchema()`.
@@ -66,6 +70,15 @@ DataSourceDefinition.prototype.discoverModelDefinition = function(name, options,
   this.toDataSource().discoverSchemas(name, options, cb);
 }
 
+loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
+  accepts: [{
+    arg: 'modelName', type: 'string'
+  }, {
+    arg: 'options', type: 'object'
+  }],
+  returns: { arg: 'status', type: 'boolean' }
+});
+
 /**
  * Get a list of table / collection names, owners and types.
  *
@@ -74,7 +87,7 @@ DataSourceDefinition.prototype.discoverModelDefinition = function(name, options,
  * @options {Object} options Discovery options.  See below.
  * @property {Boolean} all If true, discover all models; if false, discover only
  * models owned by the current user.
- * @property {Boolean} views If true, nclude views; if false, only tables.
+ * @property {Boolean} views If true, include views; if false, only tables.
  * @property {Number} limit Page size
  * @property {Number} offset Starting index
  * @callback {Function} callback
@@ -86,6 +99,11 @@ DataSourceDefinition.prototype.getSchema = function(options, cb) {
   this.toDataSource().discoverModelDefinitions(options, cb);
 }
 
+loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
+  accepts: { arg: 'options', type: 'object'},
+  returns: { arg: 'models', type: 'array' }
+});
+
 /**
  * Run a migration on the data source. Creates indexes, tables, collections, etc.
  *
@@ -96,7 +114,7 @@ DataSourceDefinition.prototype.getSchema = function(options, cb) {
  */
 
 DataSourceDefinition.prototype.automigrate = function() {
-
+  throw new Error('not implemented');
 }
 
 /**
@@ -107,7 +125,7 @@ DataSourceDefinition.prototype.automigrate = function() {
  */
 
 DataSourceDefinition.prototype.autoupdate = function() {
-  
+  throw new Error('not implemented');  
 }
 
 /**

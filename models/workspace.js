@@ -1,3 +1,4 @@
+var loopback = require('loopback');
 var extend = require('util')._extend;
 var fs = require('fs');
 var ncp = require('ncp');
@@ -34,8 +35,19 @@ var Workspace = app.models.Workspace;
  */
 
 Workspace.getAvailableTemplates = function(cb) {
-  fs.readdir(TEMPLATE_DIR, cb);
+  fs.readdir(TEMPLATE_DIR, function(err, files) {
+    cb(err, err ? undefined : files.filter(dirFilter));
+  });
 }
+
+function dirFilter(file) {
+  return file.indexOf('.') === -1;
+}
+
+loopback.remoteMethod(Workspace.getAvailableTemplates, {
+  http: {verb: 'get', path: '/component-templates'},
+  returns: {arg: 'templates', type: 'array'}
+});
 
 /**
  * Recursively copy files.
@@ -114,6 +126,11 @@ Workspace.addComponent = function(options, cb) {
 
   async.series(steps, cb);
 };
+
+loopback.remoteMethod(Workspace.addComponent, {
+  http: {verb: 'post', path: '/component'},
+  accepts: {arg: 'options', type: 'object', http: {source: 'body'}}
+});
 
 function createFacet(name, template, cb) {
   var steps = [];
@@ -196,6 +213,15 @@ Workspace.createFromTemplate = function(templateName, name, cb) {
   }, cb);
 }
 
+loopback.remoteMethod(Workspace.createFromTemplate, {
+  http: {verb: 'post', path: '/'},
+  accepts: [{
+    arg: 'templateName', type: 'string'
+  }, {
+    arg: 'name', type: 'string', http: {source: 'body'}
+  }]
+});
+
 /**
  * @typedef {{name, description,supportedByStrongLoop}} ConnectorMeta
  */
@@ -213,6 +239,11 @@ var staticConnectorList = require('../available-connectors');
 Workspace.listAvailableConnectors = function(cb) {
   cb(null, staticConnectorList);
 };
+
+loopback.remoteMethod(Workspace.listAvailableConnectors, {
+  http: {verb: 'get', path: '/connectors'},
+  returns: {arg: 'connectors', type: 'array', root: true}
+});
 
 /**
  * Check if the project is a valid directory.
