@@ -151,9 +151,6 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   });
 }
 
-var i = 0;
-var temp;
-
 Facet.saveToFs = function(cache, facetData, cb) {
   // TODO(ritch) try and remove this hack...
   // ensure ModelDefinition methods are defined
