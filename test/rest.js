@@ -50,6 +50,7 @@ describe('REST API', function () {
     });
 
     describe('POST /workspaces/connectors', function () {
+      beforeEach(givenEmptyWorkspace);
       beforeEach(function(done) {
         this.req = request(app)
           .get('/api/workspaces/connectors')
@@ -68,6 +69,33 @@ describe('REST API', function () {
         expect(connectors).to.contain('rest');
         expect(connectors).to.contain('neo4j');
         expect(connectors).to.contain('kafka');
+      });
+    });
+
+    describe('POST /api/DataSourceDefinitions', function () {
+      beforeEach(givenEmptyWorkspace);
+      beforeEach(function(done) {
+        this.req = request(app)
+          .post('/api/DataSourceDefinitions')
+          .set('Accepts', 'application/json')
+          .send({
+            "defaultForType": "mysql",
+            "name": "test",
+            "connector": "loopback-connector-mysql",
+            "host": "demo.strongloop.com",
+            "port": 3306,
+            "facetName": "server",
+            "database": "demo",
+            "username": "demo******",
+            "password": "**********"
+          })
+          .end(done);
+      });
+      it('should create a datasource def', function (done) {
+        app.models.DataSourceDefinition.findById('server.test', function(err, def) {
+          expect(def).to.exist;
+          done();
+        });
       });
     });
   });
