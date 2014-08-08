@@ -22,7 +22,6 @@
     "glob": "~4.0.2",
     "grunt": "~0.4.5",
     "grunt-loopback-angular": "~1.1.0",
-    "longjohn": "~0.2.4",
     "loopback": "^2.0.0",
     "loopback-datasource-juggler": "^2.0.0",
     "loopback-boot": "^1.0.0",
