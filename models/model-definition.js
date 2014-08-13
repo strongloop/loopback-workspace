@@ -6,6 +6,7 @@ var async = require('async');
 var underscoreString = require('underscore.string');
 var dasherize = underscoreString.dasherize;
 var camelize = underscoreString.camelize;
+var ConfigFile = app.models.ConfigFile;
 
 /**
  * Defines a LoopBack `Model`.
@@ -68,11 +69,11 @@ function formatRelatedData(relation, relatedData) {
   assert(false, relation.embed.as + ' is not supported by embed');
 }
 
-ModelDefinition.getPath = function(app, obj) {
+ModelDefinition.getPath = function(facetName, obj) {
   if(obj.configFile) return obj.configFile;
 
   // TODO(ritch) the path should be customizable
-  return path.join(app, ModelDefinition.settings.defaultDir, ModelDefinition.toFilename(obj.name) + '.json');
+  return path.join(facetName, ModelDefinition.settings.defaultDir, ModelDefinition.toFilename(obj.name) + '.json');
 }
 
 ModelDefinition.toFilename = function(name) {
@@ -84,6 +85,24 @@ ModelDefinition.toFilename = function(name) {
 
   return split.join('');
 }
+
+ModelDefinition.removeById = function(id, cb) {
+  this.findById(id, function(err, modelDef) {
+    var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
+    var file = new ConfigFile({path: p});
+    file.remove(cb);
+  });
+}
+
+ModelDefinition.destroyById = ModelDefinition.removeById;
+ModelDefinition.deleteById = ModelDefinition.removeById;
+
+ModelDefinition.prototype.remove = function(cb) {
+  this.constructor.removeById(this.id, cb);
+}
+
+ModelDefinition.prototype.destroy = ModelDefinition.prototype.remove;
+ModelDefinition.prototype.delete = ModelDefinition.prototype.remove;
 
 /**
  * Remove the foreign key from embeded data and sort the properties in

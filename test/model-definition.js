@@ -39,6 +39,29 @@ describe('ModelDefinition', function() {
         });
       });
     });
+
+    describe('ModelDefinition.removeById(id, cb)', function () {
+      beforeEach(function(done) {
+        this.modelDef.properties.create({
+          name: 'myProp'
+        }, done);
+      });
+      it('should remove the model definition', function (done) {
+        var id = this.modelDef.id;
+        ModelDefinition.removeById(id, function(err) {
+          if(err) return done(err);
+          ModelDefinition.findById(id, function(err, modelDef) {
+            if(err) return done(err);
+            expect(modelDef).to.not.exist;
+            ModelProperty.count(function(err, count) {
+              if(err) return done(err);
+              expect(count).to.equal(0);
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 
   describe('ModelDefinition.getPath(app, obj)', function () {
