@@ -141,6 +141,35 @@ describe('DataSourceDefinition', function() {
     });
   });
 
+  describe('DataSourceDefinition.testConnection(data, callback)', function() {
+    it('returns true for memory connector', function(done) {
+      DataSourceDefinition.testConnection(
+        {
+        connector: 'memory',
+        name: 'test-memory-ds'
+        },
+        function(err, connectionAvailable) {
+          if (err) done(err);
+          expect(connectionAvailable).to.be.true;
+          done();
+        }
+      );
+    });
+
+    it('returns error for unknown connector', function(done) {
+      DataSourceDefinition.testConnection(
+        {
+          connector: 'connector-that-does-not-exist',
+          name: 'test-unknown-ds'
+        },
+        function(err, connectionAvailable) {
+          expect(err, 'err').to.be.defined;
+          done();
+        }
+      );
+    });
+  });
+
   describe('dataSourceDefinition.getSchema(callback)', function() {
     it('Test the datasource definition connection.', function(done) {
       var dataSourceDef = getMockDataSourceDef();

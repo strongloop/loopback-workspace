@@ -1,5 +1,6 @@
 var app = require('../app');
 var loopback = require('loopback');
+var debug = require('debug')('workspace:data-source-definition');
 
 /*
  TODOs
@@ -47,11 +48,48 @@ DataSourceDefinition.prototype.testConnection = function(cb) {
   var timer = setTimeout(function() {
     cb(new Error('connection timed out after ' + timeout + 'ms'));
   }, timeout);
-  dataSource.connect();
+
+  try {
+    dataSource.connect();
+  } catch (err) {
+    debug(
+      'Cannot connect to the data source.\nData: %j\nError: %s',
+      this.toObject(), err);
+
+    // NOTE(bajtos) juggler ignores unknown connector and let the application
+    // crash later, when a method of undefined connector is called
+    // We have to build a useful error message ourselves
+
+    return cb(
+      new Error('Cannot connect to the data source.' +
+        ' Ensure the configuration is valid and the connector is installed.'));
+  }
 }
 
 loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
   returns: { arg: 'status', type: 'boolean' }
+});
+
+/**
+ * Test the datasource connection (static version).
+ *
+ * @param {Object} data DataSourceDefinition
+ * @callback {Function} callback
+ * @param {Error} err A connection or other error
+ * @param {Boolean} success `true` if the connection was established
+ */
+DataSourceDefinition.testConnection = function(data, cb) {
+  new DataSourceDefinition(data).testConnection(cb);
+};
+
+DataSourceDefinition.remoteMethod('testConnection', {
+  accepts: {
+    arg: 'data', type: 'DataSourceDefinition', http: { source: 'body' }
+  },
+  returns: {
+    args: 'status', type: 'boolean'
+  },
+  http: { verb: 'POST' }
 });
 
 /**
