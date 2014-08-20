@@ -87,7 +87,7 @@ DataSourceDefinition.remoteMethod('testConnection', {
     arg: 'data', type: 'DataSourceDefinition', http: { source: 'body' }
   },
   returns: {
-    args: 'status', type: 'boolean'
+    arg: 'status', type: 'boolean'
   },
   http: { verb: 'POST' }
 });
