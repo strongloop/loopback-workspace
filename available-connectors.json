@@ -9,42 +9,70 @@
     "name": "mysql",
     "description": "MySQL",
     "baseModel": "PersistedModel",
+    "package": {
+      "name": "loopback-connector-mysql",
+      "version": "^1.4"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "postgresql",
     "description": "PostgreSQL",
     "baseModel": "PersistedModel",
+    "package": {
+      "name": "loopback-connector-postgresql",
+      "version": "^1.1"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "oracle",
     "description": "Oracle",
     "baseModel": "PersistedModel",
+    "package": {
+      "name": "loopback-connector-oracle",
+      "version": "^1.4"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "mssql",
     "description": "Microsoft SQL",
     "baseModel": "PersistedModel",
+    "package": {
+      "name": "loopback-connector-mssql",
+      "version": "^1.1"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "mongodb",
     "description": "MongoDB",
     "baseModel": "PersistedModel",
+    "package": {
+      "name": "loopback-connector-mongodb",
+      "version": "^1.4"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "soap",
     "description": "SOAP webservices",
     "baseModel": "Model",
+    "package": {
+      "name": "loopback-connector-soap",
+      "version": "^1.1"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "rest",
     "description": "REST services",
     "baseModel": "Model",
+    "package": {
+      "name": "loopback-connector-rest",
+      "version": "^1.2"
+    },
     "supportedByStrongLoop": true
   },
 
@@ -52,12 +80,20 @@
     "name": "neo4j",
     "description": "Neo4j",
     "baseModel": "PersistedModel",
+    "package": {
+      "name": "loopback-connector-neo4j",
+      "version": "^0.1"
+    },
     "supportedByStrongLoop": false
   },
   {
     "name": "kafka",
     "description": "Kafka",
     "baseModel": "PersistedModel",
+    "package": {
+      "name": "loopback-connector-kafka",
+      "version": "^0.2"
+    },
     "supportedByStrongLoop": false
   }
 ]
