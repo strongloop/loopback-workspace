@@ -85,7 +85,13 @@ WorkspaceEntity.addToCache = function(cache, val) {
 }
 
 WorkspaceEntity.getFromCache = function(cache, id) {
-  return JSON.parse(cache[this.modelName][id]);
+  try {
+    return JSON.parse(cache[this.modelName][id]);
+  } catch(err) {
+    err.message = 'Cannot parse ' + this.modelName + '#' + id + '. ' +
+      err.message;
+    throw err;
+  }
 }
 
 WorkspaceEntity.updateInCache = function(cache, id, data) {
