@@ -247,32 +247,33 @@ describe('ModelDefinition', function() {
 
   describe('rename', function () {
     beforeEach(givenBasicWorkspace);
-    beforeEach(function(done) {
-      ModelDefinition.create({name: 'init', facetName: 'common'}, done);
-    });
-    beforeEach(function(done) {
-      ModelDefinition.findOne(function(err, def) {
-        expect(err).to.not.exist;
-        def.name = 'renamed';
-        def.save(done);
+    beforeEach(function createAModelDefinition(done) {
+      ModelDefinition.create({
+        name: 'init',
+        facetName: 'common'
+      }, function(err, def) {
+        definition = def;
+        done(err);
       });
     });
-    beforeEach(function(done) {
-      var test = this;
-      ModelDefinition.findById('common.renamed', function(err, updated) {
-        expect(err).to.not.exist;
-        test.updated = updated;
+
+    beforeEach(function renameTheModelDefinition(done) {
+      // It is important that the model we are going to rename
+      // was created API-first and was not loaded for the filesystem (yet)
+      // Another imporant requirement is to modify the name only and
+      // preserve all other data (e.g. configFile)
+      definition.name = 'renamed';
+      ModelDefinition.updateOrCreate(definition.toObject(), function(err, def) {
+        if (err) return done(err);
+        expect(def.name, 'name').to.equal('renamed');
+        expect(def.id, 'id').to.equal('common.renamed');
         done();
       });
     });
 
-    it('should update the id', function () {
-      expect(this.updated.id).to.equal('common.renamed');
-    });
-
     it('should not clone the entity', function(done) {
       ModelDefinition.count(function(err, count) {
-        expect(err).to.not.exist;
+        if (err) return done(err);
         expect(count).to.equal(1);
         done();
       });
