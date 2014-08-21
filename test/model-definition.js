@@ -248,4 +248,57 @@ describe('ModelDefinition', function() {
       });
     });
   });
+
+  describe('properties relation', function() {
+    describe('modelDefinition.properties', function () {
+      beforeEach(givenBasicWorkspace);
+      beforeEach(function(done) {
+        ModelDefinition.create({
+          facetName: 'server',
+          name: 'testModel'
+        }, done);
+      });
+      it('should exist', function (done) {
+        ModelDefinition.find(function(err, defs) {
+          var def = defs[0];
+          expect(def.properties).to.exist;
+          done();
+        });
+      });
+    });
+  });
+
+  describe('rename', function () {
+    beforeEach(givenBasicWorkspace);
+    beforeEach(function(done) {
+      ModelDefinition.create({name: 'init', facetName: 'common'}, done);
+    });
+    beforeEach(function(done) {
+      ModelDefinition.findOne(function(err, def) {
+        expect(err).to.not.exist;
+        def.name = 'renamed';
+        def.save(done);
+      });
+    });
+    beforeEach(function(done) {
+      var test = this;
+      ModelDefinition.findById('common.renamed', function(err, updated) {
+        expect(err).to.not.exist;
+        test.updated = updated;
+        done();
+      });
+    });
+
+    it('should update the id', function () {
+      expect(this.updated.id).to.equal('common.renamed');
+    });
+
+    it('should not clone the entity', function(done) {
+      ModelDefinition.count(function(err, count) {
+        expect(err).to.not.exist;
+        expect(count).to.equal(1);
+        done();
+      });
+    });
+  });
 });

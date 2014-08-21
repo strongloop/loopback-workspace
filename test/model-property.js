@@ -107,4 +107,23 @@ describe('ModelProperty', function() {
       }.bind(this));
     });
   });
+
+  describe('rename', function () {
+    it('should change the id', function (done) {
+      ModelProperty.findOne(function(err, prop) {
+        expect(err).to.not.exist;
+        prop.name = 'renamed';
+        prop.save(function(err) {
+          expect(err).to.not.exist;
+          ModelProperty.find({where: {name: 'renamed'}}, function(err, props) {
+            expect(err).to.not.exist;
+            var id = 'server.user.renamed';
+            expect(props).to.have.length(1);
+            expect(props[0]).to.have.property('id', id);
+            done();
+          });
+        });
+      });
+    });
+  });
 });
