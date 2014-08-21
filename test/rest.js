@@ -6,7 +6,7 @@ describe('REST API', function () {
   
   describe('/workspaces', function () {
     describe('POST /workspaces', function () {
-      beforeEach(function(done) {
+      beforeEach(function createWorkspaceFromTemplate(done) {
         request(app)
           .post('/api/workspaces')
           .set('Content-Type', 'application/json')

@@ -215,11 +215,10 @@ Workspace.createFromTemplate = function(templateName, name, cb) {
 
 loopback.remoteMethod(Workspace.createFromTemplate, {
   http: {verb: 'post', path: '/'},
-  accepts: [{
-    arg: 'templateName', type: 'string'
-  }, {
-    arg: 'name', type: 'string', http: {source: 'body'}
-  }]
+  accepts: [
+    { arg: 'templateName', type: 'string' },
+    { arg: 'name', type: 'string' }
+  ]
 });
 
 /**

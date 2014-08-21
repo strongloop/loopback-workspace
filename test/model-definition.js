@@ -78,6 +78,24 @@ describe('ModelDefinition', function() {
     });
   });
 
+  describe('validation', function() {
+    before(givenBasicWorkspace);
+
+    it('rejects invalid model name', function(done) {
+      var md = new ModelDefinition({
+        facetName: 'server',
+        name: 'a name with space'
+      });
+
+      md.isValid(function(valid) {
+        expect(valid, 'isValid').to.be.false;
+        expect(md.errors).to.have.property('name');
+        expect(md.errors.name).to.eql(['is invalid']);
+        done();
+      });
+    });
+  });
+
   describe('ModelDefinition.toFilename(modelName)', function () {
     given('Foo').expect('foo');
     given('FooBar').expect('foo-bar');
@@ -163,6 +181,7 @@ describe('ModelDefinition', function() {
         new TestDataBuilder()
           .define('model', ModelDefinition, {
             facetName: this.serverFacet,
+            name: 'a-name',
             custom: true
           })
           .define('acl', ModelAccessControl, {
