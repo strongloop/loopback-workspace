@@ -20,3 +20,13 @@ var ModelConfig = app.models.ModelConfig;
 ModelConfig.validatesUniquenessOf('name', { scopedTo: ['facetName'] });
 ModelConfig.validatesPresenceOf('name');
 ModelConfig.validatesPresenceOf('facetName');
+
+ModelConfig.loadAllFromFs = function(cb) {
+  // find all model-config files
+  // load and parse for individual ModelConfigs
+}
+
+ModelConfig.saveToFs = function(modelConfigData, cb) {
+  // get file
+  // set the data, update with model config and save
+}

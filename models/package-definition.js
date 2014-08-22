@@ -6,6 +6,11 @@ PackageDefinition.prototype.getUniqueId = function() {
   return this.name || null;
 }
 
+
+PackageDefinition.loadAllFromFs = function(cb) {
+  // all facets
+};
+
 PackageDefinition.saveToFs = function(cache, packageDef, cb) {
   // TODO(bajtos) Move this method to WorkspaceEntity
   var configFile = new ConfigFile({

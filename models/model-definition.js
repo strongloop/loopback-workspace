@@ -36,6 +36,10 @@ ModelDefinition.getConfigFromCache = function(cache, modelDef) {
   return configData;
 }
 
+ModelDefinition.loadAllFromFs = function(cb) {
+  // find all model files...
+}
+
 function getRelated(cache, id, relation) {
   var Definition = app.models[relation.model];
   var cachedData = Definition.allFromCache(cache);

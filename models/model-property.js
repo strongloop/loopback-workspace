@@ -9,6 +9,11 @@ var app = require('../app');
 
 var ModelProperty = app.models.ModelProperty;
 
+ModelProperty.loadAllFromFs = function() {
+  // find all model files
+  // load all properties from files
+}
+
 /**
  * List of built-in types that can be used for `ModelProperty.type`.
  * @type {string[]}

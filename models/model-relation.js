@@ -40,3 +40,8 @@ ModelRelation.getValidTypes = function(cb) {
     { name: 'has one', value: 'hasOne' }
   ]);
 }
+
+ModelRelation.loadAllFromFs = function() {
+  // find all model files
+  // load all properties from files
+}

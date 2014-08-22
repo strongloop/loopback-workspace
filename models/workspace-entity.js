@@ -71,32 +71,6 @@ WorkspaceEntity.getWorkspaceDir = function() {
   return app.get('workspace dir');
 }
 
-WorkspaceEntity.clearCache = function(cache) {
-  // TODO(ritch) should this clear the ids cache?
-  cache[this.modelName] = {};
-}
-
-WorkspaceEntity.addToCache = function(cache, val) {
-  var Entity = this;
-  var id = Entity.getUniqueId(val);
-  val[this.dataSource.idName(Entity.modelName)] = id;
-  this.updateInCache(cache, id, val);
-  return id;
-}
-
-WorkspaceEntity.getFromCache = function(cache, id) {
-  return JSON.parse(cache[this.modelName][id]);
-}
-
-WorkspaceEntity.updateInCache = function(cache, id, data) {
-  cache[this.modelName][id] = JSON.stringify(data);
-}
-
-WorkspaceEntity.allFromCache = function(cache) {
-  return Object.keys(cache[this.modelName])
-    .map(this.getFromCache.bind(this, cache));
-}
-
 WorkspaceEntity.getPath = function(facetName, obj) {
   if(obj.configFile) return obj.configFile;
   return path.join(facetName, this.settings.defaultConfigFile);
@@ -163,3 +137,49 @@ WorkspaceEntity.beforeValidate = function injectFacetName(next) {
     next();
   }.bind(this));
 };
+
+WorkspaceEntity.getAllConfigFiles = function(filter, cb) {
+  // find paths based on a glob???
+}
+
+WorkspaceEntity.getAllFromFiles = function(files, cb) {
+  var result = [];
+  var Entity = this;
+  
+  async.each(files, function(file, cb) {
+    if(Entity.isEmbeded()) {
+      result = result.concat(Entity.getAllFromFile(file));
+    } else {
+      var data = Entity.getFromFile(file);
+      if(data) result.push(data);
+    }
+  }, function(err) {
+    if(err) return cb(err);
+    cb(null, result);
+  });
+}
+
+WorkspaceEntity.getAllFromFile = function(file) {
+  var result;
+  var key = this.settings.embedAs;
+  var all = file.data[key];
+  switch(settings.embed.as) {
+    case 'object':
+      result = Object.keys(all).map(function(key) {
+        return all[key];
+      });
+    break;
+    default:
+      result = all;
+    break;
+  }
+  return result;
+}
+
+WorkspaceEntity.getFromFile = function(file) {
+  return file.data;
+}
+
+WorkspaceEntity.addToFile = function(file, data) {
+  file.data = data;
+}
