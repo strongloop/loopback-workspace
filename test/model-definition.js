@@ -248,4 +248,58 @@ describe('ModelDefinition', function() {
       });
     });
   });
+
+  describe('properties relation', function() {
+    describe('modelDefinition.properties', function () {
+      beforeEach(givenBasicWorkspace);
+      beforeEach(function(done) {
+        ModelDefinition.create({
+          facetName: 'server',
+          name: 'testModel'
+        }, done);
+      });
+      it('should exist', function (done) {
+        ModelDefinition.find(function(err, defs) {
+          var def = defs[0];
+          expect(def.properties).to.exist;
+          done();
+        });
+      });
+    });
+  });
+
+  describe('rename', function () {
+    beforeEach(givenBasicWorkspace);
+    beforeEach(function createAModelDefinition(done) {
+      ModelDefinition.create({
+        name: 'init',
+        facetName: 'common'
+      }, function(err, def) {
+        definition = def;
+        done(err);
+      });
+    });
+
+    beforeEach(function renameTheModelDefinition(done) {
+      // It is important that the model we are going to rename
+      // was created API-first and was not loaded for the filesystem (yet)
+      // Another imporant requirement is to modify the name only and
+      // preserve all other data (e.g. configFile)
+      definition.name = 'renamed';
+      ModelDefinition.updateOrCreate(definition.toObject(), function(err, def) {
+        if (err) return done(err);
+        expect(def.name, 'name').to.equal('renamed');
+        expect(def.id, 'id').to.equal('common.renamed');
+        done();
+      });
+    });
+
+    it('should not clone the entity', function(done) {
+      ModelDefinition.count(function(err, count) {
+        if (err) return done(err);
+        expect(count).to.equal(1);
+        done();
+      });
+    });
+  });
 });
