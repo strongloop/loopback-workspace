@@ -43,7 +43,7 @@ describe('end-to-end', function() {
     });
 
     before(function installSandboxPackages(cb) {
-      this.timeout(120 * 1000);
+      this.timeout(300 * 1000);
       install(SANDBOX, PKG_CACHE, cb);
     });
 

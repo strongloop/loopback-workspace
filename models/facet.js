@@ -112,13 +112,12 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
         var def = configFile.data || {};
         def.facetName = facetName;
         def.configFile = configFile.path;
-        var modelDef = new ModelDefinition(def);
 
         debug('loading [%s] model definition into cache', def.name);
 
+        var uniqueId = ModelDefinition.getUniqueId(def);
         ModelDefinition.addToCache(cache, def);
-        ModelDefinition.addRelatedToCache(cache, def, facetName
-          , modelDef.getUniqueId());
+        ModelDefinition.addRelatedToCache(cache, def, facetName, uniqueId);
       });
       cb();
     });
