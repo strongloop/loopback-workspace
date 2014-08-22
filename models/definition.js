@@ -152,6 +152,6 @@ Definition.addToCache = function(cache, val) {
   this.getEmbededRelations().forEach(function(relation) {
     delete data[relation.as];
   });
-  Definition.base.addToCache.call(this, cache, data);
+  return Definition.base.addToCache.call(this, cache, data);
 };
 
