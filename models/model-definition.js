@@ -25,6 +25,7 @@ var ModelDefinition = app.models.ModelDefinition;
 
 ModelDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 ModelDefinition.validatesPresenceOf('name');
+ModelDefinition.validatesFormatOf('name', { with: /^[\-_a-zA-Z0-9]+$/ });
 
 ModelDefinition.getConfigFromCache = function(cache, modelDef) {
   var configData = this.getConfigFromData(modelDef);
