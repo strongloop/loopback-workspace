@@ -40,14 +40,21 @@ DataSourceDefinition.validatesPresenceOf('facetName');
 DataSourceDefinition.prototype.testConnection = function(cb) {
   var dataSource = this.toDataSource();
   var timeout = DataSourceDefinition.settings.testConnectionTimeout || 60000;
-  dataSource.once('connected', function() {
-    clearTimeout(timer);
-    cb(null, true);
-  });
-  dataSource.once('error', cb);
   var timer = setTimeout(function() {
-    cb(new Error('connection timed out after ' + timeout + 'ms'));
+    done(new Error('connection timed out after ' + timeout + 'ms'));
   }, timeout);
+
+  dataSource.once('connected', function() {
+    done(null, true);
+  });
+  dataSource.once('error', done);
+
+  function done(err, result) {
+    clearTimeout(timer);
+    cb(err, result);
+    // prevent calling the callback multiple times
+    cb = function(){};
+  }
 
   try {
     dataSource.connect();

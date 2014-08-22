@@ -149,7 +149,7 @@ describe('DataSourceDefinition', function() {
         name: 'test-memory-ds'
         },
         function(err, connectionAvailable) {
-          if (err) done(err);
+          if (err) return done(err);
           expect(connectionAvailable).to.be.true;
           done();
         }
