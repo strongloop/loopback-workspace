@@ -1,4 +1,5 @@
 var app = require('../app');
+var execFile = require('child_process').execFile;
 var loopback = require('loopback');
 var debug = require('debug')('workspace:data-source-definition');
 
@@ -154,23 +155,66 @@ loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
  *
  * **NOTE: this will destroy any existing data**
  *
+ * @param {string} modelName
  * @callback {Function} callback
  * @param {Error} err
+ * @param {boolean} success
  */
 
-DataSourceDefinition.prototype.automigrate = function() {
-  throw new Error('not implemented');
-}
+DataSourceDefinition.prototype.automigrate = function(modelName, cb) {
+  invokeDataSourceMethod(this.name, 'automigrate', modelName, cb);
+};
+
+loopback.remoteMethod(DataSourceDefinition.prototype.automigrate, {
+  accepts: {arg: 'modelName', type: 'string' },
+  returns: { arg: 'success', type: 'boolean' },
+  http: { verb: 'POST' }
+});
 
 /**
  * Update existing tables / collections.
  *
+ * @param {string} modelName
  * @callback {Function} callback
  * @param {Error} err
+ * @param {boolean} success
  */
 
-DataSourceDefinition.prototype.autoupdate = function() {
-  throw new Error('not implemented');  
+DataSourceDefinition.prototype.autoupdate = function(modelName, cb) {
+  invokeDataSourceMethod(this.name, 'autoupdate', modelName, cb);
+};
+
+loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
+  accepts: {arg: 'modelName', type: 'string' },
+  returns: { arg: 'success', type: 'boolean' },
+  http: { verb: 'POST' }
+});
+
+function invokeDataSourceMethod() {
+  // TODO(bajtos) We should ensure there is never more than one instance
+  // of this code running at any given time.
+  var args = Array.prototype.slice.call(arguments);
+  var cb = args.pop();
+
+  // remove optional parameters with 'undefined' value
+  while (args[args.length-1] === undefined) args.pop();
+
+  debug('invoke dataSource', args.map(JSON.stringify).join(' '));
+
+  args.unshift(require.resolve('../bin/datasource-invoke'))
+  execFile(
+    process.execPath,
+    args,
+    {
+      cwd: process.env.WORKSPACE_DIR,
+      timeout: 90 * 1000,
+    },
+    function(err, stdout, stderr) {
+      debug(
+        '--invoke stdout--\n%s--invoke stderr--\n%s--invoke end--',
+        stdout, stderr);
+      cb(err, !err);
+    });
 }
 
 /**
