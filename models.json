@@ -90,6 +90,7 @@
       "id": {"type": "string", "id": true, "json": false},
       "facetName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string", "json": false},
+      "dataSource": {"type": "string" },
       "public": {"type": "boolean"}
     },
     "dataSource": "db",
