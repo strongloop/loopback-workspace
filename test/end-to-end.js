@@ -123,7 +123,8 @@ describe('end-to-end', function() {
     });
   });
 
-  describe('autoupdate', function() {
+  // Skip tests requiring MySQL database when running on Jenkins CI
+  describeOnLocalMachine('autoupdate', function() {
     var connection;
     before(function setupConnection(done) {
       connection = mysql.createConnection({
@@ -241,6 +242,15 @@ describe('end-to-end', function() {
     });
   });
 });
+
+function describeOnLocalMachine(name, fn) {
+  if (process.env.JENKINS_HOME) {
+    describe.skip(name, fn);
+  } else {
+    describe(name, fn);
+  }
+}
+
 
 function execNpm(args, options, cb) {
   var debug = require('debug')('test:exec-npm');
