@@ -39,30 +39,32 @@ DataSourceDefinition.validatesPresenceOf('facetName');
  */
 
 DataSourceDefinition.prototype.testConnection = function(cb) {
-  var dataSource = this.toDataSource();
-  var timeout = DataSourceDefinition.settings.testConnectionTimeout || 60000;
-  var timer = setTimeout(function() {
-    done(new Error('connection timed out after ' + timeout + 'ms'));
-  }, timeout);
+  this.invokeMethodInWorkspace('ping', cb);
+};
 
-  dataSource.once('connected', function() {
-    done(null, true);
-  });
-  dataSource.once('error', done);
+loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
+  returns: { arg: 'status', type: 'boolean' }
+});
 
-  function done(err, result) {
-    clearTimeout(timer);
-    cb(err, result);
-    // prevent calling the callback multiple times
-    cb = function(){};
-  }
-
+/**
+ * Test the datasource connection (static version).
+ *
+ * @deprecated Use the prototype version.
+ *
+ * @param {Object} data DataSourceDefinition
+ * @callback {Function} callback
+ * @param {Error} err A connection or other error
+ * @param {Boolean} success `true` if the connection was established
+ */
+DataSourceDefinition.testConnection = function(data, cb) {
+  // A legacy implementation that runs the test in loopback-workspace process
   try {
-    dataSource.connect();
+    var dataSource = new DataSourceDefinition(data).toDataSource();
+    dataSource.ping(function(err) {
+      cb(err, !err);
+    });
   } catch (err) {
-    debug(
-      'Cannot connect to the data source.\nData: %j\nError: %s',
-      this.toObject(), err);
+    debug('Cannot connect to the data source.\nData: %j\nError: %s', data, err);
 
     // NOTE(bajtos) juggler ignores unknown connector and let the application
     // crash later, when a method of undefined connector is called
@@ -72,22 +74,6 @@ DataSourceDefinition.prototype.testConnection = function(cb) {
       new Error('Cannot connect to the data source.' +
         ' Ensure the configuration is valid and the connector is installed.'));
   }
-}
-
-loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
-  returns: { arg: 'status', type: 'boolean' }
-});
-
-/**
- * Test the datasource connection (static version).
- *
- * @param {Object} data DataSourceDefinition
- * @callback {Function} callback
- * @param {Error} err A connection or other error
- * @param {Boolean} success `true` if the connection was established
- */
-DataSourceDefinition.testConnection = function(data, cb) {
-  new DataSourceDefinition(data).testConnection(cb);
 };
 
 DataSourceDefinition.remoteMethod('testConnection', {
@@ -162,7 +148,7 @@ loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
  */
 
 DataSourceDefinition.prototype.automigrate = function(modelName, cb) {
-  invokeDataSourceMethod(this.name, 'automigrate', modelName, cb);
+  this.invokeMethodInWorkspace('automigrate', modelName, cb);
 };
 
 loopback.remoteMethod(DataSourceDefinition.prototype.automigrate, {
@@ -181,7 +167,7 @@ loopback.remoteMethod(DataSourceDefinition.prototype.automigrate, {
  */
 
 DataSourceDefinition.prototype.autoupdate = function(modelName, cb) {
-  invokeDataSourceMethod(this.name, 'autoupdate', modelName, cb);
+  this.invokeMethodInWorkspace('autoupdate', modelName, cb);
 };
 
 loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
@@ -190,14 +176,17 @@ loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
   http: { verb: 'POST' }
 });
 
-function invokeDataSourceMethod() {
+DataSourceDefinition.prototype.invokeMethodInWorkspace = function() {
   // TODO(bajtos) We should ensure there is never more than one instance
   // of this code running at any given time.
+  var self = this;
   var args = Array.prototype.slice.call(arguments);
   var cb = args.pop();
 
   // remove optional parameters with 'undefined' value
   while (args[args.length-1] === undefined) args.pop();
+
+  args.unshift(self.name);
 
   debug('invoke dataSource', args.map(JSON.stringify).join(' '));
 
@@ -213,7 +202,42 @@ function invokeDataSourceMethod() {
       debug(
         '--invoke stdout--\n%s--invoke stderr--\n%s--invoke end--',
         stdout, stderr);
-      cb(err, !err);
+
+      if (err)
+        cb(missingConnector(err) || invocationError(err) || err);
+      else
+        cb(null, true);
+
+      function missingConnector(err) {
+        var match = err.message.match(
+          /LoopBack connector "(.*)" is not installed/
+        );
+        if (match && match[1] === self.connector) {
+          err = new Error('Connector "' + this.self + '" is not installed.');
+          err.code = 'ER_INVALID_CONNECTOR';
+          return err;
+        }
+        return undefined;
+      }
+
+      function invocationError(err) {
+        var match = err.message.match(
+          /--datasource-invoke-error--\n((.|[\r\n])*)$/
+        );
+        if (match) {
+          try {
+            var errorData = JSON.parse(match[1]);
+            err = new Error(errorData.message);
+            for (var k in errorData.properties) {
+              err[k] = errorData.properties[k];
+            }
+            return err;
+          } catch(jsonerr) {
+            debug('Cannot parse error JSON', jsonerr);
+          }
+        }
+        return undefined;
+      }
     });
 }
 

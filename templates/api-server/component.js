@@ -15,7 +15,7 @@ template.package = {
     "errorhandler": "^1.1.1",
     "loopback": "^2.0.0",
     "loopback-boot": "^2.0.0",
-    "loopback-datasource-juggler": "^2.0.0",
+    "loopback-datasource-juggler": "^2.6.1",
     "serve-favicon": "^2.0.1"
   },
   "optionalDependencies": {
