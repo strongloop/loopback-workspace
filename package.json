@@ -23,7 +23,7 @@
     "grunt": "~0.4.5",
     "grunt-loopback-angular": "~1.1.0",
     "loopback": "^2.0.0",
-    "loopback-datasource-juggler": "^2.0.0",
+    "loopback-datasource-juggler": "^2.6.1",
     "loopback-boot": "^1.0.0",
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
