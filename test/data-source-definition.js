@@ -129,18 +129,6 @@ describe('DataSourceDefinition', function() {
     });
   });
 
-  describe('dataSourceDefinition.testConnection(callback)', function() {
-    it('Test the datasource definition connection.', function(done) {
-      var dataSourceDef = getMockDataSourceDef();
-
-      dataSourceDef.testConnection(function(err, connectionAvailable) {
-        expect(err).to.not.exist;
-        expect(connectionAvailable).to.be.true;
-        done();
-      });
-    });
-  });
-
   describe('DataSourceDefinition.testConnection(data, callback)', function() {
     it('returns true for memory connector', function(done) {
       DataSourceDefinition.testConnection(

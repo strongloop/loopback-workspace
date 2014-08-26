@@ -241,7 +241,118 @@ describe('end-to-end', function() {
       });
     });
   });
-});
+
+  describe('testConnection', function() {
+    var DataSourceDefinition = models.DataSourceDefinition;
+
+    before(givenBasicWorkspace);
+
+    before(function addMySQLConnector(done) {
+      models.PackageDefinition.findOne({}, function(err, pkg) {
+        if (err) return done(err);
+        pkg.dependencies['loopback-connector-mysql'] = '1.x';
+        pkg.save(done);
+      });
+    });
+
+    before(installSandboxPackages);
+
+    it('returns true for memory connector', function(done) {
+      DataSourceDefinition.create(
+        {
+          facetName: 'server',
+          name: 'test-memory-ds',
+          connector: 'memory'
+        },
+        function(err, definition) {
+          if (err) return done(err);
+          definition.testConnection(function(err, connectionAvailable) {
+            if (err) return done(err);
+            expect(connectionAvailable).to.be.true;
+            done();
+          });
+        }
+      );
+    });
+
+    it('returns descriptive error for unknown connector', function(done) {
+      DataSourceDefinition.create(
+        {
+          facetName: 'server',
+          name: 'test-unknown-ds',
+          connector: 'connector-that-does-not-exist',
+        },
+        function(err, definition) {
+          if (err) return done(err);
+          definition.testConnection(function(err) {
+            expect(err, 'err').to.be.defined;
+            expect(err.code, 'err.code').to.equal('ER_INVALID_CONNECTOR');
+            done();
+          });
+        });
+    });
+
+    describeOnLocalMachine('MySQL', function() {
+      it('returns true for valid config', function(done) {
+        givenDataSource({}, function(err, definition) {
+          if (err) return done(err);
+          definition.testConnection(done);
+        });
+      });
+
+      it('returns descriptive error for ECONNREFUSED', function(done) {
+        givenDataSource(
+          {
+            port: 65000 // hopefully nobody is listening there
+          },
+          function(err, definition) {
+            if (err) return done(err);
+            definition.testConnection(function(err) {
+              expect(err, 'err').to.exist;
+              expect(err.code).to.equal('ECONNREFUSED');
+              done();
+            });
+          });
+      });
+
+      it('returns descriptive error for invalid credentials', function(done) {
+        givenDataSource(
+          {
+            password: 'invalid-password'
+          },
+          function(err, definition) {
+            if (err) return done(err);
+            definition.testConnection(function(err) {
+              expect(err, 'err').to.exist;
+              expect(err.code).to.equal('ER_ACCESS_DENIED_ERROR');
+              done();
+            });
+          });
+      });
+
+      var dsid;
+      function givenDataSource(config, cb) {
+        config = extend({
+          id: dsid,
+          facetName: 'server',
+          name: 'mysql',
+          connector: 'mysql',
+          port: null, // use default
+          database: MYSQL_DATABASE,
+          user: MYSQL_USER,
+          password: MYSQL_PASSWORD
+        }, config);
+
+        DataSourceDefinition.updateOrCreate(config, function(err, dsd) {
+          if (!err)
+            dsid = dsd.id;
+          cb(err, dsd);
+        });
+      }
+    });
+  });
+})
+;
 
 function describeOnLocalMachine(name, fn) {
   if (process.env.JENKINS_HOME) {

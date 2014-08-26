@@ -19,7 +19,12 @@ var ds = app.dataSources[dataSourceName];
 console.log('Invoking %s %j', methodName, args);
 args.push(function callback(err, result) {
   if (err) {
-    console.error(err);
+    console.error('--datasource-invoke-error--');
+    console.error(JSON.stringify({
+      message: err.message,
+      properties: err,
+      stack: err.stack
+    }));
     process.exit(1);
   } else {
     console.log('Done', result);
