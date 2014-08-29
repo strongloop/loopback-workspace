@@ -257,6 +257,13 @@ describe('end-to-end', function() {
 
     before(installSandboxPackages);
 
+    beforeEach(function resetWorkspace(done) {
+      // delete all non-default datasources to isolate individual tests
+      // use `nlike` instead of `neq` as the latter is not implemented yet
+      // https://github.com/strongloop/loopback-datasource-juggler/issues/265
+      DataSourceDefinition.destroyAll({ name: { nlike: 'db' } }, done);
+    });
+
     it('returns true for memory connector', function(done) {
       DataSourceDefinition.create(
         {
