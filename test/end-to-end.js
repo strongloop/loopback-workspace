@@ -294,6 +294,8 @@ describe('end-to-end', function() {
           definition.testConnection(function(err) {
             expect(err, 'err').to.be.defined;
             expect(err.code, 'err.code').to.equal('ER_INVALID_CONNECTOR');
+            expect(err.message, 'err.message')
+              .to.contain('connector-that-does-not-exist');
             done();
           });
         });

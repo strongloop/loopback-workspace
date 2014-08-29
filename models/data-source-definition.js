@@ -213,7 +213,8 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function() {
           /LoopBack connector "(.*)" is not installed/
         );
         if (match && match[1] === self.connector) {
-          err = new Error('Connector "' + this.self + '" is not installed.');
+          var msg = 'Connector "' + self.connector + '" is not installed.';
+          err = new Error(msg);
           err.code = 'ER_INVALID_CONNECTOR';
           return err;
         }
