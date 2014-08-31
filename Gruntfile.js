@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    loopback_angular: {
+    loopback_sdk_angular: {
       services: {
         options: {
           input: './app.js',
@@ -27,8 +27,8 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-loopback-angular');
+  grunt.loadNpmTasks('grunt-loopback-sdk-angular');
   grunt.loadNpmTasks('grunt-docular');
 
-  grunt.registerTask('default', ['loopback_angular', 'docular']);
+  grunt.registerTask('default', ['loopback_sdk_angular', 'docular']);
 };
