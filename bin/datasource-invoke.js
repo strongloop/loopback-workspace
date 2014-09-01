@@ -20,7 +20,7 @@ try {
   console.log('Invoking %s %j', methodName, args);
   args.push(function callback(err, result) {
     if (err) {
-      reportError(err);
+      reportError('invoke', err);
       process.exit(1);
     } else {
       console.log('Done', result);
@@ -30,13 +30,14 @@ try {
 
   ds[methodName].apply(ds, args);
 } catch (err) {
-  reportError(err);
+  reportError('uncaught', err);
   process.exit(2);
 }
 
-function reportError(err) {
+function reportError(origin, err) {
   console.error('--datasource-invoke-error--');
   console.error(JSON.stringify({
+    origin: origin,
     message: err.message,
     properties: err,
     stack: err.stack

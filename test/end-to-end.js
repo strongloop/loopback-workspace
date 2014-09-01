@@ -325,16 +325,18 @@ describe('end-to-end', function() {
         });
       });
 
-      it('returns descriptive error for ECONNREFUSED', function(done) {
+      it('returns descriptive result for ECONNREFUSED', function(done) {
         givenDataSource(
           {
             port: 65000 // hopefully nobody is listening there
           },
           function(err, definition) {
             if (err) return done(err);
-            definition.testConnection(function(err) {
-              expect(err, 'err').to.exist;
-              expect(err.code).to.equal('ECONNREFUSED');
+            definition.testConnection(function(err, status, pingError) {
+              if (err) return done(err);
+              expect(status, 'status').to.be.false;
+              expect(pingError, 'pingError').to.exist;
+              expect(pingError.code).to.equal('ECONNREFUSED');
               done();
             });
           });
@@ -347,9 +349,11 @@ describe('end-to-end', function() {
           },
           function(err, definition) {
             if (err) return done(err);
-            definition.testConnection(function(err) {
-              expect(err, 'err').to.exist;
-              expect(err.code).to.equal('ER_ACCESS_DENIED_ERROR');
+            definition.testConnection(function(err, status, pingError) {
+              if (err) return done(err);
+              expect(status, 'status').to.be.false;
+              expect(pingError, 'pingError').to.exist;
+              expect(pingError.code).to.equal('ER_ACCESS_DENIED_ERROR');
               done();
             });
           });

@@ -39,11 +39,30 @@ DataSourceDefinition.validatesPresenceOf('facetName');
  */
 
 DataSourceDefinition.prototype.testConnection = function(cb) {
-  this.invokeMethodInWorkspace('ping', cb);
+  this.invokeMethodInWorkspace('ping', function(err) {
+    if (!err) {
+      return cb(null, true);
+    }
+
+    if (err.origin === 'invoke') {
+      // report `ping` errors as a 200 result with error details, not a 500
+      cb(null, false, {
+        message: err.message,
+        code: err.code,
+        details: err.details,
+        stack: err.stack
+      });
+    } else {
+      cb(err);
+    }
+  });
 };
 
 loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
-  returns: { arg: 'status', type: 'boolean' }
+  returns: [
+    { arg: 'status', type: 'boolean' },
+    { arg: 'error', type: 'Error' }
+  ]
 });
 
 /**
@@ -215,6 +234,7 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function() {
         if (match && match[1] === self.connector) {
           var msg = 'Connector "' + self.connector + '" is not installed.';
           err = new Error(msg);
+          err.name = 'InvocationError';
           err.code = 'ER_INVALID_CONNECTOR';
           return err;
         }
@@ -229,9 +249,12 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function() {
           try {
             var errorData = JSON.parse(match[1]);
             err = new Error(errorData.message);
+            err.name = 'InvocationError';
             for (var k in errorData.properties) {
               err[k] = errorData.properties[k];
             }
+            err.origin = errorData.origin;
+            err.stack = errorData.stack;
             return err;
           } catch(jsonerr) {
             debug('Cannot parse error JSON', jsonerr);
