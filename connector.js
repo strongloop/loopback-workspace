@@ -16,7 +16,7 @@ connector.saveToFile = function(result, callback) {
     callback(err, result);
   });
 
-  if (connector.writeCallbacks.length == 1) {
+  if (connector.writeCallbacks.length === 1) {
     // The first write, nobody else is writing now
     debugSync('write executing');
     connector._saveToFile(saveDone);
@@ -29,7 +29,7 @@ connector.saveToFile = function(result, callback) {
     var cb = connector.writeCallbacks.shift();
     debugSync('write finished, %s calls in queue', connector.writeCallbacks.length);
     mergeAndRunPendingWrites();
-    cb(err);
+    cb(err, result);
   }
 
   function mergeAndRunPendingWrites() {
