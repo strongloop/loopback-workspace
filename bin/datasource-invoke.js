@@ -10,26 +10,36 @@ var methodName = args.shift();
 assert(dataSourceName, 'dataSourceName (arg1) is required');
 assert(methodName, 'methodName (arg2) is required');
 
-console.log('Loading the app.');
-var app = require(process.cwd());
+try {
+  console.log('Loading the app.');
+  var app = require(process.cwd());
 
-console.log('Using datasource %j', dataSourceName);
-var ds = app.dataSources[dataSourceName];
+  console.log('Using datasource %j', dataSourceName);
+  var ds = app.dataSources[dataSourceName];
 
-console.log('Invoking %s %j', methodName, args);
-args.push(function callback(err, result) {
-  if (err) {
-    console.error('--datasource-invoke-error--');
-    console.error(JSON.stringify({
-      message: err.message,
-      properties: err,
-      stack: err.stack
-    }));
-    process.exit(1);
-  } else {
-    console.log('Done', result);
-    process.exit(0);
-  }
-});
+  console.log('Invoking %s %j', methodName, args);
+  args.push(function callback(err, result) {
+    if (err) {
+      reportError('invoke', err);
+      process.exit(1);
+    } else {
+      console.log('Done', result);
+      process.exit(0);
+    }
+  });
 
-ds[methodName].apply(ds, args);
+  ds[methodName].apply(ds, args);
+} catch (err) {
+  reportError('uncaught', err);
+  process.exit(2);
+}
+
+function reportError(origin, err) {
+  console.error('--datasource-invoke-error--');
+  console.error(JSON.stringify({
+    origin: origin,
+    message: err.message,
+    properties: err,
+    stack: err.stack
+  }));
+}

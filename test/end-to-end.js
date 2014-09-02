@@ -257,6 +257,13 @@ describe('end-to-end', function() {
 
     before(installSandboxPackages);
 
+    beforeEach(function resetWorkspace(done) {
+      // delete all non-default datasources to isolate individual tests
+      // use `nlike` instead of `neq` as the latter is not implemented yet
+      // https://github.com/strongloop/loopback-datasource-juggler/issues/265
+      DataSourceDefinition.destroyAll({ name: { nlike: 'db' } }, done);
+    });
+
     it('returns true for memory connector', function(done) {
       DataSourceDefinition.create(
         {
@@ -287,9 +294,27 @@ describe('end-to-end', function() {
           definition.testConnection(function(err) {
             expect(err, 'err').to.be.defined;
             expect(err.code, 'err.code').to.equal('ER_INVALID_CONNECTOR');
+            expect(err.message, 'err.message')
+              .to.contain('connector-that-does-not-exist');
             done();
           });
         });
+    });
+
+    it('returns error when the test crashes', function(done) {
+      // Important: the data-source is not persisted to datasources.json,
+      // the invocation should throw `Cannot read property 'ping' of undefined`.
+      // This test verifies that the error correctly forwarded to the caller.
+      // NOTE(bajtos) The situation when the datasource is not defined
+      // should never happen in production, thus it is not worth implementing
+      // a more useful error message.
+      var ds = new DataSourceDefinition({ name: 'temp' });
+      ds.testConnection(function(err) {
+        expect(err, 'err').to.be.defined;
+        expect(err.message, 'err.message')
+          .to.match(/Cannot read property '[^']*' of undefined/);
+        done();
+      });
     });
 
     describeOnLocalMachine('MySQL', function() {
@@ -300,16 +325,18 @@ describe('end-to-end', function() {
         });
       });
 
-      it('returns descriptive error for ECONNREFUSED', function(done) {
+      it('returns descriptive result for ECONNREFUSED', function(done) {
         givenDataSource(
           {
             port: 65000 // hopefully nobody is listening there
           },
           function(err, definition) {
             if (err) return done(err);
-            definition.testConnection(function(err) {
-              expect(err, 'err').to.exist;
-              expect(err.code).to.equal('ECONNREFUSED');
+            definition.testConnection(function(err, status, pingError) {
+              if (err) return done(err);
+              expect(status, 'status').to.be.false;
+              expect(pingError, 'pingError').to.exist;
+              expect(pingError.code).to.equal('ECONNREFUSED');
               done();
             });
           });
@@ -322,9 +349,11 @@ describe('end-to-end', function() {
           },
           function(err, definition) {
             if (err) return done(err);
-            definition.testConnection(function(err) {
-              expect(err, 'err').to.exist;
-              expect(err.code).to.equal('ER_ACCESS_DENIED_ERROR');
+            definition.testConnection(function(err, status, pingError) {
+              if (err) return done(err);
+              expect(status, 'status').to.be.false;
+              expect(pingError, 'pingError').to.exist;
+              expect(pingError.code).to.equal('ER_ACCESS_DENIED_ERROR');
               done();
             });
           });
