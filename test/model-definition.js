@@ -1,4 +1,5 @@
 var app = require('../app');
+var fs = require('fs');
 var ModelDefinition = app.models.ModelDefinition;
 var ModelAccessControl = app.models.ModelAccessControl;
 var ModelProperty = app.models.ModelProperty;
@@ -34,6 +35,13 @@ describe('ModelDefinition', function() {
     describe('ModelDefinition.create(modelDef, cb)', function () {
       it('should create a common/models/$name.json file', function (done) {
         this.modelDefFile.exists(function(err, exists) {
+          expect(exists).to.equal(true);
+          done();
+        });
+      });
+      it('should create common/models/$name.js file', function(done) {
+        var script = this.modelDef.getScriptPath();
+        fs.exists(script, function(exists) {
           expect(exists).to.equal(true);
           done();
         });
