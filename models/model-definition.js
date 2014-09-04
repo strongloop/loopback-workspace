@@ -1,4 +1,5 @@
 var path = require('path');
+var fs = require('fs');
 var assert = require('assert');
 var extend = require('util')._extend;
 var app = require('../app');
@@ -6,7 +7,9 @@ var async = require('async');
 var underscoreString = require('underscore.string');
 var dasherize = underscoreString.dasherize;
 var camelize = underscoreString.camelize;
+var classify = underscoreString.classify;
 var ConfigFile = app.models.ConfigFile;
+var _ = require('lodash');
 
 /**
  * Defines a LoopBack `Model`.
@@ -121,4 +124,49 @@ function cleanRelatedData(relatedData, relation) {
     delete data[relation.embed.key];
     relatedData[ix] = data;
   }
+}
+
+ModelDefinition.afterCreate = function(next) {
+  var def = this;
+  var scriptPath = def.getScriptPath();
+
+  fs.exists(scriptPath, function(exists) {
+    if(exists) {
+      next();
+    } else {
+      createScript(def, scriptPath, next);
+    }
+  });
+}
+
+ModelDefinition.prototype.getClassName = function() {
+  if(!this.name) return null;
+  return classify(dasherize(this.name));
+}
+
+ModelDefinition.prototype.getScriptPath = function() {
+  var configFilePath = ModelDefinition.getPath(this.facetName, this);
+  var scriptFilePath = configFilePath.replace(/\.json$/, '.js');
+
+  return path.join(
+    ConfigFile.getWorkspaceDir(),
+    scriptFilePath
+  );
+}
+
+var templatePath = path.join(__dirname, '..', 'templates', 'scripts',
+    'model.js.tmpl');
+var MODEL_SCRIPT_TEMPLATE = fs.readFileSync(templatePath, 'utf8');
+
+function createScript(def, out, cb) {
+  var script;
+  try {
+    script = _.template(MODEL_SCRIPT_TEMPLATE, {
+      modelDef: def,
+      modelClassName: def.getClassName()
+    });
+  } catch(e) {
+    return cb(e);
+  }
+  fs.writeFile(out, script, cb);
 }

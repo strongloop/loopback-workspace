@@ -14,7 +14,7 @@ var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelDefinition = app.models.ModelDefinition;
 var ModelRelation = app.models.ModelRelation;
 var ViewDefinition = app.models.ViewDefinition;
-var TEMPLATE_DIR = path.join(__dirname, '..', 'templates');
+var TEMPLATE_DIR = path.join(__dirname, '..', 'templates', 'components');
 var DEFAULT_TEMPLATE = 'api-server';
 var debug = require('debug')('workspace');
 
@@ -80,7 +80,7 @@ Workspace.addComponent = function(options, cb) {
   var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
 
   try {
-    template = require('../templates/' + templateName + '/component');
+    template = require('../templates/components/' + templateName + '/component');
     // create a clone to preserve the original
     template = JSON.parse(JSON.stringify(template));
   } catch (e) {
