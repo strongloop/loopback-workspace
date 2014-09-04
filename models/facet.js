@@ -157,6 +157,18 @@ Facet.saveToFs = function(cache, facetData, cb) {
 
   var filesToSave = [];
 
+  // Add a file to be saved with dedupe
+  function addFileToSave(file) {
+    for (var i = 0, n = filesToSave.length; i < n; i++) {
+      if (filesToSave[i].path === file.path) {
+        filesToSave[i] = file; // Replace the queued save
+        return;
+      }
+    }
+    // No match
+    filesToSave.push(file);
+  }
+
   var facetName = facetData.name;
   assert(facetName);
 
@@ -173,7 +185,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
       facetConfigFile.data[setting.name] = setting.value;
     });
 
-    filesToSave.push(facetConfigFile);
+    addFileToSave(facetConfigFile);
   }
 
   PackageDefinition.allFromCache(cache).forEach(function(package) {
@@ -183,7 +195,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
         data: package
       });
       delete package.facetName;
-      filesToSave.push(packageFile);
+      addFileToSave(packageFile);
     }
   });
 
@@ -200,7 +212,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
       }
     });
 
-    filesToSave.push(new ConfigFile({
+    addFileToSave(new ConfigFile({
       path: dataSourcePath,
       data: dataSoureConfig
     }));
@@ -219,7 +231,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
       }
     });
 
-    filesToSave.push(modelConfigFile);
+    addFileToSave(modelConfigFile);
   }
 
   var cachedModels = ModelDefinition.allFromCache(cache);
@@ -229,7 +241,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
     if(modelDef.facetName === facetName) {
       var modelConfigFile = ModelDefinition.getConfigFile(facetName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigFromCache(cache, modelDef);
-      filesToSave.push(modelConfigFile);
+      addFileToSave(modelConfigFile);
     }
   });
 
