@@ -10,6 +10,16 @@
     "supportedByStrongLoop": true
   },
   {
+    "name": "mail",
+    "description": "Email",
+    "baseModel": "Email",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "supportedByStrongLoop": true
+  },
+  {
     "name": "mysql",
     "description": "MySQL",
     "baseModel": "PersistedModel",
@@ -107,7 +117,6 @@
     },
     "supportedByStrongLoop": true
   },
-
   {
     "name": "neo4j",
     "description": "Neo4j",
