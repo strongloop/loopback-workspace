@@ -2,9 +2,6 @@ var async = require('async');
 var assert = require('assert');
 var path = require('path');
 var app = require('../app');
-var fs = require('fs');
-var debug = require('debug')('workspace:facet');
-var extend = require('util')._extend;
 
 var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
@@ -20,6 +17,13 @@ var FacetSetting = app.models.FacetSetting;
  */
 
 var Facet = app.models.Facet;
+
+/**
+ * Create an I/O queue to serialize load/save to avoid file corruptions
+ */
+Facet.ioQueue = async.queue(function(task, cb) {
+  task(cb);
+}, 1); // Set concurrency to 1 so that tasks will be executed one by one
 
 /**
  * Load the app with the given name into the connector cache.
@@ -143,11 +147,13 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     });
   }
 
-  async.series(steps, function(err) {
-    if(err) return cb(err);
-    debug('loading finished');
-    cb();
-  });
+  Facet.ioQueue.push(function (done) {
+    async.series(steps, function (err) {
+      if (err) return done(err);
+      debug('loading finished');
+      done();
+    });
+  }, cb);
 }
 
 Facet.saveToFs = function(cache, facetData, cb) {
@@ -245,15 +251,17 @@ Facet.saveToFs = function(cache, facetData, cb) {
     }
   });
 
-  // TODO(ritch) files that exist without data in the cache should be deleted
-  async.each(filesToSave, function(configFile, cb) {
-    debug('file [%s]', configFile.path);
-    configFile.save(cb);
-  }, function(err) {
-    if (err) return cb(err);
-    debug('saving finished');
-    cb();
-  });
+  Facet.ioQueue.push(function(done) {
+    // TODO(ritch) files that exist without data in the cache should be deleted
+    async.each(filesToSave, function (configFile, cb) {
+      debug('file [%s]', configFile.path);
+      configFile.save(cb);
+    }, function (err) {
+      if (err) return done(err);
+      debug('saving finished');
+      done();
+    });
+  }, cb);
 }
 
 Facet.hasApp = function(facetData) {
