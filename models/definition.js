@@ -1,6 +1,7 @@
 var loopback = require('loopback');
 var path = require('path');
 var app = require('../app');
+var clone = require('underscore').clone;
 var debug = require('debug')('workspace:definition');
 var ConfigFile = app.models.ConfigFile;
 
@@ -144,5 +145,13 @@ Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
   });
 }
 
-function noop() {};
+Definition.addToCache = function(cache, val) {
+  // Remove data of embedded relations
+  // see https://github.com/strongloop/loopback-datasource-juggler/issues/242
+  var data = clone(val);
+  this.getEmbededRelations().forEach(function(relation) {
+    delete data[relation.as];
+  });
+  return Definition.base.addToCache.call(this, cache, data);
+};
 

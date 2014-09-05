@@ -1,4 +1,5 @@
 var path = require('path');
+var fs = require('fs');
 var assert = require('assert');
 var extend = require('util')._extend;
 var app = require('../app');
@@ -6,6 +7,9 @@ var async = require('async');
 var underscoreString = require('underscore.string');
 var dasherize = underscoreString.dasherize;
 var camelize = underscoreString.camelize;
+var classify = underscoreString.classify;
+var ConfigFile = app.models.ConfigFile;
+var _ = require('lodash');
 
 /**
  * Defines a LoopBack `Model`.
@@ -24,6 +28,7 @@ var ModelDefinition = app.models.ModelDefinition;
 
 ModelDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
 ModelDefinition.validatesPresenceOf('name');
+ModelDefinition.validatesFormatOf('name', { with: /^[\-_a-zA-Z0-9]+$/ });
 
 ModelDefinition.getConfigFromCache = function(cache, modelDef) {
   var configData = this.getConfigFromData(modelDef);
@@ -68,11 +73,11 @@ function formatRelatedData(relation, relatedData) {
   assert(false, relation.embed.as + ' is not supported by embed');
 }
 
-ModelDefinition.getPath = function(app, obj) {
+ModelDefinition.getPath = function(facetName, obj) {
   if(obj.configFile) return obj.configFile;
 
   // TODO(ritch) the path should be customizable
-  return path.join(app, ModelDefinition.settings.defaultDir, ModelDefinition.toFilename(obj.name) + '.json');
+  return path.join(facetName, ModelDefinition.settings.defaultDir, ModelDefinition.toFilename(obj.name) + '.json');
 }
 
 ModelDefinition.toFilename = function(name) {
@@ -84,6 +89,24 @@ ModelDefinition.toFilename = function(name) {
 
   return split.join('');
 }
+
+ModelDefinition.removeById = function(id, cb) {
+  this.findById(id, function(err, modelDef) {
+    var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
+    var file = new ConfigFile({path: p});
+    file.remove(cb);
+  });
+}
+
+ModelDefinition.destroyById = ModelDefinition.removeById;
+ModelDefinition.deleteById = ModelDefinition.removeById;
+
+ModelDefinition.prototype.remove = function(cb) {
+  this.constructor.removeById(this.id, cb);
+}
+
+ModelDefinition.prototype.destroy = ModelDefinition.prototype.remove;
+ModelDefinition.prototype.delete = ModelDefinition.prototype.remove;
 
 /**
  * Remove the foreign key from embeded data and sort the properties in
@@ -101,4 +124,49 @@ function cleanRelatedData(relatedData, relation) {
     delete data[relation.embed.key];
     relatedData[ix] = data;
   }
+}
+
+ModelDefinition.afterCreate = function(next) {
+  var def = this;
+  var scriptPath = def.getScriptPath();
+
+  fs.exists(scriptPath, function(exists) {
+    if(exists) {
+      next();
+    } else {
+      createScript(def, scriptPath, next);
+    }
+  });
+}
+
+ModelDefinition.prototype.getClassName = function() {
+  if(!this.name) return null;
+  return classify(dasherize(this.name));
+}
+
+ModelDefinition.prototype.getScriptPath = function() {
+  var configFilePath = ModelDefinition.getPath(this.facetName, this);
+  var scriptFilePath = configFilePath.replace(/\.json$/, '.js');
+
+  return path.join(
+    ConfigFile.getWorkspaceDir(),
+    scriptFilePath
+  );
+}
+
+var templatePath = path.join(__dirname, '..', 'templates', 'scripts',
+    'model.js.tmpl');
+var MODEL_SCRIPT_TEMPLATE = fs.readFileSync(templatePath, 'utf8');
+
+function createScript(def, out, cb) {
+  var script;
+  try {
+    script = _.template(MODEL_SCRIPT_TEMPLATE, {
+      modelDef: def,
+      modelClassName: def.getClassName()
+    });
+  } catch(e) {
+    return cb(e);
+  }
+  fs.writeFile(out, script, cb);
 }

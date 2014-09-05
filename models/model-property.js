@@ -9,6 +9,8 @@ var app = require('../app');
 
 var ModelProperty = app.models.ModelProperty;
 
+ModelProperty.validatesFormatOf('name', { with: /^[\-_a-zA-Z0-9]+$/ });
+
 /**
  * List of built-in types that can be used for `ModelProperty.type`.
  * @type {string[]}

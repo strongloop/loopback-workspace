@@ -11,11 +11,12 @@ var EventEmitter = require('events').EventEmitter;
 connector.writeCallbacks = [];
 var debugSync = require('debug')('workspace:connector:save-sync');
 
-connector.saveToFile = function() {
-  var cb = arguments[arguments.length - 1];
-  connector.writeCallbacks.push(cb);
+connector.saveToFile = function(result, callback) {
+  connector.writeCallbacks.push(function(err) {
+    callback(err, result);
+  });
 
-  if (connector.writeCallbacks.length == 1) {
+  if (connector.writeCallbacks.length === 1) {
     // The first write, nobody else is writing now
     debugSync('write executing');
     connector._saveToFile(saveDone);
@@ -28,7 +29,7 @@ connector.saveToFile = function() {
     var cb = connector.writeCallbacks.shift();
     debugSync('write finished, %s calls in queue', connector.writeCallbacks.length);
     mergeAndRunPendingWrites();
-    cb(err);
+    cb(err, result);
   }
 
   function mergeAndRunPendingWrites() {
@@ -50,7 +51,7 @@ connector.saveToFile = function() {
     };
     cb.internal = true;
 
-    connector.saveToFile(cb);
+    connector.saveToFile(null, cb);
   }
 };
 

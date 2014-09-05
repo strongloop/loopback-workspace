@@ -1,4 +1,5 @@
 var app = require('../app');
+var fs = require('fs');
 var ModelDefinition = app.models.ModelDefinition;
 var ModelAccessControl = app.models.ModelAccessControl;
 var ModelProperty = app.models.ModelProperty;
@@ -38,6 +39,36 @@ describe('ModelDefinition', function() {
           done();
         });
       });
+      it('should create common/models/$name.js file', function(done) {
+        var script = this.modelDef.getScriptPath();
+        fs.exists(script, function(exists) {
+          expect(exists).to.equal(true);
+          done();
+        });
+      });
+    });
+
+    describe('ModelDefinition.removeById(id, cb)', function () {
+      beforeEach(function(done) {
+        this.modelDef.properties.create({
+          name: 'myProp'
+        }, done);
+      });
+      it('should remove the model definition', function (done) {
+        var id = this.modelDef.id;
+        ModelDefinition.removeById(id, function(err) {
+          if(err) return done(err);
+          ModelDefinition.findById(id, function(err, modelDef) {
+            if(err) return done(err);
+            expect(modelDef).to.not.exist;
+            ModelProperty.count(function(err, count) {
+              if(err) return done(err);
+              expect(count).to.equal(0);
+              done();
+            });
+          });
+        });
+      });
     });
   });
 
@@ -52,6 +83,24 @@ describe('ModelDefinition', function() {
     it('should return construct configFile path', function () {
       var path = ModelDefinition.getPath('.', { name: 'MyModel' });
       expect(path).to.equal('models/my-model.json');
+    });
+  });
+
+  describe('validation', function() {
+    before(givenBasicWorkspace);
+
+    it('rejects invalid model name', function(done) {
+      var md = new ModelDefinition({
+        facetName: 'server',
+        name: 'a name with space'
+      });
+
+      md.isValid(function(valid) {
+        expect(valid, 'isValid').to.be.false;
+        expect(md.errors).to.have.property('name');
+        expect(md.errors.name).to.eql(['is invalid']);
+        done();
+      });
     });
   });
 
@@ -140,6 +189,7 @@ describe('ModelDefinition', function() {
         new TestDataBuilder()
           .define('model', ModelDefinition, {
             facetName: this.serverFacet,
+            name: 'a-name',
             custom: true
           })
           .define('acl', ModelAccessControl, {

@@ -2,6 +2,8 @@ var models = require('../app').models;
 var PackageDefinition = models.PackageDefinition;
 var ConfigFile = models.ConfigFile;
 
+PackageDefinition.validatesFormatOf('name', { with: /^[\-_a-zA-Z0-9]+$/ });
+
 PackageDefinition.prototype.getUniqueId = function() {
   return this.name || null;
 }

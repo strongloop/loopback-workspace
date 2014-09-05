@@ -3,61 +3,246 @@
     "name": "memory",
     "description": "In-memory db",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "localStorage": {
+        "type": "string",
+        "description": "window.localStorage key to use for persistence (browser only)"
+      },
+      "file": {
+        "type": "string",
+        "description": "Full path to file for persistence (server only)"
+      }
+    },
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "mail",
+    "description": "Email",
+    "baseModel": "Email",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "mysql",
     "description": "MySQL",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-mysql",
+      "version": "^1.4"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "postgresql",
     "description": "PostgreSQL",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-postgresql",
+      "version": "^1.1"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "oracle",
     "description": "Oracle",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-oracle",
+      "version": "^1.4"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "mssql",
     "description": "Microsoft SQL",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-mssql",
+      "version": "^1.1"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "mongodb",
     "description": "MongoDB",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-mongodb",
+      "version": "^1.4"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "soap",
     "description": "SOAP webservices",
     "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "package": {
+      "name": "loopback-connector-soap",
+      "version": "^1.1"
+    },
     "supportedByStrongLoop": true
   },
   {
     "name": "rest",
     "description": "REST services",
     "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "package": {
+      "name": "loopback-connector-rest",
+      "version": "^1.2"
+    },
     "supportedByStrongLoop": true
   },
-
   {
     "name": "neo4j",
     "description": "Neo4j",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "package": {
+      "name": "loopback-connector-neo4j",
+      "version": "^0.1"
+    },
     "supportedByStrongLoop": false
   },
   {
     "name": "kafka",
     "description": "Kafka",
     "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "package": {
+      "name": "loopback-connector-kafka",
+      "version": "^0.2"
+    },
     "supportedByStrongLoop": false
   }
 ]
