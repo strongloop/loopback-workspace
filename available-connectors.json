@@ -7,6 +7,16 @@
       "discovery": false,
       "migration": false
     },
+    "settings": {
+      "localStorage": {
+        "type": "string",
+        "description": "window.localStorage key to use for persistence (browser only)"
+      },
+      "file": {
+        "type": "string",
+        "description": "Full path to file for persistence (server only)"
+      }
+    },
     "supportedByStrongLoop": true
   },
   {
@@ -27,6 +37,24 @@
       "discovery": true,
       "migration": true
     },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
     "package": {
       "name": "loopback-connector-mysql",
       "version": "^1.4"
@@ -40,6 +68,24 @@
     "features": {
       "discovery": true,
       "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
     },
     "package": {
       "name": "loopback-connector-postgresql",
@@ -55,6 +101,24 @@
       "discovery": true,
       "migration": true
     },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
     "package": {
       "name": "loopback-connector-oracle",
       "version": "^1.4"
@@ -69,6 +133,24 @@
       "discovery": true,
       "migration": true
     },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
     "package": {
       "name": "loopback-connector-mssql",
       "version": "^1.1"
@@ -82,6 +164,24 @@
     "features": {
       "discovery": false,
       "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
     },
     "package": {
       "name": "loopback-connector-mongodb",
