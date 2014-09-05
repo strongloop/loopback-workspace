@@ -60,6 +60,7 @@ describe('REST API', function () {
       it('should return a list of connectors', function () {
         var connectors = toNames(this.req.res.body);
         expect(connectors).to.contain('memory');
+        expect(connectors).to.contain('mail');
         expect(connectors).to.contain('mysql');
         expect(connectors).to.contain('postgresql');
         expect(connectors).to.contain('oracle');
