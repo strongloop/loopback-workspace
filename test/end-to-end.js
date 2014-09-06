@@ -449,7 +449,10 @@ function execNpm(args, options, cb) {
 
 function installSandboxPackages(cb) {
   this.timeout(300 * 1000);
-  install(SANDBOX, PKG_CACHE, cb);
+  if (process.env.JENKINS_HOME)
+    exec('npm install', { cwd: SANDBOX }, cb);
+  else
+    install(SANDBOX, PKG_CACHE, cb);
 }
 
 function listTableNames(connection, cb) {
