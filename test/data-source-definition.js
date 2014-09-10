@@ -169,34 +169,6 @@ describe('DataSourceDefinition', function() {
       });
     });
   });
-
-  describe('dataSourceDefinition.discoverModelDefinition(name, callback)', function() {
-    it('Test the datasource definition connection.', function(done) {
-      var dataSourceDef = getMockDataSourceDef();
-
-      dataSourceDef.getSchema({}, function(err, schema) {
-        expect(err).to.not.exist;
-        dataSourceDef.discoverModelDefinition(schema[0].name, {}, function(err, schema) {
-          expect(err).to.not.exist;
-          expect(schema.Customer).to.exist;
-          done();
-        });
-      });
-    });
-  });
-
-  describe.skip('dataSourceDefinition.automigrate(callback)', function() {
-    it('should call dataSource.automigrate()', function(done) {
-
-    });
-  });
-
-
-  describe.skip('dataSourceDefinition.autoupdate(callback)', function() {
-    it('should call dataSource.autoupdate()', function(done) {
-
-    });
-  });
 });
 
 function getMockDataSourceDef() {

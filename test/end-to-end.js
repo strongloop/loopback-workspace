@@ -244,6 +244,76 @@ describe('end-to-end', function() {
     });
   });
 
+  describeOnLocalMachine('discovery', function() {
+    this.timeout(10000);
+    
+    var connection;
+    before(function(done) {
+      connection = setupConnection(done);
+    });
+
+    after(function closeConnection(done) {
+      connection.end(done);
+    });
+
+    before(givenBasicWorkspace);
+
+    before(configureMySQLDataSource);
+
+    before(addMySQLConnector);
+
+    before(installSandboxPackages);
+
+    before(function createTable(done) {
+      var sql = fs.readFileSync(
+        path.join(
+          __dirname, 'sql', 'create-simple-table.sql'
+        ),
+        'utf8'
+      );
+
+      connection.query(sql, done);
+    });
+
+    var db;
+    beforeEach(function findDb(done) {
+      models.DataSourceDefinition.findOne(
+        { where: { name: 'db' } },
+        function(err, ds) {
+          db = ds;
+          done(err);
+        });
+    });
+
+    describe('getSchema', function() {
+      it('should include the simple table', function(done) {
+        db.getSchema(function(err, schema) {
+          if(err) return done(err);
+          var tableNames = schema.map(function(item) { return item.name; });
+          expect(tableNames).to.contain('simple');
+          listTableNames(connection, function(err, tables) {
+            if(err) return done(err);
+            expect(tables.sort()).to.eql(tableNames.sort());
+            done();
+          });
+        });
+      });
+    });
+
+    describe('discoverModelDefinition', function() {
+      it('should discover the simple table as a model', function(done) {
+        db.discoverModelDefinition('simple', function(err, modelDefinition) {
+          if(err) return done(err);
+          expect(modelDefinition.name).to.equal('Simple');
+          expect(modelDefinition.options.mysql.table).to.equal('simple');
+          var props = Object.keys(modelDefinition.properties);
+          expect(props.sort()).to.eql(['id', 'name', 'created'].sort());
+          done();
+        });
+      });
+    });
+  });
+
   describe('testConnection', function() {
     var DataSourceDefinition = models.DataSourceDefinition;
 
@@ -393,6 +463,33 @@ function describeOnLocalMachine(name, fn) {
   }
 }
 
+function setupConnection(done) {
+  var connection = mysql.createConnection({
+    database: MYSQL_DATABASE,
+    user: MYSQL_USER,
+    password: MYSQL_PASSWORD
+  });
+
+  connection.connect(function(err) {
+    if (!err) return done(err);
+    if (err.code === 'ECONNREFUSED') {
+      err = new Error(
+          'Cannot connect to local MySQL database, ' +
+          'make sure you have `mysqld` running on your machine');
+    } else {
+      console.error();
+      console.error('**************************************');
+      console.error('Cannot connect to MySQL.');
+      console.error('Setup the test environment by running');
+      console.error('    node bin/setup-mysql');
+      console.error('**************************************');
+      console.error();
+    }
+    done(err);
+  });
+
+  return connection;
+}
 
 function execNpm(args, options, cb) {
   var debug = require('debug')('test:exec-npm');
@@ -428,5 +525,27 @@ function listTableNames(connection, cb) {
       return row[fields[0].name];
     });
     cb(null, tables);
+  });
+}
+
+function configureMySQLDataSource(done) {
+  models.DataSourceDefinition.findOne(
+    { where: { name: 'db' } },
+    function(err, ds) {
+      if (err) return done(err);
+      ds.connector = 'mysql';
+      // settings prepared by bin/setup-mysql.js
+      ds.database = MYSQL_DATABASE;
+      ds.user = MYSQL_USER;
+      ds.password = MYSQL_PASSWORD;
+      ds.save(done);
+    });
+}
+
+function addMySQLConnector(done) {
+  models.PackageDefinition.findOne({}, function(err, pkg) {
+    if (err) return done(err);
+    pkg.dependencies['loopback-connector-mysql'] = '1.x';
+    pkg.save(done);
   });
 }

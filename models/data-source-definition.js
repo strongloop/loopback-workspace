@@ -119,12 +119,31 @@ DataSourceDefinition.remoteMethod('testConnection', {
  */
 
 DataSourceDefinition.prototype.discoverModelDefinition = function(name, options, cb) {
-  this.toDataSource().discoverSchemas(name, options, cb);
+  var cb = arguments[arguments.length - 1];
+
+  if(typeof options === 'function') {
+    cb = options;
+    options = undefined;
+  }
+
+  if(typeof cb !== 'function') {
+    cb = function getSchemaCallback(err) {
+      if(err) console.error(err);
+    }
+  }
+
+  if(!options) options = {};
+
+  this._setDefaultSchema(options);
+  this.invokeMethodInWorkspace('discoverSchemas', name, options, function(err, result) {
+    if(err) return cb(err);
+    cb(null, result[options.schema + '.' + name]);
+  });
 }
 
 loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
   accepts: [{
-    arg: 'modelName', type: 'string'
+    arg: 'tableName', type: 'string', required: true
   }, {
     arg: 'options', type: 'object'
   }],
@@ -148,13 +167,49 @@ loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
  */
 
 DataSourceDefinition.prototype.getSchema = function(options, cb) {
-  this.toDataSource().discoverModelDefinitions(options, cb);
+  var cb = arguments[arguments.length - 1];
+
+  if(typeof options === 'function') {
+    cb = options;
+    options = undefined;
+  }
+
+  if(typeof cb !== 'function') {
+    cb = function getSchemaCallback(err) {
+      if(err) console.error(err);
+    }
+  }
+
+  if(!options) options = {};
+
+  this._setDefaultSchema(options);
+
+  this.invokeMethodInWorkspace('discoverModelDefinitions', options, cb);
 }
 
 loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
   accepts: { arg: 'options', type: 'object'},
   returns: { arg: 'models', type: 'array' }
 });
+
+DataSourceDefinition.prototype._setDefaultSchema = function(options) {
+  if(options && typeof options === 'object' && !options.schema) {
+    switch(this.connector) {
+      case 'oracle':
+        options.schema = this.username;
+      break;
+      case 'mysql':
+        options.schema = this.database;
+      break;
+      case 'postgres':
+        options.schema = 'public';
+      break;
+      case 'mssql':
+        options.schema = 'dbo';
+      break;
+    }
+  }
+}
 
 /**
  * Run a migration on the data source. Creates indexes, tables, collections, etc.
