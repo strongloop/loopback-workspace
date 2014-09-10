@@ -125,6 +125,8 @@ describe('end-to-end', function() {
 
   // Skip tests requiring MySQL database when running on Jenkins CI
   describeOnLocalMachine('autoupdate', function() {
+    this.timeout(10000);
+    
     var connection;
     before(function setupConnection(done) {
       connection = mysql.createConnection({
@@ -312,7 +314,7 @@ describe('end-to-end', function() {
       ds.testConnection(function(err) {
         expect(err, 'err').to.be.defined;
         expect(err.message, 'err.message')
-          .to.match(/Cannot read property '[^']*' of undefined/);
+          .to.match(/temp is not a valid data source/);
         done();
       });
     });

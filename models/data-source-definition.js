@@ -1,7 +1,8 @@
 var app = require('../app');
-var execFile = require('child_process').execFile;
+var fork = require('child_process').fork;
 var loopback = require('loopback');
 var debug = require('debug')('workspace:data-source-definition');
+var ConfigFile = app.models.ConfigFile;
 
 /*
  TODOs
@@ -195,74 +196,85 @@ loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
   http: { verb: 'POST' }
 });
 
-DataSourceDefinition.prototype.invokeMethodInWorkspace = function() {
+DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
   // TODO(bajtos) We should ensure there is never more than one instance
   // of this code running at any given time.
   var self = this;
-  var args = Array.prototype.slice.call(arguments);
-  var cb = args.pop();
+  var args = Array.prototype.slice.call(arguments, 0);
+  var child;
+  var cb;
+
+  // remove method name
+  args.shift();
+
+  if(typeof args[args.length - 1] === 'function') {
+    cb = args.pop();
+  } else {
+    cb = function invokeComplete(err) {
+      if(err) console.error(err);
+    }
+  }
 
   // remove optional parameters with 'undefined' value
-  while (args[args.length-1] === undefined) args.pop();
+  args = args.filter(function(arg) {
+    return arg !== undefined;
+  });
 
-  args.unshift(self.name);
+  child = fork(require.resolve('../bin/datasource-invoke'));
 
-  debug('invoke dataSource', args.map(JSON.stringify).join(' '));
+  // handle the callback message
+  child.once('message', function(msg) {
+    var err = msg.error;
+    if(err) {
+      return cb(missingConnector(err) || invocationError(err) || err);
+    }
 
-  args.unshift(require.resolve('../bin/datasource-invoke'))
-  execFile(
-    process.execPath,
-    args,
-    {
-      cwd: process.env.WORKSPACE_DIR,
-      timeout: 90 * 1000,
-    },
-    function(err, stdout, stderr) {
-      debug(
-        '--invoke stdout--\n%s--invoke stderr--\n%s--invoke end--',
-        stdout, stderr);
+    cb.apply(self, msg.callbackArgs);
+  });
 
-      if (err)
-        cb(missingConnector(err) || invocationError(err) || err);
-      else
-        cb(null, true);
+  // send the args as a message to the child
+  child.send({
+    dir: ConfigFile.getWorkspaceDir(),
+    dataSourceName: this.name,
+    methodName: methodName,
+    args: args
+  });
 
-      function missingConnector(err) {
-        var match = err.message.match(
-          /LoopBack connector "(.*)" is not installed/
-        );
-        if (match && match[1] === self.connector) {
-          var msg = 'Connector "' + self.connector + '" is not installed.';
-          err = new Error(msg);
-          err.name = 'InvocationError';
-          err.code = 'ER_INVALID_CONNECTOR';
-          return err;
+  function missingConnector(err) {
+    var match = err.message.match(
+      /LoopBack connector "(.*)" is not installed/
+    );
+    if (match && match[1] === self.connector) {
+      var msg = 'Connector "' + self.connector + '" is not installed.';
+      err = new Error(msg);
+      err.name = 'InvocationError';
+      err.code = 'ER_INVALID_CONNECTOR';
+      return err;
+    }
+    return undefined;
+  }
+
+  function invocationError(err) {
+    var match = err.message.match(
+      /--datasource-invoke-error--\n((.|[\r\n])*)$/
+    );
+    if (match) {
+      try {
+        var errorData = JSON.parse(match[1]);
+        err = new Error(errorData.message);
+        err.name = 'InvocationError';
+        for (var k in errorData.properties) {
+          err[k] = errorData.properties[k];
         }
-        return undefined;
+        err.origin = errorData.origin;
+        err.stack = errorData.stack;
+        return err;
+      } catch(jsonerr) {
+        debug('Cannot parse error JSON', jsonerr);
       }
-
-      function invocationError(err) {
-        var match = err.message.match(
-          /--datasource-invoke-error--\n((.|[\r\n])*)$/
-        );
-        if (match) {
-          try {
-            var errorData = JSON.parse(match[1]);
-            err = new Error(errorData.message);
-            err.name = 'InvocationError';
-            for (var k in errorData.properties) {
-              err[k] = errorData.properties[k];
-            }
-            err.origin = errorData.origin;
-            err.stack = errorData.stack;
-            return err;
-          } catch(jsonerr) {
-            debug('Cannot parse error JSON', jsonerr);
-          }
-        }
-        return undefined;
-      }
-    });
+    }
+    return undefined;
+  }
 }
 
 /**
