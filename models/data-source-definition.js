@@ -415,3 +415,9 @@ DataSourceDefinition.prototype.createModel = function(discoveredDef, cb) {
     }, cb);
   }
 }
+
+loopback.remoteMethod(DataSourceDefinition.prototype.createModel, {
+  accepts: {arg: 'discoveredDef', type: 'object', description: 'usually the result of discoverModelDefinition'},
+  returns: { arg: 'modelDefinitionId', type: 'string' },
+  http: { verb: 'POST' }
+});
