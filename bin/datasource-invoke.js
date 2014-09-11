@@ -13,15 +13,10 @@ process.once('message', function(msg) {
   });
 
   function done(err, args) {
-    try {
-      process.send({
-        error: err,
-        callbackArgs: args
-      });
-    } catch(e) {
-      console.error('failed to send message to parent process');
-      console.error(e);
-    }
+    send({
+      error: err,
+      callbackArgs: args
+    });
 
     process.nextTick(function() {
       process.exit();
@@ -58,7 +53,7 @@ function invoke(msg, cb) {
   try {
     args.push(cb);
     ds[methodName].apply(ds, args);
-  } catch (err) {
+  } catch (e) {
     return error(e, 'invoke');
   }
 
@@ -68,16 +63,36 @@ function invoke(msg, cb) {
   }
 }
 
-
-Object.defineProperty(Error.prototype, 'toJSON', {
-  value: function () {
-    var alt = {};
-
-    Object.getOwnPropertyNames(this).forEach(function (key) {
-      alt[key] = this[key];
-    }, this);
-
-    return alt;
-  },
-  configurable: true
+process.on('uncaughtException', function(err) {
+  if(process.send) {
+    send({
+      error: err
+    });
+  } else {
+    throw err;
+  }
 });
+
+function send(msg) {
+  if(msg.error) {
+    msg.error = toSerializableError(msg.error);
+  }
+
+  try {
+    process.send(msg);
+  } catch(e) {
+    console.error('failed to send message to parent process');
+    console.error(e);
+    process.exit(1);
+  }
+}
+
+function toSerializableError(err) {
+  var alt = {};
+
+  Object.getOwnPropertyNames(err).forEach(function (key) {
+    alt[key] = err[key];
+  }, this);
+
+  return alt;
+}

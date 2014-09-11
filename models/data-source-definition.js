@@ -258,10 +258,12 @@ loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
 DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
   // TODO(bajtos) We should ensure there is never more than one instance
   // of this code running at any given time.
+  var isDone = false;
   var self = this;
   var args = Array.prototype.slice.call(arguments, 0);
   var child;
   var cb;
+  var stdErrs = [];
 
   // remove method name
   args.shift();
@@ -274,21 +276,24 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
     }
   }
 
-  // remove optional parameters with 'undefined' value
-  args = args.filter(function(arg) {
-    return arg !== undefined;
-  });
-
   child = fork(require.resolve('../bin/datasource-invoke'));
 
   // handle the callback message
   child.once('message', function(msg) {
     var err = msg.error;
     if(err) {
-      return cb(missingConnector(err) || invocationError(err) || err);
+      return done(missingConnector(err) || err);
     }
 
-    cb.apply(self, msg.callbackArgs);
+    done.apply(self, msg.callbackArgs);
+  });
+
+  process.stderr.on('data', storeErrors);
+
+  child.on('exit', function(code) {
+    if(code > 0) {
+      done(new Error(stdErrs.join('')));
+    }
   });
 
   // send the args as a message to the child
@@ -298,6 +303,23 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
     methodName: methodName,
     args: args
   });
+
+  function done(err) {
+    if(isDone && err) {
+      console.error('Error calling ' + methodName + ' after callback!');
+      console.error(err);
+      return;
+    }
+
+    process.stderr.removeListener('data', storeErrors);
+
+    cb.apply(self, arguments);
+    isDone = true;
+  }
+
+  function storeErrors(buf) {
+    stdErrs.push(buf.toString());
+  }
 
   function missingConnector(err) {
     var match = err.message.match(
@@ -309,28 +331,6 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
       err.name = 'InvocationError';
       err.code = 'ER_INVALID_CONNECTOR';
       return err;
-    }
-    return undefined;
-  }
-
-  function invocationError(err) {
-    var match = err.message.match(
-      /--datasource-invoke-error--\n((.|[\r\n])*)$/
-    );
-    if (match) {
-      try {
-        var errorData = JSON.parse(match[1]);
-        err = new Error(errorData.message);
-        err.name = 'InvocationError';
-        for (var k in errorData.properties) {
-          err[k] = errorData.properties[k];
-        }
-        err.origin = errorData.origin;
-        err.stack = errorData.stack;
-        return err;
-      } catch(jsonerr) {
-        debug('Cannot parse error JSON', jsonerr);
-      }
     }
     return undefined;
   }

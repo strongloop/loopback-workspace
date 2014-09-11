@@ -40,13 +40,7 @@ describe('end-to-end', function() {
       }, done);
     });
 
-    before(function configureCustomModel(done) {
-      models.ModelConfig.create({
-        name: 'Custom',
-        dataSource: 'db',
-        facetName: 'server'
-      }, done);
-    });
+    before(configureCustomModel);
 
     before(installSandboxPackages);
 
@@ -128,30 +122,8 @@ describe('end-to-end', function() {
     this.timeout(10000);
     
     var connection;
-    before(function setupConnection(done) {
-      connection = mysql.createConnection({
-        database: MYSQL_DATABASE,
-        user: MYSQL_USER,
-        password: MYSQL_PASSWORD
-      });
-
-      connection.connect(function(err) {
-        if (!err) return done(err);
-        if (err.code === 'ECONNREFUSED') {
-          err = new Error(
-              'Cannot connect to local MySQL database, ' +
-              'make sure you have `mysqld` running on your machine');
-        } else {
-          console.error();
-          console.error('**************************************');
-          console.error('Cannot connect to MySQL.');
-          console.error('Setup the test environment by running');
-          console.error('    node bin/setup-mysql');
-          console.error('**************************************');
-          console.error();
-        }
-        done(err);
-      });
+    before(function(done) {
+      connection = setupConnection(done);
     });
 
     after(function closeConnection(done) {
@@ -160,27 +132,9 @@ describe('end-to-end', function() {
 
     before(givenBasicWorkspace);
 
-    before(function configureMySQLDataSource(done) {
-      models.DataSourceDefinition.findOne(
-        { where: { name: 'db' } },
-        function(err, ds) {
-          if (err) return done(err);
-          ds.connector = 'mysql';
-          // settings prepared by bin/setup-mysql.js
-          ds.database = MYSQL_DATABASE;
-          ds.user = MYSQL_USER;
-          ds.password = MYSQL_PASSWORD;
-          ds.save(done);
-        });
-    });
+    before(configureMySQLDataSource);
 
-    before(function addMySQLConnector(done) {
-      models.PackageDefinition.findOne({}, function(err, pkg) {
-        if (err) return done(err);
-        pkg.dependencies['loopback-connector-mysql'] = '1.x';
-        pkg.save(done);
-      });
-    });
+    before(addMySQLConnector);
 
     before(installSandboxPackages);
 
@@ -194,13 +148,7 @@ describe('end-to-end', function() {
       }, done);
     });
 
-    before(function configureCustomModel(done) {
-      models.ModelConfig.create({
-        name: 'Custom',
-        dataSource: 'db',
-        facetName: 'server'
-      }, done);
-    });
+    before(configureCustomModel);
 
     beforeEach(function resetMysqlDatabase(done) {
       listTableNames(connection, function(err, tables) {
@@ -319,13 +267,7 @@ describe('end-to-end', function() {
 
     before(givenBasicWorkspace);
 
-    before(function addMySQLConnector(done) {
-      models.PackageDefinition.findOne({}, function(err, pkg) {
-        if (err) return done(err);
-        pkg.dependencies['loopback-connector-mysql'] = '1.x';
-        pkg.save(done);
-      });
-    });
+    before(addMySQLConnector);
 
     before(installSandboxPackages);
 
@@ -452,8 +394,7 @@ describe('end-to-end', function() {
       }
     });
   });
-})
-;
+});
 
 function describeOnLocalMachine(name, fn) {
   if (process.env.JENKINS_HOME) {
@@ -548,4 +489,12 @@ function addMySQLConnector(done) {
     pkg.dependencies['loopback-connector-mysql'] = '1.x';
     pkg.save(done);
   });
+}
+
+function configureCustomModel(done) {
+  models.ModelConfig.create({
+    name: 'Custom',
+    dataSource: 'db',
+    facetName: 'server'
+  }, done);
 }

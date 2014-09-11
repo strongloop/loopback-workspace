@@ -158,18 +158,6 @@ describe('DataSourceDefinition', function() {
     });
   });
 
-  describe('dataSourceDefinition.getSchema(callback)', function() {
-    it('Test the datasource definition connection.', function(done) {
-      var dataSourceDef = getMockDataSourceDef();
-
-      dataSourceDef.getSchema({}, function(err, schema) {
-        expect(err).to.not.exist;
-        expect(schema).to.be.instanceof(Array);
-        done();
-      });
-    });
-  });
-
   describe('dataSourceDefinition.createModel(modelDefinition, cb)', function() {
     beforeEach(givenBasicWorkspace);
     beforeEach(function(done) {
