@@ -169,6 +169,59 @@ describe('DataSourceDefinition', function() {
       });
     });
   });
+
+  describe('dataSourceDefinition.createModel(modelDefinition, cb)', function() {
+    beforeEach(givenBasicWorkspace);
+    beforeEach(function(done) {
+      var test = this;
+      DataSourceDefinition.create({
+        name: 'basic',
+        connector: 'memory',
+        facetName: 'server'
+      }, function(err, def) {
+        if(err) return done(err);
+        test.basic = def;
+        done();
+      });
+    });
+    beforeEach(function(done) {
+      this.basic.createModel({
+        name: 'BasicModel',
+        properties: {
+          id: {type: 'number'},
+          name: {type: 'string'}
+        },
+        options: {
+          foo: 'bar'
+        }
+      }, done);
+    });
+    it('should create a model definition', function(done) {
+      app.models.ModelDefinition.findOne({
+        where: {
+          name: 'BasicModel'
+        }
+      }, function(err, modelDefinition) {
+        expect(err).to.not.exist;
+        expect(modelDefinition).to.exist;
+        expect(modelDefinition.name).to.equal('BasicModel');
+        expect(modelDefinition.facetName).to.equal('common');
+        done();
+      });
+    });
+    it('should create a model config', function(done) {
+      var test = this;
+      app.models.ModelConfig.findOne({
+        where: {
+          name: 'BasicModel'
+        }
+      }, function(err, config) {
+        expect(err).to.not.exist;
+        expect(config.toObject().dataSource).to.equal(test.basic.id);
+        done();
+      });
+    });
+  });
 });
 
 function getMockDataSourceDef() {

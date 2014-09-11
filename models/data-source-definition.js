@@ -1,4 +1,8 @@
+var async = require('async');
 var app = require('../app');
+var ModelDefinition = app.models.ModelDefinition;
+var ModelConfig = app.models.ModelConfig;
+var ModelProperty = app.models.ModelProperty;
 var fork = require('child_process').fork;
 var loopback = require('loopback');
 var debug = require('debug')('workspace:data-source-definition');
@@ -340,4 +344,74 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
 
 DataSourceDefinition.prototype.toDataSource = function() {
   return loopback.createDataSource(this.name, this);
+}
+
+/**
+ * Create a `ModelDefinition` with the appropriate set of `ModelProperties` and
+ * `ModelConfig` using the given `discoveredDef` object.
+ *
+ * @param {Object} discoveredDef The result of `dataSource.discoverModelDefinition()`.
+ * @callback {Function} callback
+ * @param {Error} err
+ * @param {String} id The created `ModelDefinition` id
+ */
+
+DataSourceDefinition.prototype.createModel = function(discoveredDef, cb) {
+  var dataSourceDef = this;
+  var properties = [];
+  var propertyNames = Object.keys(discoveredDef.properties);
+  var options = discoveredDef.options;
+  var modelDefinition = {};
+  var modelDefinitionId;
+
+  // use common facet by default
+  modelDefinition.facetName = 'common';
+  modelDefinition.name = discoveredDef.name;
+
+  // merge options
+  Object.keys(options).forEach(function(option) {
+    modelDefinition[option] = options[option];
+  });
+
+  // convert properties object to array
+  propertyNames.forEach(function(propertyName) {
+    var property = discoveredDef.properties[propertyName];
+    property.name = propertyName;
+    properties.push(property);
+  });
+
+  async.series([
+    createModelDefinition,
+    createProperties,
+    createModelConfig
+  ], function(err) {
+    if(err) return cb(err);
+    cb(null, modelDefinition.id);
+  });
+
+  function createModelDefinition(cb) {
+    ModelDefinition.create(modelDefinition, function(err, def) {
+      if(err) return cb(err);
+      modelDefinition = def;
+      cb();
+    });
+  }
+
+  function createProperties(cb) {
+    async.each(properties, function(property, cb) {
+      modelDefinition.properties.create(property, cb);
+    }, cb);
+  }
+
+  function createModelConfig(cb) {
+    if(modelDefinition.public === undefined) {
+      modelDefinition.public = true;
+    }
+
+    dataSourceDef.models.create({
+      facetName: dataSourceDef.facetName,
+      name: modelDefinition.name,
+      public: modelDefinition.public
+    }, cb);
+  }
 }
