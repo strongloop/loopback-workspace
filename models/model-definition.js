@@ -35,6 +35,17 @@ ModelDefinition.getConfigFromCache = function(cache, modelDef) {
   var relations = this.getEmbededRelations();
   relations.forEach(function(relation) {
     var relatedData = getRelated(cache, modelDef.id, relation);
+    if(relation.model === 'ModelAccessControl') {
+      relatedData = relatedData.sort(function(a, b) {
+        if (a.index < b.index) {
+          return -1;
+        }
+        if (a.index > b.index) {
+          return 1;
+        }
+        return 0;
+      });
+    }
     configData[relation.as] = formatRelatedData(relation, relatedData);
   });
 
