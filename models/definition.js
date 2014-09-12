@@ -115,9 +115,12 @@ Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
     var properties = Entity.definition.properties;
 
     if(Array.isArray(relatedData)) {
-      relatedData.forEach(function(config) {
+      relatedData.forEach(function(config, index) {
         config[relation.foreignKey] = fk;
         config.facetName = facetName;
+        if(relation.embed && relation.embed.includeIndex) {
+          config.index = index;
+        }
         debug('addRelatedToCache %s %j', relation.model, config);
         Entity.addToCache(cache, config);
       });

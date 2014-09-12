@@ -120,6 +120,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
         debug('loading [%s] model definition into cache', def.name);
 
         var uniqueId = ModelDefinition.getUniqueId(def);
+
         ModelDefinition.addToCache(cache, def);
         ModelDefinition.addRelatedToCache(cache, def, facetName, uniqueId);
       });

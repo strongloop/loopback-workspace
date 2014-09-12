@@ -118,6 +118,10 @@ WorkspaceEntity.getConfigFile = function(facetName, obj) {
   return new ConfigFile({path: this.getPath(facetName, obj)});
 }
 
+WorkspaceEntity.prototype.getConfigFile = function() {
+  return this.constructor.getConfigFile(this.facetName, this);
+}
+
 WorkspaceEntity.getConfigFromData = function(data) {
   var properties = this.definition.properties;
   var result = {};
