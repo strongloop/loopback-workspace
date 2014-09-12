@@ -3,43 +3,96 @@
 
 var assert = require('assert');
 
-var args = process.argv.slice(2); // skip `node` and script-name
-var dataSourceName = args.shift();
-var methodName = args.shift();
-
-assert(dataSourceName, 'dataSourceName (arg1) is required');
-assert(methodName, 'methodName (arg2) is required');
-
-try {
-  console.log('Loading the app.');
-  var app = require(process.cwd());
-
-  console.log('Using datasource %j', dataSourceName);
-  var ds = app.dataSources[dataSourceName];
-
-  console.log('Invoking %s %j', methodName, args);
-  args.push(function callback(err, result) {
-    if (err) {
-      reportError('invoke', err);
-      process.exit(1);
-    } else {
-      console.log('Done', result);
-      process.exit(0);
+process.once('message', function(msg) {
+  invoke(msg, function(err) {
+    if(err) {
+      if(!err.origin) err.origin = 'invoke';
+      return done(err);
     }
+    done(null, Array.prototype.slice.call(arguments, 0));
   });
 
-  ds[methodName].apply(ds, args);
-} catch (err) {
-  reportError('uncaught', err);
-  process.exit(2);
+  function done(err, args) {
+    send({
+      error: err,
+      callbackArgs: args
+    });
+
+    process.nextTick(function() {
+      process.exit();
+    });
+  }
+});
+
+function invoke(msg, cb) {
+  var dataSourceName = msg.dataSourceName;
+  var methodName = msg.methodName;
+  var args = msg.args;
+  var cbMsg = {};
+  var app;
+  var ds;
+
+  assert(dataSourceName, 'dataSourceName is required');
+  assert(methodName, 'methodName is required');
+
+  try {
+    app = require(msg.dir);
+  } catch(e) {
+    return error(e, 'app');
+  }
+
+  try {
+    ds = app.dataSources[dataSourceName];
+    if(!ds) {
+      throw new Error(dataSourceName + ' is not a valid data source');
+    }
+  } catch(e) {
+    return error(e, 'dataSource');
+  }
+
+  try {
+    args.push(cb);
+    ds[methodName].apply(ds, args);
+  } catch (e) {
+    return error(e, 'invoke');
+  }
+
+  function error(err, origin) {
+    err.origin = origin;
+    cb(err);
+  }
 }
 
-function reportError(origin, err) {
-  console.error('--datasource-invoke-error--');
-  console.error(JSON.stringify({
-    origin: origin,
-    message: err.message,
-    properties: err,
-    stack: err.stack
-  }));
+process.on('uncaughtException', function(err) {
+  if(process.send) {
+    send({
+      error: err
+    });
+  } else {
+    throw err;
+  }
+});
+
+function send(msg) {
+  if(msg.error) {
+    msg.error = toSerializableError(msg.error);
+  }
+
+  try {
+    process.send(msg);
+  } catch(e) {
+    console.error('failed to send message to parent process');
+    console.error(e);
+    process.exit(1);
+  }
+}
+
+function toSerializableError(err) {
+  var alt = {};
+
+  Object.getOwnPropertyNames(err).forEach(function (key) {
+    alt[key] = err[key];
+  }, this);
+
+  return alt;
 }

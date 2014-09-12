@@ -1,7 +1,12 @@
+var async = require('async');
 var app = require('../app');
-var execFile = require('child_process').execFile;
+var ModelDefinition = app.models.ModelDefinition;
+var ModelConfig = app.models.ModelConfig;
+var ModelProperty = app.models.ModelProperty;
+var fork = require('child_process').fork;
 var loopback = require('loopback');
 var debug = require('debug')('workspace:data-source-definition');
+var ConfigFile = app.models.ConfigFile;
 
 /*
  TODOs
@@ -118,12 +123,31 @@ DataSourceDefinition.remoteMethod('testConnection', {
  */
 
 DataSourceDefinition.prototype.discoverModelDefinition = function(name, options, cb) {
-  this.toDataSource().discoverSchemas(name, options, cb);
+  var cb = arguments[arguments.length - 1];
+
+  if(typeof options === 'function') {
+    cb = options;
+    options = undefined;
+  }
+
+  if(typeof cb !== 'function') {
+    cb = function getSchemaCallback(err) {
+      if(err) console.error(err);
+    }
+  }
+
+  if(!options) options = {};
+
+  this._setDefaultSchema(options);
+  this.invokeMethodInWorkspace('discoverSchemas', name, options, function(err, result) {
+    if(err) return cb(err);
+    cb(null, result[options.schema + '.' + name]);
+  });
 }
 
 loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
   accepts: [{
-    arg: 'modelName', type: 'string'
+    arg: 'tableName', type: 'string', required: true
   }, {
     arg: 'options', type: 'object'
   }],
@@ -147,13 +171,49 @@ loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
  */
 
 DataSourceDefinition.prototype.getSchema = function(options, cb) {
-  this.toDataSource().discoverModelDefinitions(options, cb);
+  var cb = arguments[arguments.length - 1];
+
+  if(typeof options === 'function') {
+    cb = options;
+    options = undefined;
+  }
+
+  if(typeof cb !== 'function') {
+    cb = function getSchemaCallback(err) {
+      if(err) console.error(err);
+    }
+  }
+
+  if(!options) options = {};
+
+  this._setDefaultSchema(options);
+
+  this.invokeMethodInWorkspace('discoverModelDefinitions', options, cb);
 }
 
 loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
   accepts: { arg: 'options', type: 'object'},
   returns: { arg: 'models', type: 'array' }
 });
+
+DataSourceDefinition.prototype._setDefaultSchema = function(options) {
+  if(options && typeof options === 'object' && !options.schema) {
+    switch(this.connector) {
+      case 'oracle':
+        options.schema = this.username;
+      break;
+      case 'mysql':
+        options.schema = this.database;
+      break;
+      case 'postgres':
+        options.schema = 'public';
+      break;
+      case 'mssql':
+        options.schema = 'dbo';
+      break;
+    }
+  }
+}
 
 /**
  * Run a migration on the data source. Creates indexes, tables, collections, etc.
@@ -195,74 +255,85 @@ loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
   http: { verb: 'POST' }
 });
 
-DataSourceDefinition.prototype.invokeMethodInWorkspace = function() {
+DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
   // TODO(bajtos) We should ensure there is never more than one instance
   // of this code running at any given time.
+  var isDone = false;
   var self = this;
-  var args = Array.prototype.slice.call(arguments);
-  var cb = args.pop();
+  var args = Array.prototype.slice.call(arguments, 0);
+  var child;
+  var cb;
+  var stdErrs = [];
 
-  // remove optional parameters with 'undefined' value
-  while (args[args.length-1] === undefined) args.pop();
+  // remove method name
+  args.shift();
 
-  args.unshift(self.name);
+  if(typeof args[args.length - 1] === 'function') {
+    cb = args.pop();
+  } else {
+    cb = function invokeComplete(err) {
+      if(err) console.error(err);
+    }
+  }
 
-  debug('invoke dataSource', args.map(JSON.stringify).join(' '));
+  child = fork(require.resolve('../bin/datasource-invoke'));
 
-  args.unshift(require.resolve('../bin/datasource-invoke'))
-  execFile(
-    process.execPath,
-    args,
-    {
-      cwd: process.env.WORKSPACE_DIR,
-      timeout: 90 * 1000,
-    },
-    function(err, stdout, stderr) {
-      debug(
-        '--invoke stdout--\n%s--invoke stderr--\n%s--invoke end--',
-        stdout, stderr);
+  // handle the callback message
+  child.once('message', function(msg) {
+    var err = msg.error;
+    if(err) {
+      return done(missingConnector(err) || err);
+    }
 
-      if (err)
-        cb(missingConnector(err) || invocationError(err) || err);
-      else
-        cb(null, true);
+    done.apply(self, msg.callbackArgs);
+  });
 
-      function missingConnector(err) {
-        var match = err.message.match(
-          /LoopBack connector "(.*)" is not installed/
-        );
-        if (match && match[1] === self.connector) {
-          var msg = 'Connector "' + self.connector + '" is not installed.';
-          err = new Error(msg);
-          err.name = 'InvocationError';
-          err.code = 'ER_INVALID_CONNECTOR';
-          return err;
-        }
-        return undefined;
-      }
+  process.stderr.on('data', storeErrors);
 
-      function invocationError(err) {
-        var match = err.message.match(
-          /--datasource-invoke-error--\n((.|[\r\n])*)$/
-        );
-        if (match) {
-          try {
-            var errorData = JSON.parse(match[1]);
-            err = new Error(errorData.message);
-            err.name = 'InvocationError';
-            for (var k in errorData.properties) {
-              err[k] = errorData.properties[k];
-            }
-            err.origin = errorData.origin;
-            err.stack = errorData.stack;
-            return err;
-          } catch(jsonerr) {
-            debug('Cannot parse error JSON', jsonerr);
-          }
-        }
-        return undefined;
-      }
-    });
+  child.on('exit', function(code) {
+    if(code > 0) {
+      done(new Error(stdErrs.join('')));
+    }
+  });
+
+  // send the args as a message to the child
+  child.send({
+    dir: ConfigFile.getWorkspaceDir(),
+    dataSourceName: this.name,
+    methodName: methodName,
+    args: args
+  });
+
+  function done(err) {
+    if(isDone && err) {
+      console.error('Error calling ' + methodName + ' after callback!');
+      console.error(err);
+      return;
+    }
+
+    process.stderr.removeListener('data', storeErrors);
+
+    cb.apply(self, arguments);
+    isDone = true;
+  }
+
+  function storeErrors(buf) {
+    stdErrs.push(buf.toString());
+  }
+
+  function missingConnector(err) {
+    var match = err.message.match(
+      /LoopBack connector "(.*)" is not installed/
+    );
+    if (match && match[1] === self.connector) {
+      var msg = 'Connector "' + self.connector + '" is not installed.';
+      err = new Error(msg);
+      err.name = 'InvocationError';
+      err.code = 'ER_INVALID_CONNECTOR';
+      return err;
+    }
+    return undefined;
+  }
 }
 
 /**
@@ -274,3 +345,79 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function() {
 DataSourceDefinition.prototype.toDataSource = function() {
   return loopback.createDataSource(this.name, this);
 }
+
+/**
+ * Create a `ModelDefinition` with the appropriate set of `ModelProperties` and
+ * `ModelConfig` using the given `discoveredDef` object.
+ *
+ * @param {Object} discoveredDef The result of `dataSource.discoverModelDefinition()`.
+ * @callback {Function} callback
+ * @param {Error} err
+ * @param {String} id The created `ModelDefinition` id
+ */
+
+DataSourceDefinition.prototype.createModel = function(discoveredDef, cb) {
+  var dataSourceDef = this;
+  var properties = [];
+  var propertyNames = Object.keys(discoveredDef.properties);
+  var options = discoveredDef.options;
+  var modelDefinition = {};
+  var modelDefinitionId;
+
+  // use common facet by default
+  modelDefinition.facetName = 'common';
+  modelDefinition.name = discoveredDef.name;
+
+  // merge options
+  Object.keys(options).forEach(function(option) {
+    modelDefinition[option] = options[option];
+  });
+
+  // convert properties object to array
+  propertyNames.forEach(function(propertyName) {
+    var property = discoveredDef.properties[propertyName];
+    property.name = propertyName;
+    properties.push(property);
+  });
+
+  async.series([
+    createModelDefinition,
+    createProperties,
+    createModelConfig
+  ], function(err) {
+    if(err) return cb(err);
+    cb(null, modelDefinition.id);
+  });
+
+  function createModelDefinition(cb) {
+    ModelDefinition.create(modelDefinition, function(err, def) {
+      if(err) return cb(err);
+      modelDefinition = def;
+      cb();
+    });
+  }
+
+  function createProperties(cb) {
+    async.each(properties, function(property, cb) {
+      modelDefinition.properties.create(property, cb);
+    }, cb);
+  }
+
+  function createModelConfig(cb) {
+    if(modelDefinition.public === undefined) {
+      modelDefinition.public = true;
+    }
+
+    dataSourceDef.models.create({
+      facetName: dataSourceDef.facetName,
+      name: modelDefinition.name,
+      public: modelDefinition.public
+    }, cb);
+  }
+}
+
+loopback.remoteMethod(DataSourceDefinition.prototype.createModel, {
+  accepts: {arg: 'discoveredDef', type: 'object', description: 'usually the result of discoverModelDefinition'},
+  returns: { arg: 'modelDefinitionId', type: 'string' },
+  http: { verb: 'POST' }
+});
