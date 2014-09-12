@@ -316,17 +316,11 @@ describe('end-to-end', function() {
     });
 
     it('returns error when the test crashes', function(done) {
-      // Important: the data-source is not persisted to datasources.json,
-      // the invocation should throw `Cannot read property 'ping' of undefined`.
-      // This test verifies that the error correctly forwarded to the caller.
-      // NOTE(bajtos) The situation when the datasource is not defined
-      // should never happen in production, thus it is not worth implementing
-      // a more useful error message.
-      var ds = new DataSourceDefinition({ name: 'temp' });
-      ds.testConnection(function(err) {
-        expect(err, 'err').to.be.defined;
-        expect(err.message, 'err.message')
-          .to.match(/temp is not a valid data source/);
+      // db is a valid dataSource, the method is invalid causing a crash
+      var ds = new DataSourceDefinition({ name: 'db' });
+      ds.invokeMethodInWorkspace('nonExistingMethod', function(err) {
+        expect(err).to.exist;
+        expect(err.message).to.contain('Cannot call method');
         done();
       });
     });
