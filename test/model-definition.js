@@ -265,11 +265,11 @@ describe('ModelDefinition', function() {
 
       it('is correct for acls', function() {
         expect(Object.keys(this.data.acls[0])).to.eql([
+          'accessType',
           'principalType',
           'principalId',
           'permission',
           'property',
-          'route',
           'custom'
         ]);
       });
