@@ -23,5 +23,15 @@ ModelProperty.availableTypes = [
   'array',
   'date',
   'buffer',
-  'geopoint'
+  'geopoint',
+  'any'
 ];
+
+ModelProperty.getAvailableTypes = function(cb) {
+  cb(null, ModelProperty.availableTypes);
+};
+
+ModelProperty.remoteMethod('getAvailableTypes', {
+  http: { verb: 'get', path: '/available-types' },
+  returns: { type: ['string'], root: true }
+});
