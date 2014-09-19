@@ -23,5 +23,6 @@ ModelProperty.availableTypes = [
   'array',
   'date',
   'buffer',
-  'geopoint'
+  'geopoint',
+  'any'
 ];
