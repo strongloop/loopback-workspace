@@ -158,43 +158,56 @@ describe('DataSourceDefinition', function() {
     });
   });
 
-  describe('dataSourceDefinition.getSchema(callback)', function() {
-    it('Test the datasource definition connection.', function(done) {
-      var dataSourceDef = getMockDataSourceDef();
-
-      dataSourceDef.getSchema({}, function(err, schema) {
-        expect(err).to.not.exist;
-        expect(schema).to.be.instanceof(Array);
+  describe('dataSourceDefinition.createModel(modelDefinition, cb)', function() {
+    beforeEach(givenBasicWorkspace);
+    beforeEach(function(done) {
+      var test = this;
+      DataSourceDefinition.create({
+        name: 'basic',
+        connector: 'memory',
+        facetName: 'server'
+      }, function(err, def) {
+        if(err) return done(err);
+        test.basic = def;
         done();
       });
     });
-  });
-
-  describe('dataSourceDefinition.discoverModelDefinition(name, callback)', function() {
-    it('Test the datasource definition connection.', function(done) {
-      var dataSourceDef = getMockDataSourceDef();
-
-      dataSourceDef.getSchema({}, function(err, schema) {
+    beforeEach(function(done) {
+      this.basic.createModel({
+        name: 'BasicModel',
+        properties: {
+          id: {type: 'number'},
+          name: {type: 'string'}
+        },
+        options: {
+          foo: 'bar'
+        }
+      }, done);
+    });
+    it('should create a model definition', function(done) {
+      app.models.ModelDefinition.findOne({
+        where: {
+          name: 'BasicModel'
+        }
+      }, function(err, modelDefinition) {
         expect(err).to.not.exist;
-        dataSourceDef.discoverModelDefinition(schema[0].name, {}, function(err, schema) {
-          expect(err).to.not.exist;
-          expect(schema.Customer).to.exist;
-          done();
-        });
+        expect(modelDefinition).to.exist;
+        expect(modelDefinition.name).to.equal('BasicModel');
+        expect(modelDefinition.facetName).to.equal('common');
+        done();
       });
     });
-  });
-
-  describe.skip('dataSourceDefinition.automigrate(callback)', function() {
-    it('should call dataSource.automigrate()', function(done) {
-
-    });
-  });
-
-
-  describe.skip('dataSourceDefinition.autoupdate(callback)', function() {
-    it('should call dataSource.autoupdate()', function(done) {
-
+    it('should create a model config', function(done) {
+      var test = this;
+      app.models.ModelConfig.findOne({
+        where: {
+          name: 'BasicModel'
+        }
+      }, function(err, config) {
+        expect(err).to.not.exist;
+        expect(config.toObject().dataSource).to.equal(test.basic.id);
+        done();
+      });
     });
   });
 });

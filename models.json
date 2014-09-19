@@ -104,7 +104,7 @@
           "model": "Facet",
           "foreignKey": "facetName"
         },
-        "dataSource": {
+        "dataSourceRef": {
           "type": "belongsTo",
           "model": "DataSourceDefinition",
           "foreignKey": "dataSource"
@@ -166,7 +166,7 @@
           "foreignKey": "modelId"
         },
         "accessControls": {
-          "embed": {"name": "acls", "as": "array"},
+          "embed": {"name": "acls", "as": "array", "includeIndex": true},
           "type": "hasMany",
           "model": "ModelAccessControl",
           "foreignKey": "modelId"
@@ -232,11 +232,12 @@
       "id": {"type": "string", "id": true, "json": false},
       "modelId": {"type": "string", "required": true, "json": false},
       "facetName": {"type": "string", "required": true, "json": false},
+      "accessType": {"type": "string"},
       "principalType": {"type": "string"},
       "principalId": {"type": "string"},
       "permission": {"type": "string", "required": true},
       "property": {"type": "string"},
-      "route": {"type": "string"}
+      "index": {"type": "number", "json": false, "default": 0}
     },
     "public": true,
     "dataSource": "db",

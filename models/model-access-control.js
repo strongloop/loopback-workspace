@@ -1,6 +1,7 @@
 var app = require('../app');
 var ACL = require('loopback').ACL;
 var Role = require('loopback').Role;
+var WorkspaceEntity = app.models.WorkspaceEntity;
 
 /**
  * Represents an Access Control configuration.
@@ -106,3 +107,27 @@ ModelAccessControl.getBuiltinRoles = function(cb) {
     { name: 'The user owning the object', value: Role.OWNER },
   ]);
 };
+
+var baseCreate = ModelAccessControl.create;
+ModelAccessControl.create = function(data, cb) {
+  var self = this;
+  this.findOne({
+    where: { modelId: this.modelId },
+    order: 'index DESC'
+  }, function(err, accessControl) {
+    if(err) return cb(err);
+    var index = 0;
+
+    if(accessControl) {
+      index = accessControl.index + 1;
+    }
+
+    data.index = index;
+    baseCreate.call(self, data, cb);
+  });
+}
+
+ModelAccessControl.getUniqueId = function(data) {
+  var sep = this.settings.idSeparator || '.';
+  return data.modelId + sep + data.index;
+}

@@ -40,13 +40,7 @@ describe('end-to-end', function() {
       }, done);
     });
 
-    before(function configureCustomModel(done) {
-      models.ModelConfig.create({
-        name: 'Custom',
-        dataSource: 'db',
-        facetName: 'server'
-      }, done);
-    });
+    before(configureCustomModel);
 
     before(installSandboxPackages);
 
@@ -125,31 +119,11 @@ describe('end-to-end', function() {
 
   // Skip tests requiring MySQL database when running on Jenkins CI
   describeOnLocalMachine('autoupdate', function() {
+    this.timeout(10000);
+    
     var connection;
-    before(function setupConnection(done) {
-      connection = mysql.createConnection({
-        database: MYSQL_DATABASE,
-        user: MYSQL_USER,
-        password: MYSQL_PASSWORD
-      });
-
-      connection.connect(function(err) {
-        if (!err) return done(err);
-        if (err.code === 'ECONNREFUSED') {
-          err = new Error(
-              'Cannot connect to local MySQL database, ' +
-              'make sure you have `mysqld` running on your machine');
-        } else {
-          console.error();
-          console.error('**************************************');
-          console.error('Cannot connect to MySQL.');
-          console.error('Setup the test environment by running');
-          console.error('    node bin/setup-mysql');
-          console.error('**************************************');
-          console.error();
-        }
-        done(err);
-      });
+    before(function(done) {
+      connection = setupConnection(done);
     });
 
     after(function closeConnection(done) {
@@ -158,27 +132,9 @@ describe('end-to-end', function() {
 
     before(givenBasicWorkspace);
 
-    before(function configureMySQLDataSource(done) {
-      models.DataSourceDefinition.findOne(
-        { where: { name: 'db' } },
-        function(err, ds) {
-          if (err) return done(err);
-          ds.connector = 'mysql';
-          // settings prepared by bin/setup-mysql.js
-          ds.database = MYSQL_DATABASE;
-          ds.user = MYSQL_USER;
-          ds.password = MYSQL_PASSWORD;
-          ds.save(done);
-        });
-    });
+    before(configureMySQLDataSource);
 
-    before(function addMySQLConnector(done) {
-      models.PackageDefinition.findOne({}, function(err, pkg) {
-        if (err) return done(err);
-        pkg.dependencies['loopback-connector-mysql'] = '1.x';
-        pkg.save(done);
-      });
-    });
+    before(addMySQLConnector);
 
     before(installSandboxPackages);
 
@@ -192,13 +148,7 @@ describe('end-to-end', function() {
       }, done);
     });
 
-    before(function configureCustomModel(done) {
-      models.ModelConfig.create({
-        name: 'Custom',
-        dataSource: 'db',
-        facetName: 'server'
-      }, done);
-    });
+    before(configureCustomModel);
 
     beforeEach(function resetMysqlDatabase(done) {
       listTableNames(connection, function(err, tables) {
@@ -242,18 +192,82 @@ describe('end-to-end', function() {
     });
   });
 
+  describeOnLocalMachine('discovery', function() {
+    this.timeout(10000);
+    
+    var connection;
+    before(function(done) {
+      connection = setupConnection(done);
+    });
+
+    after(function closeConnection(done) {
+      connection.end(done);
+    });
+
+    before(givenBasicWorkspace);
+
+    before(configureMySQLDataSource);
+
+    before(addMySQLConnector);
+
+    before(installSandboxPackages);
+
+    before(function createTable(done) {
+      var sql = fs.readFileSync(
+        path.join(
+          __dirname, 'sql', 'create-simple-table.sql'
+        ),
+        'utf8'
+      );
+
+      connection.query(sql, done);
+    });
+
+    var db;
+    beforeEach(function findDb(done) {
+      models.DataSourceDefinition.findOne(
+        { where: { name: 'db' } },
+        function(err, ds) {
+          db = ds;
+          done(err);
+        });
+    });
+
+    describe('getSchema', function() {
+      it('should include the simple table', function(done) {
+        db.getSchema(function(err, schema) {
+          if(err) return done(err);
+          var tableNames = schema.map(function(item) { return item.name; });
+          expect(tableNames).to.contain('simple');
+          listTableNames(connection, function(err, tables) {
+            if(err) return done(err);
+            expect(tables.sort()).to.eql(tableNames.sort());
+            done();
+          });
+        });
+      });
+    });
+
+    describe('discoverModelDefinition', function() {
+      it('should discover the simple table as a model', function(done) {
+        db.discoverModelDefinition('simple', function(err, modelDefinition) {
+          if(err) return done(err);
+          expect(modelDefinition.name).to.equal('Simple');
+          expect(modelDefinition.options.mysql.table).to.equal('simple');
+          var props = Object.keys(modelDefinition.properties);
+          expect(props.sort()).to.eql(['id', 'name', 'created'].sort());
+          done();
+        });
+      });
+    });
+  });
+
   describe('testConnection', function() {
     var DataSourceDefinition = models.DataSourceDefinition;
 
     before(givenBasicWorkspace);
 
-    before(function addMySQLConnector(done) {
-      models.PackageDefinition.findOne({}, function(err, pkg) {
-        if (err) return done(err);
-        pkg.dependencies['loopback-connector-mysql'] = '1.x';
-        pkg.save(done);
-      });
-    });
+    before(addMySQLConnector);
 
     before(installSandboxPackages);
 
@@ -302,17 +316,11 @@ describe('end-to-end', function() {
     });
 
     it('returns error when the test crashes', function(done) {
-      // Important: the data-source is not persisted to datasources.json,
-      // the invocation should throw `Cannot read property 'ping' of undefined`.
-      // This test verifies that the error correctly forwarded to the caller.
-      // NOTE(bajtos) The situation when the datasource is not defined
-      // should never happen in production, thus it is not worth implementing
-      // a more useful error message.
-      var ds = new DataSourceDefinition({ name: 'temp' });
-      ds.testConnection(function(err) {
-        expect(err, 'err').to.be.defined;
-        expect(err.message, 'err.message')
-          .to.match(/Cannot read property '[^']*' of undefined/);
+      // db is a valid dataSource, the method is invalid causing a crash
+      var ds = new DataSourceDefinition({ name: 'db' });
+      ds.invokeMethodInWorkspace('nonExistingMethod', function(err) {
+        expect(err).to.exist;
+        expect(err.message).to.contain('Cannot call method');
         done();
       });
     });
@@ -380,8 +388,7 @@ describe('end-to-end', function() {
       }
     });
   });
-})
-;
+});
 
 function describeOnLocalMachine(name, fn) {
   if (process.env.JENKINS_HOME) {
@@ -391,6 +398,33 @@ function describeOnLocalMachine(name, fn) {
   }
 }
 
+function setupConnection(done) {
+  var connection = mysql.createConnection({
+    database: MYSQL_DATABASE,
+    user: MYSQL_USER,
+    password: MYSQL_PASSWORD
+  });
+
+  connection.connect(function(err) {
+    if (!err) return done(err);
+    if (err.code === 'ECONNREFUSED') {
+      err = new Error(
+          'Cannot connect to local MySQL database, ' +
+          'make sure you have `mysqld` running on your machine');
+    } else {
+      console.error();
+      console.error('**************************************');
+      console.error('Cannot connect to MySQL.');
+      console.error('Setup the test environment by running');
+      console.error('    node bin/setup-mysql');
+      console.error('**************************************');
+      console.error();
+    }
+    done(err);
+  });
+
+  return connection;
+}
 
 function execNpm(args, options, cb) {
   var debug = require('debug')('test:exec-npm');
@@ -427,4 +461,34 @@ function listTableNames(connection, cb) {
     });
     cb(null, tables);
   });
+}
+
+function configureMySQLDataSource(done) {
+  models.DataSourceDefinition.findOne(
+    { where: { name: 'db' } },
+    function(err, ds) {
+      if (err) return done(err);
+      ds.connector = 'mysql';
+      // settings prepared by bin/setup-mysql.js
+      ds.database = MYSQL_DATABASE;
+      ds.user = MYSQL_USER;
+      ds.password = MYSQL_PASSWORD;
+      ds.save(done);
+    });
+}
+
+function addMySQLConnector(done) {
+  models.PackageDefinition.findOne({}, function(err, pkg) {
+    if (err) return done(err);
+    pkg.dependencies['loopback-connector-mysql'] = '1.x';
+    pkg.save(done);
+  });
+}
+
+function configureCustomModel(done) {
+  models.ModelConfig.create({
+    name: 'Custom',
+    dataSource: 'db',
+    facetName: 'server'
+  }, done);
 }
