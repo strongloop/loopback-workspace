@@ -264,6 +264,7 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
   var child;
   var cb;
   var stdErrs = [];
+  var invokePath = require.resolve('../bin/datasource-invoke');
 
   // remove method name
   args.shift();
@@ -276,7 +277,8 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
     }
   }
 
-  child = fork(require.resolve('../bin/datasource-invoke'));
+  child = fork(invokePath, [], { silent: true });
+  child.stdout.pipe(process.stdout);
 
   // handle the callback message
   child.once('message', function(msg) {
@@ -288,7 +290,7 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
     done.apply(self, msg.callbackArgs);
   });
 
-  process.stderr.on('data', storeErrors);
+  child.stderr.on('data', storeErrors);
 
   child.on('exit', function(code) {
     if(code > 0) {
@@ -311,7 +313,7 @@ DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
       return;
     }
 
-    process.stderr.removeListener('data', storeErrors);
+    child.stderr.removeListener('data', storeErrors);
 
     cb.apply(self, arguments);
     isDone = true;

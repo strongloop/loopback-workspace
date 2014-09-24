@@ -1,8 +1,9 @@
 {
   "name": "loopback-workspace",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "main": "app.js",
   "scripts": {
+    "pretest": "test -z \"$JENKINS_HOME\" || (echo | node bin/setup-mysql.js)",
     "test": "mocha"
   },
   "repository": {

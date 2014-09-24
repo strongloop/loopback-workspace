@@ -117,10 +117,8 @@ describe('end-to-end', function() {
     });
   });
 
-  // Skip tests requiring MySQL database when running on Jenkins CI
-  describeOnLocalMachine('autoupdate', function() {
+  describe('autoupdate', function() {
     this.timeout(10000);
-    
     var connection;
     before(function(done) {
       connection = setupConnection(done);
@@ -192,7 +190,7 @@ describe('end-to-end', function() {
     });
   });
 
-  describeOnLocalMachine('discovery', function() {
+  describe('discovery', function() {
     this.timeout(10000);
     
     var connection;
@@ -325,7 +323,7 @@ describe('end-to-end', function() {
       });
     });
 
-    describeOnLocalMachine('MySQL', function() {
+    describe('MySQL', function() {
       it('returns true for valid config', function(done) {
         givenDataSource({}, function(err, definition) {
           if (err) return done(err);
@@ -389,14 +387,6 @@ describe('end-to-end', function() {
     });
   });
 });
-
-function describeOnLocalMachine(name, fn) {
-  if (process.env.JENKINS_HOME) {
-    describe.skip(name, fn);
-  } else {
-    describe(name, fn);
-  }
-}
 
 function setupConnection(done) {
   var connection = mysql.createConnection({
