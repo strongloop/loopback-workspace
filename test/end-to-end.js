@@ -318,7 +318,9 @@ describe('end-to-end', function() {
       var ds = new DataSourceDefinition({ name: 'db' });
       ds.invokeMethodInWorkspace('nonExistingMethod', function(err) {
         expect(err).to.exist;
-        expect(err.message).to.contain('Cannot call method');
+        // Node compat: v0.10.x (call method) or v0.11.x (read property)
+        expect(err.message)
+          .to.match(/Cannot (call method|read property) 'apply' of/);
         done();
       });
     });
