@@ -127,8 +127,8 @@
       "strict": "boolean",
       "public": "boolean",
       "idInjection": "boolean",
-      "scopes": "array",
-      "indexes": "array",
+      "scopes": "object",
+      "indexes": "object",
       "options": "object"
     },
     "public": true,
