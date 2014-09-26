@@ -139,9 +139,9 @@ DataSourceDefinition.prototype.discoverModelDefinition = function(name, options,
   if(!options) options = {};
 
   this._setDefaultSchema(options);
-  this.invokeMethodInWorkspace('discoverSchemas', name, options, function(err, result) {
+  this.invokeMethodInWorkspace('discoverSchema', name, options, function(err, result) {
     if(err) return cb(err);
-    cb(null, result[options.schema + '.' + name]);
+    cb(null, result);
   });
 }
 
