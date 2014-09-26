@@ -410,7 +410,8 @@ DataSourceDefinition.prototype.createModel = function(discoveredDef, cb) {
       modelDefinition.public = true;
     }
 
-    dataSourceDef.models.create({
+    ModelConfig.create({
+      dataSource: dataSourceDef.name,
       facetName: dataSourceDef.facetName,
       name: modelDefinition.name,
       public: modelDefinition.public

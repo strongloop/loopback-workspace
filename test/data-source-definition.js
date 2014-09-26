@@ -205,7 +205,7 @@ describe('DataSourceDefinition', function() {
         }
       }, function(err, config) {
         expect(err).to.not.exist;
-        expect(config.toObject().dataSource).to.equal(test.basic.id);
+        expect(config.toObject().dataSource).to.equal(test.basic.name);
         done();
       });
     });
