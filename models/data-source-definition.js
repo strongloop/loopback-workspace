@@ -199,15 +199,19 @@ loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
 DataSourceDefinition.prototype._setDefaultSchema = function(options) {
   if(options && typeof options === 'object' && !options.schema) {
     switch(this.connector) {
+      case 'loopback-connector-oracle':
       case 'oracle':
         options.schema = this.username;
       break;
+      case 'loopback-connector-mysql':
       case 'mysql':
         options.schema = this.database;
       break;
-      case 'postgres':
+      case 'loopback-connector-postgresql':
+      case 'postgresql':
         options.schema = 'public';
       break;
+      case 'loopback-connector-mssql':
       case 'mssql':
         options.schema = 'dbo';
       break;
