@@ -139,9 +139,9 @@ DataSourceDefinition.prototype.discoverModelDefinition = function(name, options,
   if(!options) options = {};
 
   this._setDefaultSchema(options);
-  this.invokeMethodInWorkspace('discoverSchemas', name, options, function(err, result) {
+  this.invokeMethodInWorkspace('discoverSchema', name, options, function(err, result) {
     if(err) return cb(err);
-    cb(null, result[options.schema + '.' + name]);
+    cb(null, result);
   });
 }
 
@@ -199,15 +199,19 @@ loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
 DataSourceDefinition.prototype._setDefaultSchema = function(options) {
   if(options && typeof options === 'object' && !options.schema) {
     switch(this.connector) {
+      case 'loopback-connector-oracle':
       case 'oracle':
         options.schema = this.username;
       break;
+      case 'loopback-connector-mysql':
       case 'mysql':
         options.schema = this.database;
       break;
-      case 'postgres':
+      case 'loopback-connector-postgresql':
+      case 'postgresql':
         options.schema = 'public';
       break;
+      case 'loopback-connector-mssql':
       case 'mssql':
         options.schema = 'dbo';
       break;
@@ -410,7 +414,8 @@ DataSourceDefinition.prototype.createModel = function(discoveredDef, cb) {
       modelDefinition.public = true;
     }
 
-    dataSourceDef.models.create({
+    ModelConfig.create({
+      dataSource: dataSourceDef.name,
       facetName: dataSourceDef.facetName,
       name: modelDefinition.name,
       public: modelDefinition.public
