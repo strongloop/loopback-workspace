@@ -5,6 +5,8 @@ var ncp = require('ncp');
 var path = require('path');
 var app = require('../app');
 var async = require('async');
+var spawn = require('child_process').spawn;
+
 var PackageDefinition = app.models.PackageDefinition;
 var ConfigFile = app.models.ConfigFile;
 var Facet = app.models.Facet;
@@ -263,3 +265,110 @@ Workspace.isValidDir = function(cb) {
     }
   });
 };
+
+/**
+ * Start the project (app) in the workspace.
+ * @param {function(Error=,Object=)} cb callback
+ */
+Workspace.start = function(cb) {
+  if (Workspace._child) {
+    debug('child already running as %s', Workspace._child.pid);
+    process.nextTick(function() {
+      cb(null, { pid: Workspace._child.pid });
+    });
+    return;
+  }
+
+  try {
+    debug('starting a child process in %s', process.env.WORKSPACE_DIR);
+    Workspace._child = spawn(
+      process.execPath,
+      ['.'],
+      {
+        cwd: process.env.WORKSPACE_DIR,
+        stdio: 'inherit'
+      });
+  } catch(err) {
+    debug('spawn failed %s', err);
+    return done(err);
+  }
+
+  var child = Workspace._child;
+
+  child.on('error', function(err) {
+    debug('child %s errored %s', child.pid, err);
+    done(err);
+  });
+
+  child.on('exit', function(code) {
+    debug('child %s exited with code %s', child.pid, code);
+    Workspace._child = null;
+    done(new Error('Child exited with code ' + code));
+  });
+
+  // Give the child process few moments to start the HTTP server
+  // TODO(bajtos) Replace setTimeout with a periodic HTTP request
+  setTimeout(function() {
+    debug('child started', child.pid);
+    done(null, { pid: child.pid });
+  }, 1000);
+
+  function done() {
+    // prevent double-callback
+    var callback = cb;
+    cb = function(){};
+
+    callback.apply(this, arguments);
+  }
+};
+
+loopback.remoteMethod(Workspace.start, {
+  http: { verb: 'post', path: '/start' },
+  returns: { arg: 'data', type: 'StartResult', root: true }
+});
+
+process.once('exit', function killWorkspaceChild() {
+  if (Workspace._child)
+    Workspace._child.kill();
+});
+
+/**
+ * Stop the project (app) in the workspace started by {@link start}.
+ * @param {function(Error=,Object=)} cb callback
+ */
+Workspace.stop = function(cb) {
+  if (!Workspace._child) {
+    debug('skipping Workspace.stop - child not running');
+    process.nextTick(function() {
+      cb(null, { exitCode: null });
+    });
+    return;
+  }
+
+  debug('stopping the child process %s', this._child.pid);
+  Workspace._child.once('exit', function(code) {
+    debug('child was stopped');
+    cb(null, { exitCode: code });
+  });
+  Workspace._child.kill();
+};
+
+loopback.remoteMethod(Workspace.stop, {
+  http: { verb: 'post', path: '/stop' },
+  returns: { arg: 'data', type: 'StopResult', root: true }
+});
+/**
+ * Restart the project (app) in the workspace.
+ * @param {function(Error=,Object=)} cb callback
+ */
+Workspace.restart = function(cb) {
+  Workspace.stop(function(err) {
+    if (err) return cb(err);
+    Workspace.start(cb);
+  });
+};
+
+loopback.remoteMethod(Workspace.restart, {
+  http: { verb: 'post', path: '/restart' },
+  returns: { arg: 'data', type: 'StartResult', root: true }
+});
