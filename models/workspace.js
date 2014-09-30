@@ -355,8 +355,9 @@ Workspace.stop = function(cb) {
 
 loopback.remoteMethod(Workspace.stop, {
   http: { verb: 'post', path: '/stop' },
-  returns: { arg: 'data', type: 'StopResult', root: true }
+  returns: { arg: 'data', type: 'Object', root: true }
 });
+
 /**
  * Restart the project (app) in the workspace.
  * @param {function(Error=,Object=)} cb callback
@@ -370,5 +371,24 @@ Workspace.restart = function(cb) {
 
 loopback.remoteMethod(Workspace.restart, {
   http: { verb: 'post', path: '/restart' },
-  returns: { arg: 'data', type: 'StartResult', root: true }
+  returns: { arg: 'data', type: 'Object', root: true }
+});
+
+/**
+ * Return run status of the app.
+ * @param {function(Error=,Object=)} cb callback
+ */
+Workspace.isRunning = function(cb) {
+  var result = Workspace._child ?
+    { running: true, pid: Workspace._child.pid } :
+    { running: false };
+
+  process.nextTick(function() {
+    cb(null, result);
+  });
+};
+
+loopback.remoteMethod(Workspace.isRunning, {
+  http: { verb: 'get', path: '/is-running' },
+  returns: { arg: 'data', type: 'Object', root: true }
 });

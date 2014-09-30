@@ -499,6 +499,36 @@ describe('end-to-end', function() {
           });
       });
     });
+
+    it('returns status for app not running', function(done) {
+      request(workspace).get('/api/workspaces/is-running')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql({
+            running: false
+          });
+          done();
+        });
+    });
+
+    it('returns status for a running app', function(done) {
+      models.Workspace.start(function(err, res) {
+        if (err) return done(err);
+        var pid = res.pid;
+
+        request(workspace).get('/api/workspaces/is-running')
+          .expect(200)
+          .end(function(err, res) {
+            if (err) return done(err);
+            expect(res.body).to.eql({
+              running: true,
+              pid: pid
+            });
+            done();
+          });
+      });
+    });
   });
 });
 
