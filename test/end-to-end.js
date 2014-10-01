@@ -9,6 +9,8 @@ var request = require('supertest');
 var debug = require('debug')('test:end-to-end');
 var workspace = require('../app');
 var models = workspace.models;
+var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var ref = TestDataBuilder.ref;
 
 var Workspace = require('../app.js').models.Workspace;
 
@@ -386,6 +388,146 @@ describe('end-to-end', function() {
           cb(err, dsd);
         });
       }
+    });
+  });
+
+  describe('start/stop/restart', function() {
+    // See api-server template used by `givenBasicWorkspace`
+    var APP_URL = 'http://localhost:3000';
+
+    // The tests are forking new processes and setting up HTTP servers,
+    // it requires more than 2 seconds to finish.
+    this.timeout(10000);
+
+    before(resetWorkspace);
+    before(givenBasicWorkspace);
+    before(installSandboxPackages);
+
+    before(function addProductModel(done) {
+      new TestDataBuilder()
+        .define('productDef', models.ModelDefinition, {
+          facetName: 'common',
+          name: 'Product'
+        })
+        .define('productName', models.ModelProperty, {
+          facetName: ref('productDef.facetName'),
+          modelId: ref('productDef.id'),
+          name: 'name',
+          type: 'string',
+        })
+        .define('productConfig', models.ModelConfig, {
+          facetName: 'server',
+          name: ref('productDef.name'),
+          dataSource: 'db'
+        })
+        .buildTo(this, done);
+    });
+
+    beforeEach(function killWorkspaceChild(done) {
+      // This is depending on Workspace internals to keep the test code simple
+      if (!Workspace._child) return done();
+      Workspace._child.once('exit', function() { done(); });
+      Workspace._child.kill();
+    });
+
+    it('starts the app in the workspace', function(done) {
+      request(workspace).post('/api/workspaces/start')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('pid');
+          request(APP_URL).get('/api/products')
+            .expect(200)
+            .end(done);
+        });
+    });
+
+    it('stops the app started by the workspace', function(done) {
+      models.Workspace.start(function(err) {
+        if (err) return done(err);
+        request(workspace).post('/api/workspaces/stop')
+          .expect(200)
+          .end(function(err) {
+            if (err) return done(err);
+            request(APP_URL).get('/api/products')
+              .end(function(err) {
+                expect(err).to.have.property('code', 'ECONNREFUSED');
+                done();
+              });
+          });
+      });
+    });
+
+    it('does not start more than one process', function(done) {
+      models.Workspace.start(function(err, res) {
+        if (err) return done(err);
+        var pid = res.pid;
+        models.Workspace.start(function(err, res) {
+          if (err) return done(err);
+          expect(res.pid).to.equal(pid);
+          done();
+        });
+      });
+    });
+
+    it('allows stop to be called multiple times', function(done) {
+      models.Workspace.start(function(err) {
+        if (err) return done(err);
+        models.Workspace.stop(function(err) {
+          if (err) return done(err);
+          models.Workspace.stop(function(err) {
+            if (err) return done(err);
+            // no assert, the test passed when we got here
+            done();
+          });
+        });
+      });
+    });
+
+    it('restarts the app', function(done) {
+      models.Workspace.start(function(err, res) {
+        if (err) return done(err);
+        var pid = res.pid;
+
+        request(workspace).post('/api/workspaces/restart')
+          .expect(200)
+          .end(function(err, res) {
+            if (err) return done(err);
+            expect(res.body.pid).to.be.a('number');
+            expect(res.body.pid).to.not.equal(pid);
+            done();
+          });
+      });
+    });
+
+    it('returns status for app not running', function(done) {
+      request(workspace).get('/api/workspaces/is-running')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql({
+            running: false
+          });
+          done();
+        });
+    });
+
+    it('returns status for a running app', function(done) {
+      models.Workspace.start(function(err, res) {
+        if (err) return done(err);
+        var pid = res.pid;
+
+        request(workspace).get('/api/workspaces/is-running')
+          .expect(200)
+          .end(function(err, res) {
+            if (err) return done(err);
+            expect(res.body).to.eql({
+              running: true,
+              pid: pid
+            });
+            done();
+          });
+      });
     });
   });
 });
