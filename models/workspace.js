@@ -6,6 +6,7 @@ var path = require('path');
 var app = require('../app');
 var async = require('async');
 var spawn = require('child_process').spawn;
+var waitTillListening = require('strong-wait-till-listening');
 
 var PackageDefinition = app.models.PackageDefinition;
 var ConfigFile = app.models.ConfigFile;
@@ -306,12 +307,32 @@ Workspace.start = function(cb) {
     done(new Error('Child exited with code ' + code));
   });
 
-  // Give the child process few moments to start the HTTP server
-  // TODO(bajtos) Replace setTimeout with a periodic HTTP request
-  setTimeout(function() {
-    debug('child started', child.pid);
-    done(null, { pid: child.pid });
-  }, 1000);
+  // Wait until the child process starts listening
+  // To do that, we need to get the host and the port from
+  // server facet settings
+  fetchServerHostPort(function waitUntilServerListens(err, host, port) {
+    if (err) {
+      debug('Cannot fetch host:port, killing the child. %s', err);
+      Workspace.stop(function(){});
+      return done(err);
+    }
+
+    var waitOpts = {
+      host: host,
+      port: port || 3000, // 3000 is the default port provided by loopback
+      timeoutInMs: 30000  // 30 seconds
+    };
+
+    waitTillListening(waitOpts, function onWaitIsOver(err) {
+      if (err) {
+        debug('Child not listening, killing it. %s', err);
+        Workspace.stop(function(){});
+        return done(err);
+      }
+      debug('Child started with pid', child.pid);
+      done(null, { pid: child.pid });
+    });
+  });
 
   function done() {
     // prevent double-callback
@@ -321,6 +342,20 @@ Workspace.start = function(cb) {
     callback.apply(this, arguments);
   }
 };
+
+function fetchServerHostPort(cb) {
+  FacetSetting.find(
+    { where: { facetName: 'server' } },
+    function extractHostPortFromFacetSettings(err, list) {
+      if (err) return cb(err);
+      var config = {};
+      list.forEach(function(it) {
+        config[it.name] = it.value;
+      });
+
+      cb(null, config.host, config.port);
+    });
+}
 
 loopback.remoteMethod(Workspace.start, {
   http: { verb: 'post', path: '/start' },

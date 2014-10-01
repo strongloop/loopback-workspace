@@ -47,6 +47,7 @@
     "mysql": "^2.4.2",
     "read": "^1.0.5",
     "strong-cached-install": "^1.0.0",
+    "strong-wait-till-listening": "^1.0.0",
     "supertest": "^0.13.0"
   }
 }

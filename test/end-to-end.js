@@ -395,10 +395,6 @@ describe('end-to-end', function() {
     // See api-server template used by `givenBasicWorkspace`
     var APP_URL = 'http://localhost:3000';
 
-    // The tests are forking new processes and setting up HTTP servers,
-    // it requires more than 2 seconds to finish.
-    this.timeout(10000);
-
     before(resetWorkspace);
     before(givenBasicWorkspace);
     before(installSandboxPackages);
@@ -439,6 +435,26 @@ describe('end-to-end', function() {
           request(APP_URL).get('/api/products')
             .expect(200)
             .end(done);
+        });
+    });
+
+    it('handles missing port and host config', function(done) {
+      models.FacetSetting.deleteAll(
+        {
+        facetName: 'server',
+        name: { inq: ['host', 'port' ]}
+        }, function(err) {
+          if (err) return done(err);
+
+          request(workspace).post('/api/workspaces/start')
+            .expect(200)
+            .end(function(err) {
+              if (err) return done(err);
+              // localhost:3000 is the default value provided by loopback
+              request('http://localhost:3000').get('/api/products')
+                .expect(200)
+                .end(done);
+            });
         });
     });
 
