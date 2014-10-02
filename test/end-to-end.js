@@ -11,6 +11,7 @@ var workspace = require('../app');
 var models = workspace.models;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var ref = TestDataBuilder.ref;
+var given = require('./helpers/given');
 
 var Workspace = require('../app.js').models.Workspace;
 
@@ -393,7 +394,11 @@ describe('end-to-end', function() {
 
   describe('start/stop/restart', function() {
     // See api-server template used by `givenBasicWorkspace`
-    var APP_URL = 'http://localhost:3000';
+    var appUrl;
+
+    // The tests are forking new processes and setting up HTTP servers,
+    // they requires more than 2 seconds to finish
+    this.timeout(10000);
 
     before(resetWorkspace);
     before(givenBasicWorkspace);
@@ -419,6 +424,14 @@ describe('end-to-end', function() {
         .buildTo(this, done);
     });
 
+    before(function setupServerPort(done) {
+      given.uniqueServerPort(function(err, portEntry) {
+        if (err) return done(err);
+        appUrl = 'http://localhost:' + portEntry.value;
+        done();
+      });
+    });
+
     afterEach(function killWorkspaceChild(done) {
       // This is depending on Workspace internals to keep the test code simple
       if (!Workspace._child) return done();
@@ -432,7 +445,7 @@ describe('end-to-end', function() {
         .end(function(err, res) {
           if (err) return done(err);
           expect(res.body).to.have.property('pid');
-          request(APP_URL).get('/api/products')
+          request(appUrl).get('/api/products')
             .expect(200)
             .end(done);
         });
@@ -465,7 +478,7 @@ describe('end-to-end', function() {
           .expect(200)
           .end(function(err) {
             if (err) return done(err);
-            request(APP_URL).get('/api/products')
+            request(appUrl).get('/api/products')
               .end(function(err) {
                 expect(err).to.have.property('code', 'ECONNREFUSED');
                 done();
