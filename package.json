@@ -21,17 +21,18 @@
     "errorhandler": "^1.1.1",
     "fs-extra": "~0.11.0",
     "glob": "~4.0.2",
+    "lodash": "~2.4.1",
     "loopback": "^2.0.0",
-    "loopback-datasource-juggler": "^2.6.1",
     "loopback-boot": "^1.0.0",
+    "loopback-datasource-juggler": "^2.6.1",
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
     "ncp": "^1.0.0",
     "serve-favicon": "^2.0.1",
+    "strong-wait-till-listening": "^1.0.0",
     "temp": "~0.8.0",
     "underscore": "~1.6.0",
-    "underscore.string": "~2.3.3",
-    "lodash": "~2.4.1"
+    "underscore.string": "~2.3.3"
   },
   "optionalDependencies": {
     "loopback-explorer": "^1.2.2"

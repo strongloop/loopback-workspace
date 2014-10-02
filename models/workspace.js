@@ -6,6 +6,7 @@ var path = require('path');
 var app = require('../app');
 var async = require('async');
 var spawn = require('child_process').spawn;
+var waitTillListening = require('strong-wait-till-listening');
 
 var PackageDefinition = app.models.PackageDefinition;
 var ConfigFile = app.models.ConfigFile;
@@ -279,39 +280,59 @@ Workspace.start = function(cb) {
     return;
   }
 
-  try {
-    debug('starting a child process in %s', process.env.WORKSPACE_DIR);
-    Workspace._child = spawn(
-      process.execPath,
-      ['.'],
-      {
-        cwd: process.env.WORKSPACE_DIR,
-        stdio: 'inherit'
-      });
-  } catch(err) {
-    debug('spawn failed %s', err);
-    return done(err);
-  }
+  // In order to wait for the child to start the HTTP server,
+  // we need to know the host and port
+  fetchServerHostPort(function startWithHostPort(err, host, port) {
+    if (err) {
+      debug('Cannot fetch host:port. %s', err);
+      return done(err);
+    }
 
-  var child = Workspace._child;
+    try {
+      debug('starting a child process in %s', process.env.WORKSPACE_DIR);
+      Workspace._child = spawn(
+        process.execPath,
+        ['.'],
+        {
+          cwd: process.env.WORKSPACE_DIR,
+          stdio: 'inherit'
+        });
+    } catch(err) {
+      debug('spawn failed %s', err);
+      return done(err);
+    }
 
-  child.on('error', function(err) {
-    debug('child %s errored %s', child.pid, err);
-    done(err);
+    var child = Workspace._child;
+
+    child.on('error', function(err) {
+      debug('child %s errored %s', child.pid, err);
+      done(err);
+    });
+
+    child.on('exit', function(code) {
+      debug('child %s exited with code %s', child.pid, code);
+      Workspace._child = null;
+      done(new Error('Child exited with code ' + code));
+    });
+
+    // Wait until the child process starts listening
+
+    var waitOpts = {
+      host: host,
+      port: port || 3000, // 3000 is the default port provided by loopback
+      timeoutInMs: 30000  // 30 seconds
+    };
+
+    waitTillListening(waitOpts, function onWaitIsOver(err) {
+      if (err) {
+        debug('Child not listening, killing it. %s', err);
+        Workspace.stop(function(){});
+        return done(err);
+      }
+      debug('Child started with pid', child.pid);
+      done(null, { pid: child.pid });
+    });
   });
-
-  child.on('exit', function(code) {
-    debug('child %s exited with code %s', child.pid, code);
-    Workspace._child = null;
-    done(new Error('Child exited with code ' + code));
-  });
-
-  // Give the child process few moments to start the HTTP server
-  // TODO(bajtos) Replace setTimeout with a periodic HTTP request
-  setTimeout(function() {
-    debug('child started', child.pid);
-    done(null, { pid: child.pid });
-  }, 1000);
 
   function done() {
     // prevent double-callback
@@ -321,6 +342,20 @@ Workspace.start = function(cb) {
     callback.apply(this, arguments);
   }
 };
+
+function fetchServerHostPort(cb) {
+  FacetSetting.find(
+    { where: { facetName: 'server' } },
+    function extractHostPortFromFacetSettings(err, list) {
+      if (err) return cb(err);
+      var config = {};
+      list.forEach(function(it) {
+        config[it.name] = it.value;
+      });
+
+      cb(null, config.host, config.port);
+    });
+}
 
 loopback.remoteMethod(Workspace.start, {
   http: { verb: 'post', path: '/start' },
