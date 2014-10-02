@@ -419,7 +419,7 @@ describe('end-to-end', function() {
         .buildTo(this, done);
     });
 
-    beforeEach(function killWorkspaceChild(done) {
+    afterEach(function killWorkspaceChild(done) {
       // This is depending on Workspace internals to keep the test code simple
       if (!Workspace._child) return done();
       Workspace._child.once('exit', function() { done(); });

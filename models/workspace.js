@@ -280,42 +280,42 @@ Workspace.start = function(cb) {
     return;
   }
 
-  try {
-    debug('starting a child process in %s', process.env.WORKSPACE_DIR);
-    Workspace._child = spawn(
-      process.execPath,
-      ['.'],
-      {
-        cwd: process.env.WORKSPACE_DIR,
-        stdio: 'inherit'
-      });
-  } catch(err) {
-    debug('spawn failed %s', err);
-    return done(err);
-  }
-
-  var child = Workspace._child;
-
-  child.on('error', function(err) {
-    debug('child %s errored %s', child.pid, err);
-    done(err);
-  });
-
-  child.on('exit', function(code) {
-    debug('child %s exited with code %s', child.pid, code);
-    Workspace._child = null;
-    done(new Error('Child exited with code ' + code));
-  });
-
-  // Wait until the child process starts listening
-  // To do that, we need to get the host and the port from
-  // server facet settings
-  fetchServerHostPort(function waitUntilServerListens(err, host, port) {
+  // In order to wait for the child to start the HTTP server,
+  // we need to know the host and port
+  fetchServerHostPort(function startWithHostPort(err, host, port) {
     if (err) {
-      debug('Cannot fetch host:port, killing the child. %s', err);
-      Workspace.stop(function(){});
+      debug('Cannot fetch host:port. %s', err);
       return done(err);
     }
+
+    try {
+      debug('starting a child process in %s', process.env.WORKSPACE_DIR);
+      Workspace._child = spawn(
+        process.execPath,
+        ['.'],
+        {
+          cwd: process.env.WORKSPACE_DIR,
+          stdio: 'inherit'
+        });
+    } catch(err) {
+      debug('spawn failed %s', err);
+      return done(err);
+    }
+
+    var child = Workspace._child;
+
+    child.on('error', function(err) {
+      debug('child %s errored %s', child.pid, err);
+      done(err);
+    });
+
+    child.on('exit', function(code) {
+      debug('child %s exited with code %s', child.pid, code);
+      Workspace._child = null;
+      done(new Error('Child exited with code ' + code));
+    });
+
+    // Wait until the child process starts listening
 
     var waitOpts = {
       host: host,
