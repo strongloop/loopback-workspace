@@ -83,7 +83,10 @@ Workspace.addComponent = function(options, cb) {
   var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
 
   try {
-    template = require('../templates/components/' + templateName + '/component');
+    var componentScript = require('../templates/components/'
+      + templateName + '/component');
+    template = (typeof componentScript === 'function') ?
+      componentScript(options) : componentScript;
     // create a clone to preserve the original
     template = JSON.parse(JSON.stringify(template));
   } catch (e) {
@@ -204,15 +207,23 @@ function createFacet(name, template, cb) {
  * corresponding workspace entities using the given template.
  *
  * @param {String} templateName
+ * @param {String} name
+ * @param {Boolean} subclassingBuiltinModels
  * @callback {Function} callback
  * @param {Error} err
  */
 
-Workspace.createFromTemplate = function(templateName, name, cb) {
+Workspace.createFromTemplate = function(templateName, name,
+                                        subclassingBuiltinModels, cb) {
+  if ((typeof subclassingBuiltinModels === 'function') && !cb) {
+    cb = subclassingBuiltinModels;
+    subclassingBuiltinModels = false;
+  }
   Workspace.addComponent({
     root: true,
     name: name,
-    template: templateName
+    template: templateName,
+    subclassingBuiltinModels: !!subclassingBuiltinModels
   }, cb);
 }
 
@@ -220,7 +231,8 @@ loopback.remoteMethod(Workspace.createFromTemplate, {
   http: {verb: 'post', path: '/'},
   accepts: [
     { arg: 'templateName', type: 'string' },
-    { arg: 'name', type: 'string' }
+    { arg: 'name', type: 'string' },
+    { arg: 'subclassingBuiltinModels', type: 'boolean' }
   ]
 });
 
