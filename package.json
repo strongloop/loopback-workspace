@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "pretest": "test -z \"$JENKINS_HOME\" || (echo | node bin/setup-mysql.js)",
-    "test": "mocha"
+    "test": "mocha --timeout 10000 -R spec"
   },
   "repository": {
     "type": "git",
@@ -46,6 +46,7 @@
     "loopback-testing": "^0.2.0",
     "mocha": "^1.20.1",
     "mysql": "^2.4.2",
+    "rc": "~0.5.1",
     "read": "^1.0.5",
     "strong-cached-install": "^1.0.0",
     "supertest": "^0.13.0"

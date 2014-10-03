@@ -17,10 +17,12 @@ var Workspace = require('../app.js').models.Workspace;
 
 var PKG_CACHE = path.resolve(__dirname, '.pkgcache');
 
+var config = require('rc')('loopback', {test: {mysql: {}}}).test.mysql;
+
 // settings from bin/setup-mysql.js
-var MYSQL_DATABASE = 'loopback_workspace_test';
-var MYSQL_USER = 'lbws';
-var MYSQL_PASSWORD = 'hbx42rec';
+var MYSQL_DATABASE = config.database || 'loopback_workspace_test';
+var MYSQL_USER = config.username || 'lbws';
+var MYSQL_PASSWORD = config.password || 'hbx42rec';
 
 describe('end-to-end', function() {
   describe('api-server template', function() {
@@ -364,7 +366,8 @@ describe('end-to-end', function() {
               if (err) return done(err);
               expect(status, 'status').to.be.false;
               expect(pingError, 'pingError').to.exist;
-              expect(pingError.code).to.equal('ER_ACCESS_DENIED_ERROR');
+              expect(pingError.code === 'ECONNREFUSED' ||
+                pingError.code === 'ER_ACCESS_DENIED_ERROR').to.be.true;
               done();
             });
           });
@@ -377,7 +380,8 @@ describe('end-to-end', function() {
           facetName: 'server',
           name: 'mysql',
           connector: 'mysql',
-          port: null, // use default
+          host: config.host || 'localhost',
+          port: config.port || null, // use default
           database: MYSQL_DATABASE,
           user: MYSQL_USER,
           password: MYSQL_PASSWORD
@@ -563,6 +567,8 @@ describe('end-to-end', function() {
 
 function setupConnection(done) {
   var connection = mysql.createConnection({
+    host: config.host || 'localhost',
+    port: config.port || null, // use default
     database: MYSQL_DATABASE,
     user: MYSQL_USER,
     password: MYSQL_PASSWORD
@@ -633,6 +639,8 @@ function configureMySQLDataSource(done) {
       if (err) return done(err);
       ds.connector = 'mysql';
       // settings prepared by bin/setup-mysql.js
+      ds.host = config.host || 'localhost',
+      ds.port = config.port || null, // use default
       ds.database = MYSQL_DATABASE;
       ds.user = MYSQL_USER;
       ds.password = MYSQL_PASSWORD;
