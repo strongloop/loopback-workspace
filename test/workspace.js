@@ -55,6 +55,28 @@ describe('Workspace', function() {
     });
   });
 
+  describe('Workspace.addComponent(options, cb) with subclassing', function () {
+    beforeEach(resetWorkspace);
+    beforeEach(givenEmptySandbox);
+
+    it('should add the static files', function(done) {
+      Workspace.addComponent({
+        template: 'api-server',
+        subclassingBuiltinModels: true,
+        root: true
+      }, function(err) {
+        if (err) return done(err);
+        expectFileExists(getPath('common/models/user.json'));
+        expectFileExists(getPath('common/models/access-token.json'));
+        expectFileExists(getPath('common/models/role.json'));
+        expectFileExists(getPath('common/models/acl.json'));
+        expectFileExists(getPath('common/models/application.json'));
+        expectFileExists(getPath('common/models/role-mapping.json'));
+        done();
+      });
+    });
+  });
+
   describe('Workspace.createFromTemplate(templateName, callback)', function() {
     beforeEach(givenBasicWorkspace);
     beforeEach(findAllEntities);
