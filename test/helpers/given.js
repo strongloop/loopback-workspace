@@ -8,19 +8,24 @@ var given = module.exports;
  * @param {function(Error=)} done callback
  */
 given.uniqueServerPort = function(done) {
-  var FacetSetting = models.FacetSetting;
 
   // Use PID to generate a port number in the range 10k-50k
   // that is unique for each test process
   var port = 10000 + (process.pid % 40000);
 
-  var props =  { facetName: 'server', name: 'port' };
+  given.facetSetting('server', 'port', port, done);
+};
+
+given.facetSetting = function(facetName, settingName, settingValue, done) {
+  var FacetSetting = models.FacetSetting;
+
+  var props =  { facetName: facetName, name: settingName };
   FacetSetting.findOne({ where: props }, function(err, entry) {
     if (err) return done(err);
     if (!entry)
       entry = new FacetSetting(props);
 
-    entry.value = port;
+    entry.value = settingValue;
     entry.save(done);
   });
 };

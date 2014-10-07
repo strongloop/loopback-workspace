@@ -290,12 +290,21 @@ Workspace.start = function(cb) {
 
     try {
       debug('starting a child process in %s', process.env.WORKSPACE_DIR);
+
+      // Forward env variables like PATH, but remove HOST and PORT
+      // to prevent the target app from listening on the same host:port
+      // as the workspace is listening
+      var env = extend({}, process.env);
+      delete env.PORT;
+      delete env.HOST;
+
       Workspace._child = spawn(
         process.execPath,
         ['.'],
         {
           cwd: process.env.WORKSPACE_DIR,
-          stdio: 'inherit'
+          stdio: 'inherit',
+          env: env
         });
     } catch(err) {
       debug('spawn failed %s', err);
