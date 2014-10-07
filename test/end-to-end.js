@@ -424,11 +424,14 @@ describe('end-to-end', function() {
         .buildTo(this, done);
     });
 
-    before(function setupServerPort(done) {
+    beforeEach(function setupServerHostAndPort(done) {
       given.uniqueServerPort(function(err, portEntry) {
         if (err) return done(err);
-        appUrl = 'http://localhost:' + portEntry.value;
-        done();
+        given.facetSetting('server', 'host', 'localhost', function(err) {
+          if (err) return done(err);
+          appUrl = 'http://localhost:' + portEntry.value;
+          done();
+        });
       });
     });
 
@@ -445,9 +448,7 @@ describe('end-to-end', function() {
         .end(function(err, res) {
           if (err) return done(err);
           expect(res.body).to.have.property('pid');
-          request(appUrl).get('/api/products')
-            .expect(200)
-            .end(done);
+          expectAppIsRunning(done);
         });
     });
 
@@ -464,9 +465,7 @@ describe('end-to-end', function() {
             .end(function(err) {
               if (err) return done(err);
               // localhost:3000 is the default value provided by loopback
-              request('http://localhost:3000').get('/api/products')
-                .expect(200)
-                .end(done);
+              expectAppIsRunning('http://localhost:3000', done);
             });
         });
     });
@@ -558,6 +557,35 @@ describe('end-to-end', function() {
           });
       });
     });
+
+    it('does not forward env.PORT', function(done) {
+      process.env.PORT = 80;
+      models.Workspace.start(function(err) {
+        delete process.env.PORT;
+        if (err) return done(err);
+        expectAppIsRunning(done);
+      });
+    });
+
+    it('does not forward env.HOST', function(done) {
+      process.env.HOST = 'invalid-hostname';
+      models.Workspace.start(function(err) {
+        delete process.env.PORT;
+        if (err) return done(err);
+        expectAppIsRunning(done);
+      });
+    });
+
+    function expectAppIsRunning(appBaseUrl, done) {
+      if (typeof appBaseUrl === 'function' && done === undefined) {
+        done = appBaseUrl;
+        appBaseUrl = appUrl;
+      }
+
+      request(appBaseUrl).get('/api/products')
+        .expect(200)
+        .end(done);
+    }
   });
 });
 
