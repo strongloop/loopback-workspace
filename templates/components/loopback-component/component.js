@@ -5,10 +5,11 @@
 var template = module.exports;
 
 template.package = {
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "pretest": "jshint ."
   },
+  "main": "index.js",
   "dependencies": {
   },
   // LoopBack component MUST have a "loopback-component" keyword
@@ -38,10 +39,8 @@ template.server = {
 
   modelConfigs: [
   ],
-  /*
   datasources: [
   ]
-  */
 };
 
 template.client = null;
