@@ -20,6 +20,9 @@ template.package = {
   },
   "optionalDependencies": {
     "loopback-explorer": "^1.1.0"
+  },
+  "devDependencies": {
+    "jshint": "^2.5.6"
   }
 };
 
