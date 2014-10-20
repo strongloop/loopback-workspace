@@ -207,10 +207,11 @@ describe('ModelDefinition', function() {
     });
 
     describe('order of keys', function() {
+      before(givenBasicWorkspace);
       before(function buildModelAndRelatedEntities(done) {
         new TestDataBuilder()
           .define('model', ModelDefinition, {
-            facetName: this.serverFacet,
+            facetName: 'server',
             name: 'a-name',
             custom: true
           })
@@ -224,6 +225,7 @@ describe('ModelDefinition', function() {
             modelId: ref('model.id'),
             facetName: undefined, // do not auto-generate a value
             name: 'id',
+            type: 'string',
             isId: true,
             custom: true
           })

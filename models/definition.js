@@ -128,6 +128,13 @@ Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
       Object.keys(relatedData).forEach(function(embedId) {
         var config = relatedData[embedId];
 
+        if (relation.model === 'ModelProperty' && !config.type) {
+          // expand shorthand notation
+          config = { type: config };
+          debug('expanded model property %s.%s defined as %j',
+            fileData.name, embedId, config);
+        }
+
         // apply `json` config from LDL property definitions
         Object.keys(properties).forEach(function(p) {
           var json = properties[p].json;

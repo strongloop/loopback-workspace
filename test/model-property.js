@@ -1,4 +1,5 @@
 var app = require('../app');
+var given = require('./helpers/given');
 var ModelProperty = app.models.ModelProperty;
 var ModelDefinition = app.models.ModelDefinition;
 var ConfigFile = app.models.ConfigFile;
@@ -105,6 +106,47 @@ describe('ModelProperty', function() {
         expect(actual).to.eql(expected);
         done();
       }.bind(this));
+    });
+
+    it('handles shorthand notation', function(done) {
+      given.modelDefinition('common', {
+        name: 'ShortProp',
+        properties: { name: 'string' }
+      });
+
+      ModelProperty.findOne(
+        { where: { id: 'common.ShortProp.name' } },
+        function(err, def) {
+          if (err) return done(err);
+          expect(def.type).to.equal('string');
+          done();
+        }
+      );
+    });
+
+    it('handles array shorthand notation', function(done) {
+      given.modelDefinition('common', {
+        name: 'ShortProp',
+        properties: { name: ['string'] }
+      });
+
+      ModelProperty.findOne(
+        { where: { id: 'common.ShortProp.name' } },
+        function(err, def) {
+          if (err) return done(err);
+          expect(def.type).to.eql(['string']);
+          done();
+        }
+      );
+    });
+
+    it('handles properties of built-in loopback models', function(done) {
+      given.loopBackInSandboxModules();
+      ModelProperty.all(function(err, list) {
+        // This is a smoke test,
+        // it passes as long as the properties were loaded.
+        done(err);
+      });
     });
   });
 });
