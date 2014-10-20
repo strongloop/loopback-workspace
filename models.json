@@ -121,6 +121,7 @@
     "properties": {
       "id": {"type": "string", "id": true, "json": false},
       "facetName": {"type": "string", "required": true, "json": false},
+      "readonly": { "type": "boolean", "json": false },
       "name": {"type": "string", "required": true},
       "plural": "string",
       "base": "string",

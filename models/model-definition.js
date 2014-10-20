@@ -103,6 +103,9 @@ ModelDefinition.toFilename = function(name) {
 
 ModelDefinition.removeById = function(id, cb) {
   this.findById(id, function(err, modelDef) {
+    if (modelDef.readonly) {
+      return cb(new Error('Cannot remove readonly model ' + id));
+    }
     var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
     var file = new ConfigFile({path: p});
     file.remove(cb);

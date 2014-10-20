@@ -1,3 +1,5 @@
+var fs = require('fs-extra');
+var path = require('path');
 var models = require('../../app').models;
 
 var given = module.exports;
@@ -28,4 +30,10 @@ given.facetSetting = function(facetName, settingName, settingValue, done) {
     entry.value = settingValue;
     entry.save(done);
   });
+};
+
+given.loopBackInSandboxModules = function() {
+  var src = path.resolve(__dirname, '../../node_modules/loopback');
+  var dest = path.resolve(SANDBOX, 'node_modules', 'loopback');
+  fs.copySync(src, dest);
 };
