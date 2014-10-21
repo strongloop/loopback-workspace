@@ -13,8 +13,8 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "errorhandler": "^1.1.1",
-    "loopback": "^2.0.0",
-    "loopback-boot": "^2.0.0",
+    "loopback": "^2.5.0",
+    "loopback-boot": "^2.2.0",
     "loopback-datasource-juggler": "^2.7.0",
     "serve-favicon": "^2.0.1"
   },
@@ -33,7 +33,12 @@ template.common = {
 template.server = {
   facet: {
     modelsMetadata: {
-      sources: ['../common/models', './models']
+      sources: [
+        'loopback/common/models',
+        'loopback/server/models',
+        '../common/models',
+        './models',
+      ]
     }
   },
 
