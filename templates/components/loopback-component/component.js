@@ -9,8 +9,11 @@ template.package = {
   "scripts": {
     "pretest": "jshint ."
   },
-  "main": "index.js",
+  "main": "server/server.js",
   "dependencies": {
+  },
+  "devDependencies": {
+    "loopback": "^2.0.0"
   },
   // LoopBack component MUST have a "loopback-component" keyword
   "keywords": [
