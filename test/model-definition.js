@@ -1,5 +1,6 @@
 var app = require('../app');
 var fs = require('fs');
+var given = require('./helpers/given');
 var ModelDefinition = app.models.ModelDefinition;
 var ModelAccessControl = app.models.ModelAccessControl;
 var ModelProperty = app.models.ModelProperty;
@@ -68,6 +69,27 @@ describe('ModelDefinition', function() {
             });
           });
         });
+      });
+    });
+  });
+
+  describe('loader', function() {
+    beforeEach(givenBasicWorkspace);
+
+    it('discovers LoopBack built-in models', function(done) {
+      given.loopBackInSandboxModules();
+      ModelDefinition.find(function(err, list) {
+        if (err) return done(err);
+        var entries = list.map(function(modelDef) {
+          return modelDef.name + (modelDef.readonly ? ' (RO)' : '');
+        });
+
+        expect(entries).to.include.members([
+          'Application (RO)',
+          'Email (RO)',
+          'User (RO)'
+        ]);
+        done();
       });
     });
   });
@@ -185,10 +207,11 @@ describe('ModelDefinition', function() {
     });
 
     describe('order of keys', function() {
+      before(givenBasicWorkspace);
       before(function buildModelAndRelatedEntities(done) {
         new TestDataBuilder()
           .define('model', ModelDefinition, {
-            facetName: this.serverFacet,
+            facetName: 'server',
             name: 'a-name',
             custom: true
           })
@@ -202,6 +225,7 @@ describe('ModelDefinition', function() {
             modelId: ref('model.id'),
             facetName: undefined, // do not auto-generate a value
             name: 'id',
+            type: 'string',
             isId: true,
             custom: true
           })
