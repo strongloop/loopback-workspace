@@ -122,6 +122,7 @@
       "id": {"type": "string", "id": true, "json": false},
       "facetName": {"type": "string", "required": true, "json": false},
       "name": {"type": "string", "required": true},
+      "description": {"type": "string"},
       "plural": "string",
       "base": "string",
       "strict": "boolean",
@@ -263,7 +264,7 @@
       "generated": {"type": "boolean"},
       "required": {"type": "boolean"},
       "index": {"type": "boolean"},
-      "desc": {"type": "string"}
+      "description": {"type": "string"}
     },
     "public": true,
     "dataSource": "db",

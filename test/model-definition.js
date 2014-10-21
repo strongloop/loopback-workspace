@@ -224,6 +224,7 @@ describe('ModelDefinition', function() {
       it('is correct for models', function() {
         expect(Object.keys(this.data)).to.eql([
           'name',
+          'description',
           'plural',
           'base',
           'strict',
@@ -248,7 +249,7 @@ describe('ModelDefinition', function() {
           'generated',
           'required',
           'index',
-          'desc',
+          'description',
           'custom'
         ]);
       });
