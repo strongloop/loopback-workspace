@@ -116,6 +116,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
         var def = configFile.data || {};
         def.facetName = facetName;
         def.configFile = configFile.path;
+        def.readonly = !!configFile.isReadOnly;
 
         debug('loading [%s] model definition into cache', def.name);
 
@@ -245,6 +246,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
 
   cachedModels.forEach(function(modelDef) {
     debug('model definition ~ %j', modelDef);
+    if (modelDef.readonly) return;
     if(modelDef.facetName === facetName) {
       var modelConfigFile = ModelDefinition.getConfigFile(facetName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigFromCache(cache, modelDef);

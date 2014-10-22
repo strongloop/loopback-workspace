@@ -1,5 +1,6 @@
 var app = require('./app');
 var loopback = require('loopback');
+var path = require('path');
 var connector = app.dataSources.db.connector;
 var Facet = app.models.Facet;
 var ConfigFile = app.models.ConfigFile;
@@ -140,6 +141,43 @@ connector._loadFromFile = function(cb) {
         });
       }, done);
     });
+  });
+
+  tasks.push(function loadLoopBackModels(done) {
+    // NOTE(bajtos) a short-term solution for loading loopback models
+    // It should be replaced by a full-fledged component-loader soon,
+    // see https://github.com/strongloop/loopback-workspace/issues/159
+    var LoopBackConfigFile = getOrCreateLoopBackConfigModel();
+    LoopBackConfigFile.findFacetFiles(function(err, loopbackFiles) {
+      if (err) return done(err);
+      if (!loopbackFiles.common) return done();
+
+      Facet.loadIntoCache(cache, 'common', loopbackFiles, function(err) {
+        if (err) return done(err);
+        commit();
+        done();
+      });
+    });
+
+    function getOrCreateLoopBackConfigModel() {
+      var LoopBackConfigFile = loopback.findModel('LoopBackConfigFile');
+      if (LoopBackConfigFile) return LoopBackConfigFile;
+
+      LoopBackConfigFile = ConfigFile.extend('LoopBackConfigFile');
+
+      // Override `getWorkspaceDir` to return node_modules/loopback
+      LoopBackConfigFile.getWorkspaceDir = function() {
+        var workspaceDir = LoopBackConfigFile.base.getWorkspaceDir();
+        return path.join(workspaceDir, 'node_modules', 'loopback');
+      };
+
+      // Override `isReadOnly` to be always `true`
+      Object.defineProperty(LoopBackConfigFile.prototype, 'isReadOnly', {
+        value: true
+      });
+
+      return LoopBackConfigFile;
+    }
   });
 
   tasks.push(function(done) {

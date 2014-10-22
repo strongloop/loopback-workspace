@@ -20,7 +20,7 @@ var Definition = app.model('Definition', {
     },
     "dir": {
       "type": "string",
-      "desc": "the directory name where the definition is persisted",
+      "description": "the directory name where the definition is persisted",
       "json": false
     }
   },
@@ -127,6 +127,13 @@ Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
     } else if(relatedData) {
       Object.keys(relatedData).forEach(function(embedId) {
         var config = relatedData[embedId];
+
+        if (relation.model === 'ModelProperty' && !config.type) {
+          // expand shorthand notation
+          config = { type: config };
+          debug('expanded model property %s.%s defined as %j',
+            fileData.name, embedId, config);
+        }
 
         // apply `json` config from LDL property definitions
         Object.keys(properties).forEach(function(p) {

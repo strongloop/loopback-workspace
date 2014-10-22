@@ -45,7 +45,12 @@ describe('Facet', function () {
       var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
       expect(content).to.have.property('_meta');
       expect(content._meta).to.eql({
-        sources: ['../common/models', './models']
+        sources: [
+          'loopback/common/models',
+          'loopback/server/models',
+          '../common/models',
+          './models'
+        ]
       });
     });
 

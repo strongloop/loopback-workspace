@@ -640,7 +640,7 @@ function execNpm(args, options, cb) {
 
 function installSandboxPackages(cb) {
   this.timeout(300 * 1000);
-  install(SANDBOX, PKG_CACHE, cb);
+  install(SANDBOX, PKG_CACHE, ['dependencies', 'devDependencies'], cb);
 }
 
 function listTableNames(connection, cb) {

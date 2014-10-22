@@ -63,7 +63,7 @@ ConfigFile.loadFromPath = function(path, cb) {
 ConfigFile.prototype.load = function(cb) {
   var configFile = this;
   if(!this.path) return cb(new Error('no path specified'));
-  var absolutePath = ConfigFile.toAbsolutePath(this.path);
+  var absolutePath = configFile.constructor.toAbsolutePath(this.path);
   async.waterfall([
     configFile.exists.bind(configFile),
     load,
@@ -159,7 +159,7 @@ ConfigFile.getWorkspaceDir = function() {
  */
 
 ConfigFile.toAbsolutePath = function(relativePath) {
-  return path.join(ConfigFile.getWorkspaceDir(), relativePath);
+  return path.join(this.getWorkspaceDir(), relativePath);
 }
 
 /**
@@ -167,10 +167,12 @@ ConfigFile.toAbsolutePath = function(relativePath) {
  */
 
 ConfigFile.prototype.getAbsolutePath = function() {
-  return ConfigFile.toAbsolutePath(this.path);
+  return this.constructor.toAbsolutePath(this.path);
 }
 
 ConfigFile.find = function(entityFilter, cb) {
+  var Ctor = this;
+
   if (!cb) {
     cb = entityFilter;
     entityFilter = function() { return true; };
@@ -199,7 +201,7 @@ ConfigFile.find = function(entityFilter, cb) {
     merged = merged.concat.apply(merged, paths);
 
     var configFiles = merged.map(function(filePath) {
-      return new ConfigFile({path: filePath});
+      return new Ctor({path: filePath});
     });
     cb(null, configFiles);
   });
@@ -233,7 +235,7 @@ ConfigFile.prototype.getFacetName = function() {
 }
 
 ConfigFile.findFacetFiles = function(cb) {
-  ConfigFile.find(entityBelongsToFacet, function(err, configFiles) {
+  this.find(entityBelongsToFacet, function(err, configFiles) {
     if(err) return cb(err);
 
     var result =
@@ -250,7 +252,7 @@ function entityBelongsToFacet(name, definition) {
 }
 
 ConfigFile.findPackageDefinitions = function(cb) {
-  ConfigFile.find(
+  this.find(
     function(name/*, definition*/) { return name === 'PackageDefinition'; },
     cb);
 };
