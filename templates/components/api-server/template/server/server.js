@@ -1,13 +1,16 @@
 var loopback = require('loopback');
 var boot = require('loopback-boot');
+var serveFavicon = require('serve-favicon');
+var compression = require('compression');
+var errorHandler = require('errorhandler');
 
 var app = module.exports = loopback();
 
-// Set up the /favicon.ico
-app.use(loopback.favicon());
+// Set up the /favicon.ico, use loopback's icon by default
+app.use(serveFavicon(loopback.faviconFile));
 
 // request pre-processing middleware
-app.use(loopback.compress());
+app.use(compression());
 
 // -- Add your pre-processing middleware here --
 
@@ -27,7 +30,7 @@ boot(app, __dirname);
 app.use(loopback.urlNotFound());
 
 // The ultimate error handler.
-app.use(loopback.errorHandler());
+app.use(errorHandler());
 
 app.start = function() {
   // start the web server
