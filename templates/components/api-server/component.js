@@ -40,7 +40,32 @@ template.server = {
   config: [
     { name: 'restApiRoot', value: '/api' },
     { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
-    { name: 'port', value: 3000 }
+    { name: 'port', value: 3000 },
+    { name: 'remoting', value: {
+        context: {
+          enableHttpContext: false
+        },
+        rest: {
+          normalizeHttpPath: false,
+          xml: false,
+          supportedTypes: ['json', 'application/javascript', 'text/javascript']
+        },
+        json: {
+          strict: false,
+          limit: '100kb'
+        },
+        urlencoded: {
+          extended: true,
+          limit: '100kb'
+        },
+        cors: {
+          origin: true,
+          credentials: true
+        },
+        errorHandler: {
+          disableStackTrace: false
+        }
+    }}
   ],
 
   modelConfigs: [
