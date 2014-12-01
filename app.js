@@ -61,9 +61,13 @@ try {
     console.log('Browse your REST API at %s%s', baseUrl, explorer.route);
   });
 } catch(e){
-  console.log(
-    'Run `npm install loopback-explorer` to enable the LoopBack explorer'
-  );
+  // Print the message only when the app was started via `app.listen()`.
+  // Do not print any message when the project is used as a component.
+  app.once('started', function(baseUrl) {
+    console.log(
+      'Run `npm install loopback-explorer` to enable the LoopBack explorer'
+    );
+  });
 }
 
 /*
