@@ -113,6 +113,21 @@ describe('end-to-end', function() {
       ], done);
     });
 
+    it('includes all built-in phases in `middleware.json`', function(done) {
+      var builtinPhases = readBuiltinPhasesFromSanbox();
+
+      var middleware = fs.readJsonFileSync(
+        path.resolve(SANDBOX, 'server/middleware.json'));
+      var phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
+
+      expect(phaseNames).to.eql(builtinPhases);
+      done();
+
+      function isNameOfMainPhase(name) {
+        return !/:(before|after)$/.test(name);
+      }
+    });
+
     it('passes scaffolded tests', function(done) {
       execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
         done(err);
@@ -682,4 +697,11 @@ function configureCustomModel(done) {
     dataSource: 'db',
     facetName: 'server'
   }, done);
+}
+
+function readBuiltinPhasesFromSanbox() {
+  var loopback = require(SANDBOX + '/node_modules/loopback');
+  var app = loopback();
+  app.lazyrouter(); // initialize request handling phases
+  return app._requestHandlingPhases.getPhaseNames();
 }
