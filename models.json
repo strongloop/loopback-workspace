@@ -128,7 +128,7 @@
       "base": "string",
       "strict": "boolean",
       "public": "boolean",
-      "idInjection": "boolean",
+      "idInjection": { "type": "boolean", "default": true },
       "scopes": "object",
       "indexes": "object",
       "options": "object"

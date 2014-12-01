@@ -10,7 +10,7 @@ var ref = TestDataBuilder.ref;
 var ConfigFile = app.models.ConfigFile;
 
 describe('ModelDefinition', function() {
-  
+
   describe('CRUD', function () {
     beforeEach(givenBasicWorkspace);
 
@@ -46,6 +46,10 @@ describe('ModelDefinition', function() {
           expect(exists).to.equal(true);
           done();
         });
+      });
+
+      it('should set `idInjection` to true by default', function() {
+        expect(this.modelDef.idInjection).to.equal(true);
       });
     });
 
