@@ -52,8 +52,7 @@ template.server = {
         },
         rest: {
           normalizeHttpPath: false,
-          xml: false,
-          supportedTypes: ['json', 'application/javascript', 'text/javascript']
+          xml: false
         },
         json: {
           strict: false,
