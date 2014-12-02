@@ -1,3 +1,15 @@
+2014-12-02, Version 3.6.0
+=========================
+
+ * api-server: remove static middleware placeholder (Miroslav Bajtoš)
+
+ * Remove supportedTypes (Raymond Feng)
+
+ * template/api-server: introduce middleware.json (Miroslav Bajtoš)
+
+ * Add remoting options to server/config.json (Raymond Feng)
+
+
 2014-12-01, Version 3.5.2
 =========================
 
@@ -227,15 +239,6 @@
 
  * Allow modelProperty.type to be any value instead of object (Ritchie Martori)
 
- * 3.0.0-beta2 (Miroslav Bajtoš)
-
- * ModelProperty: support `['string']` type (Miroslav Bajtoš)
-
-
-2014-07-17, Version 3.0.0-beta1
-===============================
-
-
 
 2014-07-17, Version 3.0.0-beta2
 ===============================
@@ -243,6 +246,10 @@
  * 3.0.0-beta2 (Miroslav Bajtoš)
 
  * ModelProperty: support `['string']` type (Miroslav Bajtoš)
+
+
+2014-07-17, Version 3.0.0-beta1
+===============================
 
  * 3.0.0-beta1 (Miroslav Bajtoš)
 
