@@ -3,16 +3,9 @@ var boot = require('loopback-boot');
 
 var app = module.exports = loopback();
 
-// boot scripts mount components like REST API
+// Bootstrap the application, configure models, datasources and middleware.
+// Sub-apps like REST API are mounted via boot scripts.
 boot(app, __dirname);
-
-// -- Mount static files here--
-// All static middleware should be registered at the end, as all requests
-// passing the static middleware are hitting the file system
-// Example:
-//   var path = require('path');
-//   app.middleware('files', loopback.static(
-//     path.resolve(__dirname, '../client')));
 
 app.start = function() {
   // start the web server
