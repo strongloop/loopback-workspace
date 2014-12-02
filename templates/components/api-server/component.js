@@ -13,8 +13,8 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "errorhandler": "^1.1.1",
-    "loopback": "^2.5.0",
-    "loopback-boot": "^2.2.0",
+    "loopback": "^2.8.0",
+    "loopback-boot": "^2.4.0",
     "loopback-datasource-juggler": "^2.7.0",
     "serve-favicon": "^2.0.1"
   },
@@ -45,7 +45,31 @@ template.server = {
   config: [
     { name: 'restApiRoot', value: '/api' },
     { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
-    { name: 'port', value: 3000 }
+    { name: 'port', value: 3000 },
+    { name: 'remoting', value: {
+        context: {
+          enableHttpContext: false
+        },
+        rest: {
+          normalizeHttpPath: false,
+          xml: false
+        },
+        json: {
+          strict: false,
+          limit: '100kb'
+        },
+        urlencoded: {
+          extended: true,
+          limit: '100kb'
+        },
+        cors: {
+          origin: true,
+          credentials: true
+        },
+        errorHandler: {
+          disableStackTrace: false
+        }
+    }}
   ],
 
   modelConfigs: [
