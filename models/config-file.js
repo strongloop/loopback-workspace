@@ -5,7 +5,7 @@ var async = require('async');
 var fs = require('fs-extra');
 var glob = require('glob');
 var ROOT_COMPONENT = '.';
-var groupBy = require('underscore').groupBy;
+var groupBy = require('lodash').groupBy;
 var debug = require('debug')('workspace:config-file');
 
 // Use fs.read to ensure we get exactly what is in the JSON file
