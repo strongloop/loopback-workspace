@@ -1,7 +1,7 @@
 var loopback = require('loopback');
 var path = require('path');
 var app = require('../app');
-var clone = require('underscore').clone;
+var clone = require('lodash').clone;
 var debug = require('debug')('workspace:definition');
 var ConfigFile = app.models.ConfigFile;
 
