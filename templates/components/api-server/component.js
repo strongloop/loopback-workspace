@@ -12,6 +12,7 @@ template.package = {
   },
   "dependencies": {
     "compression": "^1.0.3",
+    "cors": "^2.5.2",
     "errorhandler": "^1.1.1",
     "loopback": "^2.8.0",
     "loopback-boot": "^2.4.0",
