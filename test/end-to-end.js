@@ -275,6 +275,15 @@ describe('end-to-end', function() {
           done();
         });
       });
+
+      it('should set the correct base model', function(done) {
+        db.discoverModelDefinition('simple', function(err, modelDefinition) {
+          if (err) return done(err);
+          expect(modelDefinition.base || modelDefinition.options.base)
+            .to.equal('PersistedModel');
+          done();
+        });
+      });
     });
   });
 
@@ -703,5 +712,5 @@ function readBuiltinPhasesFromSanbox() {
   var loopback = require(SANDBOX + '/node_modules/loopback');
   var app = loopback();
   app.lazyrouter(); // initialize request handling phases
-  return app._requestHandlingPhases.getPhaseNames();
+  return app._requestHandlingPhases;
 }

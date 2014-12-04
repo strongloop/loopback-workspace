@@ -1,3 +1,43 @@
+2015-01-15, Version 3.6.5
+=========================
+
+ * Fix handling of workspaces with nested packages (Miroslav Bajtoš)
+
+ * Facet: remove PackageDefinition-related code (Miroslav Bajtoš)
+
+ * Fix the test case (Raymond Feng)
+
+
+2015-01-07, Version 3.6.4
+=========================
+
+ * Add description/repostiory/readme to avoid npm warnings (Raymond Feng)
+
+ * Fix bad CLA URL in CONTRIBUTING.md (Ryan Graham)
+
+ * available-connectors: add Couchbase connector (Miroslav Bajtoš)
+
+
+2014-12-15, Version 3.6.3
+=========================
+
+ * Set base model of discovered models (Miroslav Bajtoš)
+
+
+2014-12-11, Version 3.6.2
+=========================
+
+ * Fix discovery of model properties with id:true (Miroslav Bajtoš)
+
+ * Update chai to ^1.10 (Miroslav Bajtoš)
+
+
+2014-12-08, Version 3.6.1
+=========================
+
+ * Remove underscore (Ryan Graham)
+
+
 2014-12-02, Version 3.6.0
 =========================
 
@@ -415,17 +455,6 @@
 
  * Upgrade to loopback@1.10.0 (Raymond Feng)
 
- * Bump version (Raymond Feng)
-
- * Fix the test case (Raymond Feng)
-
- * Update datasources to reflect new push component. (Dave Bryand)
-
-
-2014-07-01, Version 2.5.1
-=========================
-
-
 
 2014-07-01, Version 2.5.2
 =========================
@@ -435,6 +464,10 @@
  * Fix the test case (Raymond Feng)
 
  * Update datasources to reflect new push component. (Dave Bryand)
+
+
+2014-07-01, Version 2.5.1
+=========================
 
  * Update deps (Raymond Feng)
 

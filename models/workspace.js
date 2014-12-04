@@ -79,6 +79,7 @@ Workspace.addComponent = function(options, cb) {
   var templateName = options.template || DEFAULT_TEMPLATE;
   var name = options.name || templateName;
   var packageName = options.packageName || name;
+  var description = options.description || packageName;
   if (options.root) name = ConfigFile.ROOT_COMPONENT;
   var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
 
@@ -104,6 +105,7 @@ Workspace.addComponent = function(options, cb) {
 
   if (template.package) {
      template.package.name = packageName;
+     template.package.description = description;
      steps.push(function(cb) {
        PackageDefinition.create(template.package, cb);
      });

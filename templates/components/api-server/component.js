@@ -5,13 +5,14 @@
 var template = module.exports;
 
 template.package = {
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "server/server.js",
   "scripts": {
     "pretest": "jshint .",
   },
   "dependencies": {
     "compression": "^1.0.3",
+    "cors": "^2.5.2",
     "errorhandler": "^1.1.1",
     "loopback": "^2.8.0",
     "loopback-boot": "^2.4.0",
@@ -23,6 +24,11 @@ template.package = {
   },
   "devDependencies": {
     "jshint": "^2.5.6"
+  },
+  // Avoid NPM warning
+  "repository": {
+    "type": "",
+    "url": ""
   }
 };
 

@@ -7,7 +7,6 @@ var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var ModelConfig = app.models.ModelConfig;
 var ConfigFile = app.models.ConfigFile;
-var PackageDefinition = app.models.PackageDefinition;
 var FacetSetting = app.models.FacetSetting;
 
 /**
@@ -42,7 +41,6 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   var modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
   var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
-  var packageFile = ConfigFile.getFileByBase(configFiles, 'package');
   var steps = [];
 
   var facetData = {
@@ -50,16 +48,6 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   };
   debug('adding to cache facet [%s]');
   var facetId = Facet.addToCache(cache, facetData);
-
-  if(packageFile) {
-    steps.push(function(cb) {
-      packageFile.load(cb);
-    }, function(cb) {
-      packageFile.data.facetName = facetName;
-      PackageDefinition.addToCache(cache, packageFile.data || {});
-      cb();
-    });
-  }
 
   if(facetConfig) {
     steps.push(function(cb) {
@@ -195,17 +183,6 @@ Facet.saveToFs = function(cache, facetData, cb) {
 
     addFileToSave(facetConfigFile);
   }
-
-  PackageDefinition.allFromCache(cache).forEach(function(package) {
-    if(package.facetName === facetName) {
-      var packageFile = new ConfigFile({
-        path: PackageDefinition.getPath(facetName, package),
-        data: package
-      });
-      delete package.facetName;
-      addFileToSave(packageFile);
-    }
-  });
 
   if (hasApp) {
     var dataSoureConfig = {};
