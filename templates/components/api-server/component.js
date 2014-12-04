@@ -12,6 +12,7 @@ template.package = {
   },
   "dependencies": {
     "compression": "^1.0.3",
+    "cors": "^2.5.2",
     "errorhandler": "^1.1.1",
     "loopback": "^2.14.0",
     "loopback-boot": "^2.6.5",
@@ -67,10 +68,7 @@ template.server = {
           extended: true,
           limit: '100kb'
         },
-        cors: {
-          origin: true,
-          credentials: true
-        },
+        cors: false,
         errorHandler: {
           disableStackTrace: false
         }
