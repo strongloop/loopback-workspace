@@ -1,6 +1,6 @@
 {
   "name": "loopback-workspace",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "main": "app.js",
   "scripts": {
     "pretest": "test -z \"$JENKINS_HOME\" || (echo | node bin/setup-mysql.js)",
@@ -31,7 +31,6 @@
     "serve-favicon": "^2.0.1",
     "strong-wait-till-listening": "^1.0.0",
     "temp": "~0.8.0",
-    "underscore": "~1.6.0",
     "underscore.string": "~2.3.3"
   },
   "optionalDependencies": {
