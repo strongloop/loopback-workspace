@@ -405,7 +405,8 @@ DataSourceDefinition.prototype.createModel = function(discoveredDef, cb) {
 
   function createProperties(cb) {
     async.each(properties, function(property, cb) {
-      modelDefinition.properties.create(property, cb);
+      var data = ModelProperty.getDataFromConfig(property);
+      modelDefinition.properties.create(data, cb);
     }, cb);
   }
 

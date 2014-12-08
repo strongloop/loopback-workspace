@@ -176,7 +176,12 @@ describe('DataSourceDefinition', function() {
       this.basic.createModel({
         name: 'BasicModel',
         properties: {
-          id: {type: 'number'},
+          id: {
+            type: 'number',
+            // NOTE: the discovery data uses `id` as the property name,
+            // but the workspace API uses `isId` as the property name instead
+            id: true
+          },
           name: {type: 'string'}
         },
         options: {
@@ -190,13 +195,22 @@ describe('DataSourceDefinition', function() {
           name: 'BasicModel'
         }
       }, function(err, modelDefinition) {
-        expect(err).to.not.exist;
-        expect(modelDefinition).to.exist;
+        expect(err).to.not.exist();
+        expect(modelDefinition).to.exist();
         expect(modelDefinition.name).to.equal('BasicModel');
         expect(modelDefinition.facetName).to.equal('common');
-        done();
+        modelDefinition.properties(
+          { where: { name: 'id' } },
+          function(err, list) {
+            if (err) return done(err);
+            expect(list).to.have.length(1);
+            var idProp = list[0];
+            expect(idProp.isId).to.be.true();
+            done();
+          });
       });
     });
+
     it('should create a model config', function(done) {
       var test = this;
       app.models.ModelConfig.findOne({

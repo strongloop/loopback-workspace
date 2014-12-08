@@ -135,14 +135,7 @@ Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
             fileData.name, embedId, config);
         }
 
-        // apply `json` config from LDL property definitions
-        Object.keys(properties).forEach(function(p) {
-          var json = properties[p].json;
-          if (json) {
-            config[p] = config[json];
-            delete config[json];
-          }
-        });
+        config = Entity.getDataFromConfig(config);
 
         // add extra properties for relations
         config[relation.foreignKey] = fk;
@@ -164,4 +157,3 @@ Definition.addToCache = function(cache, val) {
   });
   return Definition.base.addToCache.call(this, cache, data);
 };
-
