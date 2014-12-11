@@ -1,4 +1,5 @@
 var path = require('path');
+var cloneDeep = require('lodash').cloneDeep;
 var app = require('../app');
 var WorkspaceEntity = app.model('WorkspaceEntity', {
   "properties": {
@@ -141,6 +142,21 @@ WorkspaceEntity.getConfigFromData = function(data) {
   }
 
   return result;
+};
+
+WorkspaceEntity.getDataFromConfig = function(config) {
+  var properties = this.definition.properties;
+  config = cloneDeep(config);
+
+  Object.keys(properties).forEach(function(p) {
+    var json = properties[p].json;
+    if (json) {
+      config[p] = config[json];
+      delete config[json];
+    }
+  });
+
+  return config;
 };
 
 // Automatically inject parent model's facetName when creating a new object
