@@ -1,3 +1,11 @@
+2014-12-11, Version 3.6.2
+=========================
+
+ * Fix discovery of model properties with id:true (Miroslav Bajtoš)
+
+ * Update chai to ^1.10 (Miroslav Bajtoš)
+
+
 2014-12-08, Version 3.6.1
 =========================
 
@@ -421,17 +429,6 @@
 
  * Upgrade to loopback@1.10.0 (Raymond Feng)
 
- * Bump version (Raymond Feng)
-
- * Fix the test case (Raymond Feng)
-
- * Update datasources to reflect new push component. (Dave Bryand)
-
-
-2014-07-01, Version 2.5.1
-=========================
-
-
 
 2014-07-01, Version 2.5.2
 =========================
@@ -441,6 +438,10 @@
  * Fix the test case (Raymond Feng)
 
  * Update datasources to reflect new push component. (Dave Bryand)
+
+
+2014-07-01, Version 2.5.1
+=========================
 
  * Update deps (Raymond Feng)
 
