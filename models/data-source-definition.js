@@ -123,6 +123,7 @@ DataSourceDefinition.remoteMethod('testConnection', {
  */
 
 DataSourceDefinition.prototype.discoverModelDefinition = function(name, options, cb) {
+  var self = this;
   var cb = arguments[arguments.length - 1];
 
   if(typeof options === 'function') {
@@ -141,7 +142,16 @@ DataSourceDefinition.prototype.discoverModelDefinition = function(name, options,
   this._setDefaultSchema(options);
   this.invokeMethodInWorkspace('discoverSchema', name, options, function(err, result) {
     if(err) return cb(err);
-    cb(null, result);
+
+    if (result.base || result.options.base)
+      return cb(null, result);
+
+    self.getDefaultBaseModel(function(err, baseModel) {
+      if (err) return cb(err);
+      if (baseModel)
+        result.options.base = baseModel;
+      cb(null, result);
+    });
   });
 }
 
@@ -153,6 +163,18 @@ loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
   }],
   returns: { arg: 'status', type: 'boolean' }
 });
+
+DataSourceDefinition.prototype.getDefaultBaseModel = function(cb) {
+  var connectorName = this.connector;
+  DataSourceDefinition.app.models.Workspace.listAvailableConnectors(
+    function(err, list) {
+      if (err) return cb(err);
+      var meta = list.filter(function(c) {
+        return c.name === connectorName;
+      })[0];
+      return cb(null, meta && meta.baseModel);
+    });
+};
 
 /**
  * Get a list of table / collection names, owners and types.
