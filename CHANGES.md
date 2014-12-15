@@ -1,3 +1,9 @@
+2014-12-15, Version 3.6.3
+=========================
+
+ * Set base model of discovered models (Miroslav Bajtoš)
+
+
 2014-12-11, Version 3.6.2
 =========================
 
