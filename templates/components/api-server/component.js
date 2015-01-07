@@ -5,7 +5,7 @@
 var template = module.exports;
 
 template.package = {
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "server/server.js",
   "scripts": {
     "pretest": "jshint .",
@@ -23,6 +23,11 @@ template.package = {
   },
   "devDependencies": {
     "jshint": "^2.5.6"
+  },
+  // Avoid NPM warning
+  "repository": {
+    "type": "",
+    "url": ""
   }
 };
 

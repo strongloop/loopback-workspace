@@ -276,5 +276,44 @@
       "version": "^0.7"
     },
     "supportedByStrongLoop": false
-  }  
+  },
+  {
+    "name": "couchbase",
+    "description": "Couchbase",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "n1qlport": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string",
+        "description": "The name of the datasource"
+      },
+      "connectionTimeout": {
+        "type": "number"
+      },
+      "operationTimeout": {
+        "type": "number"
+      },
+      "env": {
+        "type": "string",
+        "description": "Environment variable for debugging"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-couchbase",
+      "version": "^1.0"
+    },
+    "supportedByStrongLoop": false
+  }
 ]

@@ -1,3 +1,13 @@
+2015-01-07, Version 3.6.4
+=========================
+
+ * Add description/repostiory/readme to avoid npm warnings (Raymond Feng)
+
+ * Fix bad CLA URL in CONTRIBUTING.md (Ryan Graham)
+
+ * available-connectors: add Couchbase connector (Miroslav Bajtoš)
+
+
 2014-12-15, Version 3.6.3
 =========================
 
