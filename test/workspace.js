@@ -86,10 +86,25 @@ describe('Workspace', function() {
       expect(dataSourceNames).to.contain('db');
     });
 
-    it('should set correct name in package.json', function() {
-      var pkg = fs.readJsonFileSync(SANDBOX + '/package.json');
-      // project name is hard-coded in support.js as 'sandbox'
-      expect(pkg.name).to.equal('sandbox');
+    describe('generated package.json', function() {
+      var pkg;
+
+      before(function() {
+        pkg = fs.readJsonFileSync(SANDBOX + '/package.json');
+      });
+
+      it('should set correct name', function() {
+        // project name is hard-coded in support.js as 'sandbox'
+        expect(pkg.name).to.equal('sandbox');
+      });
+
+      it('should set correct description', function() {
+        expect(pkg.description).to.equal('sandbox');
+      });
+
+      it('should set dummy repository', function() {
+        expect(pkg.repository).to.be.an('object');
+      });
     });
   });
 
