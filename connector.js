@@ -184,6 +184,12 @@ connector._loadFromFile = function(cb) {
     ConfigFile.findPackageDefinitions(function(err, files) {
       if (err) return done(err);
       async.each(files, function(f, next) {
+        var dir = f.getDirName();
+        if (dir !== '.') {
+          debug('Skipping package.json in %j', dir);
+          return next();
+        }
+
         // TODO(bajtos) Generalize and move this code to WorkspaceEntity
         f.load(function(err) {
           if (err) return next(err);
