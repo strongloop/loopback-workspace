@@ -1,3 +1,13 @@
+2015-01-15, Version 3.6.5
+=========================
+
+ * Fix handling of workspaces with nested packages (Miroslav Bajtoš)
+
+ * Facet: remove PackageDefinition-related code (Miroslav Bajtoš)
+
+ * Fix the test case (Raymond Feng)
+
+
 2015-01-07, Version 3.6.4
 =========================
 
