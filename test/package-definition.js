@@ -1,5 +1,8 @@
+var async = require('async');
 var fs = require('fs-extra');
-var PackageDefinition = require('../app').models.PackageDefinition;
+var path = require('path');
+var models = require('../app').models;
+var PackageDefinition = models.PackageDefinition;
 
 describe('PackageDefinition', function () {
   beforeEach(resetWorkspace);
@@ -16,6 +19,49 @@ describe('PackageDefinition', function () {
           expect(content).to.not.have.property('id');
           done();
         });
+    });
+  });
+
+  describe('in project with multiple package.json files', function(done) {
+    var MAIN_FILE, MAIN_DATA, SUBPROJECT_FILE, SUBPROJECT_DATA;
+
+    beforeEach(givenBasicWorkspace);
+
+    beforeEach(function prepareScenario() {
+      MAIN_FILE = path.resolve(SANDBOX, 'package.json');
+      MAIN_DATA = fs.readJsonFileSync(MAIN_FILE);
+
+      SUBPROJECT_FILE = path.resolve(SANDBOX, 'subproject', 'package.json');
+      SUBPROJECT_DATA = { name: 'subproject', version: '1.2.3' };
+
+      fs.mkdirpSync(path.dirname(SUBPROJECT_FILE));
+      fs.writeJsonFileSync(SUBPROJECT_FILE, SUBPROJECT_DATA);
+    });
+
+    it('correctly saves package definitions', function(done) {
+      // See https://github.com/strongloop/loopback-workspace/issues/181
+      models.PackageDefinition.find(function(err, list) {
+        if (err) return done;
+        async.each(
+          list,
+          function(it, next) { it.save(next); },
+          function(err) {
+            if (err) return done(err);
+            expect(fs.readJsonFileSync(MAIN_FILE)).to.eql(MAIN_DATA);
+            expect(fs.readJsonFileSync(SUBPROJECT_FILE)).to.eql(SUBPROJECT_DATA);
+            done();
+          });
+      });
+    });
+
+    it('ignores package definitions in nested folders', function(done) {
+      // This is a temporary test that should be removed once
+      // loopback-workspace supports multiple nested projects
+      models.PackageDefinition.find(function(err, list) {
+        var packageNames = list.map(function(pkg) { return pkg.name; });
+        expect(packageNames).to.eql([MAIN_DATA.name]);
+        done();
+      });
     });
   });
 });

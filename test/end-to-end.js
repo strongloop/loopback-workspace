@@ -712,5 +712,5 @@ function readBuiltinPhasesFromSanbox() {
   var loopback = require(SANDBOX + '/node_modules/loopback');
   var app = loopback();
   app.lazyrouter(); // initialize request handling phases
-  return app._requestHandlingPhases.getPhaseNames();
+  return app._requestHandlingPhases;
 }
