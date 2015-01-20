@@ -68,10 +68,7 @@ template.server = {
           extended: true,
           limit: '100kb'
         },
-        cors: {
-          origin: true,
-          credentials: true
-        },
+        cors: false,
         errorHandler: {
           disableStackTrace: false
         }
