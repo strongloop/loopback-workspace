@@ -1,3 +1,9 @@
+2015-01-22, Version 3.7.0
+=========================
+
+ * Fix registration of status route (Miroslav Bajtoš)
+
+
 2015-01-15, Version 3.6.5
 =========================
 
