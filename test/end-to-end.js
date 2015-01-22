@@ -61,6 +61,13 @@ describe('end-to-end', function() {
         });
     });
 
+    it('provides status on the root url only', function(done) {
+      // See https://github.com/strongloop/generator-loopback/issues/80
+      request(app)
+        .get('/does-not-exist')
+        .expect(404, done);
+    });
+
     it('has authentication enabled', function(done) {
       request(app)
         .get('/api/users')
@@ -210,7 +217,7 @@ describe('end-to-end', function() {
 
   describe('discovery', function() {
     this.timeout(10000);
-    
+
     var connection;
     before(function(done) {
       connection = setupConnection(done);
