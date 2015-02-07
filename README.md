@@ -47,3 +47,10 @@ To start the workspace in a specific directory, you must specify the
 
 In order to use the REST api, you must mount the app on an existing express app
 or call `workspace.listen(PORT)`.
+
+## Test
+
+To run end-to-end tests, you will need a local MySQL instance. Once you have
+that running, you can run [the MySQL setup script](/bin/setup-mysql.js) to
+autoconfigure your database. Finally, use the `npm test` command to run the
+tests.
