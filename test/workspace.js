@@ -165,4 +165,15 @@ describe('Workspace', function() {
       });
     });
   });
+
+  describe('Workspace.copyGitignore(templatesDir, dest, cb)', function() {
+    beforeEach(givenBasicWorkspace);
+
+    it('generates `.gitignore` properly', function(done) {
+      fs.exists(SANDBOX + '/.gitignore', function(exists) {
+        expect(exists).to.be.ok;
+        done();
+      });
+    });
+  });
 });
