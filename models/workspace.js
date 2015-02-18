@@ -129,7 +129,25 @@ Workspace.addComponent = function(options, cb) {
     });
   });
 
+  // This step is required as NPM renames `.gitignore` to `.npmignore`
+  steps.push(function(cb) {
+    Workspace.copyGitignore(fileTemplatesDir, dest, cb);
+  });
+
   async.series(steps, cb);
+};
+
+/**
+ * Copy `gitignore` to the templates directory as `.gitignore`.
+ *
+ * @param {String} templatesDir
+ * @param {String} dest
+ * @callback {Function} cb
+ */
+Workspace.copyGitignore = function(templatesDir, dest, cb) {
+  var gitignore = path.resolve(templatesDir, '..', 'gitignore');
+  var dotGitignore = path.resolve(dest, '.gitignore');
+  Workspace.copyRecursive(gitignore, dotGitignore, cb);
 };
 
 loopback.remoteMethod(Workspace.addComponent, {
