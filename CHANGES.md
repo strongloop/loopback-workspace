@@ -1,3 +1,21 @@
+2015-02-18, Version 3.7.1
+=========================
+
+ * Generate .gitignore from gitignore (Simon Ho)
+
+ * Add npm-debug and .iml to .gitignore (Simon Ho)
+
+ * Sort items in ASCII order (Simon Ho)
+
+ * Fix unit-tests (Miroslav Bajtoš)
+
+ * Make setup script executable by default (Simon Ho)
+
+ * Add instructions to run test (Simon Ho)
+
+ * Add .strong-pm to .gitignore (Sam Roberts)
+
+
 2015-01-22, Version 3.7.0
 =========================
 
@@ -605,13 +623,9 @@
 
  * Bump LoopBack version to 1.4.x (Ritchie Martori)
 
- * Add missing middleware and cookieSecret (Ritchie Martori)
-
-
-2013-12-17, Version 2.1.0
-=========================
-
  * Add loopback-datasource-juggler as devDependency (Ryan Graham)
+
+ * Add missing middleware and cookieSecret (Ritchie Martori)
 
  * Fix loopback-explorer and swagger setup. (Miroslav Bajtos)
 
@@ -622,12 +636,6 @@
  * Bump version (Ritchie Martori)
 
  * add app.enableAuth() to enable auth / access control (Ritchie Martori)
-
-
-2013-12-06, Version 2.0.3
-=========================
-
- * Bump version (Ritchie Martori)
 
  * Fix config.name => package.name mapping (Ritchie Martori)
 
@@ -642,130 +650,6 @@
 
 
 2013-12-03, Version 2.0.2
-=========================
-
- * Fix missing options and properties from models (Ritchie Martori)
-
- * Fix the logger as 'development' is not a valid format (Raymond Feng)
-
- * test: Redirect stdout logs to stderr (Miroslav Bajtos)
-
- * Mount REST API at `/api` (Miroslav Bajtos)
-
- * Fix empty swagger descriptor (Miroslav Bajtos)
-
- * Add .jshintignore (Miroslav Bajtos)
-
- * Add jshint configuration. (Miroslav Bajtos)
-
- * Unskip mobile smoke test (Ritchie Martori)
-
- * Fix autoWiring assertion errors (Ritchie Martori)
-
- * AccessToken compatibility updates for lb@1.3.0 (Ritchie Martori)
-
- * Minor app template updates (Ritchie Martori)
-
- * Use the configured error handler for unknown urls (Miroslav Bajtos)
-
- * Remove blanket and bump version (Raymond Feng)
-
- * Update loopback dep version (Ritchie Martori)
-
- * Update mobile template (Ritchie Martori)
-
- * Add getModel / getDataSourceByName (Ritchie Martori)
-
- * Move pacakge to template file, Upgrade temp dependency (Ritchie Martori)
-
- * Add new loopback-explorer (Ritchie Martori)
-
- * Update session relationship template (Ritchie Martori)
-
- * Bump verison (Ritchie Martori)
-
- * Initial 2.0 rewrite (Ritchie)
-
- * Add repo to package.json (Raymond Feng)
-
- * Update dependencies (Raymond Feng)
-
- * Update deps for sls-1.1 (Raymond Feng)
-
- * bump version (Ritchie Martori)
-
- * Update app template, model template, and project api (Ritchie Martori)
-
- * Use hostname instead of ip (Raymond Feng)
-
- * Make listener port/ip configurable (Raymond Feng)
-
- * Add redirect from /explorer to /explorer/. (Michael Schoonmaker)
-
- * Add docs module. (Michael Schoonmaker)
-
- * Upgrade to 0.2.15 (Raymond Feng)
-
- * Add keywords to package.json (Raymond Feng)
-
- * Finalize package.json for sls-1.0.0 (Raymond Feng)
-
- * Add strong-agent and strong-cluster-control as optional deps (Raymond Feng)
-
- * Add informational GET / route. (Michael Schoonmaker)
-
- * Improve startup messages. (Michael Schoonmaker)
-
-
-2013-09-17, Version strongloopsuite-1.0.0-5
-===========================================
-
- * Fix the loopback dependency to be a version for the release (Raymond Feng)
-
-
-2013-09-12, Version strongloopsuite-1.0.0-4
-===========================================
-
- * Add redirect from /explorer to /explorer/. (Michael Schoonmaker)
-
- * Add docs module. (Michael Schoonmaker)
-
- * Upgrade to 0.2.15 (Raymond Feng)
-
-
-2013-09-11, Version strongloopsuite-1.0.0-3
-===========================================
-
- * Add informational GET / route. (Michael Schoonmaker)
-
- * Improve startup messages. (Michael Schoonmaker)
-
- * Add keywords to package.json (Raymond Feng)
-
-
-2013-09-10, Version strongloopsuite-1.0.0-2
-===========================================
-
- * Upgrade to with strong-agent 0.2.11 (Raymond Feng)
-
- * Finalize package.json for sls-1.0.0 (Raymond Feng)
-
- * Changed tag to strongloopsuite-1.0.0-2 (cgole)
-
-
-2013-09-09, Version strongloopsuite-1.0.0-1
-===========================================
-
- * Add strong-agent and strong-cluster-control as optional deps (Raymond Feng)
-
-
-2013-09-05, Version strongloopsuite-1.0.0-0
-===========================================
-
- * Updated to use tagged version strongloopsuite-1.0.0-0 of dependencies (cgole)
-
-
-2013-09-04, Version 1.2.0
 =========================
 
  * First release!
