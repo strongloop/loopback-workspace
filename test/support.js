@@ -22,6 +22,7 @@ expectValueInJSONFile = function(file, propertyPath, val) {
   expect(obj).to.have.deep.property(propertyPath, val);
 }
 
+FIXTURES = path.resolve(__dirname, 'fixtures/');
 SANDBOX = path.resolve(__dirname, 'sandbox/');
 
 // tell the workspace to load files from the sandbox
