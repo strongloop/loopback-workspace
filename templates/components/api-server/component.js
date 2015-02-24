@@ -14,7 +14,7 @@ template.package = {
     "compression": "^1.0.3",
     "errorhandler": "^1.1.1",
     "loopback": "^2.8.0",
-    "loopback-boot": "^2.4.0",
+    "loopback-boot": "^2.6.5",
     "loopback-datasource-juggler": "^2.7.0",
     "serve-favicon": "^2.0.1"
   },

@@ -140,6 +140,19 @@ describe('end-to-end', function() {
         done(err);
       });
     });
+
+    it('emits the `booted` event when booting is complete', function(done) {
+      var src = FIXTURES + '/async.js';
+      var dest = SANDBOX + '/server/boot/async.js';
+      fs.copySync(src, dest);
+      delete require.cache[require.resolve(SANDBOX)];
+      var app = require(SANDBOX);
+      app.on('booted', function() {
+        expect(app.asyncBoot, 'app.asyncBoot').to.be.true();
+        done();
+      });
+      // the test will time out if `booted` is not emitted
+    });
   });
 
   describe('autoupdate', function() {
