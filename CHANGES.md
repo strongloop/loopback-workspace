@@ -1,3 +1,9 @@
+2015-02-24, Version 3.9.0
+=========================
+
+ * Boot the app asynchronously (Simon Ho)
+
+
 2015-02-24, Version 3.8.0
 =========================
 
