@@ -27,7 +27,7 @@
     "loopback-datasource-juggler": "^2.6.1",
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
-    "ncp": "^1.0.0",
+    "ncp": "^2.0.0",
     "serve-favicon": "^2.0.1",
     "strong-wait-till-listening": "^1.0.0",
     "temp": "~0.8.0",
@@ -46,7 +46,7 @@
     "mocha": "^1.20.1",
     "mysql": "^2.4.2",
     "read": "^1.0.5",
-    "strong-cached-install": "^1.0.0",
+    "strong-cached-install": "^2.0.0",
     "supertest": "^0.13.0"
   }
 }
