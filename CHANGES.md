@@ -1,3 +1,9 @@
+2015-02-24, Version 3.8.0
+=========================
+
+ * Upgrade ncp and strong-cached-install for io.js (Miroslav Bajtoš)
+
+
 2015-02-18, Version 3.7.1
 =========================
 
