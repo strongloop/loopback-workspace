@@ -162,6 +162,7 @@ describe('ModelDefinition', function() {
     it('includes `name` property', function(done) {
       new TestDataBuilder()
         .define('model', ModelDefinition, {
+          facetName: 'server',
           name: 'test-model'
         })
         .buildTo(this, function(err) {
@@ -198,6 +199,7 @@ describe('ModelDefinition', function() {
     it('includes all custom properties', function(done) {
       new TestDataBuilder()
         .define('model', ModelDefinition, {
+          facetName: 'server',
           name: 'test-model',
           custom: 'custom'
         })
