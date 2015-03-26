@@ -13,9 +13,9 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "errorhandler": "^1.1.1",
-    "loopback": "^2.8.0",
+    "loopback": "^2.14.0",
     "loopback-boot": "^2.6.5",
-    "loopback-datasource-juggler": "^2.7.0",
+    "loopback-datasource-juggler": "^2.19.0",
     "serve-favicon": "^2.0.1"
   },
   "optionalDependencies": {
@@ -74,7 +74,8 @@ template.server = {
         errorHandler: {
           disableStackTrace: false
         }
-    }}
+    }},
+    { name: 'legacyExplorer', value: false }
   ],
 
   modelConfigs: [
