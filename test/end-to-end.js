@@ -80,6 +80,14 @@ describe('end-to-end', function() {
         .expect(200, done);
     });
 
+    it('provides CORS headers for all URLs', function(done) {
+      request(app).get('/')
+        .set('X-Requested-By', 'XMLHttpRequest')
+        .set('Origin', 'http://example.com')
+        .expect('Access-Control-Allow-Origin',  'http://example.com')
+        .expect(200, done);
+    });
+
     it('can create and login a user', function(done) {
       var credentials = { email: 'test@example.com', password: 'pass' };
       var userId, tokenId;
