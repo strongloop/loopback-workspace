@@ -22,7 +22,7 @@ var ModelDefinition = app.models.ModelDefinition;
 
 /**
  * - `name` is required and must be unique per `Facet`
- * 
+ *
  * @header Property Validation
  */
 
@@ -140,8 +140,10 @@ function cleanRelatedData(relatedData, relation) {
   }
 }
 
-ModelDefinition.afterCreate = function(next) {
-  var def = this;
+ModelDefinition.observe("after save", function(ctx, next) {
+  if (!ctx.isNewInstance) return next();
+
+  var def = ctx.instance;
   var scriptPath = def.getScriptPath();
 
   fs.exists(scriptPath, function(exists) {
@@ -151,7 +153,7 @@ ModelDefinition.afterCreate = function(next) {
       createScript(def, scriptPath, next);
     }
   });
-}
+});
 
 ModelDefinition.prototype.getClassName = function() {
   if(!this.name) return null;

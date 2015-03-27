@@ -41,7 +41,7 @@ WorkspaceEntity.getUniqueIdParts = function(data) {
       return [];
     }
   }
-  
+
   if(name) parts.push(name);
 
   return parts;
@@ -162,10 +162,10 @@ WorkspaceEntity.getDataFromConfig = function(config) {
 // Automatically inject parent model's facetName when creating a new object
 // We have to perform this task before the validations are executed, since
 // the `facetName` is a required property
-WorkspaceEntity.beforeValidate = function injectFacetName(next) {
-  var Entity = this.constructor;
+WorkspaceEntity.observe('before save', function injectFacetName(ctx, next) {
+  var Entity = ctx.Model;
   var properties = Entity.definition.properties;
-  var data = this.toObject();
+  var data = ctx.instance ? ctx.instance.toObject() : ctx.data;
 
   if (!('facetName' in properties &&
     'modelId' in properties &&
@@ -175,17 +175,17 @@ WorkspaceEntity.beforeValidate = function injectFacetName(next) {
 
   Entity.app.models.ModelDefinition.findById(data.modelId, function(err, model) {
     if (model && model.facetName) {
-      if (this.facetName && this.facetName !== model.facetName) {
+      if (data.facetName && data.facetName !== model.facetName) {
         console.warn(
           'Warning: fixed %s[%s].facetName from %j to %j' +
             ' to match the parent',
           Entity.modelName,
-          this.id,
-          this.facetName,
+          data.id,
+          data.facetName,
           model.facetName);
       }
-      this.facetName = model.facetName;
+      (ctx.instance || ctx.data).facetName = model.facetName;
     }
     next();
-  }.bind(this));
-};
+  });
+});

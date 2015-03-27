@@ -6,6 +6,8 @@ var boot = require('loopback-boot');
 var started = new Date();
 var env = app.get('env');
 
+app.set('legacyExplorer', false);
+
 // required to support base models
 app.dataSource('db', {
   connector: loopback.Memory,
