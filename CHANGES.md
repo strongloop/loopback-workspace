@@ -1,3 +1,20 @@
+2015-03-27, Version 3.10.1
+==========================
+
+ * Remove deprecation warnings (Miroslav Bajtoš)
+
+ * Add unit-test verifying top-level CORS setup (Miroslav Bajtoš)
+
+ * Setup a single top-level CORS middleware (claylo)
+
+ * Disable legacy explorer routes by default. Add option to generated config file for the new legacyExplorer option introduced as a fix to strongloop/loopback#1134. This will ensure that the /routes and /models routes are disabled by default. (Ron Edgecomb)
+
+
+2015-02-24, Version 3.10.0
+==========================
+
+
+
 2015-02-24, Version 3.9.0
 =========================
 
