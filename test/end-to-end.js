@@ -40,7 +40,15 @@ describe('end-to-end', function() {
       models.ModelDefinition.create({
         facetName: 'common',
         name: 'Custom'
-      }, done);
+      }, function(err, model) {
+        if (err) return done(err);
+        model.properties.create({
+          facetName: 'common',
+          name: 'name',
+          type: 'string',
+          required: true
+        }, done);
+      });
     });
 
     before(configureCustomModel);
@@ -179,6 +187,14 @@ describe('end-to-end', function() {
         .expect(404, done);
     });
 
+    it('validates "updateOrCreate" data', function(done) {
+      request(app).put('/api/customs')
+        // it's important to include "id", otherwise updateOrCreate
+        // short-circuits to regular create()
+        .send({ id: 999, name: '' })
+        .expect(422)
+        .end(done);
+    });
   });
 
   describe('autoupdate', function() {
