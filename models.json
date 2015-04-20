@@ -131,7 +131,9 @@
       "idInjection": { "type": "boolean", "default": true },
       "scopes": "object",
       "indexes": "object",
-      "options": "object"
+      "options": { "type": "object", "default": {
+        "validateUpsert": true
+      } }
     },
     "public": true,
     "dataSource": "db",
