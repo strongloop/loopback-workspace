@@ -1,3 +1,9 @@
+2015-04-20, Version 3.11.0
+==========================
+
+ * Enable "validateUpsert" for newly created models (Miroslav Bajtoš)
+
+
 2015-03-27, Version 3.10.1
 ==========================
 
