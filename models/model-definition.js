@@ -177,7 +177,7 @@ var MODEL_SCRIPT_TEMPLATE = fs.readFileSync(templatePath, 'utf8');
 function createScript(def, out, cb) {
   var script;
   try {
-    script = _.template(MODEL_SCRIPT_TEMPLATE, {
+    script = _.template(MODEL_SCRIPT_TEMPLATE)({
       modelDef: def,
       modelClassName: def.getClassName()
     });
