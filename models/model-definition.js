@@ -4,10 +4,6 @@ var assert = require('assert');
 var extend = require('util')._extend;
 var app = require('../app');
 var async = require('async');
-var underscoreString = require('underscore.string');
-var dasherize = underscoreString.dasherize;
-var camelize = underscoreString.camelize;
-var classify = underscoreString.classify;
 var ConfigFile = app.models.ConfigFile;
 var _ = require('lodash');
 
@@ -94,7 +90,7 @@ ModelDefinition.getPath = function(facetName, obj) {
 ModelDefinition.toFilename = function(name) {
   if(name === name.toUpperCase()) return name.toLowerCase();
   if(~name.indexOf('-')) return name.toLowerCase();
-  var dashed = dasherize(name);
+  var dashed = _.kebabCase(name);
   var split = dashed.split('');
   if(split[0] === '-') split.shift();
 
@@ -157,7 +153,7 @@ ModelDefinition.observe("after save", function(ctx, next) {
 
 ModelDefinition.prototype.getClassName = function() {
   if(!this.name) return null;
-  return classify(dasherize(this.name));
+  return _.capitalize(_.camelCase(this.name));
 }
 
 ModelDefinition.prototype.getScriptPath = function() {
@@ -177,7 +173,7 @@ var MODEL_SCRIPT_TEMPLATE = fs.readFileSync(templatePath, 'utf8');
 function createScript(def, out, cb) {
   var script;
   try {
-    script = _.template(MODEL_SCRIPT_TEMPLATE, {
+    script = _.template(MODEL_SCRIPT_TEMPLATE)({
       modelDef: def,
       modelClassName: def.getClassName()
     });
