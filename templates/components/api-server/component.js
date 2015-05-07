@@ -44,6 +44,12 @@ template.server = {
         'loopback/server/models',
         '../common/models',
         './models',
+      ],
+      mixins: [
+        'loopback/common/mixins',
+        'loopback/server/mixins',
+        '../common/mixins',
+        './mixins',
       ]
     }
   },
