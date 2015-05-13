@@ -1,3 +1,17 @@
+2015-05-13, Version 3.12.0
+==========================
+
+ * Update deps (Raymond Feng)
+
+ * Add `options` arg (Raymond Feng)
+
+ * deps: remove unused 'temp' dependency (Ryan Graham)
+
+ * deps: replace underscore.string with lodash (Ryan Graham)
+
+ * deps: upgrade lodash to 3.x (Ryan Graham)
+
+
 2015-04-20, Version 3.11.0
 ==========================
 
