@@ -24,7 +24,7 @@
     "lodash": "^3.0.0",
     "loopback": "^2.0.0",
     "loopback-boot": "^1.0.0",
-    "loopback-datasource-juggler": "^2.22.0",
+    "loopback-datasource-juggler": "^2.27.0",
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
     "ncp": "^2.0.0",

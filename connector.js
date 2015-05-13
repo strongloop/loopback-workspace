@@ -222,9 +222,8 @@ connector._loadFromFile = function(cb) {
 var originalFind = connector.find;
 var originalAll = connector.all;
 
-connector.find = function(model) {
+connector.find = function(model, id, options, cb) {
   var args = arguments;
-  var cb = args[args.length - 1];
   connector.loadFromFile(function(err) {
     if(err) return cb(err);
     debug('reading from cache %s => %j', model, Object.keys(connector.cache[model]));
@@ -232,9 +231,8 @@ connector.find = function(model) {
   });
 }
 
-connector.all = function(model) {
+connector.all = function(model, filter, options, cb) {
   var args = arguments;
-  var cb = args[args.length - 1];
   connector.loadFromFile(function(err) {
     if(err) return cb(err);
     debug('reading from cache %s => %j', model, Object.keys(connector.cache[model]));
@@ -248,7 +246,7 @@ connector.getIdValue = function(model, data) {
   return entity.getUniqueId();
 }
 
-connector.create = function create(model, data, callback) {
+connector.create = function create(model, data, options, callback) {
   var Entity = loopback.getModel(model);
   var entity = new Entity(data);
   var id = entity.getUniqueId();
