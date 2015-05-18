@@ -1,3 +1,9 @@
+2015-05-18, Version 3.13.0
+==========================
+
+ * api-server template: add strong-express-metrics (Miroslav Bajtoš)
+
+
 2015-05-13, Version 3.12.0
 ==========================
 
