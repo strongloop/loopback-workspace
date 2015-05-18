@@ -17,6 +17,7 @@ template.package = {
     "loopback": "^2.14.0",
     "loopback-boot": "^2.6.5",
     "loopback-datasource-juggler": "^2.19.0",
+    "strong-express-metrics": "^1.1.0",
     "serve-favicon": "^2.0.1"
   },
   "optionalDependencies": {
