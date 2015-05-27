@@ -195,19 +195,6 @@ describe('end-to-end', function() {
         .expect(422)
         .end(done);
     });
-
-    it('reports API usage metrics', function(done) {
-      var recordedUrls = [];
-      require(SANDBOX + '/node_modules/strong-express-metrics')
-        .onRecord(function(data) { recordedUrls.push(data.request.url); });
-      request(app).get('/')
-        .expect(200)
-        .end(function(err, res) {
-          if (err) return done(err);
-          expect(recordedUrls).to.eql(['/']);
-          done();
-        });
-    });
   });
 
   describe('autoupdate', function() {

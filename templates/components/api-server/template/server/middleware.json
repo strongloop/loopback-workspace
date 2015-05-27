@@ -1,7 +1,6 @@
 {
   "initial:before": {
-    "loopback#favicon": {},
-    "strong-express-metrics": {}
+    "loopback#favicon": {}
   },
   "initial": {
     "compression": {},
