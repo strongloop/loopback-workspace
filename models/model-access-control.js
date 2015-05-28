@@ -14,7 +14,7 @@ var ModelAccessControl = app.models.ModelAccessControl;
 
 /**
  * Get the available access types.
- * 
+ *
  * @callback {Function} callback
  * @param {Error} err
  * @param {Array} types An array of objects with the following format:
@@ -37,7 +37,7 @@ ModelAccessControl.getAccessTypes = function(cb) {
 
 /**
  * Get the available permission types.
- * 
+ *
  * @callback {Function} callback
  * @param {Error} err
  * @param {Array} types An array of objects with the following format:
@@ -62,7 +62,7 @@ ModelAccessControl.getPermissionTypes = function(cb) {
 
 /**
  * Get the available principal types.
- * 
+ *
  * @callback {Function} callback
  * @param {Error} err
  * @param {Array} types An array of objects with the following format:
@@ -109,7 +109,12 @@ ModelAccessControl.getBuiltinRoles = function(cb) {
 };
 
 var baseCreate = ModelAccessControl.create;
-ModelAccessControl.create = function(data, cb) {
+ModelAccessControl.create = function(data, options, cb) {
+  if (typeof options === 'function' && cb === undefined) {
+    cb = options;
+    options = {};
+  }
+
   var self = this;
   this.findOne({
     where: { modelId: this.modelId },
@@ -123,7 +128,7 @@ ModelAccessControl.create = function(data, cb) {
     }
 
     data.index = index;
-    baseCreate.call(self, data, cb);
+    baseCreate.call(self, data, options, cb);
   });
 }
 
