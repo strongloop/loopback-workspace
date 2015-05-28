@@ -1,3 +1,13 @@
+2015-05-28, Version 3.14.0
+==========================
+
+ * Fix ModelAccessControl.create() and failing tests (Miroslav Bajtoš)
+
+ * Revert "api-server template: add strong-express-metrics" (Miroslav Bajtoš)
+
+ * api-server: configure default mixin sources (Miroslav Bajtoš)
+
+
 2015-05-18, Version 3.13.0
 ==========================
 
