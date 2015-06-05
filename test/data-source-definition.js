@@ -34,7 +34,7 @@ describe('DataSourceDefinition', function() {
     beforeEach(function(done) {
       this.configFile.load(done);
     });
-    it('shoulb be able to create multiple', function (done) {
+    it('should be able to create multiple', function (done) {
       DataSourceDefinition.find(function(err, defs) {
         expect(defs).to.have.length(2);
         done();
@@ -55,7 +55,7 @@ describe('DataSourceDefinition', function() {
         expect(dsConfig).to.not.have.property('facetName');
       });
     });
-    it('shoulb be persist multiple to the config file', function (done) {
+    it('should be persist multiple to the config file', function (done) {
       var defs = Object.keys(this.configFile.data).sort();
       expect(defs).to.eql(['bar', 'foo'].sort());
       done();
