@@ -1,3 +1,9 @@
+2015-06-16, Version 3.15.0
+==========================
+
+ * Add middleware config model and apis (Raymond Feng)
+
+
 2015-05-28, Version 3.14.0
 ==========================
 
