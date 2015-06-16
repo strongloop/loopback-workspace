@@ -5,6 +5,7 @@ var app = require('../app');
 
 var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
+var Middleware = app.models.Middleware;
 var ModelConfig = app.models.ModelConfig;
 var ConfigFile = app.models.ConfigFile;
 var FacetSetting = app.models.FacetSetting;
@@ -40,6 +41,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   var facetConfig = ConfigFile.getFileByBase(configFiles, 'config');
   var modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
+  var middlewares = ConfigFile.getFileByBase(configFiles, 'middleware');
   var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
   var steps = [];
 
@@ -132,7 +134,15 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
         debug('loading [%s] dataSource into cache', dataSourceName);
         DataSourceDefinition.addToCache(cache, def);
       });
-      
+      cb();
+    });
+  }
+
+  if(middlewares) {
+    steps.push(function(cb) {
+      middlewares.load(cb);
+    }, function(cb) {
+      Middleware.deserialize(cache, facetName, middlewares);
       cb();
     });
   }
@@ -185,22 +195,27 @@ Facet.saveToFs = function(cache, facetData, cb) {
   }
 
   if (hasApp) {
-    var dataSoureConfig = {};
+    var dataSourceConfig = {};
     var dataSourcePath = path.join(facetName, 'datasources.json');
     var cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
     cachedDataSources.forEach(function(dataSourceDef) {
       if(dataSourceDef.facetName === facetName) {
         dataSourcePath = DataSourceDefinition.getPath(facetName, dataSourceDef);
-        dataSoureConfig[dataSourceDef.name] =
+        dataSourceConfig[dataSourceDef.name] =
           DataSourceDefinition.getConfigFromData(dataSourceDef);
       }
     });
 
     addFileToSave(new ConfigFile({
       path: dataSourcePath,
-      data: dataSoureConfig
+      data: dataSourceConfig
     }));
+
+    var middlewareFile = Middleware.serialize(cache, facetName);
+    if (middlewareFile) {
+      addFileToSave(middlewareFile);
+    }
 
     var cachedModelConfigs = ModelConfig.allFromCache(cache);
     var modelConfigPath = path.join(facetName, ModelConfig.settings.defaultConfigFile);
