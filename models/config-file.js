@@ -8,6 +8,9 @@ var ROOT_COMPONENT = '.';
 var groupBy = require('lodash').groupBy;
 var debug = require('debug')('workspace:config-file');
 
+// workaround to https://github.com/jprichardson/node-jsonfile/issues/26
+fs.spaces = 2;
+
 // Use fs.read to ensure we get exactly what is in the JSON file
 // Some module is using `require('../models.json')` and changing
 // the content of the object afterwards (loopback-boot's executor ?)
