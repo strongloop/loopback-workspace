@@ -1,3 +1,9 @@
+2015-06-23, Version 3.15.1
+==========================
+
+ * Workaround for https://github.com/jprichardson/node-jsonfile/issues/26 (Raymond Feng)
+
+
 2015-06-16, Version 3.15.0
 ==========================
 
