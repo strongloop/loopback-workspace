@@ -176,7 +176,7 @@
           "foreignKey": "modelId"
         },
         "methods": {
-          "embed": {"as": "array"},
+          "embed": {"as": "object", "key": "name"},
           "type": "hasMany",
           "model": "ModelMethod",
           "foreignKey": "modelId"
