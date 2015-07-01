@@ -5,6 +5,7 @@ var app = require('../app');
 
 var ModelDefinition = app.models.ModelDefinition;
 var DataSourceDefinition = app.models.DataSourceDefinition;
+var GatewayMap = app.models.GatewayMap;
 var Middleware = app.models.Middleware;
 var ModelConfig = app.models.ModelConfig;
 var ConfigFile = app.models.ConfigFile;
@@ -42,6 +43,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   var modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
   var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
   var middlewares = ConfigFile.getFileByBase(configFiles, 'middleware');
+  var policyConfigs = ConfigFile.getFileByBase(configFiles, 'policy-config');
   var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
   var steps = [];
 
@@ -51,7 +53,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
   debug('adding to cache facet [%s]');
   var facetId = Facet.addToCache(cache, facetData);
 
-  if(facetConfig) {
+  if (facetConfig) {
     steps.push(function(cb) {
       facetConfig.load(cb);
     }, function(cb) {
@@ -69,7 +71,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     });
   }
 
-  if(modelConfigs) {
+  if (modelConfigs) {
     steps.push(function(cb) {
       modelConfigs.load(cb);
     }, function(cb) {
@@ -100,7 +102,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     steps.push(configFile.load.bind(configFile));
   });
 
-  if(modelDefinitionFiles.length) {
+  if (modelDefinitionFiles.length) {
     steps.push(function(cb) {
       modelDefinitionFiles.forEach(function(configFile) {
         var def = configFile.data || {};
@@ -119,7 +121,7 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     });
   }
 
-  if(dataSources) {
+  if (dataSources) {
     steps.push(function(cb) {
       dataSources.load(cb);
     }, function(cb) {
@@ -138,7 +140,16 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     });
   }
 
-  if(middlewares) {
+  if (policyConfigs) {
+    steps.push(function(cb) {
+      policyConfigs.load(cb);
+    }, function(cb) {
+      GatewayMap.deserialize(cache, facetName, policyConfigs);
+      cb();
+    });
+  }
+
+  if (middlewares) {
     steps.push(function(cb) {
       middlewares.load(cb);
     }, function(cb) {
@@ -147,8 +158,8 @@ Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
     });
   }
 
-  Facet.ioQueue.push(function (done) {
-    async.series(steps, function (err) {
+  Facet.ioQueue.push(function(done) {
+    async.series(steps, function(err) {
       if (err) return done(err);
       debug('loading finished');
       done();
@@ -200,7 +211,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
     var cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
     cachedDataSources.forEach(function(dataSourceDef) {
-      if(dataSourceDef.facetName === facetName) {
+      if (dataSourceDef.facetName === facetName) {
         dataSourcePath = DataSourceDefinition.getPath(facetName, dataSourceDef);
         dataSourceConfig[dataSourceDef.name] =
           DataSourceDefinition.getConfigFromData(dataSourceDef);
@@ -211,6 +222,11 @@ Facet.saveToFs = function(cache, facetData, cb) {
       path: dataSourcePath,
       data: dataSourceConfig
     }));
+
+    var policyConfigFile = GatewayMap.serialize(cache, facetName);
+    if (policyConfigFile) {
+      addFileToSave(policyConfigFile);
+    }
 
     var middlewareFile = Middleware.serialize(cache, facetName);
     if (middlewareFile) {
@@ -225,7 +241,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
     modelConfigJson._meta = facetData.modelsMetadata;
 
     cachedModelConfigs.forEach(function(modelConfig) {
-      if(modelConfig.facetName === facetName) {
+      if (modelConfig.facetName === facetName) {
         modelConfigJson[modelConfig.name] =
           ModelConfig.getConfigFromData(modelConfig);
       }
@@ -239,7 +255,7 @@ Facet.saveToFs = function(cache, facetData, cb) {
   cachedModels.forEach(function(modelDef) {
     debug('model definition ~ %j', modelDef);
     if (modelDef.readonly) return;
-    if(modelDef.facetName === facetName) {
+    if (modelDef.facetName === facetName) {
       var modelConfigFile = ModelDefinition.getConfigFile(facetName, modelDef);
       modelConfigFile.data = ModelDefinition.getConfigFromCache(cache, modelDef);
       addFileToSave(modelConfigFile);
@@ -248,10 +264,10 @@ Facet.saveToFs = function(cache, facetData, cb) {
 
   Facet.ioQueue.push(function(done) {
     // TODO(ritch) files that exist without data in the cache should be deleted
-    async.each(filesToSave, function (configFile, cb) {
+    async.each(filesToSave, function(configFile, cb) {
       debug('file [%s]', configFile.path);
       configFile.save(cb);
-    }, function (err) {
+    }, function(err) {
       if (err) return done(err);
       debug('saving finished');
       done();
