@@ -88,6 +88,7 @@ describe('Gateway Policies', function() {
 
     it('should be able to create multiple maps', function(done) {
       GatewayMap.find(function(err, defs) {
+        if (err) return done(err);
         expect(defs).to.have.length(3);
         done();
       });
@@ -95,6 +96,7 @@ describe('Gateway Policies', function() {
 
     it('should be able to create multiple policies', function(done) {
       Policy.find(function(err, defs) {
+        if (err) return done(err);
         expect(defs).to.have.length(3);
         done();
       });
@@ -102,7 +104,22 @@ describe('Gateway Policies', function() {
 
     it('should be able to create multiple pipelines', function(done) {
       Pipeline.find(function(err, defs) {
+        if (err) return done(err);
         expect(defs).to.have.length(1);
+        done();
+      });
+    });
+
+    it('should be able to list scopes', function(done) {
+      GatewayMap.getScopes(function(err, scopes) {
+        if (err) return done(err);
+        expect(scopes).to.eql({
+            catalog: [{verb: 'GET', endpoint: '/api/catalog'},
+              {verb: 'ALL', endpoint: '/api/invoices'}],
+            shopping: [{verb: 'GET', endpoint: '/api/catalog'},
+              {verb: 'ALL', endpoint: '/api/invoices'}]
+          }
+        );
         done();
       });
     });

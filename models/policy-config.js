@@ -29,6 +29,7 @@ function loadFromCache(cache) {
   var maps = GatewayMap.allFromCache(cache);
   var pipelines = Pipeline.allFromCache(cache);
   var policies = Policy.allFromCache(cache);
+  // var scopes = buildScopes(maps, pipelines, policies);
   maps = maps.map(GatewayMap.getConfigFromData.bind(GatewayMap));
   pipelines = pipelines.map(Pipeline.getConfigFromData.bind(Pipeline));
   policies = policies.map(Policy.getConfigFromData.bind(Policy));
@@ -37,6 +38,41 @@ function loadFromCache(cache) {
     pipelines: pipelines,
     policies: policies
   };
+}
+
+/**
+ * Build a set of scopes from maps/pipelines/policies
+ * @param {GatewayMap[]) maps
+ * @param {Pipeline[]) pipelines
+ * @param {Policy[]) policies
+ * @returns {{}}
+ */
+GatewayMap.buildScopes = function(maps, pipelines, policies) {
+  var scopes = {};
+  maps.forEach(function(m) {
+    var matchedPipelines = pipelines.filter(function(pipeline) {
+      return m.pipelineId === pipeline.id;
+    });
+    matchedPipelines.forEach(function(pipeline) {
+      var matchedPolicies = policies.filter(function(policy) {
+        return policy.type === 'auth' &&
+          pipeline.policyIds.indexOf(policy.id) !== -1;
+      });
+      matchedPolicies.forEach(function(policy) {
+        if (policy.scopes) {
+          policy.scopes.forEach(function(s) {
+            var routes = scopes[s];
+            if (!routes) {
+              routes = []
+              scopes[s] = routes;
+            }
+            routes.push({verb: m.verb, endpoint: m.endpoint});
+          });
+        }
+      });
+    });
+  });
+  return scopes;
 }
 
 /**
@@ -76,6 +112,49 @@ GatewayMap.deserialize = function(cache, facetName, configFile) {
   configs.maps.forEach(function(m) {
     debug('loading [%s] map into cache', m.name);
     GatewayMap.addToCache(cache, m);
+  });
+};
+
+/**
+ * Get the list of scope mappings
+ * @param cb
+ */
+GatewayMap.getScopes = function(cb) {
+  // Find referenced pipeline/policies of type `auth`
+  GatewayMap.find({
+    include: {
+      pipeline: {
+        relation: 'policies',
+        scope: {
+          where: {
+            type: 'auth'
+          }
+        }
+      }
+    }
+  }, function(err, maps) {
+    if (err) return cb(err);
+    var scopes = {};
+    maps.forEach(function(m) {
+      var map = m.toJSON();
+      if (map.pipeline) {
+        if (map.pipeline.policies) {
+          map.pipeline.policies.forEach(function(policy) {
+            if (policy.scopes) {
+              policy.scopes.forEach(function(s) {
+                var routes = scopes[s];
+                if (!routes) {
+                  routes = []
+                  scopes[s] = routes;
+                }
+                routes.push({verb: map.verb, endpoint: map.endpoint});
+              });
+            }
+          });
+        }
+      }
+    });
+    cb(null, scopes);
   });
 };
 
