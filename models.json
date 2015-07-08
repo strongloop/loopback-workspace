@@ -820,6 +820,7 @@
   },
   "OAuth2": {
     "properties": {
+      "scopes": ["string"]
     },
     "public": true,
     "dataSource": "db",
@@ -829,6 +830,7 @@
   },
   "ReverseProxy": {
     "properties": {
+      "targetURL": "string"
     },
     "public": true,
     "dataSource": "db",
@@ -837,6 +839,37 @@
     }
   },
   "RateLimiting": {
+    "properties": {
+      "interval": "number",
+      "limit": "number",
+      "perApp": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perIp": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perUrl": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perUser": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perAppAndUser": {
+        "interval": "number",
+        "limit": "number"
+      }
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Policy"
+    }
+  },
+  "Metrics": {
     "properties": {
     },
     "public": true,
