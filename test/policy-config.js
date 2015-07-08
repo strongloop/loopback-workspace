@@ -1,6 +1,5 @@
 var async = require('async');
 var app = require('../app');
-var loopback = require('loopback');
 var ConfigFile = app.models.ConfigFile;
 var GatewayMap = app.models.GatewayMap;
 var Pipeline = app.models.Pipeline;
@@ -37,11 +36,11 @@ describe('Gateway Policies', function() {
           phase: 'final'
         }, done);
       }], function(err, policies) {
-      if(err) return cb(err);
+      if (err) return cb(err);
       Pipeline.create({
         name: 'default-pipeline'
       }, function(err, pipeline) {
-        if(err) return cb(err);
+        if (err) return cb(err);
         async.each(policies, function(policy, done) {
           pipeline.policies.add(policy, done);
         }, cb);
@@ -105,6 +104,32 @@ describe('Gateway Policies', function() {
       Pipeline.find(function(err, defs) {
         expect(defs).to.have.length(1);
         done();
+      });
+    });
+
+    it('should be able to rename a policy', function(done) {
+      Policy.rename('auth-catalog', 'auth-catalog-1', function(err, policy) {
+        if (err) return done(err);
+        Pipeline.find(function(err, defs) {
+          expect(defs).to.have.length(1);
+          expect(defs[0].policyIds).to.contain('auth-catalog-1');
+          done();
+        });
+      });
+    });
+
+    it('should be able to rename a pipeline', function(done) {
+      Pipeline.rename('default-pipeline', 'default-pipeline-1', function(err, pipeline) {
+        if (err) return done(err);
+        GatewayMap.find(function(err, defs) {
+          expect(defs).to.have.length(3);
+          defs.forEach(function(m) {
+            if (m.name !== 'order') {
+              expect(m.pipelineId).to.eql('default-pipeline-1');
+            }
+          });
+          done();
+        });
       });
     });
 
