@@ -14,7 +14,7 @@ fs.spaces = 2;
 // Use fs.read to ensure we get exactly what is in the JSON file
 // Some module is using `require('../models.json')` and changing
 // the content of the object afterwards (loopback-boot's executor ?)
-var models = fs.readJsonFileSync(require.resolve('../models.json'));
+var models = fs.readJsonSync(require.resolve('../models.json'));
 
 /**
  * Various definitions in the workspace are backed by a `ConfigFile`.
