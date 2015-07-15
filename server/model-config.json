@@ -1,0 +1,83 @@
+{
+  "_meta": {
+    "sources": [
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "Definition": {
+    "public": false,
+    "dataSource": false
+  },
+  "WorkspaceEntity": {
+    "public": false,
+    "dataSource": false
+  },
+  "ConfigFile": {
+    "public": false,
+    "dataSource": false
+  },
+  "Workspace": {
+    "public": true,
+    "dataSource": false
+  },
+  "PackageDefinition": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "Facet": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "FacetSetting": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "ModelConfig": {
+    "dataSource": "db"
+  },
+  "ModelDefinition": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "ModelMethod": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "ModelRelation": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "ModelAccessControl": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "ModelProperty": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "DatabaseColumn": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "PropertyValidation": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "ViewDefinition": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "DataSourceDefinition": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "Middleware": {
+    "public": true,
+    "dataSource": "db"
+  }
+}

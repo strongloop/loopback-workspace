@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "model": "string"
+  },
+  "public": true,
+  "dataSource": "db",
+  "options": {
+    "defaultConfigFile": "views/$id.json",
+    "configFiles": [
+      "views.json",
+      "views/*.json"
+    ]
+  },
+  "base": "Definition",
+  "relations": {
+    "children": {
+      "type": "hasMany",
+      "model": "ViewDefinition",
+      "foreignKey": "parent"
+    }
+  }
+}

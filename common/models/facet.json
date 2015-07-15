@@ -1,0 +1,41 @@
+{
+  "properties": {
+    "name": {
+      "id": true,
+      "type": "string",
+      "json": false
+    },
+    "modelsMetadata": {
+      "type": "object",
+      "json": false
+    },
+    "defaultPermission": {
+      "type": "string"
+    }
+  },
+  "public": true,
+  "dataSource": "db",
+  "base": "Definition",
+  "relations": {
+    "models": {
+      "type": "hasMany",
+      "model": "ModelDefinition",
+      "foreignKey": "facetName"
+    },
+    "datasources": {
+      "type": "hasMany",
+      "model": "DataSourceDefinition",
+      "foreignKey": "facetName"
+    },
+    "modelConfigs": {
+      "type": "hasMany",
+      "model": "ModelConfig",
+      "foreignKey": "facetName"
+    },
+    "settings": {
+      "type": "hasMany",
+      "model": "FacetSetting",
+      "foreignKey": "facetName"
+    }
+  }
+}

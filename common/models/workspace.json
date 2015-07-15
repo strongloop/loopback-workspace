@@ -1,0 +1,9 @@
+{
+  "properties": {
+    "name": {
+      "id": true,
+      "type": "string"
+    }
+  },
+  "base": "Model"
+}

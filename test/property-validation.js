@@ -1,4 +1,4 @@
-var app = require('../app');
+var app = require('../');
 var PropertyValidation = app.models.PropertyValidation;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 

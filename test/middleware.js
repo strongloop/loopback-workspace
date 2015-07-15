@@ -1,6 +1,6 @@
 var util = require('util');
 var async = require('async');
-var app = require('../app');
+var app = require('../');
 var loopback = require('loopback');
 var ConfigFile = app.models.ConfigFile;
 var Middleware = app.models.Middleware;

@@ -1,4 +1,4 @@
-var app = require('../app');
+var app = require('../');
 var WorkspaceEntity = app.models.WorkspaceEntity;
 var Facet = app.models.Facet;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;

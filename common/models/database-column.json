@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "connector": {
+      "type": "string"
+    },
+    "columnName": {
+      "type": "string"
+    },
+    "dataType": {
+      "type": "string"
+    },
+    "dataLength": {
+      "type": "string"
+    },
+    "nullable": {
+      "type": "boolean"
+    }
+  },
+  "public": true,
+  "dataSource": "db",
+  "base": "WorkspaceEntity"
+}

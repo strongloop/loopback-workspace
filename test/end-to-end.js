@@ -7,13 +7,13 @@ var mysql = require('mysql');
 var path = require('path');
 var request = require('supertest');
 var debug = require('debug')('test:end-to-end');
-var workspace = require('../app');
+var workspace = require('../');
 var models = workspace.models;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var ref = TestDataBuilder.ref;
 var given = require('./helpers/given');
 
-var Workspace = require('../app.js').models.Workspace;
+var Workspace = workspace.models.Workspace;
 
 var PKG_CACHE = path.resolve(__dirname, '.pkgcache');
 
@@ -23,6 +23,8 @@ var MYSQL_USER = 'lbws';
 var MYSQL_PASSWORD = 'hbx42rec';
 
 describe('end-to-end', function() {
+  this.timeout(10000);
+
   describe('api-server template', function() {
     var app;
 
@@ -416,6 +418,7 @@ describe('end-to-end', function() {
 
     describe('MySQL', function() {
       it('returns true for valid config', function(done) {
+        this.timeout(10000);
         givenDataSource({}, function(err, definition) {
           if (err) return done(err);
           definition.testConnection(done);

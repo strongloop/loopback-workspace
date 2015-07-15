@@ -1,6 +1,6 @@
 var fs = require('fs-extra');
 var path = require('path');
-var models = require('../../app').models;
+var models = require('../../').models;
 
 var given = module.exports;
 
