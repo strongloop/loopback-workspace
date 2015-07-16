@@ -119,7 +119,7 @@ GatewayMap.deserialize = function(cache, facetName, configFile) {
  * Get the list of scope mappings
  * @param cb
  */
-GatewayMap.getScopes = function(cb) {
+GatewayMap.getAuthScopes = function(cb) {
   // Find referenced pipeline/policies of type `auth`
   GatewayMap.find({
     include: {
@@ -298,4 +298,20 @@ Pipeline.remoteMethod('rename', {
       root: true
     }
   ]
+});
+
+GatewayMap.remoteMethod('getAuthScopes', {
+  isStatic: true,
+  accepts: [],
+  returns: [
+    {
+      arg: 'scopes',
+      type: 'object',
+      root: true
+    }
+  ],
+  http: {
+    verb: 'get',
+    path: '/authScopes'
+  }
 });

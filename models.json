@@ -818,7 +818,7 @@
     "public": true,
     "dataSource": "db"
   },
-  "OAuth2": {
+  "AuthPolicy": {
     "properties": {
       "scopes": ["string"]
     },
@@ -828,7 +828,7 @@
       "base": "Policy"
     }
   },
-  "ReverseProxy": {
+  "ReverseProxyPolicy": {
     "properties": {
       "targetURL": "string"
     },
@@ -838,7 +838,7 @@
       "base": "Policy"
     }
   },
-  "RateLimiting": {
+  "RateLimitingPolicy": {
     "properties": {
       "interval": "number",
       "limit": "number",
@@ -869,7 +869,7 @@
       "base": "Policy"
     }
   },
-  "Metrics": {
+  "MetricsPolicy": {
     "properties": {
     },
     "public": true,

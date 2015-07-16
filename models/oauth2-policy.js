@@ -1,9 +1,9 @@
 var app = require('../app');
 var debug = require('debug')('workspace:policy:oauth2');
 
-var OAuth2 = app.models.OAuth2;
+var AuthPolicy = app.models.AuthPolicy;
 
-OAuth2.prototype.defineScope = function(scope, cb) {
+AuthPolicy.prototype.defineScope = function(scope, cb) {
 
 };
 
