@@ -111,7 +111,7 @@ describe('Gateway Policies', function() {
     });
 
     it('should be able to list scopes', function(done) {
-      GatewayMap.getScopes(function(err, scopes) {
+      GatewayMap.getAuthScopes(function(err, scopes) {
         if (err) return done(err);
         expect(scopes).to.eql({
             catalog: [{verb: 'GET', endpoint: '/api/catalog'},
