@@ -222,11 +222,24 @@ connector._loadFromFile = function(cb) {
 var originalFind = connector.find;
 var originalAll = connector.all;
 
+// Map the model to a collection
+function getCollection(model) {
+  var Entity = loopback.getModel(model);
+  var meta = Entity.settings[connector.name];
+  if (meta) {
+    return meta.collection || meta.table || meta.tableName || model;
+  }
+  return model;
+}
+
 connector.find = function(model, id, options, cb) {
   var args = arguments;
   connector.loadFromFile(function(err) {
     if(err) return cb(err);
-    debug('reading from cache %s => %j', model, Object.keys(connector.cache[model]));
+    if (debug.enabled) {
+      var collection = getCollection(model);
+      debug('reading from cache %s => %j', collection, Object.keys(connector.cache[collection]));
+    }
     originalFind.apply(connector, args);
   });
 }
@@ -235,7 +248,10 @@ connector.all = function(model, filter, options, cb) {
   var args = arguments;
   connector.loadFromFile(function(err) {
     if(err) return cb(err);
-    debug('reading from cache %s => %j', model, Object.keys(connector.cache[model]));
+    if (debug.enabled) {
+      var collection = getCollection(model);
+      debug('reading from cache %s => %j', collection, Object.keys(connector.cache[collection]));
+    }
     originalAll.apply(connector, args);
   });
 }
@@ -253,11 +269,12 @@ connector.create = function create(model, data, options, callback) {
 
   this.setIdValue(model, data, id);
 
-  if(!this.cache[model]) {
-    this.cache[model] = {};
+  var collection = getCollection(model);
+  if(!this.cache[collection]) {
+    this.cache[collection] = {};
   }
 
-  this.cache[model][id] = serialize(data);
+  this.cache[collection][id] = serialize(data);
   this.saveToFile(id, function(err) {
     if(err) return callback(err);
     callback(null, id);

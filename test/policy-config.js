@@ -4,6 +4,7 @@ var ConfigFile = app.models.ConfigFile;
 var GatewayMap = app.models.GatewayMap;
 var Pipeline = app.models.Pipeline;
 var Policy = app.models.Policy;
+var AuthPolicy = app.models.AuthPolicy;
 
 var Facet = app.models.Facet;
 
@@ -12,9 +13,8 @@ describe('Gateway Policies', function() {
   function createPoliciesAndPipelines(cb) {
     async.parallel([
       function(done) {
-        Policy.create({
+        AuthPolicy.create({
           name: 'auth-catalog',
-          type: 'auth',
           scopes: ['catalog', 'shopping'],
           phase: 'auth'
         }, done);
@@ -22,7 +22,7 @@ describe('Gateway Policies', function() {
       function(done) {
         Policy.create({
           name: 'rate-limiter-per-minute',
-          type: 'rate-limiting',
+          type: 'rateLimiting',
           interval: 60000,
           limit: 1000,
           phase: 'auth:after'
@@ -31,8 +31,8 @@ describe('Gateway Policies', function() {
       function(done) {
         Policy.create({
           name: 'proxy-to-catalog',
-          type: 'reverse-proxy',
-          target: 'https://server1.example.com/api/catalog',
+          type: 'reverseProxy',
+          targetURL: 'https://server1.example.com/api/catalog',
           phase: 'final'
         }, done);
       }], function(err, policies) {

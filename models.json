@@ -825,7 +825,15 @@
     "public": true,
     "dataSource": "db",
     "options": {
-      "base": "Policy"
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "auth"
+        }
+      }
     }
   },
   "ReverseProxyPolicy": {
@@ -835,7 +843,15 @@
     "public": true,
     "dataSource": "db",
     "options": {
-      "base": "Policy"
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "reverseProxy"
+        }
+      }
     }
   },
   "RateLimitingPolicy": {
@@ -866,7 +882,15 @@
     "public": true,
     "dataSource": "db",
     "options": {
-      "base": "Policy"
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "rateLimiting"
+        }
+      }
     }
   },
   "MetricsPolicy": {
@@ -875,7 +899,15 @@
     "public": true,
     "dataSource": "db",
     "options": {
-      "base": "Policy"
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "metrics"
+        }
+      }
     }
   }
 }
