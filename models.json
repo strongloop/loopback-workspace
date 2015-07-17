@@ -1,22 +1,34 @@
 {
   "ConfigFile": {
     "properties": {
-      "path": {"type": "string", "id": true},
-      "data": {"type": "any"}
+      "path": {
+        "type": "string",
+        "id": true
+      },
+      "data": {
+        "type": "any"
+      }
     },
     "dataSource": "db",
     "public": false
   },
   "Workspace": {
     "properties": {
-      "name": {"id": true, "type": "string"}
+      "name": {
+        "id": true,
+        "type": "string"
+      }
     },
     "public": true,
     "dataSource": "db"
   },
   "PackageDefinition": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -30,9 +42,18 @@
   },
   "Facet": {
     "properties": {
-      "name": {"id": true, "type": "string", "json": false},
-      "modelsMetadata": {"type": "object", "json": false},
-      "defaultPermission": {"type": "string"}
+      "name": {
+        "id": true,
+        "type": "string",
+        "json": false
+      },
+      "modelsMetadata": {
+        "type": "object",
+        "json": false
+      },
+      "defaultPermission": {
+        "type": "string"
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -64,8 +85,16 @@
   },
   "FacetSetting": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "facetName": {"type": "string", "required": true, "json": false}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -87,17 +116,34 @@
   },
   "ModelConfig": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "facetName": {"type": "string", "required": true, "json": false},
-      "name": {"type": "string", "json": false},
-      "dataSource": {"type": "string" },
-      "public": {"type": "boolean"}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "name": {
+        "type": "string",
+        "json": false
+      },
+      "dataSource": {
+        "type": "string"
+      },
+      "public": {
+        "type": "boolean"
+      }
     },
     "dataSource": "db",
     "options": {
       "base": "WorkspaceEntity",
       "defaultConfigFile": "model-config.json",
-      "configFiles": ["model-config.json"],
+      "configFiles": [
+        "model-config.json"
+      ],
       "relations": {
         "facet": {
           "type": "belongsTo",
@@ -119,21 +165,43 @@
   },
   "ModelDefinition": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "facetName": {"type": "string", "required": true, "json": false},
-      "readonly": { "type": "boolean", "json": false },
-      "name": {"type": "string", "required": true},
-      "description": {"type": "string"},
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "readonly": {
+        "type": "boolean",
+        "json": false
+      },
+      "name": {
+        "type": "string",
+        "required": true
+      },
+      "description": {
+        "type": "string"
+      },
       "plural": "string",
       "base": "string",
       "strict": "boolean",
       "public": "boolean",
-      "idInjection": { "type": "boolean", "default": true },
+      "idInjection": {
+        "type": "boolean",
+        "default": true
+      },
       "scopes": "object",
       "indexes": "object",
-      "options": { "type": "object", "default": {
-        "validateUpsert": true
-      } }
+      "options": {
+        "type": "object",
+        "default": {
+          "validateUpsert": true
+        }
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -144,7 +212,9 @@
       "configFiles": [
         "models/*.json"
       ],
-      "configExtensions": ["json"],
+      "configExtensions": [
+        "json"
+      ],
       "relations": {
         "facet": {
           "type": "belongsTo",
@@ -152,31 +222,45 @@
           "foreignKey": "facetName"
         },
         "properties": {
-          "embed": {"as": "object", "key": "name"},
+          "embed": {
+            "as": "object",
+            "key": "name"
+          },
           "type": "hasMany",
           "model": "ModelProperty",
           "foreignKey": "modelId"
         },
         "validations": {
-          "embed": {"as": "array"},
+          "embed": {
+            "as": "array"
+          },
           "type": "hasMany",
           "model": "PropertyValidation",
           "foreignKey": "modelId"
         },
         "relations": {
-          "embed": {"as": "object", "key": "name"},
+          "embed": {
+            "as": "object",
+            "key": "name"
+          },
           "type": "hasMany",
           "model": "ModelRelation",
           "foreignKey": "modelId"
         },
         "accessControls": {
-          "embed": {"name": "acls", "as": "array", "includeIndex": true},
+          "embed": {
+            "name": "acls",
+            "as": "array",
+            "includeIndex": true
+          },
           "type": "hasMany",
           "model": "ModelAccessControl",
           "foreignKey": "modelId"
         },
         "methods": {
-          "embed": {"as": "array"},
+          "embed": {
+            "as": "array"
+          },
           "type": "hasMany",
           "model": "ModelMethod",
           "foreignKey": "modelId"
@@ -191,16 +275,42 @@
   },
   "ModelMethod": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "modelId": {"type": "string", "required": true, "json": false},
-      "facetName": {"type": "string", "required": true, "json": false},
-      "aliases": {"type": "array"},
-      "isStatic": {"type": "boolean"},
-      "accepts": {"type": "array"},
-      "returns": {"type": "array"},
-      "description": {"type": "string"},
-      "http": {"type": "object"},
-      "shared": {"type": "boolean"}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "modelId": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "aliases": {
+        "type": "array"
+      },
+      "isStatic": {
+        "type": "boolean"
+      },
+      "accepts": {
+        "type": "array"
+      },
+      "returns": {
+        "type": "array"
+      },
+      "description": {
+        "type": "string"
+      },
+      "http": {
+        "type": "object"
+      },
+      "shared": {
+        "type": "boolean"
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -210,13 +320,33 @@
   },
   "ModelRelation": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "modelId": {"type": "string", "required": true, "json": false},
-      "facetName": {"type": "string", "required": true, "json": false},
-      "type": {"type": "string"},
-      "model": {"type": "string"},
-      "as": {"type": "string"},
-      "foreignKey": {"type": "string"}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "modelId": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "type": {
+        "type": "string"
+      },
+      "model": {
+        "type": "string"
+      },
+      "as": {
+        "type": "string"
+      },
+      "foreignKey": {
+        "type": "string"
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -233,15 +363,42 @@
   },
   "ModelAccessControl": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "modelId": {"type": "string", "required": true, "json": false},
-      "facetName": {"type": "string", "required": true, "json": false},
-      "accessType": {"type": "string"},
-      "principalType": {"type": "string"},
-      "principalId": {"type": "string"},
-      "permission": {"type": "string", "required": true},
-      "property": {"type": "string"},
-      "index": {"type": "number", "json": false, "default": 0}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "modelId": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "accessType": {
+        "type": "string"
+      },
+      "principalType": {
+        "type": "string"
+      },
+      "principalId": {
+        "type": "string"
+      },
+      "permission": {
+        "type": "string",
+        "required": true
+      },
+      "property": {
+        "type": "string"
+      },
+      "index": {
+        "type": "number",
+        "json": false,
+        "default": 0
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -258,16 +415,43 @@
   },
   "ModelProperty": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "modelId": {"type": "string", "required": true, "json": false},
-      "facetName": {"type": "string", "required": true, "json": false},
-      "name": {"type": "string"},
-      "type": {"type": "any"},
-      "isId": {"type": "boolean", "json": "id"},
-      "generated": {"type": "boolean"},
-      "required": {"type": "boolean"},
-      "index": {"type": "boolean"},
-      "description": {"type": "string"}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "modelId": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "type": "any"
+      },
+      "isId": {
+        "type": "boolean",
+        "json": "id"
+      },
+      "generated": {
+        "type": "boolean"
+      },
+      "required": {
+        "type": "boolean"
+      },
+      "index": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string"
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -289,11 +473,21 @@
   },
   "DatabaseColumn": {
     "properties": {
-      "connector": {"type": "string"},
-      "columnName": {"type": "string"},
-      "dataType": {"type": "string"},
-      "dataLength": {"type": "string"},
-      "nullable": {"type": "boolean"}
+      "connector": {
+        "type": "string"
+      },
+      "columnName": {
+        "type": "string"
+      },
+      "dataType": {
+        "type": "string"
+      },
+      "dataLength": {
+        "type": "string"
+      },
+      "nullable": {
+        "type": "boolean"
+      }
     },
     "options": {
       "base": "WorkspaceEntity"
@@ -303,15 +497,37 @@
   },
   "PropertyValidation": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "propertyId": {"type": "string", "required": true, "json": false},
-      "type": {"type": "string"},
-      "message": {"type": "string"},
-      "min": {"type": "number"},
-      "max": {"type": "string"},
-      "int": {"type": "string"},
-      "number": {"type": "string"},
-      "with": {"type": "string"}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "propertyId": {
+        "type": "string",
+        "required": true,
+        "json": false
+      },
+      "type": {
+        "type": "string"
+      },
+      "message": {
+        "type": "string"
+      },
+      "min": {
+        "type": "number"
+      },
+      "max": {
+        "type": "string"
+      },
+      "int": {
+        "type": "string"
+      },
+      "number": {
+        "type": "string"
+      },
+      "with": {
+        "type": "string"
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -350,14 +566,34 @@
   },
   "DataSourceDefinition": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "host": {"type": "string"},
-      "port": {"type": "number"},
-      "url": {"type": "string"},
-      "database": {"type": "string"},
-      "username": {"type": "string"},
-      "password": {"type": "string"},
-      "facetName": {"type": "string", "required": true, "json": false}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "url": {
+        "type": "string"
+      },
+      "database": {
+        "type": "string"
+      },
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -384,16 +620,48 @@
   },
   "Middleware": {
     "properties": {
-      "id": {"type": "string", "id": true, "json": false},
-      "name": {"type": "string", "json": false},
-      "phase": {"type": "string", "json": false},
-      "subPhase": {"type": "string", "json": false},
-      "isPhasePlaceHolder": {"type": "boolean", "json": false},
-      "nextPhase": {"type": "string", "json": false},
-      "order": {"type": "number", "json": false},
-      "paths": {"type": ["string"]},
-      "params": {"type": "object"},
-      "facetName": {"type": "string", "required": true, "json": false}
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "name": {
+        "type": "string",
+        "json": false
+      },
+      "phase": {
+        "type": "string",
+        "json": false
+      },
+      "subPhase": {
+        "type": "string",
+        "json": false
+      },
+      "isPhasePlaceHolder": {
+        "type": "boolean",
+        "json": false
+      },
+      "nextPhase": {
+        "type": "string",
+        "json": false
+      },
+      "order": {
+        "type": "number",
+        "json": false
+      },
+      "paths": {
+        "type": [
+          "string"
+        ]
+      },
+      "params": {
+        "type": "object"
+      },
+      "facetName": {
+        "type": "string",
+        "required": true,
+        "json": false
+      }
     },
     "public": true,
     "dataSource": "db",
@@ -409,6 +677,235 @@
           "type": "belongsTo",
           "model": "Facet",
           "foreignKey": "facetName"
+        }
+      }
+    }
+  },
+  "Endpoint": {
+    "properties": {
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "name": {
+        "type": "string",
+        "json": false
+      },
+      "routes": {
+        "type": [
+          "string"
+        ]
+      }
+    },
+    "options": {
+      "base": "Definition"
+    },
+    "public": true,
+    "dataSource": "db"
+  },
+  "EndpointGroup": {
+    "properties": {
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "name": {
+        "type": "string",
+        "json": false
+      }
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Definition",
+      "relations": {
+        "endpoints": {
+          "type": "referencesMany",
+          "model": "Endpoint"
+        }
+      }
+    }
+  },
+  "Policy": {
+    "properties": {
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      },
+      "phase": {
+        "type": "string"
+      }
+    },
+    "options": {
+      "base": "Definition"
+    },
+    "public": true,
+    "dataSource": "db"
+  },
+  "Pipeline": {
+    "properties": {
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "options": {
+      "base": "Definition",
+      "relations": {
+        "policies": {
+          "type": "referencesMany",
+          "model": "Policy"
+        }
+      }
+    },
+    "public": true,
+    "dataSource": "db"
+  },
+  "GatewayMap": {
+    "properties": {
+      "id": {
+        "type": "string",
+        "id": true,
+        "json": false
+      },
+      "name": {
+        "type": "string"
+      },
+      "verb": {
+        "type": "string"
+      },
+      "endpoint": {
+        "type": "string"
+      },
+      "facetName": {
+        "type": "string",
+        "default": "server",
+        "json": false
+      }
+    },
+    "options": {
+      "base": "Definition",
+      "defaultConfigFile": "policy-config.json",
+      "configFiles": [
+        "policy-config.json",
+        "policy-config.*.json"
+      ],
+      "relations": {
+        "pipeline": {
+          "type": "belongsTo",
+          "model": "Pipeline"
+        },
+        "facet": {
+          "type": "belongsTo",
+          "model": "Facet",
+          "foreignKey": "facetName"
+        }
+      }
+    },
+    "public": true,
+    "dataSource": "db"
+  },
+  "AuthPolicy": {
+    "properties": {
+      "scopes": ["string"]
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "auth"
+        }
+      }
+    }
+  },
+  "ReverseProxyPolicy": {
+    "properties": {
+      "targetURL": "string"
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "reverseProxy"
+        }
+      }
+    }
+  },
+  "RateLimitingPolicy": {
+    "properties": {
+      "interval": "number",
+      "limit": "number",
+      "perApp": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perIp": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perUrl": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perUser": {
+        "interval": "number",
+        "limit": "number"
+      },
+      "perAppAndUser": {
+        "interval": "number",
+        "limit": "number"
+      }
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "rateLimiting"
+        }
+      }
+    }
+  },
+  "MetricsPolicy": {
+    "properties": {
+    },
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "base": "Policy",
+      "memory": {
+        "collection": "Policy"
+      },
+      "scope": {
+        "where": {
+          "type": "metrics"
         }
       }
     }
