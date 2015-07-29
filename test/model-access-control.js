@@ -1,4 +1,4 @@
-var app = require('../app');
+var app = require('../');
 var ModelDefinition = app.models.ModelDefinition;
 var ModelAccessControl = app.models.ModelAccessControl;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
@@ -12,19 +12,22 @@ describe('ModelAccessControl', function() {
         name: 'TestModel',
         facetName: 'common'
       }, function(err, model) {
+        if(err) return done(err);
         model.accessControls.create({
           principalType: '$role',
           principalId: '$everyone',
           permission: 'ALLOW',
           accessType: '*',
-        }, function() {
+        }, function(err) {
+          if(err) return done(err);
+
           var configFile = model.getConfigFile();
           configFile.load(function() {
             expect(configFile.data.acls).to.eql([{
               accessType: '*',
               principalType: '$role',
               principalId: '$everyone',
-              permission: 'ALLOW' 
+              permission: 'ALLOW'
             }]);
             model.accessControls.create({
               principalType: '$role',

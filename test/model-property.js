@@ -1,4 +1,4 @@
-var app = require('../app');
+var app = require('../');
 var given = require('./helpers/given');
 var ModelProperty = app.models.ModelProperty;
 var ModelDefinition = app.models.ModelDefinition;

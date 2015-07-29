@@ -1,10 +1,12 @@
-var app = require('../app');
+var app = require('../');
 var request = require('supertest');
 
 describe('REST API', function () {
   beforeEach(givenEmptySandbox);
-  
+
   describe('/workspaces', function () {
+    beforeEach(resetWorkspace);
+
     describe('POST /workspaces', function () {
       beforeEach(function createWorkspaceFromTemplate(done) {
         request(app)
@@ -15,7 +17,10 @@ describe('REST API', function () {
             name: 'sandbox'
           })
           .expect(204)
-          .end(done);
+          .end(function(err, res) {
+            console.log(res.body);
+            done(err);
+          });
       });
       it('should add a facet from a template', function (done) {
         app.models.Facet.find(function(err, defs) {

@@ -3,7 +3,7 @@ var async = require('async');
 var fs = require('fs-extra');
 var path = require('path');
 expect = require('chai').expect;
-var workspace = require('../app');
+var workspace = require('../server/server');
 var models = workspace.models;
 var ConfigFile = models.ConfigFile;
 var debug = require('debug')('workspace:test:support');
@@ -43,7 +43,11 @@ givenEmptySandbox = function(cb) {
 
 resetWorkspace = function(cb) {
   async.each(workspace.models(), function(model, cb) {
-    model.destroyAll(cb);
+    if(model.destroyAll) {
+      model.destroyAll(cb);
+    } else {
+      cb();
+    }
   }, cb);
 }
 
@@ -73,7 +77,7 @@ givenEmptyWorkspace = function(cb) {
 givenBasicWorkspace = function(cb) {
   resetWorkspace(function(err) {
     if(err) return cb(err);
-    givenWorkspaceFromTemplate('api-server', cb);  
+    givenWorkspaceFromTemplate('api-server', cb);
   });
 }
 
@@ -138,7 +142,7 @@ findAllEntities = function(cb) {
   steps = steps.map(function(fn) {
     return fn.bind(test);
   });
-  
+
   async.parallel(steps, cb);
 }
 

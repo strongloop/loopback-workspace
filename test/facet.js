@@ -1,5 +1,5 @@
 var fs = require('fs-extra');
-var Facet = require('../app').models.Facet;
+var Facet = require('../').models.Facet;
 
 describe('Facet', function () {
   describe('Facet.create(def, cb)', function () {

@@ -1,4 +1,4 @@
-var app = require('../app');
+var app = require('../');
 var DatabaseColumn = app.models.DatabaseColumn;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 

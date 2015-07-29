@@ -1,6 +1,6 @@
 var async = require('async');
 var FACET_CONFIG_JSON = 'server/config.json';
-var ConfigFile = require('../app').models.ConfigFile;
+var ConfigFile = require('../').models.ConfigFile;
 var assert = require('assert');
 var testData;
 
@@ -116,7 +116,7 @@ describe('ConfigFile', function() {
 
   describe('configFile.getFacetName()', function() {
     it('should be the name of the app', function() {
-      
+
       expectFacetNameForPath('my-app', 'my-app/datasource.json');
       expectFacetNameForPath('my-app', 'my-app/models/todo.json');
       expectFacetNameForPath(ConfigFile.ROOT_COMPONENT, 'config.json');
