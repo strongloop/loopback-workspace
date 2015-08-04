@@ -95,7 +95,8 @@
     },
     "methods": {
       "embed": {
-        "as": "array"
+        "as": "object",
+        "key": "name"
       },
       "type": "hasMany",
       "model": "ModelMethod",
