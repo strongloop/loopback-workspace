@@ -1,7 +1,7 @@
 module.exports = function(ConfigFile) {
 
   var assert = require('assert');
-  var app = require('../../');
+  var app = require('../../server/server');
   var path = require('path');
   var async = require('async');
   var fs = require('fs-extra');

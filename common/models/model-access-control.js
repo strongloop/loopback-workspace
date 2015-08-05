@@ -1,17 +1,15 @@
-var app = require('../../');
+var app = require('../../server/server');
 
 module.exports = function(ModelAccessControl) {
-  app.on('ready', function() {
+  app.once('ready', function() {
     ready(ModelAccessControl);
   });
-}
+};
 
 function ready(ModelAccessControl) {
 
-  var app = require('../../');
   var ACL = require('loopback').ACL;
   var Role = require('loopback').Role;
-  var WorkspaceEntity = app.models.WorkspaceEntity;
 
   /**
    * Represents an Access Control configuration.

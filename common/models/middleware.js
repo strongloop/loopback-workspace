@@ -1,14 +1,13 @@
-var app = require('../../');
+var app = require('../../server/server');
 
 module.exports = function(Middleware) {
-  app.on('ready', function() {
+  app.once('ready', function() {
     ready(Middleware);
   });
 }
 
 function ready(Middleware) {
 
-  var app = require('../../');
   var loopback = require('loopback');
   var debug = require('debug')('workspace:middleware');
   var ConfigFile = app.models.ConfigFile;

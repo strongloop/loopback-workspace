@@ -1,7 +1,7 @@
-var app = require('../../');
+var app = require('../../server/server');
 
 module.exports = function(DataSourceDefinition) {
-  app.on('ready', function() {
+  app.once('ready', function() {
     ready(DataSourceDefinition);
   });
 }
@@ -9,7 +9,6 @@ module.exports = function(DataSourceDefinition) {
 function ready(DataSourceDefinition) {
 
   var async = require('async');
-  var app = require('../../');
   var ModelDefinition = app.models.ModelDefinition;
   var ModelConfig = app.models.ModelConfig;
   var ModelProperty = app.models.ModelProperty;

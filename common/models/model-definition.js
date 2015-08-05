@@ -1,10 +1,10 @@
-var app = require('../../');
+var app = require('../../server/server');
 
 module.exports = function(ModelDefinition) {
-  app.on('ready', function() {
+  app.once('ready', function() {
     ready(ModelDefinition);
   });
-}
+};
 
 function ready(ModelDefinition) {
 
@@ -13,7 +13,6 @@ function ready(ModelDefinition) {
   var assert = require('assert');
   var extend = require('util')._extend;
 
-  var app = require('../../');
   var async = require('async');
   var ConfigFile = app.models.ConfigFile;
   var _ = require('lodash');

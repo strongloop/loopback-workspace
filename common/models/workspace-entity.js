@@ -1,7 +1,7 @@
 module.exports = function(WorkspaceEntity) {
   var path = require('path');
   var cloneDeep = require('lodash').cloneDeep;
-  var app = require('../../');
+  var app = require('../../server/server');
 
   WorkspaceEntity.getUniqueId = function(data) {
     var sep = this.settings.idSeparator || '.';
@@ -66,9 +66,13 @@ module.exports = function(WorkspaceEntity) {
     return app.get('workspace dir');
   }
 
+  WorkspaceEntity.getCollection = function() {
+    return this.dataSource.connector.getCollection(this.modelName);
+  };
+
   WorkspaceEntity.clearCache = function(cache) {
     // TODO(ritch) should this clear the ids cache?
-    cache[this.modelName] = {};
+    cache[this.getCollection()] = {};
   }
 
   WorkspaceEntity.addToCache = function(cache, val) {
@@ -81,7 +85,7 @@ module.exports = function(WorkspaceEntity) {
 
   WorkspaceEntity.getFromCache = function(cache, id) {
     try {
-      return JSON.parse(cache[this.modelName][id]);
+      return JSON.parse(cache[this.getCollection()][id]);
     } catch(err) {
       err.message = 'Cannot parse ' + this.modelName + '#' + id + '. ' +
         err.message;
@@ -90,11 +94,15 @@ module.exports = function(WorkspaceEntity) {
   }
 
   WorkspaceEntity.updateInCache = function(cache, id, data) {
-    cache[this.modelName][id] = JSON.stringify(data);
+    cache[this.getCollection()][id] = JSON.stringify(data);
   }
 
   WorkspaceEntity.allFromCache = function(cache) {
-    return Object.keys(cache[this.modelName])
+    var data = cache[this.getCollection()];
+    if (!data) {
+      return [];
+    }
+    return Object.keys(data)
       .map(this.getFromCache.bind(this, cache));
   }
 
