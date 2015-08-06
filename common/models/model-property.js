@@ -1,7 +1,5 @@
 module.exports = function(ModelProperty) {
 
-  var app = require('../../');
-
   /**
    * Represents a Property of a LoopBack `Model`.
    *

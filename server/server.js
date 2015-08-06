@@ -3,8 +3,6 @@ var path = require('path');
 var methodOverride = require('method-override');
 var app = module.exports = loopback();
 var boot = require('loopback-boot');
-var started = new Date();
-var env = app.get('env');
 
 app.set('legacyExplorer', false);
 

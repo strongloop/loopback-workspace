@@ -1,7 +1,5 @@
 module.exports = function(ModelRelation) {
 
-  var app = require('../../');
-
   /**
    * Represents a relation between two LoopBack `Model`s.
    *

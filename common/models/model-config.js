@@ -1,7 +1,5 @@
 module.exports = function(ModelConfig) {
 
-  var app = require('../../');
-
   /**
    * Defines a model configuration which attaches a model to a facet and a
    * dataSource. It also can extend a model definition with additional configuration.

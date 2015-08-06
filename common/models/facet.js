@@ -1,7 +1,7 @@
-var app = require('../../');
+var app = require('../../server/server');
 
 module.exports = function(Facet) {
-  app.on('ready', function() {
+  app.once('ready', function() {
     ready(Facet);
   });
 }
@@ -11,14 +11,10 @@ function ready(Facet) {
   var async = require('async');
   var assert = require('assert');
   var path = require('path');
-  var app = require('../../');
 
   var ModelDefinition = app.models.ModelDefinition;
-  var DataSourceDefinition = app.models.DataSourceDefinition;
   var Middleware = app.models.Middleware;
   var ModelConfig = app.models.ModelConfig;
-  var ConfigFile = app.models.ConfigFile;
-  var FacetSetting = app.models.FacetSetting;
 
   /**
    * Defines a `LoopBackApp` configuration.
@@ -32,6 +28,17 @@ function ready(Facet) {
   Facet.ioQueue = async.queue(function(task, cb) {
     task(cb);
   }, 1); // Set concurrency to 1 so that tasks will be executed one by one
+
+  Facet.artifactTypes = {};
+
+  /**
+   * Register a hander for the given artifact type
+   * @param {String} name Config file name of the artifact
+   * @param {Object} handler An object that has load()/save() methods
+   */
+  Facet.registerArtifactType = function(name, handler) {
+    Facet.artifactTypes[name] = handler;
+  };
 
   /**
    * Load the app with the given name into the connector cache.
@@ -55,6 +62,15 @@ function ready(Facet) {
     var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
     var middlewares = ConfigFile.getFileByBase(configFiles, 'middleware');
     var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
+
+    var artifacts = {};
+    for (var at in Facet.artifactTypes) {
+      var file = ConfigFile.getFileByBase(configFiles, at);
+      debug('Loading %s from %s', at, file);
+      if (file) {
+        artifacts[at] = file;
+      }
+    }
     var steps = [];
 
     var facetData = {
@@ -159,6 +175,16 @@ function ready(Facet) {
       });
     }
 
+    function createLoader(a) {
+      return function(cb) {
+        Facet.artifactTypes[a].load(cache, facetName, artifacts[a], cb);
+      };
+    }
+
+    for (var a in artifacts) {
+      steps.push(createLoader(a));
+    }
+
     Facet.ioQueue.push(function (done) {
       async.series(steps, function (err) {
         if (err) return done(err);
@@ -260,6 +286,15 @@ function ready(Facet) {
         addFileToSave(modelConfigFile);
       }
     });
+
+    for (var a in Facet.artifactTypes) {
+      if (typeof Facet.artifactTypes[a].save === 'function') {
+        var artifact = Facet.artifactTypes[a].save(cache, facetName);
+        if (artifact) {
+          addFileToSave(artifact);
+        }
+      }
+    }
 
     Facet.ioQueue.push(function(done) {
       // TODO(ritch) files that exist without data in the cache should be deleted

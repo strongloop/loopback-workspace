@@ -1,7 +1,7 @@
-var app = require('../../');
+var app = require('../../server/server');
 
 module.exports = function(PackageDefinition) {
-  app.on('ready', function() {
+  app.once('ready', function() {
     ready(PackageDefinition);
   });
 }
