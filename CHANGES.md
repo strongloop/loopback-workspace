@@ -1,3 +1,17 @@
+2015-08-06, Version 3.16.0
+==========================
+
+ * Update to fs-extra 0.22 (Raymond Feng)
+
+ * Allow loopback-workspace to work with gateway-workspace (Raymond Feng)
+
+ * Fix model methods to be represented as an object (Miroslav Bajtoš)
+
+ * Add app.js for backwards compatibility (Ritchie Martori)
+
+ * Refactor the workspace into the LoopBack 2.x structure (Ritchie Martori)
+
+
 2015-06-23, Version 3.15.1
 ==========================
 
