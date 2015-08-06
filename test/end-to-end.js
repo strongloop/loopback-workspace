@@ -141,7 +141,7 @@ describe('end-to-end', function() {
     it('includes all built-in phases in `middleware.json`', function(done) {
       var builtinPhases = readBuiltinPhasesFromSanbox();
 
-      var middleware = fs.readJsonFileSync(
+      var middleware = fs.readJsonSync(
         path.resolve(SANDBOX, 'server/middleware.json'));
       var phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
 

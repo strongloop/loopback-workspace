@@ -28,7 +28,7 @@ describe('ModelRelation', function() {
           foreignKey: 'reportsTo'
         }, function(err) {
           if (err) return done(err);
-          var json = fs.readJsonFileSync(
+          var json = fs.readJsonSync(
             path.resolve(SANDBOX, 'common/models/test-model.json'));
           expect(json.relations).to.eql({
             boss: {

@@ -42,5 +42,5 @@ given.modelDefinition = function(facetName, modelDefinition) {
   var dir = path.resolve(SANDBOX, facetName, 'models');
   fs.mkdirpSync(dir);
   var file = path.resolve(dir, modelDefinition.name + '.json');
-  fs.writeJsonFileSync(file, modelDefinition);
+  fs.writeJsonSync(file, modelDefinition);
 };

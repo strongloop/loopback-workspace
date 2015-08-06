@@ -15,7 +15,7 @@ describe('PackageDefinition', function () {
         { id: 'test-pkg', name: 'test-pkg' },
         function(err) {
           if (err) return done(err);
-          var content = fs.readJsonFileSync(SANDBOX + '/package.json');
+          var content = fs.readJsonSync(SANDBOX + '/package.json');
           expect(content).to.not.have.property('id');
           done();
         });
@@ -29,13 +29,13 @@ describe('PackageDefinition', function () {
 
     beforeEach(function prepareScenario() {
       MAIN_FILE = path.resolve(SANDBOX, 'package.json');
-      MAIN_DATA = fs.readJsonFileSync(MAIN_FILE);
+      MAIN_DATA = fs.readJsonSync(MAIN_FILE);
 
       SUBPROJECT_FILE = path.resolve(SANDBOX, 'subproject', 'package.json');
       SUBPROJECT_DATA = { name: 'subproject', version: '1.2.3' };
 
       fs.mkdirpSync(path.dirname(SUBPROJECT_FILE));
-      fs.writeJsonFileSync(SUBPROJECT_FILE, SUBPROJECT_DATA);
+      fs.writeJsonSync(SUBPROJECT_FILE, SUBPROJECT_DATA);
     });
 
     it('correctly saves package definitions', function(done) {
@@ -47,8 +47,8 @@ describe('PackageDefinition', function () {
           function(it, next) { it.save(next); },
           function(err) {
             if (err) return done(err);
-            expect(fs.readJsonFileSync(MAIN_FILE)).to.eql(MAIN_DATA);
-            expect(fs.readJsonFileSync(SUBPROJECT_FILE)).to.eql(SUBPROJECT_DATA);
+            expect(fs.readJsonSync(MAIN_FILE)).to.eql(MAIN_DATA);
+            expect(fs.readJsonSync(SUBPROJECT_FILE)).to.eql(SUBPROJECT_DATA);
             done();
           });
       });
