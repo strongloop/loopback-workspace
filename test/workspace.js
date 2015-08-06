@@ -90,7 +90,7 @@ describe('Workspace', function() {
       var pkg;
 
       before(function() {
-        pkg = fs.readJsonFileSync(SANDBOX + '/package.json');
+        pkg = fs.readJsonSync(SANDBOX + '/package.json');
       });
 
       it('should set correct name', function() {

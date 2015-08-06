@@ -17,32 +17,32 @@ describe('Facet', function () {
     });
 
     it('omits `name` in config.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/config.json');
+      var content = fs.readJsonSync(SANDBOX + '/server/config.json');
       expect(content).to.not.have.property('name');
     });
 
     it('omits `modelsMetadata` in config.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/config.json');
+      var content = fs.readJsonSync(SANDBOX + '/server/config.json');
       expect(content).to.not.have.property('modelsMetadata');
     });
 
     it('omits `facetName` in model-config.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
+      var content = fs.readJsonSync(SANDBOX + '/server/model-config.json');
       expect(content.User).to.not.have.property('facetName');
     });
 
     it('omits `facetName` in datasources.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/datasources.json');
+      var content = fs.readJsonSync(SANDBOX + '/server/datasources.json');
       expect(content.db).to.not.have.property('facetName');
     });
 
     it('omits `configFile` in datasources.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/datasources.json');
+      var content = fs.readJsonSync(SANDBOX + '/server/datasources.json');
       expect(content.db).to.not.have.property('configFile');
     });
 
     it('includes `_meta.source` in model-config.json', function() {
-      var content = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
+      var content = fs.readJsonSync(SANDBOX + '/server/model-config.json');
       expect(content).to.have.property('_meta');
       expect(content._meta).to.eql({
         sources: [
@@ -61,7 +61,7 @@ describe('Facet', function () {
     });
 
     it('saves facet models to correct file', function() {
-      var serverModels = fs.readJsonFileSync(SANDBOX + '/server/model-config.json');
+      var serverModels = fs.readJsonSync(SANDBOX + '/server/model-config.json');
       expect(Object.keys(serverModels), 'server models').to.not.be.empty;
     });
 
