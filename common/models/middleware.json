@@ -29,6 +29,11 @@
       "type": "number",
       "json": false
     },
+    "methods": {
+      "type": [
+        "string"
+      ]
+    },
     "paths": {
       "type": [
         "string"
