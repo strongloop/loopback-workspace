@@ -1,4 +1,5 @@
 var app = require('../../server/server');
+var debug = require('debug')('workspace:model-definition');
 
 module.exports = function(ModelDefinition) {
   app.once('ready', function() {
@@ -12,7 +13,6 @@ function ready(ModelDefinition) {
   var fs = require('fs');
   var assert = require('assert');
   var extend = require('util')._extend;
-
   var async = require('async');
   var ConfigFile = app.models.ConfigFile;
   var _ = require('lodash');
@@ -105,14 +105,37 @@ function ready(ModelDefinition) {
     return split.join('');
   }
 
+  var removeById = ModelDefinition.removeById.bind(ModelDefinition);
+
   ModelDefinition.removeById = function(id, cb) {
+    debug('removing model: %s', id);
+
     this.findById(id, function(err, modelDef) {
+      if (err) {
+        return cb(err);
+      }
+
+      if (!modelDef) {
+        return cb(new Error('ModelDefinition ' + id + ' does not exist'));
+      }
+
       if (modelDef.readonly) {
         return cb(new Error('Cannot remove readonly model ' + id));
       }
-      var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
-      var file = new ConfigFile({path: p});
-      file.remove(cb);
+      removeById(id, function(err) {
+        if (err) return cb(err);
+
+        var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
+        var file = new ConfigFile({path: p});
+        file.exists(function(err, exists) {
+          if (err) return cb(err);
+          if (exists) {
+            file.remove(cb)
+          } else {
+            cb();
+          }
+        });
+      });
     });
   }
 
