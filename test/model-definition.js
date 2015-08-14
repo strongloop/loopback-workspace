@@ -235,6 +235,13 @@ describe('ModelDefinition', function() {
             isId: true,
             custom: true
           })
+          .define('property', ModelProperty, {
+            modelId: ref('model.id'),
+            facetName: 'server', // do not auto-generate a value
+            name: 'xyz',
+            disableInherit: true,
+            custom: true
+          })
           .define('relation', ModelRelation, {
             modelId: ref('model.id'),
             facetName: undefined, // do not auto-generate a value
@@ -283,6 +290,11 @@ describe('ModelDefinition', function() {
           'custom'
         ]);
       });
+
+      it('is correct for properties to disable inherit', function() {
+        expect(this.data.properties.xyz).to.eql(false);
+      });
+
 
       it('is correct for relations', function() {
         expect(Object.keys(this.data.relations.self)).to.eql([

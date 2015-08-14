@@ -107,9 +107,18 @@ module.exports = function(Definition) {
         Object.keys(relatedData).forEach(function(embedId) {
           var config = relatedData[embedId];
 
-          if (relation.model === 'ModelProperty' && !config.type) {
-            // expand shorthand notation
-            config = { type: config };
+          if (relation.model === 'ModelProperty' && !(config && config.type)) {
+            if (typeof config === 'string' || typeof config === 'function') {
+              // expand shorthand notation
+              config = {type: config};
+            } else {
+              // https://github.com/strongloop/loopback-workspace/issues/223
+              // {myProp: false} or {myProp: null} is to hide base myProp
+              config = {
+                disableInherit: true,
+                comments: 'Flag to not inherit the property from base'
+              };
+            }
             debug('expanded model property %s.%s defined as %j',
               fileData.name, embedId, config);
           }
