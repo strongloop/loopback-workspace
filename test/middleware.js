@@ -30,6 +30,7 @@ describe('Middleware', function() {
         Middleware.addMiddleware({
           facetName: serverFacet,
           name: 'foo-before',
+          methods: ['get', 'post'],
           paths: ['/foo-before'],
           params: {
             barParam: 'foo-before'
@@ -78,6 +79,11 @@ describe('Middleware', function() {
           return !m.isPhasePlaceHolder;
         });
         expect(middleware).to.have.length(4);
+        // Convert to json for eql comparison, otherwise List != []
+        var m = middleware[3].toJSON();
+        expect(m.paths).to.eql(['/foo-before']);
+        expect(m.methods).to.eql(['get', 'post']);
+        expect(m.params).to.eql({barParam: 'foo-before'});
         done();
       });
     });
