@@ -38,7 +38,6 @@ app.emit('ready');
 
 app.use(loopback.favicon());
 app.use(loopback.cookieParser(app.get('cookieSecret')));
-app.use(loopback.token({model: app.models.accessToken}));
 app.use(methodOverride());
 
 /*
