@@ -1,3 +1,19 @@
+2015-08-17, Version 3.17.0
+==========================
+
+ * Increate the timeout for tests (Raymond Feng)
+
+ * Fix the test of property config (Raymond Feng)
+
+ * Remove the unused token middleware (Raymond Feng)
+
+ * Support flag to exclude inheritance of base properties (Raymond Feng)
+
+ * Fix ModelDefinitions not being deleted from cache (Ritchie Martori)
+
+ * Add 'methods' property to middleware model (Raymond Feng)
+
+
 2015-08-06, Version 3.16.0
 ==========================
 
