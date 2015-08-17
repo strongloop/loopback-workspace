@@ -163,6 +163,11 @@ function ready(ModelDefinition) {
       var data = Entity.getConfigFromData(relatedData[ix]);
       delete data[relation.foreignKey];
       delete data[relation.embed.key];
+
+      // Convert the disableInherit placeholder (myBaseProp: false) back to false
+      if (relation.model === 'ModelProperty' && data.disableInherit) {
+        data = false;
+      }
       relatedData[ix] = data;
     }
   }
