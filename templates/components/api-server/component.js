@@ -13,10 +13,9 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "cors": "^2.5.2",
-    "errorhandler": "^1.1.1",
-    "loopback": "^2.14.0",
+    "loopback": "^2.22.0",
     "loopback-boot": "^2.6.5",
-    "loopback-datasource-juggler": "^2.19.0",
+    "loopback-datasource-juggler": "^2.39.0",
     "serve-favicon": "^2.0.1"
   },
   "optionalDependencies": {
