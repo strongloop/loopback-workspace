@@ -215,8 +215,21 @@ function ready(Middleware) {
             phaseDef = {};
             middlewareConfig[phaseName] = phaseDef;
           }
-          phaseDef[m.name] =
-            Middleware.getConfigFromData(m);
+          if (m.isMiddlewarePlaceHolder) {
+            phaseDef[m.name] = [];
+          } else {
+            var def = phaseDef[m.name];
+            if (def) {
+              // The name already has an entry, convert the value to array
+              if (!Array.isArray(def)) {
+                def = [def];
+              }
+              phaseDef[m.name] = def;
+              def.push(Middleware.getConfigFromData(m));
+            } else {
+              phaseDef[m.name] = Middleware.getConfigFromData(m);
+            }
+          }
         });
         return entries.length;
       }
@@ -236,7 +249,7 @@ function ready(Middleware) {
     });
 
     debug('Writing to middleware.json: %j', middlewareConfig);
-    if(Object.keys(middlewareConfig).length) {
+    if (Object.keys(middlewareConfig).length) {
       return new ConfigFile({
         path: middlewarePath,
         data: middlewareConfig
@@ -280,16 +293,28 @@ function ready(Middleware) {
       Middleware.addToCache(cache, def);
 
       for (var d in defs) {
-        order++;
         def = defs[d];
-        def.configFile = configFile.path;
-        def.phase = phase;
-        def.subPhase = subPhase;
-        def.facetName = facetName;
-        def.name = d;
-        def.order = phaseOrder * ORDER_BUFFER + order;
-        debug('loading [%s] middleware into cache', def.name);
-        Middleware.addToCache(cache, def);
+        var defList = def;
+        if (!Array.isArray(def)) {
+          defList = [def];
+        }
+        if (defList.length === 0) {
+          defList = [{isMiddlewarePlaceHolder: true}];
+        }
+        // The middleware value can be an array
+        for (var i = 0, n = defList.length; i < n; i++) {
+          order++;
+          var md = defList[i];
+          md.configFile = configFile.path;
+          md.phase = phase;
+          md.subPhase = subPhase;
+          md.facetName = facetName;
+          md.name = d;
+          md.order = phaseOrder * ORDER_BUFFER + order;
+          md.index = i;
+          debug('loading [%s] middleware into cache: %j', md.name, md);
+          Middleware.addToCache(cache, md);
+        }
       }
     });
   };
@@ -299,7 +324,11 @@ function ready(Middleware) {
     if (data.subPhase) {
       phase = phase + ':' + data.subPhase;
     }
-    return phase + '.' + data.name;
+    var index = '';
+    if (data.index) {
+      index = '.' + data.index.toString();
+    }
+    return phase + '.' + data.name + index;
   };
 
-};
+}
