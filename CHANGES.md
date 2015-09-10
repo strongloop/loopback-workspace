@@ -1,3 +1,11 @@
+2015-09-10, Version 3.17.1
+==========================
+
+ * Allow array value for middleware definition (Raymond Feng)
+
+ * Suppress error stack traces in production (Miroslav Bajtoš)
+
+
 2015-08-17, Version 3.17.0
 ==========================
 
