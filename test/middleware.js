@@ -51,6 +51,35 @@ describe('Middleware', function() {
       }, function(done) {
         Middleware.addMiddleware({
           facetName: serverFacet,
+          name: 'xyz',
+          paths: ['/xyz'],
+          params: {
+            xyzParam: 'xyz'
+          },
+          phase: 'files',
+          index: 0
+        }, done);
+      }, function(done) {
+        Middleware.addMiddleware({
+          facetName: serverFacet,
+          name: 'xyz',
+          paths: ['/xyz1'],
+          params: {
+            xyzParam: 'xyz1'
+          },
+          phase: 'files',
+          index: 1
+        }, done);
+      }, function(done) {
+        Middleware.addMiddleware({
+          facetName: serverFacet,
+          name: 'dummy',
+          phase: 'files',
+          isMiddlewarePlaceHolder: true
+        }, done);
+      }, function(done) {
+        Middleware.addMiddleware({
+          facetName: serverFacet,
           isPhasePlaceHolder: true,
           phase: 'myPhase'
         }, done);
@@ -74,13 +103,13 @@ describe('Middleware', function() {
 
     it('should be able to create multiple entries', function(done) {
       Middleware.find(function(err, defs) {
-        expect(defs).to.have.length(7);
+        expect(defs).to.have.length(11);
         var middleware = defs.filter(function(m) {
           return !m.isPhasePlaceHolder;
         });
-        expect(middleware).to.have.length(4);
+        expect(middleware).to.have.length(7);
         // Convert to json for eql comparison, otherwise List != []
-        var m = middleware[3].toJSON();
+        var m = middleware[6].toJSON();
         expect(m.paths).to.eql(['/foo-before']);
         expect(m.methods).to.eql(['get', 'post']);
         expect(m.params).to.eql({barParam: 'foo-before'});
@@ -109,12 +138,26 @@ describe('Middleware', function() {
         expect(configData.myPhase).exist;
         expect(Object.keys(configData.myPhase)).to.eql([]);
       });
+
+      it('should allow array value', function() {
+        var configData = this.configFile.data;
+        expect(configData.files).exist;
+        expect(configData.files.xyz).to.be.array;
+        expect(configData.files.xyz.length).to.eql(2);
+      });
+
+      it('should allow empty array value', function() {
+        var configData = this.configFile.data;
+        expect(configData.files).exist;
+        expect(configData.files.dummy).to.be.array;
+        expect(configData.files.dummy.length).to.eql(0);
+      });
     });
 
     it('should keep the order of entries', function(done) {
       var defs = this.configFile.data;
       expect(Object.keys(defs)).to.eql(
-        ['auth', 'routes:before', 'routes', 'myPhase']);
+        ['auth', 'routes:before', 'routes', 'files', 'myPhase']);
       var routes = defs.routes;
       expect(Object.keys(routes)).to.eql(['foo', 'bar']);
       done();
@@ -145,7 +188,7 @@ describe('Middleware', function() {
           if (err) done(err);
           var middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'phase1', 'routes:before', 'routes', 'myPhase']);
+            ['auth', 'phase1', 'routes:before', 'routes', 'files', 'myPhase']);
           done();
         });
       });
@@ -159,7 +202,7 @@ describe('Middleware', function() {
           if (err) done(err);
           var middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'routes:before', 'routes', 'myPhase']);
+            ['auth', 'routes:before', 'routes', 'files', 'myPhase']);
           done();
         });
       });
@@ -173,7 +216,7 @@ describe('Middleware', function() {
           if (err) done(err);
           var middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'routes:before', 'routes', 'myPhase', 'phase1']);
+            ['auth', 'routes:before', 'routes', 'files', 'myPhase', 'phase1']);
           done();
         });
       });

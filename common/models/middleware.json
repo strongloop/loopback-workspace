@@ -21,6 +21,14 @@
       "type": "boolean",
       "json": false
     },
+    "isMiddlewarePlaceHolder": {
+      "type": "boolean",
+      "json": false
+    },
+    "index": {
+      "type": "number",
+      "json": false
+    },
     "nextPhase": {
       "type": "string",
       "json": false
