@@ -54,22 +54,11 @@ app.use(methodOverride());
 // LoopBack REST interface
 app.use(app.get('restApiRoot'), loopback.rest());
 
-// API explorer (if present)
-try {
-  var explorer = require('loopback-explorer')(app);
-  app.use('/explorer', explorer);
-  app.once('started', function(baseUrl) {
-    console.log('Browse your REST API at %s%s', baseUrl, explorer.route);
-  });
-} catch(e){
-  // Print the message only when the app was started via `app.listen()`.
-  // Do not print any message when the project is used as a component.
-  app.once('started', function(baseUrl) {
-    console.log(
-      'Run `npm install loopback-explorer` to enable the LoopBack explorer'
-    );
-  });
-}
+// API explorer
+require('loopback-component-explorer')(app);
+app.once('started', function(baseUrl) {
+  console.log('Browse your REST API at %s%s', baseUrl, '/explorer');
+});
 
 /*
  * EXTENSION POINT

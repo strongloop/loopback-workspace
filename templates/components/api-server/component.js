@@ -15,11 +15,9 @@ template.package = {
     "cors": "^2.5.2",
     "loopback": "^2.22.0",
     "loopback-boot": "^2.6.5",
+    "loopback-component-explorer": "^2.1.0",
     "loopback-datasource-juggler": "^2.39.0",
     "serve-favicon": "^2.0.1"
-  },
-  "optionalDependencies": {
-    "loopback-explorer": "^1.1.0"
   },
   "devDependencies": {
     "jshint": "^2.5.6"
