@@ -390,7 +390,7 @@ describe('end-to-end', function() {
         {
           facetName: 'server',
           name: 'test-unknown-ds',
-          connector: 'connector-that-does-not-exist',
+          connector: 'connector-that-does-not-exist'
         },
         function(err, definition) {
           if (err) return done(err);
@@ -503,7 +503,7 @@ describe('end-to-end', function() {
           facetName: ref('productDef.facetName'),
           modelId: ref('productDef.id'),
           name: 'name',
-          type: 'string',
+          type: 'string'
         })
         .define('productConfig', models.ModelConfig, {
           facetName: 'server',
@@ -537,6 +537,8 @@ describe('end-to-end', function() {
         .end(function(err, res) {
           if (err) return done(err);
           expect(res.body).to.have.property('pid');
+          expect(res.body).to.have.property('host');
+          expect(res.body).to.have.property('port');
           expectAppIsRunning(done);
         });
     });
@@ -713,7 +715,7 @@ function execNpm(args, options, cb) {
     {
       PATH: process.env.PATH,
       HOME: process.env.HOME,
-      USERPROFILE: process.env.USERPROFILE,
+      USERPROFILE: process.env.USERPROFILE
     },
     options.env
   );
