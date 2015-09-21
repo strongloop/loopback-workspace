@@ -24,6 +24,7 @@
     "lodash": "^3.0.0",
     "loopback": "^2.0.0",
     "loopback-boot": "^2.0.0",
+    "loopback-component-explorer": "^2.1.0",
     "loopback-datasource-juggler": "^2.27.0",
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
@@ -31,9 +32,6 @@
     "serve-favicon": "^2.0.1",
     "stable": "^0.1.5",
     "strong-wait-till-listening": "^1.0.0"
-  },
-  "optionalDependencies": {
-    "loopback-explorer": "^1.2.2"
   },
   "devDependencies": {
     "better-stack-traces": "^1.0.1",
