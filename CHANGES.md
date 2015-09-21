@@ -1,3 +1,9 @@
+2015-09-21, Version 3.18.0
+==========================
+
+ * declaratively load rest-api and explorer (Hage Yaapa)
+
+
 2015-09-10, Version 3.17.1
 ==========================
 
