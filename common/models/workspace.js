@@ -365,7 +365,7 @@ module.exports = function(Workspace) {
             return done(err);
           }
           debug('Child started with pid', child.pid);
-          done(null, {pid: child.pid});
+          done(null, {pid: child.pid, host: waitOpts.host, port: waitOpts.port });
         });
       });
 
