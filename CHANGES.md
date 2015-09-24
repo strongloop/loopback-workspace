@@ -1,3 +1,9 @@
+2015-09-24, Version 3.18.1
+==========================
+
+ * Add host and port to start app response payload (seanbrookes)
+
+
 2015-09-21, Version 3.18.0
 ==========================
 
