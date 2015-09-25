@@ -395,7 +395,11 @@ module.exports = function(Workspace) {
 
     loopback.remoteMethod(Workspace.start, {
       http: {verb: 'post', path: '/start'},
-      returns: {arg: 'data', type: 'StartResult', root: true}
+      returns: {
+        arg: 'data',
+        type: { pid: Number, host: String, port: Number },
+        root: true
+      }
     });
 
     process.once('exit', function killWorkspaceChild() {
