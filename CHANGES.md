@@ -1,3 +1,9 @@
+2015-09-25, Version 3.18.2
+==========================
+
+ * Fix remoting metadata of Workspace.start() (Miroslav Bajtoš)
+
+
 2015-09-24, Version 3.18.1
 ==========================
 
