@@ -8,6 +8,7 @@ template.package = {
   "version": "1.0.0",
   "main": "server/server.js",
   "scripts": {
+    "start": "node .",
     "pretest": "jshint .",
   },
   "dependencies": {
