@@ -14,6 +14,7 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "cors": "^2.5.2",
+    "helmet": "^0.14.0",
     "loopback": "^2.22.0",
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^2.1.0",
