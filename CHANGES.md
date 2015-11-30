@@ -1,3 +1,15 @@
+2015-11-30, Version 3.18.3
+==========================
+
+ * Update package specification to support 'node .' (Gunjan Pandya)
+
+ * add support for `npm start` (Sai Vennam)
+
+ * Refer to licenses with a link (Sam Roberts)
+
+ * Use strongloop conventions for licensing (Sam Roberts)
+
+
 2015-09-25, Version 3.18.2
 ==========================
 
