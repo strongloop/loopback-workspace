@@ -350,13 +350,19 @@ module.exports = function(Workspace) {
         });
 
         // Wait until the child process starts listening
-
         var waitOpts = {
           host: host,
           port: port || 3000, // 3000 is the default port provided by loopback
           timeoutInMs: 30000  // 30 seconds
         };
 
+        // Windows will fail to connect if the host is 0.0.0.0, so redirect to
+        // localhost to prevent the startup detection from timing out.
+        if (waitOpts.host === '0.0.0.0') {
+          waitOpts.host = 'localhost';
+        }
+
+        debug('Listening for child on %s:%s', waitOpts.host, waitOpts.port);
         waitTillListening(waitOpts, function onWaitIsOver(err) {
           if (err) {
             debug('Child not listening, killing it. %s', err);
