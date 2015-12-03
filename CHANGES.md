@@ -1,3 +1,9 @@
+2015-12-03, Version 3.18.4
+==========================
+
+ * Fix timeout on workspace start on Windows (Joseph Tary)
+
+
 2015-11-30, Version 3.18.3
 ==========================
 
