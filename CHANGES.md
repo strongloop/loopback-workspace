@@ -1,3 +1,9 @@
+2015-12-04, Version 3.18.5
+==========================
+
+ * Fix: ModelMethod.http is an array (Miroslav Bajtoš)
+
+
 2015-12-03, Version 3.18.4
 ==========================
 
