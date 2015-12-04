@@ -31,7 +31,7 @@
       "type": "string"
     },
     "http": {
-      "type": "object"
+      "type": ["object"]
     },
     "shared": {
       "type": "boolean"

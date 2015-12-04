@@ -57,4 +57,42 @@ describe('ModelMethod', function() {
         });
       });
   });
+
+  it('supports multiple http endpoints', function(done) {
+    ModelMethod.create(
+      {
+        modelId: userModel.id,
+        name: 'multiMethod',
+        isStatic: true,
+        http: [
+          { verb: 'get', path: '/get' },
+          { verb: 'head', path: '/head' }
+        ]
+      },
+      function(err) {
+        if (err) return done(err);
+
+        userModel.methods(function(err, list) {
+          if (err) return done(err);
+          expect(list).to.have.length(1);
+          var method = list[0];
+          expect(method).to.have.property('name', 'multiMethod');
+          expect(method).to.have.property('http').to.have.length(2);
+          expect(method.http[0]).to.eql({ verb: 'get', path: '/get' });
+          expect(method.http[1]).to.eql({ verb: 'head', path: '/head' });
+
+          var cfg = new ConfigFile({ path: 'server/models/user.json' });
+          cfg.load(function(err) {
+            if (err) return done(err);
+            var methods = cfg.data.methods;
+            expect(methods).to.have.property('multiMethod');
+            expect(methods.multiMethod).to.have.property('http').eql([
+              { verb: 'get', path: '/get' },
+              { verb: 'head', path: '/head' }
+            ]);
+            done();
+          });
+        });
+      });
+  });
 });
