@@ -12,6 +12,7 @@ var models = workspace.models;
 var TestDataBuilder = require('loopback-testing').TestDataBuilder;
 var ref = TestDataBuilder.ref;
 var given = require('./helpers/given');
+var should = require('chai').should();
 
 var Workspace = workspace.models.Workspace;
 
@@ -96,6 +97,19 @@ describe('end-to-end', function() {
         .set('Origin', 'http://example.com')
         .expect('Access-Control-Allow-Origin',  'http://example.com')
         .expect(200, done);
+    });
+    
+    it('provides security headers for all URLs ', function(done){
+      request(app).get('/')
+       .expect('X-frame-options', 'DENY')
+       .expect('x-xss-protection', '1; mode=block')
+       .expect('x-content-type-options', 'nosniff')
+       .expect('x-download-options', 'noopen')
+       .expect(function(res){
+          var headers = res.headers;
+          headers.should.not.have.property('x-powered-by');
+       })
+       .expect(200, done);
     });
 
     it('can create and login a user', function(done) {
