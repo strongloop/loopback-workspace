@@ -10,6 +10,7 @@ template.package = {
   "scripts": {
     "start": "node .",
     "pretest": "jshint .",
+    "posttest":"nsp check"
   },
   "dependencies": {
     "compression": "^1.0.3",
@@ -22,7 +23,8 @@ template.package = {
     "serve-favicon": "^2.0.1"
   },
   "devDependencies": {
-    "jshint": "^2.5.6"
+    "jshint": "^2.5.6",
+    "nsp":"^2.1.0"
   },
   // Avoid NPM warning
   "repository": {
