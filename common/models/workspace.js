@@ -474,5 +474,17 @@ module.exports = function(Workspace) {
       returns: {arg: 'data', type: 'Object', root: true}
     });
 
+    Workspace.loadWorkspace = function(path, cb) {
+      process.env.WORKSPACE_DIR = path;
+      debug(process.env.WORKSPACE_DIR);
+      setImmediate(cb);
+    };
+
+    loopback.remoteMethod(Workspace.loadWorkspace, {
+      http: {verb: 'post', path: '/load-workspace'},
+      accepts: {arg: 'path', type: 'string'},
+      returns: {arg: 'data', type: 'Object', root: true}
+    });
+
   }
 };
