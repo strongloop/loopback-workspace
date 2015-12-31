@@ -2,7 +2,7 @@ var app = require('../');
 var ConfigFile = app.models.ConfigFile;
 var ModelDefinition = app.models.ModelDefinition;
 var ModelMethod = app.models.ModelMethod;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('ModelMethod', function() {
   var userModel;

@@ -5,7 +5,7 @@ var loopback = require('loopback');
 var ConfigFile = app.models.ConfigFile;
 var Middleware = app.models.Middleware;
 var Facet = app.models.Facet;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('Middleware', function() {
 

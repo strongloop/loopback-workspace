@@ -1,7 +1,7 @@
 var app = require('../');
 var ModelDefinition = app.models.ModelDefinition;
 var ModelAccessControl = app.models.ModelAccessControl;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('ModelAccessControl', function() {
   describe('ModelAccessControl.create()', function() {

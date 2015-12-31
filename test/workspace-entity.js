@@ -1,7 +1,7 @@
 var app = require('../');
 var WorkspaceEntity = app.models.WorkspaceEntity;
 var Facet = app.models.Facet;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('WorkspaceEntity', function() {
   describe('workspaceEntity.getUniqueId()', function() {

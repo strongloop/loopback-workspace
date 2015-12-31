@@ -1,7 +1,7 @@
 var async = require('async');
 var fs = require('fs-extra');
 var app = require('../');
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 var Workspace = app.models.Workspace;
 var ConfigFile = app.models.ConfigFile;
 

@@ -2,7 +2,7 @@ var fs = require('fs-extra');
 var path = require('path');
 var app = require('../');
 var ModelRelation = app.models.ModelRelation;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('ModelRelation', function() {
   beforeEach(givenBasicWorkspace);

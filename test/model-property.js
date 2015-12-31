@@ -3,7 +3,7 @@ var given = require('./helpers/given');
 var ModelProperty = app.models.ModelProperty;
 var ModelDefinition = app.models.ModelDefinition;
 var ConfigFile = app.models.ConfigFile;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('ModelProperty', function() {
   beforeEach(givenBasicWorkspace);
