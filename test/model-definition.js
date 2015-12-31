@@ -5,7 +5,7 @@ var ModelDefinition = app.models.ModelDefinition;
 var ModelAccessControl = app.models.ModelAccessControl;
 var ModelProperty = app.models.ModelProperty;
 var ModelRelation = app.models.ModelRelation;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 var ref = TestDataBuilder.ref;
 var ConfigFile = app.models.ConfigFile;
 

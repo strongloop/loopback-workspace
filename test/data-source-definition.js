@@ -6,7 +6,7 @@ var DataSource = loopback.DataSource;
 var ConfigFile = app.models.ConfigFile;
 var DataSourceDefinition = app.models.DataSourceDefinition;
 var Facet = app.models.Facet;
-var TestDataBuilder = require('loopback-testing').TestDataBuilder;
+var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('DataSourceDefinition', function() {
 
