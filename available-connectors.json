@@ -347,5 +347,37 @@
       "version": "^1.0.0"
     },
     "supportedByStrongLoop": true
+  },
+  {
+    "name": "cloudant",
+    "description": "IBM Cloudant DB",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "database": {
+        "type": "string"
+      },
+      "url": {
+        "type": "string"
+      },
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "modelIndex": {
+        "type": "string"   
+      }
+    },
+    "package": {
+      "name": "loopback-connector-cloudant",
+      "version": "^1.0.4"
+    },
+    "supportedByStrongLoop": true
   }
 ]
