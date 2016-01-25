@@ -322,7 +322,7 @@
     "baseModel": "PersistedModel",
     "features": {
       "discovery": false,
-      "migration": true
+      "migration": false
     },
     "settings": {
       "host": {
