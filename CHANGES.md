@@ -1,3 +1,21 @@
+2016-02-02, Version 3.19.0
+==========================
+
+ * Set proper value for migration (Loay Gewily)
+
+ * Add cloudant connector (Jue Hou)
+
+ * Add DB2 connector To the list of data source connectors (Loay Gewily)
+
+ * Remove dependency on loopback-testing (Simon Ho)
+
+ * Add support for changing workspace (Krishna Raman)
+
+ * Add post test script for security check. (Gunjan Pandya)
+
+ * Enhance Security of Scaffolded Loopback App. (Gunjan Pandya)
+
+
 2015-12-04, Version 3.18.5
 ==========================
 
@@ -464,15 +482,11 @@
 2014-07-17, Version 3.0.0-beta2
 ===============================
 
- * 3.0.0-beta2 (Miroslav Bajtoš)
-
  * ModelProperty: support `['string']` type (Miroslav Bajtoš)
 
 
 2014-07-17, Version 3.0.0-beta1
 ===============================
-
- * 3.0.0-beta1 (Miroslav Bajtoš)
 
  * ModelAccessControl: remove values not implemented (Miroslav Bajtoš)
 
