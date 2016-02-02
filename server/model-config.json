@@ -72,6 +72,10 @@
     "public": true,
     "dataSource": "db"
   },
+  "ComponentConfig": {
+    "public": true,
+    "dataSource": "db"
+  },
   "DataSourceDefinition": {
     "public": true,
     "dataSource": "db"

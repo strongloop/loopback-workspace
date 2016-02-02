@@ -113,6 +113,7 @@ findFacets = findOfType('facets', models.Facet);
 findFacetSettings = findOfType('facetSettings', models.FacetSetting);
 findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
 findMiddlewares = findOfType('middlewares', models.Middleware);
+findComponentConfigs = findOfType('componentConfigs', models.ComponentConfig);
 findModelConfigs = findOfType('modelConfigs', models.ModelConfig);
 findModelDefinitions = findOfType('models', models.ModelDefinition);
 findViewDefinitions = findOfType('views', models.ViewDefinition);

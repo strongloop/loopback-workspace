@@ -107,7 +107,7 @@ module.exports = function(WorkspaceEntity) {
   }
 
   WorkspaceEntity.getPath = function(facetName, obj) {
-    if(obj.configFile) return obj.configFile;
+    if(obj && obj.configFile) return obj.configFile;
     return path.join(facetName, this.settings.defaultConfigFile);
   }
 
