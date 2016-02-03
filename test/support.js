@@ -8,6 +8,8 @@ var models = workspace.models;
 var ConfigFile = models.ConfigFile;
 var debug = require('debug')('workspace:test:support');
 
+global.Promise = require('bluebird');
+
 expectFileExists = function (file) {
   assert(fs.existsSync(file), file + ' does not exist');
 }
