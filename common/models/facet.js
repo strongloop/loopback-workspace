@@ -14,6 +14,7 @@ function ready(Facet) {
 
   var ModelDefinition = app.models.ModelDefinition;
   var Middleware = app.models.Middleware;
+  var ComponentConfig = app.models.ComponentConfig;
   var ModelConfig = app.models.ModelConfig;
 
   /**
@@ -61,6 +62,7 @@ function ready(Facet) {
     var modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
     var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
     var middlewares = ConfigFile.getFileByBase(configFiles, 'middleware');
+    var componentConfigs = ConfigFile.getFileByBase(configFiles, 'component-config');
     var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
 
     var artifacts = {};
@@ -175,6 +177,16 @@ function ready(Facet) {
       });
     }
 
+    if (componentConfigs) {
+      steps.push(function(cb) {
+        componentConfigs.load(cb);
+      }, function(cb) {
+        debug('adding to cache component-config file [%s]', componentConfigs.path);
+        ComponentConfig.deserialize(cache, facetName, componentConfigs);
+        cb();
+      });
+    }
+
     function createLoader(a) {
       return function(cb) {
         Facet.artifactTypes[a].load(cache, facetName, artifacts[a], cb);
@@ -256,6 +268,11 @@ function ready(Facet) {
       var middlewareFile = Middleware.serialize(cache, facetName);
       if (middlewareFile) {
         addFileToSave(middlewareFile);
+      }
+
+      var componentConfigFile = ComponentConfig.serialize(cache, facetName);
+      if (componentConfigFile) {
+        addFileToSave(componentConfigFile);
       }
 
       var cachedModelConfigs = ModelConfig.allFromCache(cache);
