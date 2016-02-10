@@ -480,7 +480,7 @@ module.exports = function(Workspace) {
 
     loopback.remoteMethod(Workspace.getWorkspace, {
       http: {verb: 'get', path: '/get-workspace'},
-      returns: {arg: 'data', type: 'string', root: true}
+      returns: {arg: 'path', type: 'string'}
     });
 
     Workspace.loadWorkspace = function(path, cb) {
