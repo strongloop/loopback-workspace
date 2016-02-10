@@ -176,4 +176,24 @@ describe('Workspace', function() {
       });
     });
   });
+
+  describe('Workspace.loadWorkspace(dir, cb)', function() {
+    var TEST_PATH = '/some/test/dir';
+
+    it('sets WORKSPACE_DIR env variable', function(done) {
+      Workspace.loadWorkspace(TEST_PATH, function() {
+        expect(process.env.WORKSPACE_DIR).to.equal(TEST_PATH);
+        done();
+      });
+    });
+  });
+
+  describe('Workspace.getWorkspace(cb)', function() {
+    it('returns the value of the WORKSPACE_DIR env variable', function(done) {
+      Workspace.getWorkspace(function(err, path) {
+        expect(path).to.equal(process.env.WORKSPACE_DIR);
+        done();
+      });
+    });
+  });
 });

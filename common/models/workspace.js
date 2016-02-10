@@ -474,6 +474,15 @@ module.exports = function(Workspace) {
       returns: {arg: 'data', type: 'Object', root: true}
     });
 
+    Workspace.getWorkspace = function(cb) {
+      cb(null, process.env.WORKSPACE_DIR);
+    }
+
+    loopback.remoteMethod(Workspace.getWorkspace, {
+      http: {verb: 'get', path: '/get-workspace'},
+      returns: {arg: 'data', type: 'string', root: true}
+    });
+
     Workspace.loadWorkspace = function(path, cb) {
       process.env.WORKSPACE_DIR = path;
       debug(process.env.WORKSPACE_DIR);
