@@ -1,3 +1,15 @@
+2016-02-15, Version 3.20.0
+==========================
+
+ * Fix export for current working directory (Joseph Tary)
+
+ * Add method to get current workspace directory (Joseph Tary)
+
+ * Add bluebird for tests running on v0.10 (Miroslav Bajtoš)
+
+ * ComponentConfig representing component-config.json (Miroslav Bajtoš)
+
+
 2016-02-02, Version 3.19.0
 ==========================
 
@@ -482,11 +494,15 @@
 2014-07-17, Version 3.0.0-beta2
 ===============================
 
+ * 3.0.0-beta2 (Miroslav Bajtoš)
+
  * ModelProperty: support `['string']` type (Miroslav Bajtoš)
 
 
 2014-07-17, Version 3.0.0-beta1
 ===============================
+
+ * 3.0.0-beta1 (Miroslav Bajtoš)
 
  * ModelAccessControl: remove values not implemented (Miroslav Bajtoš)
 
