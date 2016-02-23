@@ -12,6 +12,7 @@ describe('Workspace', function() {
         expect(templates).to.have.members([
           'api-server',
           'empty-server',
+          'hello-world',
         ]);
         done();
       });
@@ -30,6 +31,10 @@ describe('Workspace', function() {
           {
             name: 'empty-server',
             description: 'An empty LoopBack API, without any configured models or datasources',
+          },
+          {
+            description: 'A project containing a basic working example, including a memory database',
+            name: 'hello-world'
           },
         ]);
         done();

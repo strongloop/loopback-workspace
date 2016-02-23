@@ -291,6 +291,39 @@ describe('end-to-end', function() {
     });
   });
 
+  describe('hello-world template', function() {
+    var app, modelInstance;
+
+    before(resetWorkspace);
+    before(givenEmptySandbox);
+
+    before(function createWorkspace(done) {
+      givenWorkspaceFromTemplate('hello-world', done);
+    });
+
+    before(installSandboxPackages);
+
+    before(function loadApp() {
+      app = require(SANDBOX);
+    });
+
+    before(function createActorInstance() {
+      return app.models.Actor.create({ name: 'Tester' })
+        .then(function(actor) { modelInstance = actor; });
+    });
+
+    it('provides "/actors/:id/greet" method', function(done) {
+      request(app)
+        .get('/api/actors/' + modelInstance.id + '/greet')
+        .expect(200, function(err, res) {
+          if (err) done(err);
+          expect(res.body)
+            .to.have.property('message', 'Hello world from Tester');
+          done();
+        });
+    });
+  });
+
   describe('autoupdate', function() {
     this.timeout(10000);
     var connection;
