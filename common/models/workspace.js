@@ -23,7 +23,7 @@ module.exports = function(Workspace) {
     var ModelDefinition = app.models.ModelDefinition;
     var ModelRelation = app.models.ModelRelation;
     var ViewDefinition = app.models.ViewDefinition;
-    var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'components');
+    var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
     var DEFAULT_TEMPLATE = 'api-server';
     var debug = require('debug')('workspace');
 
@@ -85,10 +85,10 @@ module.exports = function(Workspace) {
       var packageName = options.packageName || name;
       var description = options.description || packageName;
       if (options.root) name = ConfigFile.ROOT_COMPONENT;
-      var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
+      var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'files');
 
       try {
-        template = require('../../templates/components/' + templateName + '/component');
+        template = require('../../templates/projects/' + templateName + '/data');
         // create a clone to preserve the original
         template = JSON.parse(JSON.stringify(template));
       } catch (e) {

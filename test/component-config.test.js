@@ -14,7 +14,7 @@ describe('ComponentConfig', function() {
     expect(this.componentConfigs).to.have.length(1);
     var explorer = this.componentConfigs[0];
     expect(explorer.configFile).to.equal('server/component-config.json');
-    // see templates/components/api-server/template/server/component-config
+    // see templates/projects/api-server/files/server/component-config
     expect(explorer.name).to.equal('loopback-component-explorer');
     expect(explorer.value).to.eql({ mountPath: '/explorer' });
   });
