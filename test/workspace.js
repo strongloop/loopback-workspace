@@ -11,6 +11,7 @@ describe('Workspace', function() {
       Workspace.getAvailableTemplates(function(err, templates) {
         expect(templates).to.have.members([
           'api-server',
+          'empty-server',
         ]);
         done();
       });

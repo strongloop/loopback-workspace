@@ -26,6 +26,121 @@ var MYSQL_PASSWORD = 'hbx42rec';
 describe('end-to-end', function() {
   this.timeout(10000);
 
+  describe('empty-server template', function() {
+    var app;
+
+    before(resetWorkspace);
+    before(givenEmptySandbox);
+
+    before(function createWorkspace(done) {
+      givenWorkspaceFromTemplate('empty-server', function(err) {
+        debug('Created "empty-server" in %s', SANDBOX);
+        done(err);
+      });
+    });
+
+    before(installSandboxPackages);
+
+    before(function loadApp() {
+      app = require(SANDBOX);
+    });
+
+    it('provides status on the root url', function(done) {
+      request(app)
+        .get('/')
+        .expect(200, function(err, res) {
+          if (err) done(err);
+          expect(res.body).to.have.property('uptime');
+          done();
+        });
+    });
+
+    it('provides status on the root url only', function(done) {
+      // See https://github.com/strongloop/generator-loopback/issues/80
+      request(app)
+        .get('/does-not-exist')
+        .expect(404, done);
+    });
+
+    it('has favicon enabled', function(done) {
+      request(app)
+        .get('/favicon.ico')
+        .expect(200, done);
+    });
+
+    it('provides CORS headers for all URLs', function(done) {
+      request(app).get('/')
+        .set('X-Requested-By', 'XMLHttpRequest')
+        .set('Origin', 'http://example.com')
+        .expect('Access-Control-Allow-Origin',  'http://example.com')
+        .expect(200, done);
+    });
+
+    it('provides security headers for all URLs ', function(done) {
+      request(app).get('/')
+       .expect('X-frame-options', 'DENY')
+       .expect('x-xss-protection', '1; mode=block')
+       .expect('x-content-type-options', 'nosniff')
+       .expect('x-download-options', 'noopen')
+       .expect(function(res) {
+         var headers = res.headers;
+         headers.should.not.have.property('x-powered-by');
+       })
+       .expect(200, done);
+    });
+
+    it('includes all built-in phases in `middleware.json`', function(done) {
+      var builtinPhases = readBuiltinPhasesFromSanbox();
+
+      var middleware = fs.readJsonSync(
+        path.resolve(SANDBOX, 'server/middleware.json'));
+      var phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
+
+      expect(phaseNames).to.eql(builtinPhases);
+      done();
+
+      function isNameOfMainPhase(name) {
+        return !/:(before|after)$/.test(name);
+      }
+    });
+
+    it('passes scaffolded tests', function(done) {
+      execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
+        done(err);
+      });
+    });
+
+    it('emits the `booted` event when booting is complete', function(done) {
+      var src = FIXTURES + '/async.js';
+      var dest = SANDBOX + '/server/boot/async.js';
+      fs.copySync(src, dest);
+      delete require.cache[require.resolve(SANDBOX)];
+      var app = require(SANDBOX);
+      app.on('booted', function() {
+        expect(app.asyncBoot, 'app.asyncBoot').to.be.true();
+        done();
+      });
+      // the test will time out if `booted` is not emitted
+    });
+
+    it('has legacy explorer disabled in config', function(done) {
+      expect(app.get('legacyExplorer'), 'legacyExplorer option').to.be.false();
+      done();
+    });
+
+    it('has legacy explorer route /models disabled', function(done) {
+      request(app)
+        .get('/api/models')
+        .expect(404, done);
+    });
+
+    it('has legacy explorer route /routes disabled', function(done) {
+      request(app)
+        .get('/api/routes')
+        .expect(404, done);
+    });
+  });
+
   describe('api-server template', function() {
     var app;
 
@@ -72,13 +187,6 @@ describe('end-to-end', function() {
         });
     });
 
-    it('provides status on the root url only', function(done) {
-      // See https://github.com/strongloop/generator-loopback/issues/80
-      request(app)
-        .get('/does-not-exist')
-        .expect(404, done);
-    });
-
     it('has authentication enabled', function(done) {
       request(app)
         .get('/api/users')
@@ -98,16 +206,16 @@ describe('end-to-end', function() {
         .expect('Access-Control-Allow-Origin',  'http://example.com')
         .expect(200, done);
     });
-    
-    it('provides security headers for all URLs ', function(done){
+
+    it('provides security headers for all URLs ', function(done) {
       request(app).get('/')
        .expect('X-frame-options', 'DENY')
        .expect('x-xss-protection', '1; mode=block')
        .expect('x-content-type-options', 'nosniff')
        .expect('x-download-options', 'noopen')
-       .expect(function(res){
-          var headers = res.headers;
-          headers.should.not.have.property('x-powered-by');
+       .expect(function(res) {
+         var headers = res.headers;
+         headers.should.not.have.property('x-powered-by');
        })
        .expect(200, done);
     });
@@ -171,36 +279,6 @@ describe('end-to-end', function() {
       execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
         done(err);
       });
-    });
-
-    it('emits the `booted` event when booting is complete', function(done) {
-      var src = FIXTURES + '/async.js';
-      var dest = SANDBOX + '/server/boot/async.js';
-      fs.copySync(src, dest);
-      delete require.cache[require.resolve(SANDBOX)];
-      var app = require(SANDBOX);
-      app.on('booted', function() {
-        expect(app.asyncBoot, 'app.asyncBoot').to.be.true();
-        done();
-      });
-      // the test will time out if `booted` is not emitted
-    });
-
-    it('has legacy explorer disabled in config', function (done) {
-      expect(app.get('legacyExplorer'), 'legacyExplorer option').to.be.false();
-      done();
-    });
-
-    it('has legacy explorer route /models disabled', function (done) {
-      request(app)
-        .get('/api/models')
-        .expect(404, done);
-    });
-
-    it('has legacy explorer route /routes disabled', function (done) {
-      request(app)
-        .get('/api/routes')
-        .expect(404, done);
     });
 
     it('validates "updateOrCreate" data', function(done) {
