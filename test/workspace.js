@@ -18,6 +18,25 @@ describe('Workspace', function() {
     });
   });
 
+  describe('Workspace.describeAvailableTemplates(cb)', function() {
+    it('returns an expected list', function(done) {
+      Workspace.describeAvailableTemplates(function(err, templates) {
+        if (err) return done(err);
+        expect(templates).to.eql([
+          {
+            name: 'api-server',
+            description: 'A LoopBack API server with local User auth',
+          },
+          {
+            name: 'empty-server',
+            description: 'An empty LoopBack API, without any configured models or datasources',
+          },
+        ]);
+        done();
+      });
+    });
+  });
+
   describe('Workspace.addComponent(options, cb)', function () {
     beforeEach(resetWorkspace);
     beforeEach(givenEmptySandbox);

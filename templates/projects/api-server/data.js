@@ -4,6 +4,8 @@
 
 var template = module.exports;
 
+template.description = 'A LoopBack API server with local User auth';
+
 template.inherits = [
   'empty-server'
 ];

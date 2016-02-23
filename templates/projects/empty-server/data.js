@@ -4,6 +4,8 @@
 
 var template = module.exports;
 
+template.description = 'An empty LoopBack API, without any configured models or datasources';
+
 template.package = {
   "version": "1.0.0",
   "main": "server/server.js",

@@ -59,6 +59,30 @@ module.exports = function(Workspace) {
     });
 
     /**
+     * Get a list of available templates, including
+     * additional information like `displayName` and `description`.
+     *
+     * @callback {Function} callback
+     * @param {Error} err
+     * @param {Object[]} templates
+     */
+
+    Workspace.describeAvailableTemplates = function(cb) {
+      Workspace.getAvailableTemplates(function(err, names) {
+        if (err) return cb(err);
+        var templates = names.map(function(name) {
+          var data = Workspace._loadProjectTemplate(name);
+          if (!data) return data;
+          return {
+            name: name,
+            description: data.description,
+          };
+        });
+        cb(null, templates);
+      });
+    };
+
+    /**
      * Recursively copy files.
      * API consumers may override this function, e.g. to detect existing files
      * and provide conflict resolution.
