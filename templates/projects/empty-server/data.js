@@ -4,6 +4,8 @@
 
 var template = module.exports;
 
+template.description = 'An empty LoopBack API, without any configured models or datasources';
+
 template.package = {
   "version": "1.0.0",
   "main": "server/server.js",
@@ -84,39 +86,11 @@ template.server = {
   ],
 
   modelConfigs: [
-    {
-      name: 'User',
-      dataSource: 'db'
-    },
-    {
-      name: 'AccessToken',
-      dataSource: 'db',
-      public: false
-    },
-    {
-      name: 'ACL',
-      dataSource: 'db',
-      public: false
-    },
-    {
-      name: 'RoleMapping',
-      dataSource: 'db',
-      public: false
-    },
-    {
-      name: 'Role',
-      dataSource: 'db',
-      public: false
-    }
   ],
 
   datasources: [
-    {
-      name: 'db',
-      connector: 'memory'
-    }
   ]
 };
 
-// An API server has no client facet
+// An empty server has no client facet
 template.client = null;

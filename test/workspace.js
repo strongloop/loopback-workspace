@@ -11,6 +11,31 @@ describe('Workspace', function() {
       Workspace.getAvailableTemplates(function(err, templates) {
         expect(templates).to.have.members([
           'api-server',
+          'empty-server',
+          'hello-world',
+        ]);
+        done();
+      });
+    });
+  });
+
+  describe('Workspace.describeAvailableTemplates(cb)', function() {
+    it('returns an expected list', function(done) {
+      Workspace.describeAvailableTemplates(function(err, templates) {
+        if (err) return done(err);
+        expect(templates).to.eql([
+          {
+            name: 'api-server',
+            description: 'A LoopBack API server with local User auth',
+          },
+          {
+            name: 'empty-server',
+            description: 'An empty LoopBack API, without any configured models or datasources',
+          },
+          {
+            description: 'A project containing a basic working example, including a memory database',
+            name: 'hello-world'
+          },
         ]);
         done();
       });

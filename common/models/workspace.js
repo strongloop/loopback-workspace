@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = function(Workspace) {
   var app = require('../../server/server');
   app.once('ready', function() {
@@ -23,7 +25,7 @@ module.exports = function(Workspace) {
     var ModelDefinition = app.models.ModelDefinition;
     var ModelRelation = app.models.ModelRelation;
     var ViewDefinition = app.models.ViewDefinition;
-    var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'components');
+    var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
     var DEFAULT_TEMPLATE = 'api-server';
     var debug = require('debug')('workspace');
 
@@ -57,6 +59,30 @@ module.exports = function(Workspace) {
     });
 
     /**
+     * Get a list of available templates, including
+     * additional information like `displayName` and `description`.
+     *
+     * @callback {Function} callback
+     * @param {Error} err
+     * @param {Object[]} templates
+     */
+
+    Workspace.describeAvailableTemplates = function(cb) {
+      Workspace.getAvailableTemplates(function(err, names) {
+        if (err) return cb(err);
+        var templates = names.map(function(name) {
+          var data = Workspace._loadProjectTemplate(name);
+          if (!data) return data;
+          return {
+            name: name,
+            description: data.description,
+          };
+        });
+        cb(null, templates);
+      });
+    };
+
+    /**
      * Recursively copy files.
      * API consumers may override this function, e.g. to detect existing files
      * and provide conflict resolution.
@@ -67,6 +93,45 @@ module.exports = function(Workspace) {
     Workspace.copyRecursive = function(source, destination, cb) {
       ncp(source, destination, cb);
     };
+
+    Workspace._loadProjectTemplate = function(templateName) {
+      var template;
+      try {
+        template = require(
+          '../../templates/projects/' + templateName + '/data');
+      } catch (e) {
+        console.error('Cannot load project template %j: %s',
+                      templateName, e.stack);
+        return null;
+      }
+      // TODO(bajtos) build a full list of files here, so that
+      // when two templates provide a different version of the same file,
+      // we resolve the conflict here, before any files are copied
+      template.files = [path.join(TEMPLATE_DIR, templateName, 'files')];
+
+      var sources = [template];
+      if (template.inherits) for (var ix in template.inherits) {
+        var t = template.inherits[ix];
+        var data = this._loadProjectTemplate(t);
+        if (!data) return null; // the error was already reported
+        sources.unshift(data);
+      }
+
+      // TODO(bajtos) use topological sort to resolve duplicated dependencies
+      // e.g. A inherits B,C; B inherits D; C inherits D too
+
+      // merge into a new object to preserve the originals
+      sources.unshift({});
+
+      // when merging arrays, concatenate them (lodash replaces by default)
+      sources.push(function templateMergeCustomizer(a, b) {
+        if (_.isArray(a)) {
+          return a.concat(b);
+        }
+      });
+
+      return _.merge.apply(_, sources);
+    }
 
     /**
      * Add a new component from a template.
@@ -79,23 +144,15 @@ module.exports = function(Workspace) {
       if (!options.root) {
         throw new Error('Non-root components are not supported yet.');
       }
-      var template;
       var templateName = options.template || DEFAULT_TEMPLATE;
       var name = options.name || templateName;
       var packageName = options.packageName || name;
       var description = options.description || packageName;
       if (options.root) name = ConfigFile.ROOT_COMPONENT;
-      var fileTemplatesDir = path.join(TEMPLATE_DIR, templateName, 'template');
-
-      try {
-        template = require('../../templates/components/' + templateName + '/component');
-        // create a clone to preserve the original
-        template = JSON.parse(JSON.stringify(template));
-      } catch (e) {
-        console.error(e);
-      }
 
       debug('create from template [%s]', templateName);
+
+      var template = this._loadProjectTemplate(templateName);
 
       if (!template) {
         var err = new Error('Unknown template ' + templateName);
@@ -124,33 +181,40 @@ module.exports = function(Workspace) {
         });
       });
 
-      steps.push(function(cb) {
-        fs.exists(fileTemplatesDir, function(exists) {
-          if (exists) {
-            Workspace.copyRecursive(fileTemplatesDir, dest, cb);
-          } else {
-            cb();
-          }
+      template.files.forEach(function(dir) {
+        steps.push(function(cb) {
+          fs.exists(dir, function(exists) {
+            if (exists) {
+              Workspace.copyRecursive(dir, dest, cb);
+            } else {
+              cb();
+            }
+          });
         });
       });
 
       // This step is required as NPM renames `.gitignore` to `.npmignore`
       steps.push(function(cb) {
-        Workspace.copyGitignore(fileTemplatesDir, dest, cb);
+        Workspace.copyGitignore(dest, cb);
       });
 
       async.series(steps, cb);
     };
 
     /**
-     * Copy `gitignore` to the templates directory as `.gitignore`.
+     * Copy `gitignore` to the destination directory as `.gitignore`.
      *
-     * @param {String} templatesDir
      * @param {String} dest
      * @callback {Function} cb
      */
-    Workspace.copyGitignore = function(templatesDir, dest, cb) {
-      var gitignore = path.resolve(templatesDir, '..', 'gitignore');
+    Workspace.copyGitignore = function(dest, cb) {
+      if (arguments.length === 3) {
+        // support the old signature copyGitignore(templateDir, dest, cb)
+        dest = arguments[2];
+        cb = arguments[3];
+      }
+
+      var gitignore = require.resolve('../../templates/gitignore');
       var dotGitignore = path.resolve(dest, '.gitignore');
       Workspace.copyRecursive(gitignore, dotGitignore, cb);
     };
