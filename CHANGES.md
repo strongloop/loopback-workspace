@@ -1,13 +1,5 @@
-
-
 2016-02-24, Version 3.21.0
 ==========================
-
- * Revert "1.0.0" (Miroslav Bajtoš)
-
-
-2016-02-24, Version 1.0.0
-=========================
 
  * Add a new template "hello-world" (Miroslav Bajtoš)
 
