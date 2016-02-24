@@ -1,3 +1,21 @@
+2016-02-24, Version 3.21.0
+==========================
+
+ * Revert "1.0.0" (Miroslav Bajtoš)
+
+
+2016-02-24, Version 1.0.0
+=========================
+
+ * Add a new template "hello-world" (Miroslav Bajtoš)
+
+ * templates: add "description" (Miroslav Bajtoš)
+
+ * Add a new template "empty-server" (Miroslav Bajtoš)
+
+ * templates: clean up directory structure (Miroslav Bajtoš)
+
+
 2016-02-15, Version 3.20.0
 ==========================
 
@@ -494,15 +512,11 @@
 2014-07-17, Version 3.0.0-beta2
 ===============================
 
- * 3.0.0-beta2 (Miroslav Bajtoš)
-
  * ModelProperty: support `['string']` type (Miroslav Bajtoš)
 
 
 2014-07-17, Version 3.0.0-beta1
 ===============================
-
- * 3.0.0-beta1 (Miroslav Bajtoš)
 
  * ModelAccessControl: remove values not implemented (Miroslav Bajtoš)
 
