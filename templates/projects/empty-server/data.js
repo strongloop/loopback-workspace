@@ -9,6 +9,7 @@ template.description = 'An empty LoopBack API, without any configured models or 
 template.package = {
   "version": "0.1.0",
   "main": "server/server.js",
+  "private": true,
   "scripts": {
     "start": "node .",
     "pretest": "jshint .",
