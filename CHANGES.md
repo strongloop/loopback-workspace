@@ -1,5 +1,26 @@
+2016-03-01, Version 3.22.0
+==========================
+
+ * Add an opt. to scaffold without explorer (Miroslav Bajtoš)
+
+ * templates: move component config to data.js (Miroslav Bajtoš)
+
+ * fix CHANGES.md (Miroslav Bajtoš)
+
+
+2016-02-24, Version 3.21.1
+==========================
+
+
+
 2016-02-24, Version 3.21.0
 ==========================
+
+ * Revert "1.0.0" (Miroslav Bajtoš)
+
+
+2016-02-24, Version 1.0.0
+=========================
 
  * Add a new template "hello-world" (Miroslav Bajtoš)
 
