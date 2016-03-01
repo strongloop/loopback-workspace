@@ -83,11 +83,22 @@ givenBasicWorkspace = function(cb) {
   });
 }
 
-givenWorkspaceFromTemplate = function(template, cb) {
+givenWorkspaceFromTemplate = function(template, options, cb) {
+  if (cb === undefined && typeof options === 'function') {
+    cb = options;
+    options = undefined;
+  }
+
   givenEmptySandbox(function(err) {
-    if(err) return cb(err);
+    if (err) return cb(err);
     workspace.set('workspace dir', SANDBOX);
-    workspace.models.Workspace.createFromTemplate(template, 'sandbox', cb);
+    models.Workspace.createFromTemplate(template, 'sandbox', options,
+      function(err) {
+        if (err) return cb(err);
+        debug('Created %j in %s', template, SANDBOX);
+        cb();
+      }
+    );
   });
 }
 
