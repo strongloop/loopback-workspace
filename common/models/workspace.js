@@ -18,6 +18,7 @@ module.exports = function(Workspace) {
 
     var PackageDefinition = app.models.PackageDefinition;
     var ConfigFile = app.models.ConfigFile;
+    var ComponentConfig = app.models.ComponentConfig;
     var Facet = app.models.Facet;
     var FacetSetting = app.models.FacetSetting;
     var ModelConfig = app.models.ModelConfig;
@@ -161,6 +162,16 @@ module.exports = function(Workspace) {
         return cb(err);
       }
 
+      // TODO(bajtos) come up with a more generic approach
+      var explorer = 'loopback-component-explorer';
+      if (options[explorer] === false) {
+        if (template.package)
+          delete template.package.dependencies[explorer];
+        if (template.server && template.server.componentConfigs)
+          template.server.componentConfigs = template.server.componentConfigs
+            .filter(function(cc) { return cc.name != explorer; });
+      }
+
       var dest = path.join(ConfigFile.getWorkspaceDir(), name);
       var steps = [];
 
@@ -275,6 +286,14 @@ module.exports = function(Workspace) {
         });
       }
 
+      if (template.componentConfigs) {
+        setFacetName(template.componentConfigs);
+        steps.push(function(cb) {
+          async.each(template.componentConfigs,
+                     ComponentConfig.create.bind(ComponentConfig), cb);
+        });
+      }
+
       function setFacetName(obj) {
         if (Array.isArray(obj)) {
           obj.forEach(function(item) {
@@ -293,17 +312,29 @@ module.exports = function(Workspace) {
      * corresponding workspace entities using the given template.
      *
      * @param {String} templateName
+     * @param {String} name
+     * @param {Object} options
      * @callback {Function} callback
      * @param {Error} err
      */
 
-    Workspace.createFromTemplate = function(templateName, name, cb) {
-      Workspace.addComponent({
+    Workspace.createFromTemplate = function(templateName, name, options, cb) {
+      if (cb === undefined && typeof options === 'function') {
+        cb = options;
+        options = undefined;
+      }
+
+      // clone options so that we don't modify input arguments
+      options = extend({}, options);
+
+      options = extend(options, {
         root: true,
         name: name,
         template: templateName
-      }, cb);
-    }
+      });
+
+      Workspace.addComponent(options, cb);
+    };
 
     loopback.remoteMethod(Workspace.createFromTemplate, {
       http: {verb: 'post', path: '/'},
