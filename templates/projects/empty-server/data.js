@@ -89,6 +89,15 @@ template.server = {
   ],
 
   datasources: [
+  ],
+
+  componentConfigs: [
+    {
+      name: 'loopback-component-explorer',
+      value: {
+        mountPath: '/explorer'
+      }
+    }
   ]
 };
 

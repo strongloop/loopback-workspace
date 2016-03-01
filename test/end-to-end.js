@@ -139,6 +139,13 @@ describe('end-to-end', function() {
         .get('/api/routes')
         .expect(404, done);
     });
+
+    it('comes with loopback-component-explorer', function(done) {
+      request(app).get('/explorer/swagger.json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(done);
+    });
   });
 
   describe('api-server template', function() {

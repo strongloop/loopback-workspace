@@ -18,6 +18,7 @@ module.exports = function(Workspace) {
 
     var PackageDefinition = app.models.PackageDefinition;
     var ConfigFile = app.models.ConfigFile;
+    var ComponentConfig = app.models.ComponentConfig;
     var Facet = app.models.Facet;
     var FacetSetting = app.models.FacetSetting;
     var ModelConfig = app.models.ModelConfig;
@@ -272,6 +273,14 @@ module.exports = function(Workspace) {
         steps.push(function(cb) {
           async.each(template.relations,
             ModelRelation.create.bind(ModelRelation), cb);
+        });
+      }
+
+      if (template.componentConfigs) {
+        setFacetName(template.componentConfigs);
+        steps.push(function(cb) {
+          async.each(template.componentConfigs,
+                     ComponentConfig.create.bind(ComponentConfig), cb);
         });
       }
 
