@@ -335,18 +335,13 @@ describe('end-to-end', function() {
       app = require(SANDBOX);
     });
 
-    before(function createActorInstance() {
-      return app.models.Actor.create({ name: 'Tester' })
-        .then(function(actor) { modelInstance = actor; });
-    });
-
-    it('provides "/actors/:id/greet" method', function(done) {
+    it('provides "/notes/greet" method', function(done) {
       request(app)
-        .get('/api/actors/' + modelInstance.id + '/greet')
+        .get('/api/notes/greet?msg=Tester')
         .expect(200, function(err, res) {
           if (err) done(err);
           expect(res.body)
-            .to.have.property('message', 'Hello world from Tester');
+            .to.have.property('greeting', 'Hello Tester');
           done();
         });
     });
