@@ -27,6 +27,35 @@
       "discovery": false,
       "migration": false
     },
+    "settings":{
+      "transports": [{
+        "type": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "secure": {
+          "type": "boolean"
+        },
+        "port": {
+          "type": "number"
+        },
+        "tls": {
+          "rejectUnauthorized": {
+            "type": "boolean"
+          }
+        },
+        "auth": {
+          "user": {
+            "type": "string"
+          },
+          "pass": {
+            "type": "string"
+          }
+        }
+      }]
+    },
     "supportedByStrongLoop": true
   },
   {
