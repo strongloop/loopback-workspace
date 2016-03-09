@@ -1,3 +1,9 @@
+2016-03-09, Version 3.23.0
+==========================
+
+ * Clean up the sameple model (Raymond Feng)
+
+
 2016-03-01, Version 3.22.0
 ==========================
 
@@ -527,11 +533,15 @@
 2014-07-17, Version 3.0.0-beta2
 ===============================
 
+ * 3.0.0-beta2 (Miroslav Bajtoš)
+
  * ModelProperty: support `['string']` type (Miroslav Bajtoš)
 
 
 2014-07-17, Version 3.0.0-beta1
 ===============================
+
+ * 3.0.0-beta1 (Miroslav Bajtoš)
 
  * ModelAccessControl: remove values not implemented (Miroslav Bajtoš)
 
@@ -860,12 +870,12 @@
  * Add project.addPermission() (Ritchie Martori)
 
 
-2013-12-03, Version v2.0.2
-==========================
-
-
-
 2013-12-03, Version 2.0.2
 =========================
+
+
+
+2013-12-03, Version v2.0.2
+==========================
 
  * First release!
