@@ -21,7 +21,7 @@ template.server = {
 
   modelConfigs: [
     {
-      name: 'Actor',
+      name: 'note',
       dataSource: 'db'
     },
   ],
