@@ -1,3 +1,9 @@
+2016-03-10, Version 3.24.0
+==========================
+
+ * Reorder the list of connectors and add settings for soap/rest/mail (Raymond Feng)
+
+
 2016-03-09, Version 3.23.0
 ==========================
 
