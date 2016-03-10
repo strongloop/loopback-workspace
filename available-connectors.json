@@ -20,12 +20,98 @@
     "supportedByStrongLoop": true
   },
   {
-    "name": "mail",
-    "description": "Email",
-    "baseModel": "Email",
+    "name": "db2",
+    "description": "IBM DB2",
+    "baseModel": "PersistedModel",
     "features": {
       "discovery": false,
       "migration": false
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-db2",
+      "version": "^1.0.0"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "cloudant",
+    "description": "IBM Cloudant DB",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "database": {
+        "type": "string"
+      },
+      "url": {
+        "type": "string"
+      },
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "modelIndex": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-cloudant",
+      "version": "^1.0.4"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "mongodb",
+    "description": "MongoDB",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-mongodb",
+      "version": "^1.4"
     },
     "supportedByStrongLoop": true
   },
@@ -158,34 +244,26 @@
     "supportedByStrongLoop": true
   },
   {
-    "name": "mongodb",
-    "description": "MongoDB",
-    "baseModel": "PersistedModel",
+    "name": "rest",
+    "description": "REST services",
+    "baseModel": "Model",
     "features": {
       "discovery": false,
-      "migration": true
+      "migration": false
     },
     "settings": {
-      "host": {
-        "type": "string"
+      "options": {
+        "type": "object",
+        "description": "Default options for the request"
       },
-      "port": {
-        "type": "number"
-      },
-      "user": {
-        "type": "string"
-      },
-      "password": {
-        "type": "string",
-        "display": "password"
-      },
-      "database": {
-        "type": "string"
+      "operations": {
+        "type": "array",
+        "description": "An array of operation templates"
       }
     },
     "package": {
-      "name": "loopback-connector-mongodb",
-      "version": "^1.4"
+      "name": "loopback-connector-rest",
+      "version": "^1.2"
     },
     "supportedByStrongLoop": true
   },
@@ -201,21 +279,64 @@
       "name": "loopback-connector-soap",
       "version": "^1.1"
     },
+    "settings": {
+      "url": {
+        "type": "string",
+        "description": "URL to the SOAP web service endpoint"
+      },
+      "wsdl": {
+        "type": "string",
+        "description": "HTTP URL or local file system path to the WSDL file"
+      },
+      "remotingEnabled": {
+        "type": "boolean",
+        "description": "Indicates whether the operations are exposed as REST APIs"
+      },
+      "operations": {
+        "type": "object",
+        "description": "Maps WSDL binding operations to Node.js methods. Each key in the JSON object becomes the name of a method on the model."
+      }
+    },
     "supportedByStrongLoop": true
   },
   {
-    "name": "rest",
-    "description": "REST services",
-    "baseModel": "Model",
+    "name": "couchbase",
+    "description": "Couchbase",
+    "baseModel": "PersistedModel",
     "features": {
       "discovery": false,
       "migration": false
     },
-    "package": {
-      "name": "loopback-connector-rest",
-      "version": "^1.2"
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "n1qlport": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string",
+        "description": "The name of the datasource"
+      },
+      "connectionTimeout": {
+        "type": "number"
+      },
+      "operationTimeout": {
+        "type": "number"
+      },
+      "env": {
+        "type": "string",
+        "description": "Environment variable for debugging"
+      }
     },
-    "supportedByStrongLoop": true
+    "package": {
+      "name": "loopback-connector-couchbase",
+      "version": "^1.0"
+    },
+    "supportedByStrongLoop": false
   },
   {
     "name": "neo4j",
@@ -278,105 +399,18 @@
     "supportedByStrongLoop": false
   },
   {
-    "name": "couchbase",
-    "description": "Couchbase",
-    "baseModel": "PersistedModel",
+    "name": "mail",
+    "description": "Email",
+    "baseModel": "Email",
     "features": {
       "discovery": false,
       "migration": false
     },
     "settings": {
-      "host": {
-        "type": "string"
-      },
-      "port": {
-        "type": "number"
-      },
-      "n1qlport": {
-        "type": "number"
-      },
-      "name": {
-        "type": "string",
-        "description": "The name of the datasource"
-      },
-      "connectionTimeout": {
-        "type": "number"
-      },
-      "operationTimeout": {
-        "type": "number"
-      },
-      "env": {
-        "type": "string",
-        "description": "Environment variable for debugging"
+      "transports": {
+        "type": "array",
+        "description": "An array of transport configuration objects"
       }
-    },
-    "package": {
-      "name": "loopback-connector-couchbase",
-      "version": "^1.0"
-    },
-    "supportedByStrongLoop": false
-  },
-  {
-    "name": "db2",
-    "description": "IBM DB2",
-    "baseModel": "PersistedModel",
-    "features": {
-      "discovery": false,
-      "migration": false
-    },
-    "settings": {
-      "host": {
-        "type": "string"
-      },
-      "port": {
-        "type": "number"
-      },
-      "user": {
-        "type": "string"
-      },
-      "password": {
-        "type": "string",
-        "display": "password"
-      },
-      "database": {
-        "type": "string"
-      }
-    },
-    "package": {
-      "name": "loopback-connector-db2",
-      "version": "^1.0.0"
-    },
-    "supportedByStrongLoop": true
-  },
-  {
-    "name": "cloudant",
-    "description": "IBM Cloudant DB",
-    "baseModel": "PersistedModel",
-    "features": {
-      "discovery": true,
-      "migration": true
-    },
-    "settings": {
-      "database": {
-        "type": "string"
-      },
-      "url": {
-        "type": "string"
-      },
-      "username": {
-        "type": "string"
-      },
-      "password": {
-        "type": "string",
-        "display": "password"
-      },
-      "modelIndex": {
-        "type": "string"   
-      }
-    },
-    "package": {
-      "name": "loopback-connector-cloudant",
-      "version": "^1.0.4"
     },
     "supportedByStrongLoop": true
   }
