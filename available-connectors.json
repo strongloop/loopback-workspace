@@ -252,6 +252,10 @@
       "migration": false
     },
     "settings": {
+      "baseURL": {
+        "type": "string",
+        "description": "Base URL for the REST service"
+      },
       "options": {
         "type": "object",
         "description": "Default options for the request"
@@ -259,6 +263,11 @@
       "operations": {
         "type": "array",
         "description": "An array of operation templates"
+      },
+      "crud": {
+        "type": "boolean",
+        "default": false,
+        "description": "Use default CRUD mapping"
       }
     },
     "package": {
@@ -290,11 +299,11 @@
       },
       "remotingEnabled": {
         "type": "boolean",
-        "description": "Indicates whether the operations are exposed as REST APIs"
+        "description": "Expose operations as REST APIs"
       },
       "operations": {
         "type": "object",
-        "description": "Maps WSDL binding operations to Node.js methods. Each key in the JSON object becomes the name of a method on the model."
+        "description": "Maps WSDL binding operations to Node.js methods"
       }
     },
     "supportedByStrongLoop": true
