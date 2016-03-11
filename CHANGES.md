@@ -1,4 +1,10 @@
-2016-03-11, Version 3.24.1
+2016-03-11, Version 3.25.0
+==========================
+
+ * Upgrade helmet version and add a license property to avoid npm warning (Raymond Feng)
+
+
+2016-03-10, Version 3.24.1
 ==========================
 
  * Update available connectors (Raymond Feng)
@@ -545,15 +551,11 @@
 2014-07-17, Version 3.0.0-beta2
 ===============================
 
- * 3.0.0-beta2 (Miroslav Bajtoš)
-
  * ModelProperty: support `['string']` type (Miroslav Bajtoš)
 
 
 2014-07-17, Version 3.0.0-beta1
 ===============================
-
- * 3.0.0-beta1 (Miroslav Bajtoš)
 
  * ModelAccessControl: remove values not implemented (Miroslav Bajtoš)
 
@@ -882,12 +884,12 @@
  * Add project.addPermission() (Ritchie Martori)
 
 
-2013-12-03, Version 2.0.2
-=========================
-
-
-
 2013-12-03, Version v2.0.2
 ==========================
+
+
+
+2013-12-03, Version 2.0.2
+=========================
 
  * First release!
