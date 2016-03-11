@@ -1,3 +1,9 @@
+2016-03-11, Version 3.24.1
+==========================
+
+ * Update available connectors (Raymond Feng)
+
+
 2016-03-10, Version 3.24.0
 ==========================
 
