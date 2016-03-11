@@ -17,7 +17,7 @@ template.package = {
   "dependencies": {
     "compression": "^1.0.3",
     "cors": "^2.5.2",
-    "helmet": "^0.14.0",
+    "helmet": "^1.3.0",
     "loopback": "^2.22.0",
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^2.4.0",
@@ -32,7 +32,8 @@ template.package = {
   "repository": {
     "type": "",
     "url": ""
-  }
+  },
+  "license": "UNLICENSED"
 };
 
 template.common = {
