@@ -125,16 +125,18 @@ function ready(ModelDefinition) {
       removeById(id, function(err) {
         if (err) return cb(err);
 
-        var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
-        var file = new ConfigFile({path: p});
-        file.exists(function(err, exists) {
-          if (err) return cb(err);
-          if (exists) {
-            file.remove(cb)
-          } else {
-            cb();
-          }
-        });
+        function removeModelDef(cb) {
+          var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
+          var file = new ConfigFile({path: p});
+          file.remove(cb);
+        }
+        function removeModelDefJs(cb) {
+          fs.unlink(modelDef.getScriptPath(), cb);
+        }
+        async.parallel([
+          removeModelDef,
+          removeModelDefJs
+        ], cb);
       });
     });
   }
