@@ -74,6 +74,20 @@ describe('ModelDefinition', function() {
           });
         });
       });
+
+      it('should delete the model def js file', function(done) {
+        var id = this.modelDef.id;
+        var self = this;
+        ModelDefinition.removeById(id, function(err) {
+          if (err) return done(err);
+
+          var script = self.modelDef.getScriptPath();
+          fs.exists(script, function(exists) {
+            expect(exists).to.equal(false);
+            done();
+          });
+        });
+      });
     });
   });
 
