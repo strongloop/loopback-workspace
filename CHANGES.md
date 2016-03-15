@@ -1,3 +1,11 @@
+2016-03-15, Version 3.26.0
+==========================
+
+ * Update connector module versions (Raymond Feng)
+
+ * Remove model definition file when deleting by id (Simon Ho)
+
+
 2016-03-11, Version 3.25.0
 ==========================
 
