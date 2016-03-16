@@ -136,7 +136,11 @@ function ready(ModelDefinition) {
         async.parallel([
           removeModelDef,
           removeModelDefJs
-        ], cb);
+        ], function(err, results) {
+          if (err) return cb(err);
+
+          cb(null, {result: results});
+        });
       });
     });
   }
