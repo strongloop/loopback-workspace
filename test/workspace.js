@@ -147,6 +147,17 @@ describe('Workspace', function() {
       expect(names).to.contain('memory');
     });
 
+    it('should have installed flag', function() {
+      var installed = connectors.filter(function(it) {
+        return it.installed === true;
+      }).map(function(it) {
+        return it.name;
+      });
+      var expectedInstalled = ['memory', 'mail'];
+
+      expect(installed).to.contain.members(expectedInstalled);
+    });
+
     it('should include base model in metadata', function() {
       var meta = findByName('memory');
       expect(meta).to.have.property('baseModel', 'PersistedModel');
