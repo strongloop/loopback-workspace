@@ -1,3 +1,9 @@
+2016-03-17, Version 3.27.0
+==========================
+
+ * Fix regression due to change in delete API (Joseph Tary)
+
+
 2016-03-15, Version 3.26.0
 ==========================
 
