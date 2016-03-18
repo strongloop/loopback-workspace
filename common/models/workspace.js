@@ -354,12 +354,42 @@ module.exports = function(Workspace) {
      */
     var staticConnectorList = require('../../available-connectors');
 
+    function isDependency(connector, pkg, cb) {
+      var packageName;
+      var deps = pkg && pkg.dependencies;
+
+      if (connector.package && deps) {
+        packageName = connector.package.name;
+
+        if (packageName && (packageName in deps)) {
+          // TODO(ritch) search node_modules or use `require.resolve`
+          return cb(null, true);
+        }
+      } else if (!connector.package) {
+        // the connector isn't a package (eg. the memory connector)
+        return cb(null, true);
+      }
+
+      // default to not installed
+      return cb(null, false);
+    }
+
     /**
      * List of connectors available on npm.
      * @param {function(Error=,Array.<ConnectorMeta>=)} cb
      */
     Workspace.listAvailableConnectors = function(cb) {
-      cb(null, staticConnectorList);
+      PackageDefinition.findOne(function(err, pkg) {
+        if (err) return cb(err);
+        async.map(staticConnectorList, function(connector, cb) {
+          isDependency(connector, pkg, function(err, isDep) {
+            if (err) return cb(err);
+
+            connector.installed = isDep;
+            cb(null, connector);
+          })
+        }, cb);
+      });
     };
 
     loopback.remoteMethod(Workspace.listAvailableConnectors, {
