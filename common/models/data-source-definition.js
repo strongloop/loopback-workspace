@@ -357,6 +357,9 @@ function ready(DataSourceDefinition) {
     }
 
     function missingConnector(err) {
+      if (err == null || typeof err.message !== 'string') {
+        return undefined;
+      }
       var match = err.message.match(
         /LoopBack connector "(.*)" is not installed/
       );
