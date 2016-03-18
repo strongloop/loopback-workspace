@@ -1,3 +1,9 @@
+2016-03-18, Version 3.28.2
+==========================
+
+ * Update rest connector version (Raymond Feng)
+
+
 2016-03-18, Version 3.28.1
 ==========================
 
