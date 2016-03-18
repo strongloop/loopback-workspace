@@ -1,4 +1,10 @@
-2016-03-17, Version 3.27.0
+2016-03-18, Version 3.28.0
+==========================
+
+ * Add installed flag to list of connectors (Ritchie Martori)
+
+
+2016-03-16, Version 3.27.0
 ==========================
 
  * Fix regression due to change in delete API (Joseph Tary)
