@@ -1,4 +1,10 @@
-2016-03-18, Version 3.28.0
+2016-03-18, Version 3.28.1
+==========================
+
+ * Check err && err.message (Raymond Feng)
+
+
+2016-03-17, Version 3.28.0
 ==========================
 
  * Add installed flag to list of connectors (Ritchie Martori)
