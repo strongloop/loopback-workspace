@@ -272,7 +272,7 @@
     },
     "package": {
       "name": "loopback-connector-rest",
-      "version": "^1.10"
+      "version": "^2.0"
     },
     "supportedByStrongLoop": true
   },
