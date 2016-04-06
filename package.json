@@ -2,6 +2,9 @@
   "name": "loopback-workspace",
   "version": "3.28.2",
   "main": "server/server.js",
+  "publishConfig": {
+    "export-tests": true
+  },
   "scripts": {
     "pretest": "test -z \"$JENKINS_HOME\" || (echo | node bin/setup-mysql.js)",
     "test": "mocha"
