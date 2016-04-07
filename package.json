@@ -31,6 +31,7 @@
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
     "ncp": "^2.0.0",
+    "semver": "^5.1.0",
     "serve-favicon": "^2.0.1",
     "stable": "^0.1.5",
     "strong-wait-till-listening": "^1.0.0"

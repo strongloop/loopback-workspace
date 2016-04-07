@@ -96,7 +96,7 @@
     "methods": {
       "embed": {
         "as": "object",
-        "key": "name"
+        "keyGetter": "getJsonKey"
       },
       "type": "hasMany",
       "model": "ModelMethod",

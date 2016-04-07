@@ -107,6 +107,36 @@ givenWorkspaceFromTemplate = function(template, options, cb) {
   });
 };
 
+givenWorkspaceWithCustomDependencies = function(templateName, deps, cb) {
+  resetWorkspace(function(err) {
+    if (err) return cb(err);
+    givenWorkspaceFromTemplate('empty-server', deps, function(err) {
+      if (err) return cb(err);
+      ConfigFile.loadFromPath('/package.json', function(err, pkgFile) {
+        if (err) return cb(err);
+        for (dep in deps) {
+          pkgFile.data.dependencies[dep] = deps[dep];
+        }
+
+        pkgFile.save(cb());
+      });
+    });
+  });
+};
+
+givenLB2Workspace = function(cb) {
+  givenWorkspaceWithCustomDependencies('empty-server', {
+    loopback: '^2.0.0',
+    'loopback-datasource-juggler': '^2.0.0',
+  }, cb);
+};
+
+givenLB3Workspace = function(cb) {
+  givenWorkspaceWithCustomDependencies('empty-server', {
+    loopback: '^3.0.0-alpha.1',
+  }, cb);
+};
+
 function findOfType(name, type) {
   assert(name);
   assert(type);

@@ -75,10 +75,19 @@ function ready(ModelDefinition) {
     assert(relation.embed && relation.embed.as, 'embed requires "as"');
     switch (relation.embed.as) {
       case 'object':
-        assert(relation.embed.key, 'embed as object requires "key"');
+        assert(relation.embed.key || relation.embed.keyGetter,
+          'embed as object requires "key" or "keyGetter"');
         result = {};
         relatedData.forEach(function(related) {
-          var key = related[relation.embed.key];
+          var Definition = app.models[relation.model];
+          var key;
+          if (relation.embed.key) {
+            key = related[relation.embed.key];
+          }
+          var keyGetter = relation.embed.keyGetter;
+          if (keyGetter && typeof Definition[keyGetter] === 'function') {
+            key = Definition[keyGetter](related.name, related);
+          }
           result[key] = related;
         });
         cleanRelatedData(result, relation);
