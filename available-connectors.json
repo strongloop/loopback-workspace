@@ -28,6 +28,10 @@
       "migration": false
     },
     "settings": {
+      "dsn": {
+        "type": "string",
+        "description": "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
+      },
       "host": {
         "type": "string"
       },
@@ -60,10 +64,11 @@
       "migration": true
     },
     "settings": {
-      "database": {
-        "type": "string"
-      },
       "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: https://username:password@host)"
+      },
+      "database": {
         "type": "string"
       },
       "username": {
@@ -92,6 +97,10 @@
       "migration": true
     },
     "settings": {
+      "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: mongodb://username:password@hostname:port/database)"
+      },
       "host": {
         "type": "string"
       },
@@ -124,6 +133,10 @@
       "migration": true
     },
     "settings": {
+      "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: mysql://user:pass@host/db)"
+      },
       "host": {
         "type": "string"
       },
@@ -156,6 +169,10 @@
       "migration": true
     },
     "settings": {
+      "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: postgres://username:password@localhost/database)"
+      },
       "host": {
         "type": "string"
       },
@@ -188,6 +205,10 @@
       "migration": true
     },
     "settings": {
+      "tns": {
+        "type": "string",
+        "description": "Connection String tns (eg: DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MY_HOST)(PORT=MY_PORT))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=MY_DB)))"
+      },
       "host": {
         "type": "string"
       },
@@ -220,6 +241,10 @@
       "migration": true
     },
     "settings": {
+       "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: mssql://username:password@localhost/database)"
+      },
       "host": {
         "type": "string"
       },
