@@ -47,6 +47,9 @@
       },
       "database": {
         "type": "string"
+      },
+      "schema": {
+        "type": "string"
       }
     },
     "package": {
