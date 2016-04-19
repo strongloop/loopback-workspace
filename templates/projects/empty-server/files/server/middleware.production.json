@@ -4,6 +4,11 @@
       "params": {
         "includeStack": false
       }
+    },
+    "loopback#strongErrorHandler": {
+      "params": {
+        "includeStack": false
+      }
     }
   }
 }

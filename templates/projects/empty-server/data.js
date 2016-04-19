@@ -81,6 +81,9 @@ template.server = {
         cors: false,
         errorHandler: {
           disableStackTrace: false
+        },
+        strongErrorHandler: {
+          disableStackTrace: true
         }
     }},
     { name: 'legacyExplorer', value: false }
