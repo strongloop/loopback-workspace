@@ -19,11 +19,8 @@
       "limit": "100kb"
     },
     "cors": false,
-    "errorHandler": {
-      "disableStackTrace": false
-    },
-    "strong-error-handlerrorHandler": {
-      "disableStackTrace": true
+    "strongErrorHandler": {
+      "debug": false
     }
   },
   "legacyExplorer": false
