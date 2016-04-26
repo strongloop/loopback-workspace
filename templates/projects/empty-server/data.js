@@ -79,11 +79,8 @@ template.server = {
           limit: '100kb'
         },
         cors: false,
-        errorHandler: {
-          disableStackTrace: false
-        },
         strongErrorHandler: {
-          disableStackTrace: true
+          debug: false
         }
     }},
     { name: 'legacyExplorer', value: false }
