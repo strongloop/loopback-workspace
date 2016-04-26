@@ -7,7 +7,9 @@
   },
   "scripts": {
     "pretest": "test -z \"$JENKINS_HOME\" || (echo | node bin/setup-mysql.js)",
-    "test": "mocha"
+    "lint": "eslint .",
+    "test": "mocha",
+    "posttest": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -37,8 +39,10 @@
     "better-stack-traces": "^1.0.1",
     "bluebird": "^3.2.1",
     "chai": "^1.10.0",
+    "eslint-config-loopback": "^2.0.0",
     "grunt": "~0.4.5",
     "grunt-docular": "~0.1.2",
+    "grunt-eslint": "^18.1.0",
     "grunt-loopback-sdk-angular": "~1.1.0",
     "mocha": "^1.20.1",
     "mysql": "^2.4.2",

@@ -6,20 +6,20 @@
 var app = require('../');
 var request = require('supertest');
 
-describe('REST API', function () {
+describe('REST API', function() {
   beforeEach(givenEmptySandbox);
 
-  describe('/workspaces', function () {
+  describe('/workspaces', function() {
     beforeEach(resetWorkspace);
 
-    describe('POST /workspaces', function () {
+    describe('POST /workspaces', function() {
       beforeEach(function createWorkspaceFromTemplate(done) {
         request(app)
           .post('/api/workspaces')
           .set('Content-Type', 'application/json')
           .send({
             templateName: 'api-server',
-            name: 'sandbox'
+            name: 'sandbox',
           })
           .expect(204)
           .end(function(err, res) {
@@ -27,9 +27,9 @@ describe('REST API', function () {
             done(err);
           });
       });
-      it('should add a facet from a template', function (done) {
+      it('should add a facet from a template', function(done) {
         app.models.Facet.find(function(err, defs) {
-          if(err) return done(err);
+          if (err) return done(err);
           var names = toNames(defs);
           expect(names).to.contain('server');
           done();
@@ -41,17 +41,17 @@ describe('REST API', function () {
      ***   SKIP UNTIL NON ROOT COMPONENT SUPPORT IS ADDED   ***
      ***/
 
-    describe.skip('POST /workspaces/component', function () {
+    describe.skip('POST /workspaces/component', function() {
       beforeEach(function(done) {
         request(app)
           .post('/api/workspaces/component')
           .set('Content-Type', 'application/json')
           .send({
-            template: 'rest'
+            template: 'rest',
           })
           .end(done);
       });
-      it('should add a component from a template', function (done) {
+      it('should add a component from a template', function(done) {
         app.models.ComponentDefinition.find(function(err, defs) {
           expect(toNames(defs)).to.contain('rest');
           done();
@@ -59,7 +59,7 @@ describe('REST API', function () {
       });
     });
 
-    describe('POST /workspaces/connectors', function () {
+    describe('POST /workspaces/connectors', function() {
       beforeEach(givenEmptyWorkspace);
       beforeEach(function(done) {
         this.req = request(app)
@@ -67,7 +67,7 @@ describe('REST API', function () {
           .set('Accepts', 'application/json')
           .end(done);
       });
-      it('should return a list of connectors', function () {
+      it('should return a list of connectors', function() {
         var connectors = toNames(this.req.res.body);
         expect(connectors).to.contain('memory');
         expect(connectors).to.contain('mail');
@@ -83,26 +83,26 @@ describe('REST API', function () {
       });
     });
 
-    describe('POST /api/DataSourceDefinitions', function () {
+    describe('POST /api/DataSourceDefinitions', function() {
       beforeEach(givenEmptyWorkspace);
       beforeEach(function(done) {
         this.req = request(app)
           .post('/api/DataSourceDefinitions')
           .set('Accepts', 'application/json')
           .send({
-            "defaultForType": "mysql",
-            "name": "test",
-            "connector": "loopback-connector-mysql",
-            "host": "demo.strongloop.com",
-            "port": 3306,
-            "facetName": "server",
-            "database": "demo",
-            "username": "demo******",
-            "password": "**********"
+            'defaultForType': 'mysql',
+            'name': 'test',
+            'connector': 'loopback-connector-mysql',
+            'host': 'demo.strongloop.com',
+            'port': 3306,
+            'facetName': 'server',
+            'database': 'demo',
+            'username': 'demo******',
+            'password': '**********',
           })
           .end(done);
       });
-      it('should create a datasource def', function (done) {
+      it('should create a datasource def', function(done) {
         app.models.DataSourceDefinition.findById('server.test', function(err, def) {
           expect(def).to.exist;
           done();

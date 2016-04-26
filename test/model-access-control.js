@@ -15,16 +15,16 @@ describe('ModelAccessControl', function() {
     it('should create an accessControl list item', function(done) {
       ModelDefinition.create({
         name: 'TestModel',
-        facetName: 'common'
+        facetName: 'common',
       }, function(err, model) {
-        if(err) return done(err);
+        if (err) return done(err);
         model.accessControls.create({
           principalType: '$role',
           principalId: '$everyone',
           permission: 'ALLOW',
           accessType: '*',
         }, function(err) {
-          if(err) return done(err);
+          if (err) return done(err);
 
           var configFile = model.getConfigFile();
           configFile.load(function() {
@@ -32,7 +32,7 @@ describe('ModelAccessControl', function() {
               accessType: '*',
               principalType: '$role',
               principalId: '$everyone',
-              permission: 'ALLOW'
+              permission: 'ALLOW',
             }]);
             model.accessControls.create({
               principalType: '$role',
@@ -40,15 +40,15 @@ describe('ModelAccessControl', function() {
               permission: 'DENY',
               accessType: '*',
             }, function(err) {
-              if(err) return done(err);
+              if (err) return done(err);
               configFile.load(function(err) {
-                if(err) return done(err);
+                if (err) return done(err);
                 expect(configFile.data.acls).to.exist;
                 expect(configFile.data.acls).to.have.length(2);
                 expectCorrectOrder(configFile.data.acls);
                 // load from disk
                 model.accessControls(function(err, acl) {
-                  if(err) return done(err);
+                  if (err) return done(err);
                   expectCorrectOrder(acl);
                   acl.forEach(function(item, index) {
                     expect(item.index).to.equal(index);

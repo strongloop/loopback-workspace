@@ -21,7 +21,7 @@ describe('ModelRelation', function() {
     new TestDataBuilder()
       .define('modelDef', app.models.ModelDefinition, {
         name: 'TestModel',
-        facetName: 'common'
+        facetName: 'common',
       })
       .buildTo(test, function(err) {
         if (err) return done(err);
@@ -30,7 +30,7 @@ describe('ModelRelation', function() {
           name: 'boss',
           type: 'belongsTo',
           model: modelDef.name,
-          foreignKey: 'reportsTo'
+          foreignKey: 'reportsTo',
         }, function(err) {
           if (err) return done(err);
           var json = fs.readJsonSync(
@@ -39,8 +39,8 @@ describe('ModelRelation', function() {
             boss: {
               type: 'belongsTo',
               model: modelDef.name,
-              foreignKey: 'reportsTo'
-            }
+              foreignKey: 'reportsTo',
+            },
           });
           done();
         });

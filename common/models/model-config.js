@@ -4,7 +4,6 @@
 // License text available at https://opensource.org/licenses/MIT
 
 module.exports = function(ModelConfig) {
-
   /**
    * Defines a model configuration which attaches a model to a facet and a
    * dataSource. It also can extend a model definition with additional configuration.
@@ -23,5 +22,4 @@ module.exports = function(ModelConfig) {
   ModelConfig.validatesUniquenessOf('name', { scopedTo: ['facetName'] });
   ModelConfig.validatesPresenceOf('name');
   ModelConfig.validatesPresenceOf('facetName');
-
 };

@@ -20,13 +20,13 @@ async.series([
   function setupConnection(next) {
     read({
       prompt: 'Enter password for MySQL root user:',
-      silent: true
+      silent: true,
     }, function(err, password) {
       if (err) return next(err);
 
       connection = mysql.createConnection({
         user: 'root',
-        password: password
+        password: password,
       });
 
       console.log('Connecting');

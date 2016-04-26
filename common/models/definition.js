@@ -17,22 +17,22 @@ module.exports = function(Definition) {
 
   Definition.loadFromFs = function() {
     throw new Error('not implemented in ' + this.modelName);
-  }
+  };
 
   Definition.saveToFs = function(cache, definitionData, cb) {
     throw new Error('not implemented in ' + this.modelName);
-  }
+  };
 
   Definition.toArray = function(obj, embed) {
-    if(!obj) return [];
-    if(Array.isArray(obj)) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) {
       return obj;
     } else {
       return Object.keys(obj).map(function(key) {
         return obj[key];
       });
     }
-  }
+  };
 
   /**
    * Get the embeded relations for a `Definition`. Only relations that specify
@@ -71,25 +71,25 @@ module.exports = function(Definition) {
     var relations = this.settings.relations;
     var results = [];
 
-    if(relations) {
+    if (relations) {
       Object
         .keys(relations)
         .forEach(function(name) {
           var relation = relations[name];
-          if(relation.embed) {
+          if (relation.embed) {
             results.push({
               embed: relation.embed,
               model: relation.model,
               as: relation.embed.name || name,
               type: relation.type,
-              foreignKey: relation.foreignKey
+              foreignKey: relation.foreignKey,
             });
           }
         });
     }
 
     return results;
-  }
+  };
 
   Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
     var Definition = this;
@@ -98,17 +98,17 @@ module.exports = function(Definition) {
       var Entity = loopback.getModel(relation.model);
       var properties = Entity.definition.properties;
 
-      if(Array.isArray(relatedData)) {
+      if (Array.isArray(relatedData)) {
         relatedData.forEach(function(config, index) {
           config[relation.foreignKey] = fk;
           config.facetName = facetName;
-          if(relation.embed && relation.embed.includeIndex) {
+          if (relation.embed && relation.embed.includeIndex) {
             config.index = index;
           }
           debug('addRelatedToCache %s %j', relation.model, config);
           Entity.addToCache(cache, config);
         });
-      } else if(relatedData) {
+      } else if (relatedData) {
         Object.keys(relatedData).forEach(function(embedId) {
           var config = relatedData[embedId];
 
@@ -118,11 +118,11 @@ module.exports = function(Definition) {
               // {myProp: false} or {myProp: null} is to hide base myProp
               config = {
                 disableInherit: true,
-                comments: 'Flag to not inherit the property from base'
+                comments: 'Flag to not inherit the property from base',
               };
             } else {
               // expand shorthand notation
-              config = {type: config};
+              config = { type: config };
             }
             debug('expanded model property %s.%s defined as %j',
               fileData.name, embedId, config);
@@ -139,7 +139,7 @@ module.exports = function(Definition) {
         });
       }
     });
-  }
+  };
 
   Definition.addToCache = function(cache, val) {
     // Remove data of embedded relations
@@ -150,5 +150,4 @@ module.exports = function(Definition) {
     });
     return Definition.base.addToCache.call(this, cache, data);
   };
-
-}
+};

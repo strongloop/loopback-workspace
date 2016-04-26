@@ -13,7 +13,6 @@ module.exports = function(ModelDefinition) {
 };
 
 function ready(ModelDefinition) {
-
   var path = require('path');
   var fs = require('fs');
   var assert = require('assert');
@@ -44,7 +43,7 @@ function ready(ModelDefinition) {
     var relations = this.getEmbededRelations();
     relations.forEach(function(relation) {
       var relatedData = getRelated(cache, modelDef.id, relation);
-      if(relation.model === 'ModelAccessControl') {
+      if (relation.model === 'ModelAccessControl') {
         relatedData = relatedData.sort(function(a, b) {
           if (a.index < b.index) {
             return -1;
@@ -59,7 +58,7 @@ function ready(ModelDefinition) {
     });
 
     return configData;
-  }
+  };
 
   function getRelated(cache, id, relation) {
     var Definition = app.models[relation.model];
@@ -74,7 +73,7 @@ function ready(ModelDefinition) {
   function formatRelatedData(relation, relatedData) {
     var result;
     assert(relation.embed && relation.embed.as, 'embed requires "as"');
-    switch(relation.embed.as) {
+    switch (relation.embed.as) {
       case 'object':
         assert(relation.embed.key, 'embed as object requires "key"');
         result = {};
@@ -84,31 +83,32 @@ function ready(ModelDefinition) {
         });
         cleanRelatedData(result, relation);
         return result;
-      break;
+        break;
       case 'array':
         cleanRelatedData(relatedData, relation);
         return relatedData;
-      break;
+        break;
     }
     assert(false, relation.embed.as + ' is not supported by embed');
   }
 
   ModelDefinition.getPath = function(facetName, obj) {
-    if(obj.configFile) return obj.configFile;
+    if (obj.configFile) return obj.configFile;
 
     // TODO(ritch) the path should be customizable
-    return path.join(facetName, ModelDefinition.settings.defaultDir, ModelDefinition.toFilename(obj.name) + '.json');
-  }
+    return path.join(facetName, ModelDefinition.settings.defaultDir,
+      ModelDefinition.toFilename(obj.name) + '.json');
+  };
 
   ModelDefinition.toFilename = function(name) {
-    if(name === name.toUpperCase()) return name.toLowerCase();
-    if(~name.indexOf('-')) return name.toLowerCase();
+    if (name === name.toUpperCase()) return name.toLowerCase();
+    if (~name.indexOf('-')) return name.toLowerCase();
     var dashed = _.kebabCase(name);
     var split = dashed.split('');
-    if(split[0] === '-') split.shift();
+    if (split[0] === '-') split.shift();
 
     return split.join('');
-  }
+  };
 
   var removeById = ModelDefinition.removeById.bind(ModelDefinition);
 
@@ -132,7 +132,7 @@ function ready(ModelDefinition) {
 
         function removeModelDef(cb) {
           var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
-          var file = new ConfigFile({path: p});
+          var file = new ConfigFile({ path: p });
           file.remove(cb);
         }
         function removeModelDefJs(cb) {
@@ -140,22 +140,22 @@ function ready(ModelDefinition) {
         }
         async.parallel([
           removeModelDef,
-          removeModelDefJs
+          removeModelDefJs,
         ], function(err, results) {
           if (err) return cb(err);
 
-          cb(null, {result: results});
+          cb(null, { result: results });
         });
       });
     });
-  }
+  };
 
   ModelDefinition.destroyById = ModelDefinition.removeById;
   ModelDefinition.deleteById = ModelDefinition.removeById;
 
   ModelDefinition.prototype.remove = function(cb) {
     this.constructor.removeById(this.id, cb);
-  }
+  };
 
   ModelDefinition.prototype.destroy = ModelDefinition.prototype.remove;
   ModelDefinition.prototype.delete = ModelDefinition.prototype.remove;
@@ -183,14 +183,14 @@ function ready(ModelDefinition) {
     }
   }
 
-  ModelDefinition.observe("after save", function(ctx, next) {
+  ModelDefinition.observe('after save', function(ctx, next) {
     if (!ctx.isNewInstance) return next();
 
     var def = ctx.instance;
     var scriptPath = def.getScriptPath();
 
     fs.exists(scriptPath, function(exists) {
-      if(exists) {
+      if (exists) {
         next();
       } else {
         createScript(def, scriptPath, next);
@@ -199,9 +199,9 @@ function ready(ModelDefinition) {
   });
 
   ModelDefinition.prototype.getClassName = function() {
-    if(!this.name) return null;
+    if (!this.name) return null;
     return _.capitalize(_.camelCase(this.name));
-  }
+  };
 
   ModelDefinition.prototype.getScriptPath = function() {
     var configFilePath = ModelDefinition.getPath(this.facetName, this);
@@ -211,7 +211,7 @@ function ready(ModelDefinition) {
       ConfigFile.getWorkspaceDir(),
       scriptFilePath
     );
-  }
+  };
 
   var templatePath = path.join(__dirname, '..', '..', 'templates', 'scripts',
       'model.js.tmpl');
@@ -222,12 +222,11 @@ function ready(ModelDefinition) {
     try {
       script = _.template(MODEL_SCRIPT_TEMPLATE)({
         modelDef: def,
-        modelClassName: def.getClassName()
+        modelClassName: def.getClassName(),
       });
-    } catch(e) {
+    } catch (e) {
       return cb(e);
     }
     fs.writeFile(out, script, cb);
   }
-
 };

@@ -190,14 +190,14 @@ describe('end-to-end', function() {
     before(function createCustomModel(done) {
       models.ModelDefinition.create({
         facetName: 'common',
-        name: 'Custom'
+        name: 'Custom',
       }, function(err, model) {
         if (err) return done(err);
         model.properties.create({
           facetName: 'common',
           name: 'name',
           type: 'string',
-          required: true
+          required: true,
         }, done);
       });
     });
@@ -289,7 +289,7 @@ describe('end-to-end', function() {
               expect(res.body.id, 'my user id').to.equal(userId);
               next();
             });
-        }
+        },
       ], done);
     });
 
@@ -376,8 +376,8 @@ describe('end-to-end', function() {
         facetName: 'common',
         name: 'Custom',
         options: {
-          mysql: { table: 'CUSTOM' }
-        }
+          mysql: { table: 'CUSTOM' },
+        },
       }, done);
     });
 
@@ -392,10 +392,12 @@ describe('end-to-end', function() {
       });
     });
 
+    /* eslint-disable one-var */
     var db;
+    /* eslint-enable one-var */
     beforeEach(function findDb(done) {
       models.DataSourceDefinition.findOne(
-        { where: { name: 'db' } },
+        { where: { name: 'db' }},
         function(err, ds) {
           db = ds;
           done(err);
@@ -456,10 +458,12 @@ describe('end-to-end', function() {
       connection.query(sql, done);
     });
 
+    /* eslint-disable one-var */
     var db;
+    /* eslint-enable one-var */
     beforeEach(function findDb(done) {
       models.DataSourceDefinition.findOne(
-        { where: { name: 'db' } },
+        { where: { name: 'db' }},
         function(err, ds) {
           db = ds;
           done(err);
@@ -469,11 +473,11 @@ describe('end-to-end', function() {
     describe('getSchema', function() {
       it('should include the simple table', function(done) {
         db.getSchema(function(err, schema) {
-          if(err) return done(err);
+          if (err) return done(err);
           var tableNames = schema.map(function(item) { return item.name; });
           expect(tableNames).to.contain('simple');
           listTableNames(connection, function(err, tables) {
-            if(err) return done(err);
+            if (err) return done(err);
             expect(tables.sort()).to.eql(tableNames.sort());
             done();
           });
@@ -484,7 +488,7 @@ describe('end-to-end', function() {
     describe('discoverModelDefinition', function() {
       it('should discover the simple table as a model', function(done) {
         db.discoverModelDefinition('simple', function(err, modelDefinition) {
-          if(err) return done(err);
+          if (err) return done(err);
           expect(modelDefinition.name).to.equal('Simple');
           expect(modelDefinition.options.mysql.table).to.equal('simple');
           var props = Object.keys(modelDefinition.properties);
@@ -517,7 +521,7 @@ describe('end-to-end', function() {
       // delete all non-default datasources to isolate individual tests
       // use `nlike` instead of `neq` as the latter is not implemented yet
       // https://github.com/strongloop/loopback-datasource-juggler/issues/265
-      DataSourceDefinition.destroyAll({ name: { nlike: 'db' } }, done);
+      DataSourceDefinition.destroyAll({ name: { nlike: 'db' }}, done);
     });
 
     it('returns true for memory connector', function(done) {
@@ -525,7 +529,7 @@ describe('end-to-end', function() {
         {
           facetName: 'server',
           name: 'test-memory-ds',
-          connector: 'memory'
+          connector: 'memory',
         },
         function(err, definition) {
           if (err) return done(err);
@@ -543,7 +547,7 @@ describe('end-to-end', function() {
         {
           facetName: 'server',
           name: 'test-unknown-ds',
-          connector: 'connector-that-does-not-exist'
+          connector: 'connector-that-does-not-exist',
         },
         function(err, definition) {
           if (err) return done(err);
@@ -581,7 +585,7 @@ describe('end-to-end', function() {
       it('returns descriptive result for ECONNREFUSED', function(done) {
         givenDataSource(
           {
-            port: 65000 // hopefully nobody is listening there
+            port: 65000, // hopefully nobody is listening there
           },
           function(err, definition) {
             if (err) return done(err);
@@ -598,7 +602,7 @@ describe('end-to-end', function() {
       it('returns descriptive error for invalid credentials', function(done) {
         givenDataSource(
           {
-            password: 'invalid-password'
+            password: 'invalid-password',
           },
           function(err, definition) {
             if (err) return done(err);
@@ -622,7 +626,7 @@ describe('end-to-end', function() {
           port: null, // use default
           database: MYSQL_DATABASE,
           user: MYSQL_USER,
-          password: MYSQL_PASSWORD
+          password: MYSQL_PASSWORD,
         }, config);
 
         DataSourceDefinition.updateOrCreate(config, function(err, dsd) {
@@ -650,18 +654,18 @@ describe('end-to-end', function() {
       new TestDataBuilder()
         .define('productDef', models.ModelDefinition, {
           facetName: 'common',
-          name: 'Product'
+          name: 'Product',
         })
         .define('productName', models.ModelProperty, {
           facetName: ref('productDef.facetName'),
           modelId: ref('productDef.id'),
           name: 'name',
-          type: 'string'
+          type: 'string',
         })
         .define('productConfig', models.ModelConfig, {
           facetName: 'server',
           name: ref('productDef.name'),
-          dataSource: 'db'
+          dataSource: 'db',
         })
         .buildTo(this, done);
     });
@@ -699,19 +703,19 @@ describe('end-to-end', function() {
     it('handles missing port and host config', function(done) {
       models.FacetSetting.deleteAll(
         {
-        facetName: 'server',
-        name: { inq: ['host', 'port' ]}
+          facetName: 'server',
+          name: { inq: ['host', 'port'] },
         }, function(err) {
-          if (err) return done(err);
+        if (err) return done(err);
 
-          request(workspace).post('/api/workspaces/start')
+        request(workspace).post('/api/workspaces/start')
             .expect(200)
             .end(function(err) {
               if (err) return done(err);
               // localhost:3000 is the default value provided by loopback
               expectAppIsRunning('http://localhost:3000', done);
             });
-        });
+      });
     });
 
     it('stops the app started by the workspace', function(done) {
@@ -778,7 +782,7 @@ describe('end-to-end', function() {
         .end(function(err, res) {
           if (err) return done(err);
           expect(res.body).to.eql({
-            running: false
+            running: false,
           });
           done();
         });
@@ -795,7 +799,7 @@ describe('end-to-end', function() {
             if (err) return done(err);
             expect(res.body).to.eql({
               running: true,
-              pid: pid
+              pid: pid,
             });
             done();
           });
@@ -837,7 +841,7 @@ function setupConnection(done) {
   var connection = mysql.createConnection({
     database: MYSQL_DATABASE,
     user: MYSQL_USER,
-    password: MYSQL_PASSWORD
+    password: MYSQL_PASSWORD,
   });
 
   connection.connect(function(err) {
@@ -868,7 +872,7 @@ function execNpm(args, options, cb) {
     {
       PATH: process.env.PATH,
       HOME: process.env.HOME,
-      USERPROFILE: process.env.USERPROFILE
+      USERPROFILE: process.env.USERPROFILE,
     },
     options.env
   );
@@ -900,7 +904,7 @@ function listTableNames(connection, cb) {
 
 function configureMySQLDataSource(done) {
   models.DataSourceDefinition.findOne(
-    { where: { name: 'db' } },
+    { where: { name: 'db' }},
     function(err, ds) {
       if (err) return done(err);
       ds.connector = 'mysql';
@@ -924,7 +928,7 @@ function configureCustomModel(done) {
   models.ModelConfig.create({
     name: 'Custom',
     dataSource: 'db',
-    facetName: 'server'
+    facetName: 'server',
   }, done);
 }
 

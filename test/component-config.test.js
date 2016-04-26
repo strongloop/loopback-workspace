@@ -29,15 +29,15 @@ describe('ComponentConfig', function() {
       facetName: 'server',
       name: 'loopback-component-foobar',
       value: {
-        configKey: 'configValue'
-      }
+        configKey: 'configValue',
+      },
     });
     return component.save().then(function() {
       var cfgFile = path.resolve(SANDBOX, 'server', 'component-config.json');
       var data = fs.readJsonSync(cfgFile);
       expect(data).to.have.property('loopback-component-foobar');
       expect(data['loopback-component-foobar']).to.eql({
-        configKey: 'configValue'
+        configKey: 'configValue',
       });
     });
   });

@@ -6,13 +6,13 @@
 var fs = require('fs-extra');
 var Facet = require('../').models.Facet;
 
-describe('Facet', function () {
-  describe('Facet.create(def, cb)', function () {
+describe('Facet', function() {
+  describe('Facet.create(def, cb)', function() {
     beforeEach(givenBasicWorkspace);
 
-    it('should use name as the id', function (done) {
+    it('should use name as the id', function(done) {
       Facet.create({
-        name: 'foo'
+        name: 'foo',
       }, function(err, def) {
         expect(err).to.not.exist;
         expect(def).to.not.have.ownProperty('id');
@@ -54,14 +54,14 @@ describe('Facet', function () {
           'loopback/common/models',
           'loopback/server/models',
           '../common/models',
-          './models'
+          './models',
         ],
         mixins: [
           'loopback/common/mixins',
           'loopback/server/mixins',
           '../common/mixins',
-          './mixins'
-        ]
+          './mixins',
+        ],
       });
     });
 

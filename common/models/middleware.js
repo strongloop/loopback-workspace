@@ -9,10 +9,9 @@ module.exports = function(Middleware) {
   app.once('ready', function() {
     ready(Middleware);
   });
-}
+};
 
 function ready(Middleware) {
-
   var loopback = require('loopback');
   var debug = require('debug')('workspace:middleware');
   var ConfigFile = app.models.ConfigFile;
@@ -51,7 +50,7 @@ function ready(Middleware) {
       var phases = sortMiddleware(instances).phases;
       cb(null, phases);
     });
-  }
+  };
 
   var ORDER_BUFFER = 1024;
 
@@ -92,13 +91,12 @@ function ready(Middleware) {
           order = ORDER_BUFFER;
         }
       }
-      var phasePlaceHolder =
-      {
+      var phasePlaceHolder = {
         phase: phase,
         isPhasePlaceHolder: true,
         order: order,
         facetName: facetName,
-        name: '*' + phase // Set the name to be unique
+        name: '*' + phase, // Set the name to be unique
       };
       debug('Adding phase %s before %s: %j', phase, nextPhase, phasePlaceHolder);
       Middleware.create(phasePlaceHolder, cb);
@@ -131,7 +129,7 @@ function ready(Middleware) {
   var subPhaseOrders = {
     before: 1,
     regular: 2,
-    after: 3
+    after: 3,
   };
 
   function compareBySubPhase(m1, m2) {
@@ -172,7 +170,7 @@ function ready(Middleware) {
     });
     return {
       phases: phases,
-      middleware: middleware
+      middleware: middleware,
     };
   }
 
@@ -257,12 +255,12 @@ function ready(Middleware) {
     if (Object.keys(middlewareConfig).length) {
       return new ConfigFile({
         path: middlewarePath,
-        data: middlewareConfig
+        data: middlewareConfig,
       });
     } else {
       return null;
     }
-  }
+  };
 
   /**
    * Load the middleware config from the file into cache. Each phase will have
@@ -293,7 +291,7 @@ function ready(Middleware) {
         isPhasePlaceHolder: true,
         order: phaseOrder * ORDER_BUFFER + order,
         facetName: facetName,
-        name: '*' + phase // Set the name to be unique
+        name: '*' + phase, // Set the name to be unique
       };
       Middleware.addToCache(cache, def);
 
@@ -304,7 +302,7 @@ function ready(Middleware) {
           defList = [def];
         }
         if (defList.length === 0) {
-          defList = [{isMiddlewarePlaceHolder: true}];
+          defList = [{ isMiddlewarePlaceHolder: true }];
         }
         // The middleware value can be an array
         for (var i = 0, n = defList.length; i < n; i++) {
@@ -335,5 +333,4 @@ function ready(Middleware) {
     }
     return phase + '.' + data.name + index;
   };
-
 }

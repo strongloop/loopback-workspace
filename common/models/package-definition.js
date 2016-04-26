@@ -9,7 +9,7 @@ module.exports = function(PackageDefinition) {
   app.once('ready', function() {
     ready(PackageDefinition);
   });
-}
+};
 
 function ready(PackageDefinition) {
   var models = app.models;
@@ -19,15 +19,14 @@ function ready(PackageDefinition) {
 
   PackageDefinition.prototype.getUniqueId = function() {
     return this.name || null;
-  }
+  };
 
   PackageDefinition.saveToFs = function(cache, packageDef, cb) {
     // TODO(bajtos) Move this method to WorkspaceEntity
     var configFile = new ConfigFile({
       path: PackageDefinition.getPath('.', packageDef),
-      data: PackageDefinition.getConfigFromData(packageDef)
+      data: PackageDefinition.getConfigFromData(packageDef),
     });
     configFile.save(cb);
   };
-
 };

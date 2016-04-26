@@ -1,9 +1,10 @@
 var template = module.exports;
 
-template.description = 'A project containing a basic working example, including a memory database';
+template.description = 'A project containing a basic working example, ' +
+  'including a memory database';
 
 template.inherits = [
-  'empty-server'
+  'empty-server',
 ];
 
 template.package = {
@@ -22,14 +23,14 @@ template.server = {
   modelConfigs: [
     {
       name: 'note',
-      dataSource: 'db'
+      dataSource: 'db',
     },
   ],
 
   datasources: [
     {
       name: 'db',
-      connector: 'memory'
-    }
-  ]
+      connector: 'memory',
+    },
+  ],
 };

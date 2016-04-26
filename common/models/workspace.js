@@ -53,15 +53,15 @@ module.exports = function(Workspace) {
       fs.readdir(TEMPLATE_DIR, function(err, files) {
         cb(err, err ? undefined : files.filter(dirFilter));
       });
-    }
+    };
 
     function dirFilter(file) {
       return file.indexOf('.') === -1;
     }
 
     loopback.remoteMethod(Workspace.getAvailableTemplates, {
-      http: {verb: 'get', path: '/component-templates'},
-      returns: {arg: 'templates', type: 'array'}
+      http: { verb: 'get', path: '/component-templates' },
+      returns: { arg: 'templates', type: 'array' },
     });
 
     /**
@@ -116,12 +116,14 @@ module.exports = function(Workspace) {
       template.files = [path.join(TEMPLATE_DIR, templateName, 'files')];
 
       var sources = [template];
+      /* eslint-disable one-var */
       if (template.inherits) for (var ix in template.inherits) {
         var t = template.inherits[ix];
         var data = this._loadProjectTemplate(t);
         if (!data) return null; // the error was already reported
         sources.unshift(data);
       }
+      /* eslint-enable one-var */
 
       // TODO(bajtos) use topological sort to resolve duplicated dependencies
       // e.g. A inherits B,C; B inherits D; C inherits D too
@@ -137,7 +139,7 @@ module.exports = function(Workspace) {
       });
 
       return _.merge.apply(_, sources);
-    }
+    };
 
     /**
      * Add a new component from a template.
@@ -236,8 +238,8 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.addComponent, {
-      http: {verb: 'post', path: '/component'},
-      accepts: {arg: 'options', type: 'object', http: {source: 'body'}}
+      http: { verb: 'post', path: '/component' },
+      accepts: { arg: 'options', type: 'object', http: { source: 'body' }},
     });
 
     function createFacet(name, template, cb) {
@@ -335,18 +337,18 @@ module.exports = function(Workspace) {
       options = extend(options, {
         root: true,
         name: name,
-        template: templateName
+        template: templateName,
       });
 
       Workspace.addComponent(options, cb);
     };
 
     loopback.remoteMethod(Workspace.createFromTemplate, {
-      http: {verb: 'post', path: '/'},
+      http: { verb: 'post', path: '/' },
       accepts: [
-        {arg: 'templateName', type: 'string'},
-        {arg: 'name', type: 'string'}
-      ]
+        { arg: 'templateName', type: 'string' },
+        { arg: 'name', type: 'string' },
+      ],
     });
 
     /**
@@ -392,14 +394,14 @@ module.exports = function(Workspace) {
 
             connector.installed = isDep;
             cb(null, connector);
-          })
+          });
         }, cb);
       });
     };
 
     loopback.remoteMethod(Workspace.listAvailableConnectors, {
-      http: {verb: 'get', path: '/connectors'},
-      returns: {arg: 'connectors', type: 'array', root: true}
+      http: { verb: 'get', path: '/connectors' },
+      returns: { arg: 'connectors', type: 'array', root: true },
     });
 
     /**
@@ -430,7 +432,7 @@ module.exports = function(Workspace) {
       if (Workspace._child) {
         debug('child already running as %s', Workspace._child.pid);
         process.nextTick(function() {
-          cb(null, {pid: Workspace._child.pid});
+          cb(null, { pid: Workspace._child.pid });
         });
         return;
       }
@@ -459,7 +461,7 @@ module.exports = function(Workspace) {
             {
               cwd: process.env.WORKSPACE_DIR,
               stdio: 'inherit',
-              env: env
+              env: env,
             });
         } catch (err) {
           debug('spawn failed %s', err);
@@ -483,7 +485,7 @@ module.exports = function(Workspace) {
         var waitOpts = {
           host: host,
           port: port || 3000, // 3000 is the default port provided by loopback
-          timeoutInMs: 30000  // 30 seconds
+          timeoutInMs: 30000,  // 30 seconds
         };
 
         // Windows will fail to connect if the host is 0.0.0.0, so redirect to
@@ -501,7 +503,7 @@ module.exports = function(Workspace) {
             return done(err);
           }
           debug('Child started with pid', child.pid);
-          done(null, {pid: child.pid, host: waitOpts.host, port: waitOpts.port });
+          done(null, { pid: child.pid, host: waitOpts.host, port: waitOpts.port });
         });
       });
 
@@ -517,7 +519,7 @@ module.exports = function(Workspace) {
 
     function fetchServerHostPort(cb) {
       FacetSetting.find(
-        {where: {facetName: 'server'}},
+        { where: { facetName: 'server' }},
         function extractHostPortFromFacetSettings(err, list) {
           if (err) return cb(err);
           var config = {};
@@ -530,12 +532,12 @@ module.exports = function(Workspace) {
     }
 
     loopback.remoteMethod(Workspace.start, {
-      http: {verb: 'post', path: '/start'},
+      http: { verb: 'post', path: '/start' },
       returns: {
         arg: 'data',
         type: { pid: Number, host: String, port: Number },
-        root: true
-      }
+        root: true,
+      },
     });
 
     process.once('exit', function killWorkspaceChild() {
@@ -551,7 +553,7 @@ module.exports = function(Workspace) {
       if (!Workspace._child) {
         debug('skipping Workspace.stop - child not running');
         process.nextTick(function() {
-          cb(null, {exitCode: null});
+          cb(null, { exitCode: null });
         });
         return;
       }
@@ -559,14 +561,14 @@ module.exports = function(Workspace) {
       debug('stopping the child process %s', this._child.pid);
       Workspace._child.once('exit', function(code) {
         debug('child was stopped');
-        cb(null, {exitCode: code});
+        cb(null, { exitCode: code });
       });
       Workspace._child.kill();
     };
 
     loopback.remoteMethod(Workspace.stop, {
-      http: {verb: 'post', path: '/stop'},
-      returns: {arg: 'data', type: 'Object', root: true}
+      http: { verb: 'post', path: '/stop' },
+      returns: { arg: 'data', type: 'Object', root: true },
     });
 
     /**
@@ -581,8 +583,8 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.restart, {
-      http: {verb: 'post', path: '/restart'},
-      returns: {arg: 'data', type: 'Object', root: true}
+      http: { verb: 'post', path: '/restart' },
+      returns: { arg: 'data', type: 'Object', root: true },
     });
 
     /**
@@ -591,8 +593,8 @@ module.exports = function(Workspace) {
      */
     Workspace.isRunning = function(cb) {
       var result = Workspace._child ?
-      {running: true, pid: Workspace._child.pid} :
-      {running: false};
+      { running: true, pid: Workspace._child.pid } :
+      { running: false };
 
       process.nextTick(function() {
         cb(null, result);
@@ -600,17 +602,17 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.isRunning, {
-      http: {verb: 'get', path: '/is-running'},
-      returns: {arg: 'data', type: 'Object', root: true}
+      http: { verb: 'get', path: '/is-running' },
+      returns: { arg: 'data', type: 'Object', root: true },
     });
 
     Workspace.getWorkspace = function(cb) {
       cb(null, process.env.WORKSPACE_DIR);
-    }
+    };
 
     loopback.remoteMethod(Workspace.getWorkspace, {
-      http: {verb: 'get', path: '/get-workspace'},
-      returns: {arg: 'path', type: 'string'}
+      http: { verb: 'get', path: '/get-workspace' },
+      returns: { arg: 'path', type: 'string' },
     });
 
     Workspace.loadWorkspace = function(path, cb) {
@@ -620,10 +622,9 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.loadWorkspace, {
-      http: {verb: 'post', path: '/load-workspace'},
-      accepts: {arg: 'path', type: 'string'},
-      returns: {arg: 'data', type: 'Object', root: true}
+      http: { verb: 'post', path: '/load-workspace' },
+      accepts: { arg: 'path', type: 'string' },
+      returns: { arg: 'data', type: 'Object', root: true },
     });
-
   }
 };

@@ -14,7 +14,7 @@ app.set('legacyExplorer', false);
 // required to support base models
 app.dataSource('db', {
   connector: loopback.Memory,
-  defaultForType: 'db'
+  defaultForType: 'db',
 });
 
 // must define base models first
@@ -105,7 +105,6 @@ app.use(loopback.urlNotFound());
 // The ultimate error handler.
 app.use(loopback.errorHandler());
 
-
 /*
  * 5. Add a basic application status route at the root `/`.
  *
@@ -137,6 +136,6 @@ app.start = function() {
   });
 };
 
-if(require.main === module) {
+if (require.main === module) {
   app.start();
 }

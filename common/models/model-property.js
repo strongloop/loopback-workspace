@@ -4,7 +4,6 @@
 // License text available at https://opensource.org/licenses/MIT
 
 module.exports = function(ModelProperty) {
-
   /**
    * Represents a Property of a LoopBack `Model`.
    *
@@ -27,7 +26,7 @@ module.exports = function(ModelProperty) {
     'date',
     'buffer',
     'geopoint',
-    'any'
+    'any',
   ];
 
   ModelProperty.getAvailableTypes = function(cb) {
@@ -36,7 +35,6 @@ module.exports = function(ModelProperty) {
 
   ModelProperty.remoteMethod('getAvailableTypes', {
     http: { verb: 'get', path: '/available-types' },
-    returns: { type: ['string'], root: true }
+    returns: { type: ['string'], root: true },
   });
-
 };

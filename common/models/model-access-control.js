@@ -12,7 +12,6 @@ module.exports = function(ModelAccessControl) {
 };
 
 function ready(ModelAccessControl) {
-
   var ACL = require('loopback').ACL;
   var Role = require('loopback').Role;
 
@@ -129,23 +128,22 @@ function ready(ModelAccessControl) {
     var self = this;
     this.findOne({
       where: { modelId: this.modelId },
-      order: 'index DESC'
+      order: 'index DESC',
     }, function(err, accessControl) {
-      if(err) return cb(err);
+      if (err) return cb(err);
       var index = 0;
 
-      if(accessControl) {
+      if (accessControl) {
         index = accessControl.index + 1;
       }
 
       data.index = index;
       baseCreate.call(self, data, options, cb);
     });
-  }
+  };
 
   ModelAccessControl.getUniqueId = function(data) {
     var sep = this.settings.idSeparator || '.';
     return data.modelId + sep + data.index;
-  }
-
+  };
 };
