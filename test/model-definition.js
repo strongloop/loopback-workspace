@@ -15,8 +15,7 @@ var ref = TestDataBuilder.ref;
 var ConfigFile = app.models.ConfigFile;
 
 describe('ModelDefinition', function() {
-
-  describe('CRUD', function () {
+  describe('CRUD', function() {
     beforeEach(givenBasicWorkspace);
 
     beforeEach(function(done) {
@@ -24,10 +23,10 @@ describe('ModelDefinition', function() {
       test.modelName = 'TestModel';
       test.model = {
         name: test.modelName,
-        facetName: 'common'
+        facetName: 'common',
       };
       ModelDefinition.create(test.model, function(err, modelDef) {
-        if(err) return done(err);
+        if (err) return done(err);
         test.modelDef = modelDef;
         done();
       });
@@ -38,8 +37,8 @@ describe('ModelDefinition', function() {
 
     beforeEach(findAllEntities);
 
-    describe('ModelDefinition.create(modelDef, cb)', function () {
-      it('should create a common/models/$name.json file', function (done) {
+    describe('ModelDefinition.create(modelDef, cb)', function() {
+      it('should create a common/models/$name.json file', function(done) {
         this.modelDefFile.exists(function(err, exists) {
           expect(exists).to.equal(true);
           done();
@@ -58,21 +57,21 @@ describe('ModelDefinition', function() {
       });
     });
 
-    describe('ModelDefinition.removeById(id, cb)', function () {
+    describe('ModelDefinition.removeById(id, cb)', function() {
       beforeEach(function(done) {
         this.modelDef.properties.create({
-          name: 'myProp'
+          name: 'myProp',
         }, done);
       });
-      it('should remove the model definition', function (done) {
+      it('should remove the model definition', function(done) {
         var id = this.modelDef.id;
         ModelDefinition.removeById(id, function(err) {
-          if(err) return done(err);
+          if (err) return done(err);
           ModelDefinition.findById(id, function(err, modelDef) {
-            if(err) return done(err);
+            if (err) return done(err);
             expect(modelDef).to.not.exist;
             ModelProperty.count(function(err, count) {
-              if(err) return done(err);
+              if (err) return done(err);
               expect(count).to.equal(0);
               done();
             });
@@ -110,22 +109,22 @@ describe('ModelDefinition', function() {
         expect(entries).to.include.members([
           'Application (RO)',
           'Email (RO)',
-          'User (RO)'
+          'User (RO)',
         ]);
         done();
       });
     });
   });
 
-  describe('ModelDefinition.getPath(app, obj)', function () {
-    it('should return the configFile path if it exists', function () {
+  describe('ModelDefinition.getPath(app, obj)', function() {
+    it('should return the configFile path if it exists', function() {
       var configFilePath = 'foo/bar/bat/baz.json';
       var path = ModelDefinition.getPath('.', { name: 'MyModel',
         configFile: configFilePath });
 
       expect(path).to.equal(configFilePath);
     });
-    it('should return construct configFile path', function () {
+    it('should return construct configFile path', function() {
       var path = ModelDefinition.getPath('.', { name: 'MyModel' });
       expect(path).to.equal('models/my-model.json');
     });
@@ -137,7 +136,7 @@ describe('ModelDefinition', function() {
     it('rejects invalid model name', function(done) {
       var md = new ModelDefinition({
         facetName: 'server',
-        name: 'a name with space'
+        name: 'a name with space',
       });
 
       md.isValid(function(valid) {
@@ -149,7 +148,7 @@ describe('ModelDefinition', function() {
     });
   });
 
-  describe('ModelDefinition.toFilename(modelName)', function () {
+  describe('ModelDefinition.toFilename(modelName)', function() {
     given('Foo').expect('foo');
     given('FooBar').expect('foo-bar');
     given('fooBar').expect('foo-bar');
@@ -159,11 +158,11 @@ describe('ModelDefinition', function() {
     given('foo-BAR').expect('foo-bar');
 
     function given(input) {
-      return {expect: function(expected) {
+      return { expect: function(expected) {
         it('given ' + input + ' expect ' + expected, function() {
           expect(ModelDefinition.toFilename(input)).to.equal(expected);
         });
-      }}
+      } };
     }
   });
 
@@ -174,7 +173,7 @@ describe('ModelDefinition', function() {
       Object.defineProperty(this, 'cache', {
         get: function() {
           return app.dataSources.db.connector.cache;
-        }
+        },
       });
     });
 
@@ -182,7 +181,7 @@ describe('ModelDefinition', function() {
       new TestDataBuilder()
         .define('model', ModelDefinition, {
           facetName: 'server',
-          name: 'test-model'
+          name: 'test-model',
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
@@ -197,12 +196,12 @@ describe('ModelDefinition', function() {
       new TestDataBuilder()
         .define('model', ModelDefinition, {
           name: 'Car',
-          facetName: 'common'
+          facetName: 'common',
         })
         .define('aclx', ModelAccessControl, {
           facetName: undefined, // prevent data builder from filling this
           method: 'ALL',
-          modelId: ref('model.id')
+          modelId: ref('model.id'),
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
@@ -220,7 +219,7 @@ describe('ModelDefinition', function() {
         .define('model', ModelDefinition, {
           facetName: 'server',
           name: 'test-model',
-          custom: 'custom'
+          custom: 'custom',
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
@@ -238,13 +237,13 @@ describe('ModelDefinition', function() {
           .define('model', ModelDefinition, {
             facetName: 'server',
             name: 'a-name',
-            custom: true
+            custom: true,
           })
           .define('acl', ModelAccessControl, {
             property: 'ALL',
             modelId: ref('model.id'),
             facetName: undefined, // do not auto-generate a value
-            custom: true
+            custom: true,
           })
           .define('property', ModelProperty, {
             modelId: ref('model.id'),
@@ -252,14 +251,14 @@ describe('ModelDefinition', function() {
             name: 'id',
             type: 'string',
             isId: true,
-            custom: true
+            custom: true,
           })
           .define('property', ModelProperty, {
             modelId: ref('model.id'),
             facetName: 'server', // do not auto-generate a value
             name: 'xyz',
             disableInherit: true,
-            custom: true
+            custom: true,
           })
           .define('relation', ModelRelation, {
             modelId: ref('model.id'),
@@ -267,7 +266,7 @@ describe('ModelDefinition', function() {
             name: 'self',
             type: 'belongsTo',
             model: ref('model.name'),
-            custom: true
+            custom: true,
           })
           .buildTo(this, function(err) {
             if (err) return done(err);
@@ -306,7 +305,7 @@ describe('ModelDefinition', function() {
           'required',
           'index',
           'description',
-          'custom'
+          'custom',
         ]);
       });
 
@@ -314,14 +313,13 @@ describe('ModelDefinition', function() {
         expect(this.data.properties.xyz).to.eql(false);
       });
 
-
       it('is correct for relations', function() {
         expect(Object.keys(this.data.relations.self)).to.eql([
           'type',
           'model',
           'as',
           'foreignKey',
-          'custom'
+          'custom',
         ]);
       });
 
@@ -332,7 +330,7 @@ describe('ModelDefinition', function() {
           'principalId',
           'permission',
           'property',
-          'custom'
+          'custom',
         ]);
       });
     });

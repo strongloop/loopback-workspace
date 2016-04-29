@@ -9,7 +9,7 @@ var path = require('path');
 var models = require('../').models;
 var PackageDefinition = models.PackageDefinition;
 
-describe('PackageDefinition', function () {
+describe('PackageDefinition', function() {
   beforeEach(resetWorkspace);
   beforeEach(givenEmptySandbox);
 

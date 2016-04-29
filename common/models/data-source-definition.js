@@ -9,10 +9,9 @@ module.exports = function(DataSourceDefinition) {
   app.once('ready', function() {
     ready(DataSourceDefinition);
   });
-}
+};
 
 function ready(DataSourceDefinition) {
-
   var async = require('async');
   var ModelDefinition = app.models.ModelDefinition;
   var ModelConfig = app.models.ModelConfig;
@@ -67,7 +66,7 @@ function ready(DataSourceDefinition) {
           message: err.message,
           code: err.code,
           details: err.details,
-          stack: err.stack
+          stack: err.stack,
         });
       } else {
         cb(err);
@@ -78,8 +77,8 @@ function ready(DataSourceDefinition) {
   loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
     returns: [
       { arg: 'status', type: 'boolean' },
-      { arg: 'error', type: 'Error' }
-    ]
+      { arg: 'error', type: 'Error' },
+    ],
   });
 
   /**
@@ -114,12 +113,12 @@ function ready(DataSourceDefinition) {
 
   DataSourceDefinition.remoteMethod('testConnection', {
     accepts: {
-      arg: 'data', type: 'DataSourceDefinition', http: { source: 'body' }
+      arg: 'data', type: 'DataSourceDefinition', http: { source: 'body' },
     },
     returns: {
-      arg: 'status', type: 'boolean'
+      arg: 'status', type: 'boolean',
     },
-    http: { verb: 'POST' }
+    http: { verb: 'POST' },
   });
 
   /**
@@ -138,22 +137,22 @@ function ready(DataSourceDefinition) {
     var self = this;
     var cb = arguments[arguments.length - 1];
 
-    if(typeof options === 'function') {
+    if (typeof options === 'function') {
       cb = options;
       options = undefined;
     }
 
-    if(typeof cb !== 'function') {
+    if (typeof cb !== 'function') {
       cb = function getSchemaCallback(err) {
-        if(err) console.error(err);
-      }
+        if (err) console.error(err);
+      };
     }
 
-    if(!options) options = {};
+    if (!options) options = {};
 
     this._setDefaultSchema(options);
     this.invokeMethodInWorkspace('discoverSchema', name, options, function(err, result) {
-      if(err) return cb(err);
+      if (err) return cb(err);
 
       if (result.base || result.options.base)
         return cb(null, result);
@@ -165,15 +164,15 @@ function ready(DataSourceDefinition) {
         cb(null, result);
       });
     });
-  }
+  };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
     accepts: [{
-      arg: 'tableName', type: 'string', required: true
+      arg: 'tableName', type: 'string', required: true,
     }, {
-      arg: 'options', type: 'object'
+      arg: 'options', type: 'object',
     }],
-    returns: { arg: 'status', type: 'boolean' }
+    returns: { arg: 'status', type: 'boolean' },
   });
 
   DataSourceDefinition.prototype.getDefaultBaseModel = function(cb) {
@@ -207,51 +206,51 @@ function ready(DataSourceDefinition) {
   DataSourceDefinition.prototype.getSchema = function(options, cb) {
     var cb = arguments[arguments.length - 1];
 
-    if(typeof options === 'function') {
+    if (typeof options === 'function') {
       cb = options;
       options = undefined;
     }
 
-    if(typeof cb !== 'function') {
+    if (typeof cb !== 'function') {
       cb = function getSchemaCallback(err) {
-        if(err) console.error(err);
-      }
+        if (err) console.error(err);
+      };
     }
 
-    if(!options) options = {};
+    if (!options) options = {};
 
     this._setDefaultSchema(options);
 
     this.invokeMethodInWorkspace('discoverModelDefinitions', options, cb);
-  }
+  };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
-    accepts: { arg: 'options', type: 'object'},
-    returns: { arg: 'models', type: 'array' }
+    accepts: { arg: 'options', type: 'object' },
+    returns: { arg: 'models', type: 'array' },
   });
 
   DataSourceDefinition.prototype._setDefaultSchema = function(options) {
-    if(options && typeof options === 'object' && !options.schema) {
-      switch(this.connector) {
+    if (options && typeof options === 'object' && !options.schema) {
+      switch (this.connector) {
         case 'loopback-connector-oracle':
         case 'oracle':
           options.schema = this.username;
-        break;
+          break;
         case 'loopback-connector-mysql':
         case 'mysql':
           options.schema = this.database;
-        break;
+          break;
         case 'loopback-connector-postgresql':
         case 'postgresql':
           options.schema = 'public';
-        break;
+          break;
         case 'loopback-connector-mssql':
         case 'mssql':
           options.schema = 'dbo';
-        break;
+          break;
       }
     }
-  }
+  };
 
   /**
    * Run a migration on the data source. Creates indexes, tables, collections, etc.
@@ -269,9 +268,9 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.automigrate, {
-    accepts: {arg: 'modelName', type: 'string' },
+    accepts: { arg: 'modelName', type: 'string' },
     returns: { arg: 'success', type: 'boolean' },
-    http: { verb: 'POST' }
+    http: { verb: 'POST' },
   });
 
   /**
@@ -288,9 +287,9 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
-    accepts: {arg: 'modelName', type: 'string' },
+    accepts: { arg: 'modelName', type: 'string' },
     returns: { arg: 'success', type: 'boolean' },
-    http: { verb: 'POST' }
+    http: { verb: 'POST' },
   });
 
   DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
@@ -299,20 +298,19 @@ function ready(DataSourceDefinition) {
     var isDone = false;
     var self = this;
     var args = Array.prototype.slice.call(arguments, 0);
-    var child;
-    var cb;
+    var child, cb;
     var stdErrs = [];
     var invokePath = require.resolve('../../bin/datasource-invoke');
 
     // remove method name
     args.shift();
 
-    if(typeof args[args.length - 1] === 'function') {
+    if (typeof args[args.length - 1] === 'function') {
       cb = args.pop();
     } else {
       cb = function invokeComplete(err) {
-        if(err) console.error(err);
-      }
+        if (err) console.error(err);
+      };
     }
 
     child = fork(invokePath, [], { silent: true });
@@ -321,7 +319,7 @@ function ready(DataSourceDefinition) {
     // handle the callback message
     child.once('message', function(msg) {
       var err = msg.error;
-      if(err) {
+      if (err) {
         return done(missingConnector(err) || err);
       }
 
@@ -331,7 +329,7 @@ function ready(DataSourceDefinition) {
     child.stderr.on('data', storeErrors);
 
     child.on('exit', function(code) {
-      if(code > 0) {
+      if (code > 0) {
         done(new Error(stdErrs.join('')));
       }
     });
@@ -341,11 +339,11 @@ function ready(DataSourceDefinition) {
       dir: ConfigFile.getWorkspaceDir(),
       dataSourceName: this.name,
       methodName: methodName,
-      args: args
+      args: args,
     });
 
     function done(err) {
-      if(isDone && err) {
+      if (isDone && err) {
         console.error('Error calling ' + methodName + ' after callback!');
         console.error(err);
         return;
@@ -377,7 +375,7 @@ function ready(DataSourceDefinition) {
       }
       return undefined;
     }
-  }
+  };
 
   /**
    * Create a `loopback.DataSource` object from the `DataSourceDefinition`.
@@ -387,7 +385,7 @@ function ready(DataSourceDefinition) {
 
   DataSourceDefinition.prototype.toDataSource = function() {
     return loopback.createDataSource(this.name, this);
-  }
+  };
 
   /**
    * Create a `ModelDefinition` with the appropriate set of `ModelProperties` and
@@ -426,15 +424,15 @@ function ready(DataSourceDefinition) {
     async.series([
       createModelDefinition,
       createProperties,
-      createModelConfig
+      createModelConfig,
     ], function(err) {
-      if(err) return cb(err);
+      if (err) return cb(err);
       cb(null, modelDefinition.id);
     });
 
     function createModelDefinition(cb) {
       ModelDefinition.create(modelDefinition, function(err, def) {
-        if(err) return cb(err);
+        if (err) return cb(err);
         modelDefinition = def;
         cb();
       });
@@ -448,7 +446,7 @@ function ready(DataSourceDefinition) {
     }
 
     function createModelConfig(cb) {
-      if(modelDefinition.public === undefined) {
+      if (modelDefinition.public === undefined) {
         modelDefinition.public = true;
       }
 
@@ -456,15 +454,15 @@ function ready(DataSourceDefinition) {
         dataSource: dataSourceDef.name,
         facetName: dataSourceDef.facetName,
         name: modelDefinition.name,
-        public: modelDefinition.public
+        public: modelDefinition.public,
       }, cb);
     }
-  }
+  };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.createModel, {
-    accepts: {arg: 'discoveredDef', type: 'object', description: 'usually the result of discoverModelDefinition'},
+    accepts: { arg: 'discoveredDef', type: 'object',
+      description: 'usually the result of discoverModelDefinition' },
     returns: { arg: 'modelDefinitionId', type: 'string' },
-    http: { verb: 'POST' }
+    http: { verb: 'POST' },
   });
-
 };

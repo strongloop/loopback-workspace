@@ -7,7 +7,7 @@ var template = module.exports;
 template.description = 'A LoopBack API server with local User auth';
 
 template.inherits = [
-  'empty-server'
+  'empty-server',
 ];
 
 template.package = {
@@ -26,34 +26,34 @@ template.server = {
   modelConfigs: [
     {
       name: 'User',
-      dataSource: 'db'
+      dataSource: 'db',
     },
     {
       name: 'AccessToken',
       dataSource: 'db',
-      public: false
+      public: false,
     },
     {
       name: 'ACL',
       dataSource: 'db',
-      public: false
+      public: false,
     },
     {
       name: 'RoleMapping',
       dataSource: 'db',
-      public: false
+      public: false,
     },
     {
       name: 'Role',
       dataSource: 'db',
-      public: false
-    }
+      public: false,
+    },
   ],
 
   datasources: [
     {
       name: 'db',
-      connector: 'memory'
-    }
-  ]
+      connector: 'memory',
+    },
+  ],
 };

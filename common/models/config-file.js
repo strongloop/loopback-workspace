@@ -4,7 +4,6 @@
 // License text available at https://opensource.org/licenses/MIT
 
 module.exports = function(ConfigFile) {
-
   var assert = require('assert');
   var app = require('../../server/server');
   var path = require('path');
@@ -37,7 +36,7 @@ module.exports = function(ConfigFile) {
   ConfigFile.create = function(obj, cb) {
     var configFile = new ConfigFile(obj);
     configFile.save(cb);
-  }
+  };
 
   /**
    * Create and load a `ConfigFile` object with the given path.
@@ -50,13 +49,13 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.loadFromPath = function(path, cb) {
     var configFile = new ConfigFile({
-      path: path
+      path: path,
     });
     configFile.load(function(err) {
-      if(err) return cb(err);
+      if (err) return cb(err);
       cb(null, configFile);
     });
-  }
+  };
 
   /**
    * Load and parse the data in the file. If a file does not exist,
@@ -65,16 +64,16 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.load = function(cb) {
     var configFile = this;
-    if(!this.path) return cb(new Error('no path specified'));
+    if (!this.path) return cb(new Error('no path specified'));
     var absolutePath = configFile.constructor.toAbsolutePath(this.path);
     async.waterfall([
       configFile.exists.bind(configFile),
       load,
-      setup
+      setup,
     ], cb);
 
     function load(exists, cb) {
-      if(exists) {
+      if (exists) {
         fs.readJson(absolutePath, function(err, data) {
           if (err && err.name === 'SyntaxError') {
             err.message = 'Cannot parse ' + configFile.path + ': ' + err.message;
@@ -91,7 +90,7 @@ module.exports = function(ConfigFile) {
       configFile.data = data || {};
       cb();
     }
-  }
+  };
 
   /**
    * Stringify and save the data to a file.
@@ -102,16 +101,16 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.save = function(cb) {
     var configFile = this;
-    if(!this.path) return cb(new Error('no path specified'));
+    if (!this.path) return cb(new Error('no path specified'));
     var absolutePath = configFile.getAbsolutePath();
     configFile.data = configFile.data || {};
 
     debug('output [%s] %j', absolutePath, configFile.data);
     fs.mkdirp(path.dirname(absolutePath), function(err) {
-      if(err) return cb(err);
+      if (err) return cb(err);
       fs.writeJson(absolutePath, configFile.data, cb);
     });
-  }
+  };
 
   /**
    * Remove the file from disk.
@@ -122,11 +121,11 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.remove = function(cb) {
     var configFile = this;
-    if(!this.path) return cb(new Error('no path specified'));
+    if (!this.path) return cb(new Error('no path specified'));
     var absolutePath = configFile.getAbsolutePath();
 
     fs.unlink(absolutePath, cb);
-  }
+  };
 
   /**
    * Does the config file exist at `configFile.path`?
@@ -140,7 +139,7 @@ module.exports = function(ConfigFile) {
     fs.exists(this.getAbsolutePath(), function(exists) {
       cb(null, exists);
     });
-  }
+  };
 
   /**
    * Get the path to the workspace directory. First check the env
@@ -151,7 +150,7 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.getWorkspaceDir = function() {
     return process.env.WORKSPACE_DIR || process.cwd();
-  }
+  };
 
   /**
    * Resolve the relative workspace path to a fully qualified
@@ -163,7 +162,7 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.toAbsolutePath = function(relativePath) {
     return path.join(this.getWorkspaceDir(), relativePath);
-  }
+  };
 
   /**
    * See: ConfigFile.getAbsolutePath()
@@ -171,7 +170,7 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.getAbsolutePath = function() {
     return this.constructor.toAbsolutePath(this.path);
-  }
+  };
 
   ConfigFile.find = function(entityFilter, cb) {
     var Ctor = this;
@@ -187,7 +186,7 @@ module.exports = function(ConfigFile) {
     models.forEach(function(Model) {
       if (!entityFilter(Model.modelName, Model.definition)) return;
       var options = Model.settings || {};
-      if(options.configFiles) {
+      if (options.configFiles) {
         patterns = patterns.concat(options.configFiles);
       }
     });
@@ -197,14 +196,14 @@ module.exports = function(ConfigFile) {
     }));
 
     async.map(patterns, find, function(err, paths) {
-      if(err) return cb(err);
+      if (err) return cb(err);
 
       // flatten paths into single list
       var merged = [];
       merged = merged.concat.apply(merged, paths);
 
       var configFiles = merged.map(function(filePath) {
-        return new Ctor({path: filePath});
+        return new Ctor({ path: filePath });
       });
       cb(null, configFiles);
     });
@@ -212,15 +211,15 @@ module.exports = function(ConfigFile) {
     function find(pattern, cb) {
       glob(pattern, { cwd: workspaceDir }, cb);
     }
-  }
+  };
 
   ConfigFile.prototype.getExtension = function() {
     return path.extname(this.path);
-  }
+  };
 
   ConfigFile.prototype.getDirName = function() {
     return path.basename(path.dirname(this.path));
-  }
+  };
 
   ConfigFile.prototype.getFacetName = function() {
     var dir = this.getDirName();
@@ -228,18 +227,18 @@ module.exports = function(ConfigFile) {
     // See: https://github.com/strongloop/generator-loopback/issues/12
     var baseDir = this.path.split('/')[0];
 
-    if(dir === ROOT_COMPONENT
-      || baseDir === this.path
-      || baseDir === 'models') {
-      return ROOT_COMPONENT;
-    } else {
-      return baseDir;
-    }
-  }
+    var isRootComponent = dir === ROOT_COMPONENT ||
+      baseDir === this.path ||
+      baseDir === 'models';
+
+    var facetName = isRootComponent ? ROOT_COMPONENT : baseDir;
+
+    return facetName;
+  };
 
   ConfigFile.findFacetFiles = function(cb) {
     this.find(entityBelongsToFacet, function(err, configFiles) {
-      if(err) return cb(err);
+      if (err) return cb(err);
 
       var result =
         groupBy(configFiles, function(configFile) {
@@ -248,10 +247,11 @@ module.exports = function(ConfigFile) {
 
       cb(null, result);
     });
-  }
+  };
 
   function entityBelongsToFacet(name, definition) {
-    return definition && definition.properties && definition.properties.facetName;
+    return definition && definition.properties &&
+      definition.properties.facetName;
   }
 
   ConfigFile.findPackageDefinitions = function(cb) {
@@ -272,7 +272,7 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.getBase = function() {
     return path.basename(this.path, this.getExtension());
-  }
+  };
 
   /**
    * From the given `configFiles`, get the first with a matching `base`
@@ -284,15 +284,14 @@ module.exports = function(ConfigFile) {
   ConfigFile.getFileByBase = function(configFiles, base) {
     assert(Array.isArray(configFiles));
     var configFile;
-    for(var i = 0; i < configFiles.length; i++) {
+    for (var i = 0; i < configFiles.length; i++) {
       configFile = configFiles[i];
-      if(configFile && configFile.getBase() === base) {
+      if (configFile && configFile.getBase() === base) {
         return configFile;
       }
     }
     return null;
-  }
-
+  };
 
   /**
    * From the given `configFiles`, get an array of files that represent
@@ -305,17 +304,16 @@ module.exports = function(ConfigFile) {
     assert(Array.isArray(configFiles));
     var configFile;
     var results = [];
-    for(var i = 0; i < configFiles.length; i++) {
+    for (var i = 0; i < configFiles.length; i++) {
       configFile = configFiles[i];
       // TODO(ritch) support other directories
-      if(configFile && configFile.getFacetName() === facetName
-        && configFile.getDirName() === 'models') {
+      if (configFile && configFile.getFacetName() === facetName &&
+          configFile.getDirName() === 'models') {
         results.push(configFile);
       }
     }
     return results;
-  }
+  };
 
   ConfigFile.ROOT_COMPONENT = ROOT_COMPONENT;
-
 };

@@ -11,15 +11,15 @@ module.exports = function(WorkspaceEntity) {
   WorkspaceEntity.getUniqueId = function(data) {
     var sep = this.settings.idSeparator || '.';
     var parts = this.getUniqueIdParts(data);
-    if(parts.length >= 1) {
+    if (parts.length >= 1) {
       return parts.join(sep);
     }
     return null;
-  }
+  };
 
   WorkspaceEntity.prototype.getUniqueId = function() {
     return this.constructor.getUniqueId(this);
-  }
+  };
 
   WorkspaceEntity.getUniqueIdParts = function(data) {
     var settings = this.settings;
@@ -30,9 +30,9 @@ module.exports = function(WorkspaceEntity) {
     var parentIdIsNotRoot = parentId !== '.';
     var name = data.name;
 
-    if(parentPropertyName) {
-      if(parentId) {
-        if(parentIdIsNotRoot) {
+    if (parentPropertyName) {
+      if (parentId) {
+        if (parentIdIsNotRoot) {
           parts.push.apply(parts, splitParentId);
         }
       } else {
@@ -41,25 +41,25 @@ module.exports = function(WorkspaceEntity) {
       }
     }
 
-    if(name) parts.push(name);
+    if (name) parts.push(name);
 
     return parts;
-  }
+  };
 
   WorkspaceEntity.getParentPropertyName = function() {
     var relations = this.relations;
-    if(!relations) return;
+    if (!relations) return;
 
     var relationNames = Object.keys(relations);
     var relation;
 
-    for(var i = 0; i < relationNames.length; i++) {
+    for (var i = 0; i < relationNames.length; i++) {
       relation = relations[relationNames[i]];
-      if(relation.type === 'belongsTo') {
+      if (relation.type === 'belongsTo') {
         return relation.keyFrom;
       }
     }
-  }
+  };
 
   /**
    * Get the Workspace directory.
@@ -69,7 +69,7 @@ module.exports = function(WorkspaceEntity) {
 
   WorkspaceEntity.getWorkspaceDir = function() {
     return app.get('workspace dir');
-  }
+  };
 
   WorkspaceEntity.getCollection = function() {
     return this.dataSource.connector.getCollection(this.modelName);
@@ -78,7 +78,7 @@ module.exports = function(WorkspaceEntity) {
   WorkspaceEntity.clearCache = function(cache) {
     // TODO(ritch) should this clear the ids cache?
     cache[this.getCollection()] = {};
-  }
+  };
 
   WorkspaceEntity.addToCache = function(cache, val) {
     var Entity = this;
@@ -86,21 +86,21 @@ module.exports = function(WorkspaceEntity) {
     val[this.dataSource.idName(Entity.modelName)] = id;
     this.updateInCache(cache, id, val);
     return id;
-  }
+  };
 
   WorkspaceEntity.getFromCache = function(cache, id) {
     try {
       return JSON.parse(cache[this.getCollection()][id]);
-    } catch(err) {
+    } catch (err) {
       err.message = 'Cannot parse ' + this.modelName + '#' + id + '. ' +
         err.message;
       throw err;
     }
-  }
+  };
 
   WorkspaceEntity.updateInCache = function(cache, id, data) {
     cache[this.getCollection()][id] = JSON.stringify(data);
-  }
+  };
 
   WorkspaceEntity.allFromCache = function(cache) {
     var data = cache[this.getCollection()];
@@ -109,26 +109,26 @@ module.exports = function(WorkspaceEntity) {
     }
     return Object.keys(data)
       .map(this.getFromCache.bind(this, cache));
-  }
+  };
 
   WorkspaceEntity.getPath = function(facetName, obj) {
-    if(obj && obj.configFile) return obj.configFile;
+    if (obj && obj.configFile) return obj.configFile;
     return path.join(facetName, this.settings.defaultConfigFile);
-  }
+  };
 
   WorkspaceEntity.getDir = function(facetName, obj) {
     return path.dirname(WorkspaceEntity.getPath(facetName, obj));
-  }
+  };
 
   WorkspaceEntity.getConfigFile = function(facetName, obj) {
     // TODO(ritch) the bootstrapping of models requires this...
     var ConfigFile = app.models.ConfigFile;
-    return new ConfigFile({path: this.getPath(facetName, obj)});
-  }
+    return new ConfigFile({ path: this.getPath(facetName, obj) });
+  };
 
   WorkspaceEntity.prototype.getConfigFile = function() {
     return this.constructor.getConfigFile(this.facetName, this);
-  }
+  };
 
   WorkspaceEntity.getConfigFromData = function(data) {
     var properties = this.definition.properties;
@@ -196,5 +196,4 @@ module.exports = function(WorkspaceEntity) {
       next();
     });
   });
-
-}
+};

@@ -15,11 +15,11 @@ describe('WorkspaceEntity', function() {
       MyWorkspaceEntity.attachTo(app.dataSources.db);
       MyWorkspaceEntity.belongsTo(Facet, {
         as: 'facet',
-        foreignKey: 'facetName'
+        foreignKey: 'facetName',
       });
       var bar = new MyWorkspaceEntity({
         facetName: 'foo',
-        name: 'bar'
+        name: 'bar',
       });
       var expected = 'foo.bar';
       expect(bar.getUniqueId()).to.equal(expected);

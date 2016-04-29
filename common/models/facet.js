@@ -9,10 +9,9 @@ module.exports = function(Facet) {
   app.once('ready', function() {
     ready(Facet);
   });
-}
+};
 
 function ready(Facet) {
-
   var async = require('async');
   var assert = require('assert');
   var path = require('path');
@@ -81,12 +80,12 @@ function ready(Facet) {
     var steps = [];
 
     var facetData = {
-      name: facetName
+      name: facetName,
     };
     debug('adding to cache facet [%s]');
     var facetId = Facet.addToCache(cache, facetData);
 
-    if(facetConfig) {
+    if (facetConfig) {
       steps.push(function(cb) {
         facetConfig.load(cb);
       }, function(cb) {
@@ -96,7 +95,7 @@ function ready(Facet) {
             name: name,
             value: facetConfig.data[name],
             configFile: facetConfig.path,
-            facetName: facetName
+            facetName: facetName,
           };
           FacetSetting.addToCache(cache, value);
         });
@@ -104,7 +103,7 @@ function ready(Facet) {
       });
     }
 
-    if(modelConfigs) {
+    if (modelConfigs) {
       steps.push(function(cb) {
         modelConfigs.load(cb);
       }, function(cb) {
@@ -135,7 +134,7 @@ function ready(Facet) {
       steps.push(configFile.load.bind(configFile));
     });
 
-    if(modelDefinitionFiles.length) {
+    if (modelDefinitionFiles.length) {
       steps.push(function(cb) {
         modelDefinitionFiles.forEach(function(configFile) {
           var def = configFile.data || {};
@@ -154,7 +153,7 @@ function ready(Facet) {
       });
     }
 
-    if(dataSources) {
+    if (dataSources) {
       steps.push(function(cb) {
         dataSources.load(cb);
       }, function(cb) {
@@ -173,7 +172,7 @@ function ready(Facet) {
       });
     }
 
-    if(middlewares) {
+    if (middlewares) {
       steps.push(function(cb) {
         middlewares.load(cb);
       }, function(cb) {
@@ -198,18 +197,20 @@ function ready(Facet) {
       };
     }
 
+    /* eslint-disable one-var */
     for (var a in artifacts) {
       steps.push(createLoader(a));
     }
+    /* eslint-enable one-var */
 
-    Facet.ioQueue.push(function (done) {
-      async.series(steps, function (err) {
+    Facet.ioQueue.push(function(done) {
+      async.series(steps, function(err) {
         if (err) return done(err);
         debug('loading finished');
         done();
       });
     }, cb);
-  }
+  };
 
   Facet.saveToFs = function(cache, facetData, cb) {
     var FacetSetting = app.models.FacetSetting;
@@ -258,7 +259,7 @@ function ready(Facet) {
       var cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
       cachedDataSources.forEach(function(dataSourceDef) {
-        if(dataSourceDef.facetName === facetName) {
+        if (dataSourceDef.facetName === facetName) {
           dataSourcePath = DataSourceDefinition.getPath(facetName, dataSourceDef);
           dataSourceConfig[dataSourceDef.name] =
             DataSourceDefinition.getConfigFromData(dataSourceDef);
@@ -267,7 +268,7 @@ function ready(Facet) {
 
       addFileToSave(new ConfigFile({
         path: dataSourcePath,
-        data: dataSourceConfig
+        data: dataSourceConfig,
       }));
 
       var middlewareFile = Middleware.serialize(cache, facetName);
@@ -282,13 +283,13 @@ function ready(Facet) {
 
       var cachedModelConfigs = ModelConfig.allFromCache(cache);
       var modelConfigPath = path.join(facetName, ModelConfig.settings.defaultConfigFile);
-      var modelConfigFile = new ConfigFile({path: modelConfigPath}); // model-config.json
+      var modelConfigFile = new ConfigFile({ path: modelConfigPath }); // model-config.json
       var modelConfigJson = modelConfigFile.data = {};
 
       modelConfigJson._meta = facetData.modelsMetadata;
 
       cachedModelConfigs.forEach(function(modelConfig) {
-        if(modelConfig.facetName === facetName) {
+        if (modelConfig.facetName === facetName) {
           modelConfigJson[modelConfig.name] =
             ModelConfig.getConfigFromData(modelConfig);
         }
@@ -302,7 +303,7 @@ function ready(Facet) {
     cachedModels.forEach(function(modelDef) {
       debug('model definition ~ %j', modelDef);
       if (modelDef.readonly) return;
-      if(modelDef.facetName === facetName) {
+      if (modelDef.facetName === facetName) {
         var modelConfigFile = ModelDefinition.getConfigFile(facetName, modelDef);
         modelConfigFile.data = ModelDefinition.getConfigFromCache(cache, modelDef);
         addFileToSave(modelConfigFile);
@@ -320,16 +321,16 @@ function ready(Facet) {
 
     Facet.ioQueue.push(function(done) {
       // TODO(ritch) files that exist without data in the cache should be deleted
-      async.each(filesToSave, function (configFile, cb) {
+      async.each(filesToSave, function(configFile, cb) {
         debug('file [%s]', configFile.path);
         configFile.save(cb);
-      }, function (err) {
+      }, function(err) {
         if (err) return done(err);
         debug('saving finished');
         done();
       });
     }, cb);
-  }
+  };
 
   Facet.hasApp = function(facetData) {
     // At the moment, the common facet does not have `app.js`,
@@ -341,6 +342,5 @@ function ready(Facet) {
 
   Facet.getUniqueId = function(data) {
     return data.name || null;
-  }
-
+  };
 };

@@ -15,7 +15,6 @@ var given = module.exports;
  * @param {function(Error=)} done callback
  */
 given.uniqueServerPort = function(done) {
-
   // Use PID to generate a port number in the range 10k-50k
   // that is unique for each test process
   var port = 10000 + (process.pid % 40000);

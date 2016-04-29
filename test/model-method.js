@@ -17,7 +17,7 @@ describe('ModelMethod', function() {
     ModelDefinition.create(
       {
         name: 'user',
-        facetName: 'server'
+        facetName: 'server',
       },
       function(err, result) {
         if (err) return done(err);
@@ -40,7 +40,7 @@ describe('ModelMethod', function() {
       {
         modelId: userModel.id,
         name: 'testMethod',
-        isStatic: true
+        isStatic: true,
       },
       function(err) {
         if (err) return done(err);
@@ -71,8 +71,8 @@ describe('ModelMethod', function() {
         isStatic: true,
         http: [
           { verb: 'get', path: '/get' },
-          { verb: 'head', path: '/head' }
-        ]
+          { verb: 'head', path: '/head' },
+        ],
       },
       function(err) {
         if (err) return done(err);
@@ -93,7 +93,7 @@ describe('ModelMethod', function() {
             expect(methods).to.have.property('multiMethod');
             expect(methods.multiMethod).to.have.property('http').eql([
               { verb: 'get', path: '/get' },
-              { verb: 'head', path: '/head' }
+              { verb: 'head', path: '/head' },
             ]);
             done();
           });

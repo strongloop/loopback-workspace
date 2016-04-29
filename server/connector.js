@@ -27,7 +27,7 @@ connector.saveToFile = function(result, callback) {
     debugSync('write executing');
     connector._saveToFile(saveDone);
   } else {
-    debugSync('write scheduled at #%s', connector.writeCallbacks.length-1);
+    debugSync('write scheduled at #%s', connector.writeCallbacks.length - 1);
     // wait for the current write to finish
   }
 
@@ -51,7 +51,7 @@ connector.saveToFile = function(result, callback) {
 
     var cb = function(err) {
       callbacks.forEach(function(fn, ix) {
-        debugSync('write finished for #%s', ix+1);
+        debugSync('write finished for #%s', ix + 1);
         fn(err);
       });
     };
@@ -110,7 +110,7 @@ connector.loadFromFile = function() {
   };
 
   connector._loadFromFile(done);
-}
+};
 
 connector._loadFromFile = function(cb) {
   var tasks = [];
@@ -178,7 +178,7 @@ connector._loadFromFile = function(cb) {
 
       // Override `isReadOnly` to be always `true`
       Object.defineProperty(LoopBackConfigFile.prototype, 'isReadOnly', {
-        value: true
+        value: true,
       });
 
       return LoopBackConfigFile;
@@ -222,7 +222,7 @@ connector._loadFromFile = function(cb) {
       });
     }
   }
-}
+};
 
 var originalFind = connector.find;
 var originalAll = connector.all;
@@ -235,37 +235,39 @@ connector.getCollection = function(model) {
     return meta.collection || meta.table || meta.tableName || model;
   }
   return model;
-}
+};
 
 connector.find = function(model, id, options, cb) {
   var args = arguments;
   connector.loadFromFile(function(err) {
-    if(err) return cb(err);
+    if (err) return cb(err);
     if (debug.enabled) {
       var collection = connector.getCollection(model);
-      debug('reading from cache %s => %j', collection, Object.keys(connector.cache[collection]));
+      debug('reading from cache %s => %j', collection,
+        Object.keys(connector.cache[collection]));
     }
     originalFind.apply(connector, args);
   });
-}
+};
 
 connector.all = function(model, filter, options, cb) {
   var args = arguments;
   connector.loadFromFile(function(err) {
-    if(err) return cb(err);
+    if (err) return cb(err);
     if (debug.enabled) {
       var collection = connector.getCollection(model);
-      debug('reading from cache %s => %j', collection, Object.keys(connector.cache[collection]));
+      debug('reading from cache %s => %j', collection,
+        Object.keys(connector.cache[collection]));
     }
     originalAll.apply(connector, args);
   });
-}
+};
 
 connector.getIdValue = function(model, data) {
   var Entity = loopback.getModel(model);
   var entity = new Entity(data);
   return entity.getUniqueId();
-}
+};
 
 connector.create = function create(model, data, options, callback) {
   var Entity = loopback.getModel(model);
@@ -275,19 +277,19 @@ connector.create = function create(model, data, options, callback) {
   this.setIdValue(model, data, id);
 
   var collection = connector.getCollection(model);
-  if(!this.cache[collection]) {
+  if (!this.cache[collection]) {
     this.cache[collection] = {};
   }
 
   this.cache[collection][id] = serialize(data);
   this.saveToFile(id, function(err) {
-    if(err) return callback(err);
+    if (err) return callback(err);
     callback(null, id);
   });
 };
 
 function serialize(obj) {
-  if(obj === null || obj === undefined) {
+  if (obj === null || obj === undefined) {
     return obj;
   }
   return JSON.stringify(obj);

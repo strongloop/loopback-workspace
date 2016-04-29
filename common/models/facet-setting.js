@@ -4,6 +4,4 @@
 // License text available at https://opensource.org/licenses/MIT
 
 module.exports = function(FacetSetting) {
-
-  
 };

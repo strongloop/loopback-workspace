@@ -13,13 +13,12 @@ var Facet = app.models.Facet;
 var TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('Middleware', function() {
-
   describe('Middleware.create(def, cb)', function() {
     beforeEach(givenEmptyWorkspace);
     beforeEach(function(done) {
       var serverFacet = this.serverFacet;
       this.configFile = new ConfigFile({
-        path: serverFacet + '/middleware.json'
+        path: serverFacet + '/middleware.json',
       });
       async.series([function(done) {
         Middleware.addMiddleware({
@@ -27,9 +26,9 @@ describe('Middleware', function() {
           name: 'foo',
           paths: ['/foo'],
           params: {
-            fooParam: 'foo'
+            fooParam: 'foo',
           },
-          phase: 'routes'
+          phase: 'routes',
         }, done);
       }, function(done) {
         Middleware.addMiddleware({
@@ -38,10 +37,10 @@ describe('Middleware', function() {
           methods: ['get', 'post'],
           paths: ['/foo-before'],
           params: {
-            barParam: 'foo-before'
+            barParam: 'foo-before',
           },
           phase: 'routes',
-          subPhase: 'before'
+          subPhase: 'before',
         }, done);
       }, function(done) {
         Middleware.addMiddleware({
@@ -49,9 +48,9 @@ describe('Middleware', function() {
           name: 'bar',
           paths: ['/bar'],
           params: {
-            barParam: 'bar'
+            barParam: 'bar',
           },
-          phase: 'routes'
+          phase: 'routes',
         }, done);
       }, function(done) {
         Middleware.addMiddleware({
@@ -59,10 +58,10 @@ describe('Middleware', function() {
           name: 'xyz',
           paths: ['/xyz'],
           params: {
-            xyzParam: 'xyz'
+            xyzParam: 'xyz',
           },
           phase: 'files',
-          index: 0
+          index: 0,
         }, done);
       }, function(done) {
         Middleware.addMiddleware({
@@ -70,23 +69,23 @@ describe('Middleware', function() {
           name: 'xyz',
           paths: ['/xyz1'],
           params: {
-            xyzParam: 'xyz1'
+            xyzParam: 'xyz1',
           },
           phase: 'files',
-          index: 1
+          index: 1,
         }, done);
       }, function(done) {
         Middleware.addMiddleware({
           facetName: serverFacet,
           name: 'dummy',
           phase: 'files',
-          isMiddlewarePlaceHolder: true
+          isMiddlewarePlaceHolder: true,
         }, done);
       }, function(done) {
         Middleware.addMiddleware({
           facetName: serverFacet,
           isPhasePlaceHolder: true,
-          phase: 'myPhase'
+          phase: 'myPhase',
         }, done);
       }, function(done) {
         Middleware.addMiddleware({
@@ -94,10 +93,10 @@ describe('Middleware', function() {
           name: 'baz',
           paths: ['/baz'],
           params: {
-            barParam: 'baz'
+            barParam: 'baz',
           },
           phase: 'auth',
-          nextPhase: 'routes'
+          nextPhase: 'routes',
         }, done);
       }], done);
     });
@@ -117,7 +116,7 @@ describe('Middleware', function() {
         var m = middleware[6].toJSON();
         expect(m.paths).to.eql(['/foo-before']);
         expect(m.methods).to.eql(['get', 'post']);
-        expect(m.params).to.eql({barParam: 'foo-before'});
+        expect(m.params).to.eql({ barParam: 'foo-before' });
         done();
       });
     });
@@ -172,8 +171,8 @@ describe('Middleware', function() {
       var configFile = this.configFile;
       Middleware.create({
         name: 'another-middleware',
-        params: {x: 'rest'},
-        facetName: this.serverFacet
+        params: { x: 'rest' },
+        facetName: this.serverFacet,
       }, function(err) {
         if (err) return done(err);
         configFile.load(function(err) {
@@ -232,18 +231,18 @@ describe('Middleware', function() {
     var ref = TestDataBuilder.ref;
     new TestDataBuilder()
       .define('facet1', Facet, {
-        name: 'facet1'
+        name: 'facet1',
       })
       .define('facet2', Facet, {
-        name: 'facet2'
+        name: 'facet2',
       })
       .define('facet1middleware', Middleware, {
         name: 'mname',
-        facetName: ref('facet1.name')
+        facetName: ref('facet1.name'),
       })
       .define('facet2middleware', Middleware, {
         name: ref('facet1middleware.name'),
-        facetName: ref('facet2.name')
+        facetName: ref('facet2.name'),
       })
       .buildTo({}, function(err) {
         if (err && err.name === 'ValidationError') {

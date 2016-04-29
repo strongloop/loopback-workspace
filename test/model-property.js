@@ -15,7 +15,7 @@ describe('ModelProperty', function() {
   beforeEach(function(done) {
     ModelDefinition.create({
       name: 'user',
-      facetName: 'server'
+      facetName: 'server',
     }, done);
   });
   beforeEach(function(done) {
@@ -25,31 +25,31 @@ describe('ModelProperty', function() {
       name: test.propertyName,
       type: 'String',
       isId: false,
-      modelId: 'server.user'
+      modelId: 'server.user',
     };
     ModelProperty.create(property, function(err, property) {
-      if(err) return done(err);
+      if (err) return done(err);
       test.property = property;
       done();
     });
   });
 
-  describe('ModelProperty.create(property, cb)', function () {
+  describe('ModelProperty.create(property, cb)', function() {
     beforeEach(givenFile('configFile', 'server/models/user.json'));
-    it('should update the correct $modelName.json file', function () {
+    it('should update the correct $modelName.json file', function() {
       var properties = this.configFile.data.properties;
       var type = this.property.type;
       expect(this.property.name).to.equal(this.propertyName);
       expect(properties).to.have.property(this.propertyName);
-      expect(properties[this.propertyName]).to.eql({type: type, id: false});
+      expect(properties[this.propertyName]).to.eql({ type: type, id: false });
     });
-    it('should have the correct id', function () {
+    it('should have the correct id', function() {
       expect(this.property.id).to.equal('server.user.myProperty');
     });
   });
 
-  describe('ModelProperty.find(filter, cb)', function (done) {
-    it('should contain the property', function (done) {
+  describe('ModelProperty.find(filter, cb)', function(done) {
+    it('should contain the property', function(done) {
       ModelProperty.find(function(err, properties) {
         expect(err).to.not.exist;
         expect(toNames(properties)).to.contain(this.propertyName);
@@ -58,23 +58,23 @@ describe('ModelProperty', function() {
     });
   });
 
-  describe('modelProperty.remove(cb)', function () {
+  describe('modelProperty.remove(cb)', function() {
     beforeEach(function(done) {
       this.property.remove(done);
     });
     beforeEach(givenFile('configFile', 'server/models/user.json'));
-    it('should remove from $modelName.json file', function () {
+    it('should remove from $modelName.json file', function() {
       var properties = this.configFile.data.properties;
       expect(properties).to.not.have.property(this.propertyName);
     });
   });
 
-  describe('model.save()', function () {
+  describe('model.save()', function() {
     var AN_ORACLE_CONFIG = {
       columnName: 'ID',
       dataType: 'VARCHAR2',
       dataLength: 20,
-      nullable: 'N'
+      nullable: 'N',
     };
     beforeEach(function(done) {
       this.property.type = 'Boolean';
@@ -84,12 +84,12 @@ describe('ModelProperty', function() {
     });
     beforeEach(givenFile('configFile', 'server/models/user.json'));
 
-    it('should update the $modelName.json file', function () {
+    it('should update the $modelName.json file', function() {
       var properties = this.configFile.data.properties;
       expect(properties[this.propertyName]).to.eql({
         type: 'Boolean',
         id: true,
-        oracle: AN_ORACLE_CONFIG});
+        oracle: AN_ORACLE_CONFIG });
     });
   });
 
@@ -105,7 +105,7 @@ describe('ModelProperty', function() {
           isId: false,
           facetName: 'server',
           id: 'server.user.myProperty',
-          modelId: 'server.user'
+          modelId: 'server.user',
         }).toObject();
 
         expect(actual).to.eql(expected);
@@ -116,11 +116,11 @@ describe('ModelProperty', function() {
     it('handles shorthand notation', function(done) {
       given.modelDefinition('common', {
         name: 'ShortProp',
-        properties: { name: 'string' }
+        properties: { name: 'string' },
       });
 
       ModelProperty.findOne(
-        { where: { id: 'common.ShortProp.name' } },
+        { where: { id: 'common.ShortProp.name' }},
         function(err, def) {
           if (err) return done(err);
           expect(def.type).to.equal('string');
@@ -132,11 +132,11 @@ describe('ModelProperty', function() {
     it('handles array shorthand notation', function(done) {
       given.modelDefinition('common', {
         name: 'ShortProp',
-        properties: { name: ['string'] }
+        properties: { name: ['string'] },
       });
 
       ModelProperty.findOne(
-        { where: { id: 'common.ShortProp.name' } },
+        { where: { id: 'common.ShortProp.name' }},
         function(err, def) {
           if (err) return done(err);
           expect(def.type).to.eql(['string']);

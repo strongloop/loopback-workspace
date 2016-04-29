@@ -10,8 +10,8 @@ var assert = require('assert');
 
 process.once('message', function(msg) {
   invoke(msg, function(err) {
-    if(err) {
-      if(!err.origin) err.origin = 'invoke';
+    if (err) {
+      if (!err.origin) err.origin = 'invoke';
       return done(err);
     }
     done(null, Array.prototype.slice.call(arguments, 0));
@@ -20,7 +20,7 @@ process.once('message', function(msg) {
   function done(err, args) {
     send({
       error: err,
-      callbackArgs: args
+      callbackArgs: args,
     });
 
     process.nextTick(function() {
@@ -34,24 +34,23 @@ function invoke(msg, cb) {
   var methodName = msg.methodName;
   var args = msg.args;
   var cbMsg = {};
-  var app;
-  var ds;
+  var app, ds;
 
   assert(dataSourceName, 'dataSourceName is required');
   assert(methodName, 'methodName is required');
 
   try {
     app = require(msg.dir);
-  } catch(e) {
+  } catch (e) {
     return error(e, 'app');
   }
 
   try {
     ds = app.dataSources[dataSourceName];
-    if(!ds) {
+    if (!ds) {
       throw new Error(dataSourceName + ' is not a valid data source');
     }
-  } catch(e) {
+  } catch (e) {
     return error(e, 'dataSource');
   }
 
@@ -69,9 +68,9 @@ function invoke(msg, cb) {
 }
 
 process.on('uncaughtException', function(err) {
-  if(process.send) {
+  if (process.send) {
     send({
-      error: err
+      error: err,
     });
   } else {
     throw err;
@@ -79,13 +78,13 @@ process.on('uncaughtException', function(err) {
 });
 
 function send(msg) {
-  if(msg.error) {
+  if (msg.error) {
     msg.error = toSerializableError(msg.error);
   }
 
   try {
     process.send(msg);
-  } catch(e) {
+  } catch (e) {
     console.error('failed to send message to parent process');
     console.error(e);
     process.exit(1);
@@ -95,7 +94,7 @@ function send(msg) {
 function toSerializableError(err) {
   var alt = {};
 
-  Object.getOwnPropertyNames(err).forEach(function (key) {
+  Object.getOwnPropertyNames(err).forEach(function(key) {
     alt[key] = err[key];
   }, this);
 

@@ -35,11 +35,13 @@ describe('Workspace', function() {
           },
           {
             name: 'empty-server',
-            description: 'An empty LoopBack API, without any configured models or datasources',
+            description: 'An empty LoopBack API, without any configured ' +
+              'models or datasources',
           },
           {
-            description: 'A project containing a basic working example, including a memory database',
-            name: 'hello-world'
+            description: 'A project containing a basic working example, ' +
+              'including a memory database',
+            name: 'hello-world',
           },
         ]);
         done();
@@ -47,14 +49,14 @@ describe('Workspace', function() {
     });
   });
 
-  describe('Workspace.addComponent(options, cb)', function () {
+  describe('Workspace.addComponent(options, cb)', function() {
     beforeEach(resetWorkspace);
     beforeEach(givenEmptySandbox);
 
     it('should add the static files', function(done) {
       Workspace.addComponent({
         template: 'api-server',
-        root: true
+        root: true,
       }, function(err) {
         if (err) return done(err);
         expectFileExists(getPath('server/server.js'));
@@ -74,7 +76,7 @@ describe('Workspace', function() {
       Workspace.addComponent(
         {
           template: 'api-server',
-          root: true
+          root: true,
         },
         function(err) {
           Workspace.copyRecursive = ncp;
@@ -93,7 +95,7 @@ describe('Workspace', function() {
       // there is most likely an issue with loading into cache in parallel
       var test = this;
       app.models.DataSourceDefinition.find(function(err, defs) {
-        if(err) return done(err);
+        if (err) return done(err);
         test.dataSources = defs;
         done();
       });
@@ -103,7 +105,7 @@ describe('Workspace', function() {
       var facetNames = toNames(this.facets);
       expect(facetNames).to.have.members([
         'common',
-        'server'
+        'server',
       ]);
     });
 

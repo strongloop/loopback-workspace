@@ -15,10 +15,9 @@ var modelFiles = modelNames.map(function(name) {
   var o = models[name];
   var base = o.options && o.options.base;
 
-
   modelConfig[name] = {
     public: o.public,
-    dataSource: o.dataSource
+    dataSource: o.dataSource,
   };
 
   return;
