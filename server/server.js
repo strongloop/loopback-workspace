@@ -103,7 +103,7 @@ app.use(loopback.urlNotFound());
  */
 
 // The ultimate error handler.
-app.use(loopback.strongErrorHandler());
+app.use(loopback.errorHandler());
 
 
 /*

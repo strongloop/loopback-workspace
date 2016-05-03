@@ -1,6 +1,6 @@
 {
   "final:after": {
-    "loopback#strongErrorHandler": {
+    "strongErrorHandler": {
       "params": {
         "debug": true
       }
