@@ -1,14 +1,6 @@
 {
-  "name": "note",
-  "properties": {
-    "title": {
-      "type": "string",
-      "required": true
-    },
-    "content": {
-      "type": "string"
-    }
-  },
+  "name": "Message",
+  "properties": {},
   "methods": {
     "greet": {
       "isStatic": true,

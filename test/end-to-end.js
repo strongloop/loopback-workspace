@@ -324,6 +324,82 @@ describe('end-to-end', function() {
     });
   });
 
+  describe('notes template', function() {
+    var app, modelInstance;
+
+    before(resetWorkspace);
+    before(givenEmptySandbox);
+
+    before(function createWorkspace(done) {
+      givenWorkspaceFromTemplate('notes', done);
+    });
+
+    before(installSandboxPackages);
+
+    before(function loadApp() {
+      app = require(SANDBOX);
+    });
+
+    it('provides retrieve operation', function(done) {
+      request(app)
+        .get('/api/Notes')
+        .expect(200, done);
+    });
+
+    it('provides create operation', function(done) {
+      var sample = {title: 'myTitle'};
+      request(app)
+      .post('/api/Notes')
+      .send(sample)
+      .expect(200, function(err, res) {
+        if(err) {
+          done(err)
+        } else {
+          expect(res.body).
+            to.have.property('title', 'myTitle');
+          done();
+        };
+      });
+    });
+
+    it('provides update operation', function(done) {
+      var sample = {title: 'myTitle'};
+      request(app)
+      .put('/api/Notes')
+      .send(sample)
+      .expect(200, function(err, res) {
+        if(err) {
+          done(err)
+        } else {
+          expect(res.body).
+            to.have.property('title', 'myTitle');
+          done();
+        };
+      });
+    });
+
+    it('provides delete operation', function(done) {
+      var Note = app.models.Note;
+      Note.create({title: 'myTitle'}, function(error, note) {
+        if(error) {
+          done(error);
+        } else {
+          request(app)
+          .delete('/api/Notes/' + note.id)
+          .expect(200, function(err, res) {
+            if(err) {
+              done(err)
+            } else {
+              expect(res.body).
+                to.have.property('count', 1);
+              done();
+            }
+          });
+        }
+      });
+    });
+  });
+
   describe('hello-world template', function() {
     var app, modelInstance;
 
@@ -340,13 +416,13 @@ describe('end-to-end', function() {
       app = require(SANDBOX);
     });
 
-    it('provides "/notes/greet" method', function(done) {
+    it('contains model "message"', function(done) {
       request(app)
-        .get('/api/notes/greet?msg=Tester')
+        .get('/api/Messages/greet?msg=Tester')
         .expect(200, function(err, res) {
           if (err) done(err);
           expect(res.body)
-            .to.have.property('greeting', 'Hello Tester');
+            .to.have.property('greeting', 'Sender says Tester to receiver');
           done();
         });
     });
