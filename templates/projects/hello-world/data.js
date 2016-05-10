@@ -1,7 +1,7 @@
 var template = module.exports;
 
-template.description = 'A project containing a basic working example, ' +
-  'including a memory database';
+template.description = 'A project containing a controller, ' +
+  'including a single vanilla Message and a single remote method';
 
 template.inherits = [
   'empty-server',
@@ -22,15 +22,10 @@ template.server = {
 
   modelConfigs: [
     {
-      name: 'note',
-      dataSource: 'db',
+      name: 'Message',
+      dataSource: null,
     },
   ],
 
-  datasources: [
-    {
-      name: 'db',
-      connector: 'memory',
-    },
-  ],
+  datasources: [],
 };

@@ -18,6 +18,7 @@ describe('Workspace', function() {
           'api-server',
           'empty-server',
           'hello-world',
+          'notes'
         ]);
         done();
       });
@@ -39,9 +40,14 @@ describe('Workspace', function() {
               'models or datasources',
           },
           {
+            description: 'A project containing a controller, ' +
+              'including a single vanilla Message and a single remote method',
+            name: 'hello-world',
+          },
+          {
             description: 'A project containing a basic working example, ' +
               'including a memory database',
-            name: 'hello-world',
+            name: 'notes',
           },
         ]);
         done();
