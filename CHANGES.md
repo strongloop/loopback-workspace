@@ -1,3 +1,19 @@
+2016-05-26, Version 3.29.0
+==========================
+
+ * Add new helloworld (juehou)
+
+ * Add eslint infrastructure (Candy)
+
+ * Add url to datasource config (juehou)
+
+ * mark tests as exported (Ryan Graham)
+
+ * relicense as MIT only (Ryan Graham)
+
+ * insert IBM copyright headers (Ryan Graham)
+
+
 2016-03-18, Version 3.28.2
 ==========================
 
