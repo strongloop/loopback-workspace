@@ -426,6 +426,12 @@ describe('end-to-end', function() {
           done();
         });
     });
+
+    it('comes without built-in GET endpoint', function(done) {
+      request(app)
+        .get('/api/Messages')
+        .expect(404, done);
+    });
   });
 
   describe('autoupdate', function() {
