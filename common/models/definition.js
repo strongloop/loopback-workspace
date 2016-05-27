@@ -128,12 +128,13 @@ module.exports = function(Definition) {
               fileData.name, embedId, config);
           }
 
-          config = Entity.getDataFromConfig(config);
+          config = Entity.getDataFromConfig(config, embedId);
 
           // add extra properties for relations
           config[relation.foreignKey] = fk;
           config[relation.embed.key] = embedId;
           config.facetName = facetName;
+          
           debug('addRelatedToCache %s %j', relation.model, config);
           Entity.addToCache(cache, config);
         });
