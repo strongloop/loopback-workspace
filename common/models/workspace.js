@@ -138,7 +138,7 @@ module.exports = function(Workspace) {
         }
       });
 
-      return _.merge.apply(_, sources);
+      return _.mergeWith.apply(_, sources);
     };
 
     /**
