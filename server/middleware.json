@@ -17,6 +17,5 @@
     "loopback#urlNotFound": {}
   },
   "final:after": {
-    "errorhandler": {}
   }
 }

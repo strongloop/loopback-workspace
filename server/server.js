@@ -103,7 +103,7 @@ app.use(loopback.urlNotFound());
  */
 
 // The ultimate error handler.
-app.use(loopback.errorHandler());
+ // app.use(loopback.errorHandler());
 
 /*
  * 5. Add a basic application status route at the root `/`.
