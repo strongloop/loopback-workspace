@@ -33,6 +33,14 @@ module.exports = function(Workspace) {
     var ViewDefinition = app.models.ViewDefinition;
     var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
     var DEFAULT_TEMPLATE = 'api-server';
+    var DEFAULT_LB_VERSION = '2.x';
+    var DEPENDENCIES_3_X = {
+      'loopback': '^3.0.0-alpha.1',
+    };
+    var DEPENDENCIES_2_X = {
+      'loopback': '^2.22.0',
+      'loopback-datasource-juggler': '^2.39.0',
+    };
     var debug = require('debug')('workspace');
 
     /**
@@ -152,6 +160,7 @@ module.exports = function(Workspace) {
       if (!options.root) {
         throw new Error('Non-root components are not supported yet.');
       }
+      var loopbackVersion = options.loopbackVersion || DEFAULT_LB_VERSION;
       var templateName = options.template || DEFAULT_TEMPLATE;
       var name = options.name || templateName;
       var packageName = options.packageName || name;
@@ -168,6 +177,14 @@ module.exports = function(Workspace) {
         err.statusCode = 400;
         return cb(err);
       }
+
+      if (loopbackVersion !== '2.x' && loopbackVersion !== '3.x') {
+        return cb(new Error('Loopback version should be either 2.x or 3.x'));
+      }
+      var defaultDependencies = template.package.dependencies;
+      var loopbackDependencies =
+        loopbackVersion === '2.x' ? DEPENDENCIES_2_X : DEPENDENCIES_3_X;
+      template.package.dependencies = extend(defaultDependencies, loopbackDependencies);
 
       // TODO(bajtos) come up with a more generic approach
       var explorer = 'loopback-component-explorer';

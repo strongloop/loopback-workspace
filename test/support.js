@@ -107,34 +107,20 @@ givenWorkspaceFromTemplate = function(template, options, cb) {
   });
 };
 
-givenWorkspaceWithCustomDependencies = function(templateName, deps, cb) {
+givenLB2Workspace = function(cb) {
   resetWorkspace(function(err) {
     if (err) return cb(err);
-    givenWorkspaceFromTemplate('empty-server', deps, function(err) {
-      if (err) return cb(err);
-      ConfigFile.loadFromPath('/package.json', function(err, pkgFile) {
-        if (err) return cb(err);
-        for (dep in deps) {
-          pkgFile.data.dependencies[dep] = deps[dep];
-        }
-
-        pkgFile.save(cb());
-      });
-    });
+    var options = { loopbackVersion: '2.x' };
+    givenWorkspaceFromTemplate('empty-server', options, cb);
   });
 };
 
-givenLB2Workspace = function(cb) {
-  givenWorkspaceWithCustomDependencies('empty-server', {
-    loopback: '^2.0.0',
-    'loopback-datasource-juggler': '^2.0.0',
-  }, cb);
-};
-
 givenLB3Workspace = function(cb) {
-  givenWorkspaceWithCustomDependencies('empty-server', {
-    loopback: '^3.0.0-alpha.1',
-  }, cb);
+  resetWorkspace(function(err) {
+    if (err) return cb(err);
+    var options = { loopbackVersion: '3.x' };
+    givenWorkspaceFromTemplate('empty-server', options, cb);
+  });
 };
 
 function findOfType(name, type) {
