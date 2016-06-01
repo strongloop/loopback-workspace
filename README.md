@@ -30,7 +30,7 @@ Each component has the following basic structure:
 
 **Basic**
 
-The `loopback-workspace` itself if a loopback component. The following
+The `loopback-workspace` itself is a loopback component. The following
 will load the workspace in the current working directory (`process.cwd()`).
 
 ```js
