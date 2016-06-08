@@ -11,6 +11,7 @@ var install = require('strong-cached-install');
 var mysql = require('mysql');
 var path = require('path');
 var request = require('supertest');
+var semver = require('semver');
 var debug = require('debug')('test:end-to-end');
 var workspace = require('../');
 var models = workspace.models;
@@ -347,13 +348,13 @@ describe('end-to-end', function() {
     });
 
     it('provides create operation', function(done) {
-      var sample = {title: 'myTitle'};
+      var sample = { title: 'myTitle' };
       request(app)
       .post('/api/Notes')
       .send(sample)
       .expect(200, function(err, res) {
-        if(err) {
-          done(err)
+        if (err) {
+          done(err);
         } else {
           expect(res.body).
             to.have.property('title', 'myTitle');
@@ -363,13 +364,13 @@ describe('end-to-end', function() {
     });
 
     it('provides update operation', function(done) {
-      var sample = {title: 'myTitle'};
+      var sample = { title: 'myTitle' };
       request(app)
       .put('/api/Notes')
       .send(sample)
       .expect(200, function(err, res) {
-        if(err) {
-          done(err)
+        if (err) {
+          done(err);
         } else {
           expect(res.body).
             to.have.property('title', 'myTitle');
@@ -380,15 +381,15 @@ describe('end-to-end', function() {
 
     it('provides delete operation', function(done) {
       var Note = app.models.Note;
-      Note.create({title: 'myTitle'}, function(error, note) {
-        if(error) {
+      Note.create({ title: 'myTitle' }, function(error, note) {
+        if (error) {
           done(error);
         } else {
           request(app)
           .delete('/api/Notes/' + note.id)
           .expect(200, function(err, res) {
-            if(err) {
-              done(err)
+            if (err) {
+              done(err);
             } else {
               expect(res.body).
                 to.have.property('count', 1);
@@ -433,6 +434,69 @@ describe('end-to-end', function() {
         .expect(404, done);
     });
   });
+
+  describe('scaffold 3.x loopback project with option 3.x', function(done) {
+    before(resetWorkspace);
+    before(function createWorkspace(done) {
+      var options = { loopbackVersion: '3.x' };
+      givenWorkspaceFromTemplate('empty-server', options, done);
+    });
+
+    it('contains dependencies with 3.x version', function(done) {
+      var dependencies = readPackageJsonSync().dependencies;
+      expect(semver.gtr('3.0.0', dependencies.loopback)).to.be.false;
+      done();
+    });
+  });
+
+  describe('scaffold 2.x loopback project with option 2.x', function(done) {
+    before(resetWorkspace);
+    before(function createWorkspace(done) {
+      var options = { loopbackVersion: '2.x' };
+      givenWorkspaceFromTemplate('empty-server', options, done);
+    });
+
+    it('contains dependencies with 2.x version', function(done) {
+      var dependencies = readPackageJsonSync().dependencies;
+      expect(semver.gtr('3.0.0', dependencies.loopback)).to.be.true;
+      expect(semver.gtr('3.0.0', dependencies['loopback-datasource-juggler']))
+        .to.be.true;
+      done();
+    });
+  });
+
+  describe('scaffold 2.x loopback project with default options', function(done) {
+    before(resetWorkspace);
+    before(function createWorkspace(done) {
+      givenWorkspaceFromTemplate('empty-server', done);
+    });
+
+    it('contains dependencies with 2.x version', function(done) {
+      var dependencies = readPackageJsonSync().dependencies;
+      expect(semver.gtr('3.0.0', dependencies.loopback)).to.be.true;
+      expect(semver.gtr('3.0.0', dependencies['loopback-datasource-juggler']))
+        .to.be.true;
+      done();
+    });
+  });
+
+  describe('Check invalid version', function(done) {
+    before(resetWorkspace);
+
+    it('throws error with invalid version', function(done) {
+      var options = { loopbackVersion: 'invalid-version' };
+      givenWorkspaceFromTemplate('empty-server', options, function(err) {
+        expect(err).to.match(/Loopback version should be either 2\.x or 3\.x/);
+        done();
+      });
+    });
+  });
+
+  function readPackageJsonSync() {
+    var filepath = SANDBOX + '/package.json';
+    var content = fs.readFileSync(filepath, 'utf-8');
+    return JSON.parse(content);
+  }
 
   describe('autoupdate', function() {
     this.timeout(10000);

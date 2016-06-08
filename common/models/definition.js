@@ -134,7 +134,7 @@ module.exports = function(Definition) {
           config[relation.foreignKey] = fk;
           config[relation.embed.key] = embedId;
           config.facetName = facetName;
-          
+
           debug('addRelatedToCache %s %j', relation.model, config);
           Entity.addToCache(cache, config);
         });

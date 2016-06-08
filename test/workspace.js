@@ -18,7 +18,7 @@ describe('Workspace', function() {
           'api-server',
           'empty-server',
           'hello-world',
-          'notes'
+          'notes',
         ]);
         done();
       });
