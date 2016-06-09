@@ -19,8 +19,9 @@
       "limit": "100kb"
     },
     "cors": false,
-    "errorHandler": {
-      "disableStackTrace": false
+    "errorhandler": {
+      "debug": false,
+      "log": true
     }
   },
   "legacyExplorer": false
