@@ -110,7 +110,7 @@
       "password": {
         "type": "string",
         "display": "password"
-      },
+      }
     },
     "package": {
       "name": "loopback-connector-dashdb",
