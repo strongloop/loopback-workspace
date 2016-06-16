@@ -92,23 +92,17 @@
     "supportedByStrongLoop": true
   },
   {
-    "name": "dashdb",
-    "description": "IBM DashDB",
-    "baseModel": "PersistedModel",
+    "name": "mqlight",
+    "description": "IBM MQ Light",
+    "baseModel": "Model",
     "features": {
       "discovery": false,
       "migration": false
     },
     "settings": {
-      "dsn": {
+      "service": {
         "type": "string",
-        "description": "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
-      },
-      "host": {
-        "type": "string"
-      },
-      "port": {
-        "type": "number"
+        "description": "URL string for MQ Light service"
       },
       "user": {
         "type": "string"
@@ -116,9 +110,6 @@
       "password": {
         "type": "string",
         "display": "password"
-      },
-      "database": {
-        "type": "string"
       }
     },
     "package": {
