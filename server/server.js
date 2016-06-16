@@ -8,6 +8,7 @@ var path = require('path');
 var methodOverride = require('method-override');
 var app = module.exports = loopback();
 var boot = require('loopback-boot');
+var cookieParser = require('cookie-parser');
 
 app.set('legacyExplorer', false);
 
@@ -42,7 +43,7 @@ app.emit('ready');
  */
 
 app.use(loopback.favicon());
-app.use(loopback.cookieParser(app.get('cookieSecret')));
+app.use(cookieParser(app.get('cookieSecret')));
 app.use(methodOverride());
 
 /*
