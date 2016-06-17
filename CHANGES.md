@@ -1,3 +1,23 @@
+2016-06-17, Version 3.30.0
+==========================
+
+ * Remove usage of deprecated loopback.cookieParser (Miroslav Bajtoš)
+
+ * Add MQ Light to available connectors (#286) (Quentin Presley)
+
+ * Choose dependency according to loopbackVersion (jannyHou)
+
+ * Add DB2z and DashDB connectors (Quentin Presley)
+
+ * Fix a typo. (Richard Pringle)
+
+ * Fix Message extends Model (jannyHou)
+
+ * Update dependencies (Miroslav Bajtoš)
+
+ * Update project to remove isStatic flag (Candy)
+
+
 2016-05-26, Version 3.29.0
 ==========================
 
