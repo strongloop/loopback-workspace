@@ -50,6 +50,22 @@ module.exports = function(Workspace) {
      */
 
     /**
+     * Get list of available loopback Versions.
+     *
+     * @callback {Function} callback
+     * @param {Error} err
+     * @param {Object} availableLBVersions
+     */
+
+    Workspace.getAvailableLBVersions = function(cb) {
+      var availableLBVersions = {
+        '2.x': { description: 'stable' },
+        '3.x': { description: 'pre-release, alpha quality' },
+      };
+      cb(null, availableLBVersions);
+    };
+
+    /**
      * Get an array of available template names.
      *
      * @callback {Function} callback
@@ -90,6 +106,7 @@ module.exports = function(Workspace) {
           return {
             name: name,
             description: data.description,
+            supportedLBVersions: data.supportedLBVersions,
           };
         });
         cb(null, templates);
@@ -129,6 +146,7 @@ module.exports = function(Workspace) {
         var t = template.inherits[ix];
         var data = this._loadProjectTemplate(t);
         if (!data) return null; // the error was already reported
+        delete data.supportedLBVersions;
         sources.unshift(data);
       }
       /* eslint-enable one-var */
