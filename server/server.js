@@ -8,7 +8,11 @@ var path = require('path');
 var methodOverride = require('method-override');
 var app = module.exports = loopback();
 var boot = require('loopback-boot');
+<<<<<<< HEAD
 var cookieParser = require('cookie-parser');
+=======
+var errorHandler = require('strong-error-handler');
+>>>>>>> 7143d31... update errorHandler templates
 
 app.set('legacyExplorer', false);
 
@@ -104,8 +108,7 @@ app.use(loopback.urlNotFound());
  */
 
 // The ultimate error handler.
-app.use(loopback.errorHandler());
-
+app.use(errorHandler());
 /*
  * 5. Add a basic application status route at the root `/`.
  *

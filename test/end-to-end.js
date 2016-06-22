@@ -19,6 +19,11 @@ var TestDataBuilder = require('./helpers/test-data-builder');
 var ref = TestDataBuilder.ref;
 var given = require('./helpers/given');
 var should = require('chai').should();
+// This may not work when the scaffolded application uses a different
+// loopback or loopback-boot version than the one used in loopback-workspace
+// Please make sure that versions are conform.
+var loopback = require('loopback');
+var boot = require('loopback-boot');
 
 var Workspace = workspace.models.Workspace;
 
@@ -982,6 +987,51 @@ describe('end-to-end', function() {
     }
   });
 });
+
+  it('includes sensitive error details in development mode', function(done) {
+    var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    var bootOptions = {
+      appRootDir: SANDBOX + '/server',
+      env: 'development'
+    };
+    boot(app, bootOptions, function(err) {
+        request(app)
+          .get('/url-does-not-exist')
+          .expect(404)
+          .end(function(err, res) {
+            if (err) return done (err);
+            var responseBody = JSON.stringify(res.body);
+            expect(responseBody).to.include('stack');
+
+            done();
+        });
+    });
+  });
+
+  it('omits sensitive error details in production mode', function(done) {
+    var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    var bootOptions = {
+      appRootDir: SANDBOX + '/server',
+      env: 'production'
+    };
+    boot(app, bootOptions, function(err) {
+        request(app)
+          .get('/url-does-not-exist')
+          .expect(404)
+          .end(function(err, res) {
+            // Assert that the response body does not contain stack trace.
+            // We want the assertion to be robust and keep working even
+            // if the property name storing stack trace changes in the future,
+            // therefore we test full response body.
+             if (err) return done(err);
+             var responseBody = JSON.stringify(res.body);
+             expect(responseBody).to.not.have.property('stack');
+             expect(responseBody).to.not.include('stack');
+             expect(JSON.stringify(res.body, null, 2)).to.not.contain(__filename);
+             done();
+        });
+    });
+  });
 
 function setupConnection(done) {
   var connection = mysql.createConnection({
