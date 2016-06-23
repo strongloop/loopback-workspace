@@ -22,6 +22,7 @@ template.package = {
     'loopback-boot': '^2.6.5',
     'loopback-component-explorer': '^2.4.0',
     'serve-favicon': '^2.0.1',
+    'strong-error-handler': '^1.0.1'
   },
   'devDependencies': {
     'eslint': '^2.5.3',
@@ -78,7 +79,7 @@ template.server = {
         limit: '100kb',
       },
       cors: false,
-      handleErrors: false,     
+      handleErrors: false,
     }},
     { name: 'legacyExplorer', value: false },
   ],
