@@ -341,6 +341,12 @@ describe('end-to-end', function() {
       app = require(SANDBOX);
     });
 
+    it('applies acl on models', function(done) {
+      request(app)
+        .get('/api/Users')
+        .expect(401, done);
+    });
+
     it('provides retrieve operation', function(done) {
       request(app)
         .get('/api/Notes')
@@ -415,6 +421,12 @@ describe('end-to-end', function() {
 
     before(function loadApp() {
       app = require(SANDBOX);
+    });
+
+    it('applies acl on models', function(done) {
+      request(app)
+        .get('/api/Users')
+        .expect(401, done);
     });
 
     it('contains model "message"', function(done) {
