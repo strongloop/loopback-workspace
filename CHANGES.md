@@ -1,3 +1,17 @@
+2016-06-24, Version 3.31.0
+==========================
+
+ * Disable discovery & migration for cloudant (Candy)
+
+ * Add acl config to new templates (jannyHou)
+
+ * add strong-error-Handler to dependencies (Loay)
+
+ * update errorhandler templates (Loay)
+
+ * Update connectors list (#289) (Quentin Presley)
+
+
 2016-06-17, Version 3.30.0
 ==========================
 
