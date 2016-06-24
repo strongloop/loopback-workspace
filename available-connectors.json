@@ -123,8 +123,8 @@
     "description": "IBM Cloudant DB",
     "baseModel": "PersistedModel",
     "features": {
-      "discovery": true,
-      "migration": true
+      "discovery": false,
+      "migration": false
     },
     "settings": {
       "url": {
