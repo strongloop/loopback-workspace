@@ -33,21 +33,25 @@ describe('Workspace', function() {
           {
             name: 'api-server',
             description: 'A LoopBack API server with local User auth',
+            supportedLBVersions: ['2.x', '3.x'],
           },
           {
             name: 'empty-server',
             description: 'An empty LoopBack API, without any configured ' +
               'models or datasources',
+            supportedLBVersions: ['2.x', '3.x'],
           },
           {
             description: 'A project containing a controller, ' +
               'including a single vanilla Message and a single remote method',
             name: 'hello-world',
+            supportedLBVersions: ['2.x', '3.x'],
           },
           {
             description: 'A project containing a basic working example, ' +
               'including a memory database',
             name: 'notes',
+            supportedLBVersions: ['2.x', '3.x'],
           },
         ]);
         done();
