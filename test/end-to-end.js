@@ -1000,7 +1000,7 @@ describe('end-to-end', function() {
     var app = loopback({ localRegistry: true, loadBuiltinModels: true });
     var bootOptions = {
       appRootDir: SANDBOX + '/server',
-      env: 'development'
+      env: 'development',
     };
     boot(app, bootOptions, function(err) {
       if (err) return done(err);
@@ -1013,7 +1013,7 @@ describe('end-to-end', function() {
           expect(responseBody).to.include('stack');
 
           done();
-      });
+        });
     });
   });
 
@@ -1023,7 +1023,7 @@ describe('end-to-end', function() {
     var app = loopback({ localRegistry: true, loadBuiltinModels: true });
     var bootOptions = {
       appRootDir: SANDBOX + '/server',
-      env: 'production'
+      env: 'production',
     };
     boot(app, bootOptions, function(err) {
       if (err) return done(err);
