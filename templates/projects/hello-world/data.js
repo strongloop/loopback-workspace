@@ -53,7 +53,7 @@ template.server = {
     },
   ],
 
-  datasources: [ 
+  datasources: [
     {
       name: 'db',
       connector: 'memory',

@@ -29,34 +29,10 @@ module.exports = function(grunt) {
         },
       ],
     },
-    eslint: {
-      gruntfile: {
-        src: 'Gruntfile.js',
-      },
-      bin: {
-        src: ['bin/**/*.js'],
-      },
-      client: {
-        src: ['client/**/*.js'],
-      },
-      common: {
-        src: ['common/**/*.js'],
-      },
-      server: {
-        src: ['server/**/*.js'],
-      },
-      templates: {
-        src: ['templates/**/*.js'],
-      },
-      test: {
-        src: ['test/**/*.js'],
-      },
-    },
   });
 
   grunt.loadNpmTasks('grunt-loopback-sdk-angular');
   grunt.loadNpmTasks('grunt-docular');
-  grunt.loadNpmTasks('grunt-eslint');
 
-  grunt.registerTask('default', ['loopback_sdk_angular', 'docular', 'eslint']);
+  grunt.registerTask('default', ['loopback_sdk_angular', 'docular']);
 };
