@@ -3,6 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var SG = require('strong-globalize');
+var g = SG();
+
 var _ = require('lodash');
 
 module.exports = function(Workspace) {
@@ -59,8 +62,8 @@ module.exports = function(Workspace) {
 
     Workspace.getAvailableLBVersions = function(cb) {
       var availableLBVersions = {
-        '2.x': { description: 'stable' },
-        '3.x': { description: 'pre-release' },
+        '2.x': { description: g.f('stable') },
+        '3.x': { description: g.f('pre-release, alpha quality') },
       };
       cb(null, availableLBVersions);
     };
@@ -131,7 +134,7 @@ module.exports = function(Workspace) {
         template = require(
           '../../templates/projects/' + templateName + '/data');
       } catch (e) {
-        console.error('Cannot load project template %j: %s',
+        g.error('Cannot load project template %j: %s',
                       templateName, e.stack);
         return null;
       }
@@ -176,7 +179,7 @@ module.exports = function(Workspace) {
      */
     Workspace.addComponent = function(options, cb) {
       if (!options.root) {
-        throw new Error('Non-root components are not supported yet.');
+        throw new Error(g.f('Non-root components are not supported yet.'));
       }
       var loopbackVersion = options.loopbackVersion || DEFAULT_LB_VERSION;
       var templateName = options.template || DEFAULT_TEMPLATE;
@@ -190,14 +193,14 @@ module.exports = function(Workspace) {
       var template = this._loadProjectTemplate(templateName);
 
       if (!template) {
-        var err = new Error('Unknown template ' + templateName);
+        var err = new Error(g.f('Unknown template %s' + templateName));
         err.templateName = templateName;
         err.statusCode = 400;
         return cb(err);
       }
 
       if (loopbackVersion !== '2.x' && loopbackVersion !== '3.x') {
-        return cb(new Error('Loopback version should be either 2.x or 3.x'));
+        return cb(new Error(g.f('Loopback version should be either 2.x or 3.x')));
       }
       var defaultDependencies = template.package.dependencies;
       var loopbackDependencies =
@@ -451,7 +454,7 @@ module.exports = function(Workspace) {
         if (err) {
           cb(err);
         } else if (!list.length) {
-          cb(new Error('Invalid workspace: no facets found.'));
+          cb(new Error(g.f('Invalid workspace: no facets found.')));
         } else {
           // TODO(bajtos) Add more sophisticated validation based on facet types
           cb();
@@ -513,7 +516,7 @@ module.exports = function(Workspace) {
         child.on('exit', function(code) {
           debug('child %s exited with code %s', child.pid, code);
           Workspace._child = null;
-          done(new Error('Child exited with code ' + code));
+          done(new Error(g.f('Child exited with code %s' + code)));
         });
 
         // Wait until the child process starts listening

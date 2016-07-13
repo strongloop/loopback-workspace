@@ -3,6 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var SG = require('strong-globalize');
+var g = SG();
+
 module.exports = function(Definition) {
   var loopback = require('loopback');
   var clone = require('lodash').clone;
@@ -16,11 +19,11 @@ module.exports = function(Definition) {
    */
 
   Definition.loadFromFs = function() {
-    throw new Error('not implemented in ' + this.modelName);
+    throw new Error(g.f('not implemented in %s', this.modelName));
   };
 
   Definition.saveToFs = function(cache, definitionData, cb) {
-    throw new Error('not implemented in ' + this.modelName);
+    throw new Error(g.f('not implemented in %s', this.modelName));
   };
 
   Definition.toArray = function(obj, embed) {
@@ -118,7 +121,7 @@ module.exports = function(Definition) {
               // {myProp: false} or {myProp: null} is to hide base myProp
               config = {
                 disableInherit: true,
-                comments: 'Flag to not inherit the property from base',
+                comments: g.f('Flag to not inherit the property from base'),
               };
             } else {
               // expand shorthand notation

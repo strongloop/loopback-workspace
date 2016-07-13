@@ -3,8 +3,12 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var loopback = require('loopback');
 var path = require('path');
+var SG = require('strong-globalize');
+SG.SetRootDir(path.join(__dirname, '..'));
+var g = SG();
+
+var loopback = require('loopback');
 var methodOverride = require('method-override');
 var app = module.exports = loopback();
 var boot = require('loopback-boot');
@@ -64,7 +68,7 @@ app.use(app.get('restApiRoot'), loopback.rest());
 // API explorer
 require('loopback-component-explorer')(app);
 app.once('started', function(baseUrl) {
-  console.log('Browse your REST API at %s%s', baseUrl, '/explorer');
+  console.log(g.f('Browse your REST API at %s%s', baseUrl, '/explorer'));
 });
 
 /*
@@ -134,7 +138,7 @@ app.start = function() {
   return app.listen(function() {
     var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
     app.emit('started', baseUrl);
-    console.log('LoopBack server listening @ %s%s', baseUrl, '/');
+    console.log(g.f('LoopBack server listening @ %s%s', baseUrl, '/'));
   });
 };
 

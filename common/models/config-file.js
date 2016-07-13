@@ -3,6 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var SG = require('strong-globalize');
+var g = SG();
+
 module.exports = function(ConfigFile) {
   var assert = require('assert');
   var app = require('../../server/server');
@@ -64,7 +67,7 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.load = function(cb) {
     var configFile = this;
-    if (!this.path) return cb(new Error('no path specified'));
+    if (!this.path) return cb(new Error(g.f('no path specified')));
     var absolutePath = configFile.constructor.toAbsolutePath(this.path);
     async.waterfall([
       configFile.exists.bind(configFile),
@@ -76,7 +79,7 @@ module.exports = function(ConfigFile) {
       if (exists) {
         fs.readJson(absolutePath, function(err, data) {
           if (err && err.name === 'SyntaxError') {
-            err.message = 'Cannot parse ' + configFile.path + ': ' + err.message;
+            err.message = g.f('Cannot parse %s: %s', configFile.path, err.message);
           }
           cb(err, err ? undefined : data);
         });
@@ -101,7 +104,7 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.save = function(cb) {
     var configFile = this;
-    if (!this.path) return cb(new Error('no path specified'));
+    if (!this.path) return cb(new Error(g.f('no path specified')));
     var absolutePath = configFile.getAbsolutePath();
     configFile.data = configFile.data || {};
 
@@ -121,7 +124,7 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.prototype.remove = function(cb) {
     var configFile = this;
-    if (!this.path) return cb(new Error('no path specified'));
+    if (!this.path) return cb(new Error(g.f('no path specified')));
     var absolutePath = configFile.getAbsolutePath();
 
     fs.unlink(absolutePath, cb);
