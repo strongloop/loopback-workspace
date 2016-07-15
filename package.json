@@ -44,7 +44,7 @@
     "eslint-config-loopback": "^2.0.0",
     "grunt": "^1.0.0",
     "grunt-docular": "~0.1.2",
-    "grunt-loopback-sdk-angular": "~1.1.0",
+    "grunt-loopback-sdk-angular": "^1.2.0",
     "mocha": "^2.4.5",
     "mysql": "^2.4.2",
     "read": "^1.0.5",
