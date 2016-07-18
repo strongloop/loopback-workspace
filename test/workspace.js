@@ -249,4 +249,61 @@ describe('Workspace', function() {
       });
     });
   });
+
+  describe('Creating 2 projects from template', function() {
+    beforeEach(givenEmptySandbox);
+    afterEach(function setWorkspaceToSandboxDir() {
+      process.env.WORKSPACE_DIR = SANDBOX;
+    });
+
+    it('Create note app & hello world app in same directory and switching workspace',
+      function(done) {
+        async.series([
+          function(done) {
+            fs.mkdir(SANDBOX + '/noteapp', done);
+          },
+          function(done) {
+            Workspace.loadWorkspace(SANDBOX + '/noteapp', function() {
+              expect(process.env.WORKSPACE_DIR).to.equal(SANDBOX + '/noteapp');
+              done();
+            });
+          },
+          function(done) {
+            app.models.Workspace.createFromTemplate('notes', 'noteapp', {},
+              function(err) {
+                if (err) return done(err);
+                expectFileExists(getPath('server/server.js'));
+                expectFileExists(getPath('server/boot/authentication.js'));
+                expectFileExists(getPath('common/models/note.js'));
+                expectFileExists(getPath('common/models/note.json'));
+                done();
+              }
+            );
+          },
+          function(done) {
+            fs.mkdir(SANDBOX + '/helloworldapp', done);
+          },
+          function(done) {
+            Workspace.loadWorkspace(SANDBOX + '/helloworldapp', function() {
+              expect(process.env.WORKSPACE_DIR).to.equal(SANDBOX + '/helloworldapp');
+              done();
+            });
+          },
+          function(done) {
+            app.models.Workspace.createFromTemplate('hello-world', 'helloworldapp', {},
+              function(err) {
+                if (err) return done(err);
+                expectFileExists(getPath('server/server.js'));
+                expectFileExists(getPath('server/boot/authentication.js'));
+                expectFileExists(getPath('common/models/message.js'));
+                expectFileExists(getPath('common/models/message.json'));
+                expectFileNotExists(getPath('common/models/note.js'));
+                expectFileNotExists(getPath('common/models/note.json'));
+                done();
+              }
+            );
+          },
+        ], done);
+      });
+  });
 });

@@ -651,9 +651,11 @@ module.exports = function(Workspace) {
     });
 
     Workspace.loadWorkspace = function(path, cb) {
-      process.env.WORKSPACE_DIR = path;
-      debug(process.env.WORKSPACE_DIR);
-      setImmediate(cb);
+      app.dataSources.db.connector.saveToFile(null, function() {
+        process.env.WORKSPACE_DIR = path;
+        debug(process.env.WORKSPACE_DIR);
+        app.dataSources.db.connector.loadFromFile(cb);
+      });
     };
 
     loopback.remoteMethod(Workspace.loadWorkspace, {
