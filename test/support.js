@@ -19,6 +19,10 @@ expectFileExists = function(file) {
   assert(fs.existsSync(file), file + ' does not exist');
 };
 
+expectFileNotExists = function(file) {
+  assert(!fs.existsSync(file), file + ' does exist');
+};
+
 getPath = function(relativePath) {
   return ConfigFile.toAbsolutePath(relativePath);
 };
