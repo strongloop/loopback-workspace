@@ -1,3 +1,21 @@
+2016-07-18, Version 3.32.0
+==========================
+
+ * Fix createFromTemplate duplicate model error (Candy)
+
+ * Bump grunt-loopback-sdk-angular dep (Miroslav Bajtoš)
+
+ * test/end-to-end: fix test failure (Miroslav Bajtoš)
+
+ * Update URLs in CONTRIBUTING.md (#300) (Ryan Graham)
+
+ * Fix eslint infrastructure (Miroslav Bajtoš)
+
+ * Add supportedLBVersion to metadata (jannyHou)
+
+ * Added \"schema\" property for the DB2 Connector. Fixes #274. (Fulton Byrne)
+
+
 2016-06-24, Version 3.31.0
 ==========================
 
