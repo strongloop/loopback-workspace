@@ -200,9 +200,21 @@ connector._loadFromFile = function(cb) {
           if (err) return next(err);
           PackageDefinition.addToCache(cache, f.data);
           if (dir === '.') {
-            var loopBackVersion = f.data.dependencies['loopback'] ||
-              f.data.devDependencies['loopback'] ||
-              f.data.optionalDependencies['loopback'];
+            var loopBackVersion = undefined;
+            var lbVersionSources = [
+              'dependencies',
+              'devDependencies',
+              'optionalDependencies',
+            ];
+
+            lbVersionSources.some(function(source) {
+              if (source && f.data[source]) {
+                loopBackVersion = f.data[source].loopback;
+              }
+
+              return loopBackVersion != null;
+            });
+
             app.models.Workspace.loopBackVersion = loopBackVersion;
           }
           next();
