@@ -15,12 +15,21 @@ var debug = require('debug')('workspace:test:support');
 
 global.Promise = require('bluebird');
 
+fileExistsSync = function(path) {
+  try {
+    fs.statSync(path);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 expectFileExists = function(file) {
-  assert(fs.existsSync(file), file + ' does not exist');
+  assert(fileExistsSync(file), file + ' does not exist');
 };
 
 expectFileNotExists = function(file) {
-  assert(!fs.existsSync(file), file + ' does exist');
+  assert(!fileExistsSync(file), file + ' does exist');
 };
 
 getPath = function(relativePath) {
@@ -39,10 +48,14 @@ SANDBOX = path.resolve(__dirname, 'sandbox/');
 // tell the workspace to load files from the sandbox
 process.env.WORKSPACE_DIR = SANDBOX;
 
+createSandboxDir = function(dirName, cb) {
+  fs.mkdir(dirName, cb);
+};
+
 givenEmptySandbox = function(cb) {
   fs.remove(SANDBOX, function(err) {
     if (err) return cb(err);
-    fs.mkdir(SANDBOX, cb);
+    createSandboxDir(SANDBOX, cb);
   });
 
   // Remove any cached modules from SANDBOX
@@ -125,6 +138,11 @@ givenLB3Workspace = function(cb) {
     var options = { loopbackVersion: '3.x' };
     givenWorkspaceFromTemplate('empty-server', options, cb);
   });
+};
+
+setWorkspaceToSandboxDir = function() {
+  // tell the workspace to load files from the sandbox
+  process.env.WORKSPACE_DIR = SANDBOX;
 };
 
 function findOfType(name, type) {
