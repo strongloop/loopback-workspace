@@ -60,7 +60,7 @@ module.exports = function(Workspace) {
     Workspace.getAvailableLBVersions = function(cb) {
       var availableLBVersions = {
         '2.x': { description: 'stable' },
-        '3.x': { description: 'pre-release, alpha quality' },
+        '3.x': { description: 'pre-release' },
       };
       cb(null, availableLBVersions);
     };
