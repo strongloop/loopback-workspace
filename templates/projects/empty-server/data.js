@@ -65,9 +65,7 @@ template.server = {
     { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
     { name: 'port', value: 3000 },
     { name: 'remoting', value: {
-      context: {
-        enableHttpContext: false,
-      },
+      context: false,
       rest: {
         normalizeHttpPath: false,
         xml: false,
