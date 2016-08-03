@@ -3,6 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var SG = require('strong-globalize');
+var g = SG();
+
 module.exports = function(WorkspaceEntity) {
   var path = require('path');
   var cloneDeep = require('lodash').cloneDeep;
@@ -92,8 +95,8 @@ module.exports = function(WorkspaceEntity) {
     try {
       return JSON.parse(cache[this.getCollection()][id]);
     } catch (err) {
-      err.message = 'Cannot parse ' + this.modelName + '#' + id + '. ' +
-        err.message;
+      err.message = g.f('Cannot parse %s #%s. %s',
+        this.modelName, id, err.message);
       throw err;
     }
   };
@@ -183,7 +186,7 @@ module.exports = function(WorkspaceEntity) {
     Entity.app.models.ModelDefinition.findById(data.modelId, function(err, model) {
       if (model && model.facetName) {
         if (data.facetName && data.facetName !== model.facetName) {
-          console.warn(
+          g.warn(
             'Warning: fixed %s[%s].facetName from %j to %j' +
               ' to match the parent',
             Entity.modelName,

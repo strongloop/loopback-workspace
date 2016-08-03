@@ -12,3 +12,6 @@ node_modules/
 /test/sandbox
 /test/.pkgcache/
 dist
+!intl/
+intl/*
+!intl/en/

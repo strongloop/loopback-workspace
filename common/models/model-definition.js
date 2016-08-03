@@ -3,6 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var SG = require('strong-globalize');
+var g = SG();
+
 var app = require('../../server/server');
 var debug = require('debug')('workspace:model-definition');
 
@@ -63,8 +66,8 @@ function ready(ModelDefinition) {
   function getRelated(cache, id, relation) {
     var Definition = app.models[relation.model];
     var cachedData = Definition.allFromCache(cache);
-    assert(relation.type === 'hasMany', 'embed only supports hasMany');
-    assert(relation.foreignKey, 'embed requires foreignKey');
+    assert(relation.type === 'hasMany', g.f('embed only supports hasMany'));
+    assert(relation.foreignKey, g.f('embed requires foreignKey'));
     return cachedData.filter(function(cached) {
       return cached[relation.foreignKey] === id;
     });
@@ -72,11 +75,11 @@ function ready(ModelDefinition) {
 
   function formatRelatedData(relation, relatedData) {
     var result;
-    assert(relation.embed && relation.embed.as, 'embed requires "as"');
+    assert(relation.embed && relation.embed.as, g.f('embed requires "as"'));
     switch (relation.embed.as) {
       case 'object':
         assert(relation.embed.key || relation.embed.keyGetter,
-          'embed as object requires "key" or "keyGetter"');
+          g.f('embed as object requires "key" or "keyGetter"'));
         result = {};
         relatedData.forEach(function(related) {
           var Definition = app.models[relation.model];
@@ -98,7 +101,7 @@ function ready(ModelDefinition) {
         return relatedData;
         break;
     }
-    assert(false, relation.embed.as + ' is not supported by embed');
+    assert(false, g.f('%s is not supported by embed', relation.embed.as));
   }
 
   ModelDefinition.getPath = function(facetName, obj) {
@@ -130,11 +133,11 @@ function ready(ModelDefinition) {
       }
 
       if (!modelDef) {
-        return cb(new Error('ModelDefinition ' + id + ' does not exist'));
+        return cb(new Error(g.f('ModelDefinition %s does not exist', id)));
       }
 
       if (modelDef.readonly) {
-        return cb(new Error('Cannot remove readonly model ' + id));
+        return cb(new Error(g.f('Cannot remove readonly model %s' + id)));
       }
       removeById(id, function(err) {
         if (err) return cb(err);
@@ -176,7 +179,7 @@ function ready(ModelDefinition) {
    */
 
   function cleanRelatedData(relatedData, relation) {
-    assert(relation.foreignKey, 'embeded relation must have foreignKey');
+    assert(relation.foreignKey, g.f('embeded relation must have foreignKey'));
 
     var Entity = require('loopback').getModel(relation.model);
     for (var ix in relatedData) {

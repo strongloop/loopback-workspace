@@ -3,6 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var SG = require('strong-globalize');
+var g = SG();
+
 var app = require('../../server/server');
 
 module.exports = function(DataSourceDefinition) {
@@ -106,8 +109,8 @@ function ready(DataSourceDefinition) {
       // We have to build a useful error message ourselves
 
       return cb(
-        new Error('Cannot connect to the data source.' +
-          ' Ensure the configuration is valid and the connector is installed.'));
+        new Error(g.f('Cannot connect to the data source.' +
+          ' Ensure the configuration is valid and the connector is installed.')));
     }
   };
 
@@ -344,7 +347,7 @@ function ready(DataSourceDefinition) {
 
     function done(err) {
       if (isDone && err) {
-        console.error('Error calling ' + methodName + ' after callback!');
+        g.error('Error calling %s after callback!', methodName);
         console.error(err);
         return;
       }
@@ -367,7 +370,7 @@ function ready(DataSourceDefinition) {
         /LoopBack connector "(.*)" is not installed/
       );
       if (match && match[1] === self.connector) {
-        var msg = 'Connector "' + self.connector + '" is not installed.';
+        var msg = g.f('Connector "%s" is not installed.', self.connector);
         err = new Error(msg);
         err.name = 'InvocationError';
         err.code = 'ER_INVALID_CONNECTOR';

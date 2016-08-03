@@ -6,6 +6,9 @@
 // This script is executed by loopback-workspace in WORKSPACE_DIR
 // to run automigrate/autoupdate
 
+var SG = require('strong-globalize');
+var g = SG();
+
 var assert = require('assert');
 
 process.once('message', function(msg) {
@@ -36,8 +39,8 @@ function invoke(msg, cb) {
   var cbMsg = {};
   var app, ds;
 
-  assert(dataSourceName, 'dataSourceName is required');
-  assert(methodName, 'methodName is required');
+  assert(dataSourceName, g.f('dataSourceName is required'));
+  assert(methodName, g.f('methodName is required'));
 
   try {
     app = require(msg.dir);
@@ -48,7 +51,7 @@ function invoke(msg, cb) {
   try {
     ds = app.dataSources[dataSourceName];
     if (!ds) {
-      throw new Error(dataSourceName + ' is not a valid data source');
+      throw new Error(g.f('%s is not a valid data source', dataSourceName));
     }
   } catch (e) {
     return error(e, 'dataSource');
@@ -85,7 +88,7 @@ function send(msg) {
   try {
     process.send(msg);
   } catch (e) {
-    console.error('failed to send message to parent process');
+    g.error('failed to send message to parent process');
     console.error(e);
     process.exit(1);
   }
