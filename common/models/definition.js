@@ -3,8 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var SG = require('strong-globalize');
-var g = SG();
+var g = require('strong-globalize')();
 
 module.exports = function(Definition) {
   var loopback = require('loopback');

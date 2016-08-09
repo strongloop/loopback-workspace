@@ -6,9 +6,7 @@
 // This script is executed by loopback-workspace in WORKSPACE_DIR
 // to run automigrate/autoupdate
 
-var SG = require('strong-globalize');
-var g = SG();
-
+var g = require('strong-globalize')();
 var assert = require('assert');
 
 process.once('message', function(msg) {

@@ -7,6 +7,7 @@
   "4a0da67cd22a6b80cf9079172966162f": "Creating user {0} with password {1}",
   "c332d7814925721225ff2ed73ecaa328": "Enter password for MySQL root user:",
   "d1659806277d709474c19462a8efe102": "Creating database {0}",
+  "e321c53b354930ba96f0243e652df458": "Connecting",
   "f5940523060652e3a7d9c269ce48de50": "Done.",
   "585a3d8b0497e75402cd4a86a9c771be": "no path specified",
   "7a24390da4b5e3336537a01924f6017c": "Cannot parse {0}: {1}",

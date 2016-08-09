@@ -3,9 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var SG = require('strong-globalize');
-var g = SG();
-
+var g = require('strong-globalize')();
 var app = require('../../server/server');
 
 module.exports = function(DataSourceDefinition) {
