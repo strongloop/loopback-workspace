@@ -68,7 +68,7 @@ app.use(app.get('restApiRoot'), loopback.rest());
 // API explorer
 require('loopback-component-explorer')(app);
 app.once('started', function(baseUrl) {
-  console.log(g.f('Browse your REST API at %s%s', baseUrl, '/explorer'));
+  g.log('Browse your REST API at %s%s', baseUrl, '/explorer');
 });
 
 /*
@@ -138,7 +138,7 @@ app.start = function() {
   return app.listen(function() {
     var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
     app.emit('started', baseUrl);
-    console.log(g.f('LoopBack server listening @ %s%s', baseUrl, '/'));
+    g.log('LoopBack server listening @ %s%s', baseUrl, '/');
   });
 };
 

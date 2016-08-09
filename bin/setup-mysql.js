@@ -4,9 +4,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var SG = require('strong-globalize');
-var g = SG();
-
+var g = require('strong-globalize')();
 var async = require('async');
 var mysql = require('mysql');
 var read = require('read');
@@ -32,16 +30,16 @@ async.series([
         password: password,
       });
 
-      console.log('Connecting');
+      g.log('Connecting');
       connection.connect(next);
     });
   },
   function createDatabase(next) {
-    console.log(g.f('Creating database %s', DATABASE));
+    g.log('Creating database %s', DATABASE);
     connection.query('CREATE DATABASE IF NOT EXISTS ' + DATABASE, next);
   },
   function createUser(next) {
-    console.log(g.f('Creating user %s with password %s', USER, PASSWORD));
+    g.log('Creating user %s with password %s', USER, PASSWORD);
     connection.query('GRANT ALL PRIVILEGES  ON ' + DATABASE + '.*' +
         ' TO "' + USER + '"@"localhost" IDENTIFIED BY "' + PASSWORD + '"' +
         ' WITH GRANT OPTION',

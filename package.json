@@ -34,7 +34,7 @@
     "semver": "^5.1.0",
     "serve-favicon": "^2.0.1",
     "stable": "^0.1.5",
-    "strong-globalize": "^2.5.8",
+    "strong-globalize": "^2.6.6",
     "strong-wait-till-listening": "^1.0.0"
   },
   "devDependencies": {
