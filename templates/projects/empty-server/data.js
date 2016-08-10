@@ -13,9 +13,9 @@ template.package = {
   'version': '1.0.0',
   'main': 'server/server.js',
   'scripts': {
+    'lint': 'eslint .',
     'start': 'node .',
-    'pretest': 'eslint .',
-    'posttest': 'nsp check',
+    'posttest': 'npm run lint && nsp check',
   },
   'dependencies': {
     'compression': '^1.0.3',
@@ -27,7 +27,8 @@ template.package = {
     'strong-error-handler': '^1.0.1',
   },
   'devDependencies': {
-    'eslint': '^2.5.3',
+    'eslint': '^2.13.1',
+    'eslint-config-loopback': '^4.0.0',
     'nsp': '^2.1.0',
   },
   // Avoid NPM warning
