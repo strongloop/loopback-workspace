@@ -6,7 +6,7 @@
     "export-tests": true
   },
   "scripts": {
-    "pretest": "test -z \"$JENKINS_HOME\" || (echo | node bin/setup-mysql.js)",
+    "pretest": "node bin/setup-mysql.js",
     "lint": "eslint .",
     "test": "mocha",
     "posttest": "npm run lint"

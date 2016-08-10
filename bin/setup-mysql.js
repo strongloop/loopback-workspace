@@ -16,23 +16,30 @@ DATABASE = 'loopback_workspace_test';
 USER = 'lbws';
 PASSWORD = 'hbx42rec';
 
-var connection;
+var connection, password;
 async.series([
-  function setupConnection(next) {
+  function askForPassword(next) {
+    if (process.env.CI) {
+      password = '';
+      return next();
+    }
     read({
       prompt: g.f('Enter password for MySQL root user:'),
       silent: true,
-    }, function(err, password) {
+    }, function(err, pwd) {
       if (err) return next(err);
-
-      connection = mysql.createConnection({
-        user: 'root',
-        password: password,
-      });
-
-      g.log('Connecting');
-      connection.connect(next);
+      password = pwd;
+      next();
     });
+  },
+  function setupConnection(next) {
+    connection = mysql.createConnection({
+      user: 'root',
+      password: password,
+    });
+
+    g.log('Connecting');
+    connection.connect(next);
   },
   function createDatabase(next) {
     g.log('Creating database %s', DATABASE);

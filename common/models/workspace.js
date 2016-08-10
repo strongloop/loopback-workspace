@@ -520,7 +520,7 @@ module.exports = function(Workspace) {
         child.on('exit', function(code) {
           debug('child %s exited with code %s', child.pid, code);
           Workspace._child = null;
-          done(new Error(g.f('Child exited with code %s' + code)));
+          done(new Error(g.f('Child exited with code %s', code)));
         });
 
         // Wait until the child process starts listening
