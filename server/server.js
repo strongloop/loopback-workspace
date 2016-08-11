@@ -16,6 +16,7 @@ var cookieParser = require('cookie-parser');
 var errorHandler = require('strong-error-handler');
 
 app.set('legacyExplorer', false);
+app.set('etag', false);
 
 // required to support base models
 app.dataSource('db', {
