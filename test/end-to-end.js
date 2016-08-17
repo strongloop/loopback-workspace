@@ -170,7 +170,6 @@ describe('end-to-end', function() {
             if (err) return done (err);
             var responseBody = JSON.stringify(res.body);
             expect(responseBody).to.include('stack');
-
             done();
           });
       });
@@ -509,6 +508,12 @@ describe('end-to-end', function() {
       expect(semver.gtr('3.0.0', dependencies.loopback)).to.be.false;
       done();
     });
+
+    it('comes without legacyExplorer flag in config.json', function(done) {
+      var config = fs.readJsonSync(path.resolve(SANDBOX, 'server/config.json'));
+      expect(config).to.not.have.property('legacyExplorer');
+      done();
+    });
   });
 
   describe('scaffold 2.x loopback project with option 2.x', function(done) {
@@ -523,6 +528,12 @@ describe('end-to-end', function() {
       expect(semver.gtr('3.0.0', dependencies.loopback)).to.be.true;
       expect(semver.gtr('3.0.0', dependencies['loopback-datasource-juggler']))
         .to.be.true;
+      done();
+    });
+
+    it('comes with legacyExplorer:false flag in config.json', function(done) {
+      var config = fs.readJsonSync(path.resolve(SANDBOX, 'server/config.json'));
+      expect(config).to.have.property('legacyExplorer', false);
       done();
     });
   });

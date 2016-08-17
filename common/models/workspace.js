@@ -215,6 +215,12 @@ module.exports = function(Workspace) {
             .filter(function(cc) { return cc.name != explorer; });
       }
 
+      // Add legacyExplorer flag to support creating LoopBack 2.x apps
+      if (loopbackVersion === '2.x' &&
+        template.server && template.server.config) {
+        template.server.config.push({ name: 'legacyExplorer', value: false });
+      }
+
       var dest = path.join(ConfigFile.getWorkspaceDir(), name);
       var steps = [];
 
