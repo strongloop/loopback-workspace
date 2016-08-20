@@ -549,5 +549,45 @@
       }
     },
     "supportedByStrongLoop": true
+  },
+  {
+    "name": "es",
+    "description": "ElasticSearch",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "index": {
+        "type": "string",
+        "description": "ElasticSearch Index"
+      },
+      "hosts": {
+        "type": "array",
+        "description": "Hosts array"
+      },
+      "apiVersion": {
+        "type": "string",
+        "description": "API Version to use (ex: 2.2)"
+      },
+      "defaultSize": {
+        "type": "string",
+        "description": "Default results size"
+      },
+      "mappings": {
+        "type": "array",
+        "description": "Array of field mappings"
+      },
+      "settings": {
+        "type": "object",
+        "description": "Settings object"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-es",
+      "version": "^1.0.7"
+    },
+    "supportedByStrongLoop": false
   }
 ]
