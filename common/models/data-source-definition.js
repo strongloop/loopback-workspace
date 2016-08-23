@@ -78,7 +78,7 @@ function ready(DataSourceDefinition) {
   loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
     returns: [
       { arg: 'status', type: 'boolean' },
-      { arg: 'error', type: 'Error' },
+      { arg: 'error', type: 'object' },
     ],
   });
 
