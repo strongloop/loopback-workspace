@@ -1,3 +1,23 @@
+2016-08-23, Version 3.33.0
+==========================
+
+ * Fix eslint setup in empty-server template (Simon Ho)
+
+ * fix DataSourceDefinition remoteMethod #269 (deepakrkris)
+
+ * Update globalization (Candy)
+
+ * Add globalization (Candy)
+
+ * Disable current-context in new projects (Miroslav Bajtoš)
+
+ * Fix test descriptions and refactor (Candy)
+
+ * workspace: remove "alpha" from 3.0 description (Miroslav Bajtoš)
+
+ * Fix crash due to missing optionalDependencies (Joseph Tary)
+
+
 2016-07-18, Version 3.32.0
 ==========================
 
