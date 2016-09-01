@@ -15,8 +15,6 @@ var boot = require('loopback-boot');
 var cookieParser = require('cookie-parser');
 var errorHandler = require('strong-error-handler');
 
-app.set('legacyExplorer', false);
-
 // required to support base models
 app.dataSource('db', {
   connector: loopback.Memory,

@@ -82,7 +82,6 @@ template.server = {
       cors: false,
       handleErrors: false,
     }},
-    { name: 'legacyExplorer', value: false },
   ],
 
   modelConfigs: [
