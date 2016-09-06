@@ -1,3 +1,13 @@
+2016-09-06, Version 3.34.0
+==========================
+
+ * available-connectors: add loopback-connector-es (DOSarrest)
+
+ * Remove Legacy Explorer (gunjpan)
+
+ * Fixup empty-server template. (Richard Pringle)
+
+
 2016-08-23, Version 3.33.0
 ==========================
 
