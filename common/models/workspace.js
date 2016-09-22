@@ -36,7 +36,7 @@ module.exports = function(Workspace) {
     var DEFAULT_TEMPLATE = 'api-server';
     var DEFAULT_LB_VERSION = '2.x';
     var DEPENDENCIES_3_X = {
-      'loopback': '^3.0.0-alpha.1',
+      'loopback': '^3.0.0',
     };
     var DEPENDENCIES_2_X = {
       'loopback': '^2.22.0',
@@ -61,7 +61,7 @@ module.exports = function(Workspace) {
     Workspace.getAvailableLBVersions = function(cb) {
       var availableLBVersions = {
         '2.x': { description: g.f('stable') },
-        '3.x': { description: g.f('pre-release, alpha quality') },
+        '3.x': { description: g.f('pre-release') },
       };
       cb(null, availableLBVersions);
     };
