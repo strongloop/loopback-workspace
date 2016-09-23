@@ -13,6 +13,7 @@ var PackageDefinition = app.models.PackageDefinition;
 var async = require('async');
 var debug = require('debug')('workspace:connector');
 var EventEmitter = require('events').EventEmitter;
+var helper = require('../lib/helper');
 
 connector.writeCallbacks = [];
 var debugSync = require('debug')('workspace:connector:save-sync');
@@ -215,7 +216,8 @@ connector._loadFromFile = function(cb) {
               return loopBackVersion != null;
             });
 
-            app.models.Workspace.loopBackVersion = loopBackVersion;
+            app.models.Workspace.loopBackVersion =
+              helper.parseLoopBackVersion(loopBackVersion);
           }
           next();
         });

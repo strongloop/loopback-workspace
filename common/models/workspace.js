@@ -5,6 +5,7 @@
 
 var g = require('strong-globalize')();
 var _ = require('lodash');
+var helper = require('../../lib/helper');
 
 module.exports = function(Workspace) {
   var app = require('../../server/server');
@@ -34,7 +35,6 @@ module.exports = function(Workspace) {
     var ViewDefinition = app.models.ViewDefinition;
     var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
     var DEFAULT_TEMPLATE = 'api-server';
-    var DEFAULT_LB_VERSION = '2.x';
     var DEPENDENCIES_3_X = {
       'loopback': '^3.0.0',
     };
@@ -179,7 +179,7 @@ module.exports = function(Workspace) {
       if (!options.root) {
         throw new Error(g.f('Non-root components are not supported yet.'));
       }
-      var loopbackVersion = options.loopbackVersion || DEFAULT_LB_VERSION;
+      var loopbackVersion = options.loopbackVersion || helper.DEFAULT_LB_VERSION;
       var templateName = options.template || DEFAULT_TEMPLATE;
       var name = options.name || templateName;
       var packageName = options.packageName || name;
