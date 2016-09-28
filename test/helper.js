@@ -33,5 +33,10 @@ describe('helper', function() {
       var version = helper.parseLoopBackVersion('dummy_value');
       expect(version).to.equal(helper.MASTER_LB_VERSION);
     });
+
+    it('non-string values should return default loopback version', function() {
+      var version = helper.parseLoopBackVersion();
+      expect(version).to.equal(helper.DEFAULT_LB_VERSION);
+    });
   });
 });
