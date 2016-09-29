@@ -32,9 +32,9 @@
   "764590e7674a68d13d783daf190abd06": "Bilinmeyen şablon {0}",
   "83ffa39296858c363627e71e3836df22": "kuruluş öncesi yayın düzeyi, Alfa kalite",
   "8bf84b9df8cd7dd0e56ee38030aa9397": "Proje şablonu {0} yüklenemiyor: {1}",
-  "ec12e3a97cf75423d063da5151601d11": "Geri Döngü sürümü 2.x ya da 3.x olmalıdır",
+  "ec12e3a97cf75423d063da5151601d11": "LoopBack sürümü 2.x ya da 3.x olmalıdır",
   "f40faf6384fc85a33d3b05a9d41c012b": "dengeli",
   "5e88c1acbc1fbaea1e238a52e80c25f1": "Şu adresteki REST API'nıza göz atın: {0}{1}",
-  "d36bd9d2794a680aeb5338854ff76dc3": "Geri Döngü sunucusu şu adreste dinlemede: @ {0}{1}"
+  "d36bd9d2794a680aeb5338854ff76dc3": "LoopBack sunucusu şu adreste dinlemede: @ {0}{1}"
 }
 

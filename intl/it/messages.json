@@ -24,7 +24,7 @@
   "c860fe117a7905f89e53aa13581ddae0": "embed as object richiede \"key\" o \"keyGetter\"",
   "f34a87e626b1b3ceebad58624e3b2bc3": "embed richiede foreignKey",
   "fc33da650e5ed108ea318ceebb593277": "embed supporta solo hasMany",
-  "91d2cfb9398609d20873443b01ec7092": "Impossibile analizzare {0} #{1}.{2}",
+  "91d2cfb9398609d20873443b01ec7092": "Impossibile analizzare {0} #{1}. {2}",
   "f22f2cd28d592a0379f25d872e28ee18": "Avvertenza: {0}[{1}].facetName cambiato da {2} a {3} in modo da corrispondere al parent",
   "1e67415320660ed5c22432b3177476bd": "I componenti non-root non sono ancora supportati.",
   "3147d25f9381556dc69b0d5d013fec3e": "Child uscito con codice {0}",
