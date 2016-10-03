@@ -13,6 +13,7 @@ var ModelRelation = app.models.ModelRelation;
 var TestDataBuilder = require('./helpers/test-data-builder');
 var ref = TestDataBuilder.ref;
 var ConfigFile = app.models.ConfigFile;
+var path = require('path');
 
 describe('ModelDefinition', function() {
   describe('CRUD', function() {
@@ -119,14 +120,15 @@ describe('ModelDefinition', function() {
   describe('ModelDefinition.getPath(app, obj)', function() {
     it('should return the configFile path if it exists', function() {
       var configFilePath = 'foo/bar/bat/baz.json';
-      var path = ModelDefinition.getPath('.', { name: 'MyModel',
+      var modelPath = ModelDefinition.getPath('.', { name: 'MyModel',
         configFile: configFilePath });
 
-      expect(path).to.equal(configFilePath);
+      expect(modelPath).to.equal(configFilePath);
     });
     it('should return construct configFile path', function() {
-      var path = ModelDefinition.getPath('.', { name: 'MyModel' });
-      expect(path).to.equal('models/my-model.json');
+      var configFilePath = 'models/my-model.json';
+      var modelPath = ModelDefinition.getPath('.', { name: 'MyModel' });
+      expect(modelPath).to.equal(path.normalize(configFilePath));
     });
   });
 

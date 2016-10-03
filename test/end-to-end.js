@@ -30,7 +30,7 @@ var MYSQL_USER = 'lbws';
 var MYSQL_PASSWORD = 'hbx42rec';
 
 describe('end-to-end', function() {
-  this.timeout(10000);
+  this.timeout(15000);
 
   describe('empty-server template', function() {
     var app;
@@ -628,7 +628,7 @@ describe('end-to-end', function() {
         if (err) done(err);
         listTableNames(connection, function(err, tables) {
           if (err) done(err);
-          expect(tables).to.contain('CUSTOM');
+          expect(tables).to.match(/CUSTOM/i);
           done();
         });
       });
@@ -639,7 +639,9 @@ describe('end-to-end', function() {
         if (err) done(err);
         listTableNames(connection, function(err, tables) {
           if (err) done(err);
-          expect(tables).to.include.members(['CUSTOM', 'User', 'AccessToken']);
+          expect(tables).to.match(/CUSTOM/i);
+          expect(tables).to.match(/User/i);
+          expect(tables).to.match(/AccessToken/i);
           done();
         });
       });
@@ -647,7 +649,7 @@ describe('end-to-end', function() {
   });
 
   describe('discovery', function() {
-    this.timeout(10000);
+    this.timeout(15000);
 
     var connection;
     before(function(done) {
@@ -863,7 +865,7 @@ describe('end-to-end', function() {
 
     // The tests are forking new processes and setting up HTTP servers,
     // they requires more than 2 seconds to finish
-    this.timeout(10000);
+    this.timeout(20000);
 
     before(resetWorkspace);
     before(givenBasicWorkspace);
