@@ -24,17 +24,17 @@
   "c860fe117a7905f89e53aa13581ddae0": "integração como objeto requer \"key\" ou \"keyGetter\"",
   "f34a87e626b1b3ceebad58624e3b2bc3": "integração requer foreignKey",
   "fc33da650e5ed108ea318ceebb593277": "integração suporta apenas hasMany",
-  "91d2cfb9398609d20873443b01ec7092": "Não é possível analisar {0} Nº{1}. {2}",
+  "91d2cfb9398609d20873443b01ec7092": "Não é possível analisar {0} #{1}. {2}",
   "f22f2cd28d592a0379f25d872e28ee18": "Aviso: {0}[{1}].facetName corrigido de {2} para {3} para corresponder ao pai",
   "1e67415320660ed5c22432b3177476bd": "Componentes não raiz ainda não são suportados.",
-  "3147d25f9381556dc69b0d5d013fec3e": "Filho encerrado com o código {0}",
+  "3147d25f9381556dc69b0d5d013fec3e": "O filhou saiu com o código {0}",
   "4f37c348d9c0437c456932764f94267b": "Área de trabalho inválida: nenhuma máscara localizada.",
   "764590e7674a68d13d783daf190abd06": "Modelo desconhecido {0}",
   "83ffa39296858c363627e71e3836df22": "pré-liberação, qualidade alpha",
-  "8bf84b9df8cd7dd0e56ee38030aa9397": "Não é possível carregar o modelo do projeto {0}: {1}",
+  "8bf84b9df8cd7dd0e56ee38030aa9397": "Não é possível carregar o modelo de projeto {0}: {1}",
   "ec12e3a97cf75423d063da5151601d11": "Versão de loopback deve ser 2.x ou 3.x",
   "f40faf6384fc85a33d3b05a9d41c012b": "estável",
-  "5e88c1acbc1fbaea1e238a52e80c25f1": "Procure sua API REST em {0}{1}",
-  "d36bd9d2794a680aeb5338854ff76dc3": "Servidor LoopBack atendendo @ {0}{1}"
+  "5e88c1acbc1fbaea1e238a52e80c25f1": "Procurar sua API REST em {0}{1}",
+  "d36bd9d2794a680aeb5338854ff76dc3": "Servidor de loopBack atendendo em @ {0}{1}"
 }
 
