@@ -77,8 +77,8 @@ function ready(DataSourceDefinition) {
 
   loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
     returns: [
-      { arg: 'status', type: 'boolean' },
-      { arg: 'error', type: 'object' },
+      { arg: 'status', type: 'Boolean' },
+      { arg: 'error', type: 'Object' },
     ],
   });
 
@@ -116,9 +116,7 @@ function ready(DataSourceDefinition) {
     accepts: {
       arg: 'data', type: 'DataSourceDefinition', http: { source: 'body' },
     },
-    returns: {
-      arg: 'status', type: 'boolean',
-    },
+    returns: { arg: 'status', type: 'Boolean' },
     http: { verb: 'POST' },
   });
 
@@ -169,11 +167,11 @@ function ready(DataSourceDefinition) {
 
   loopback.remoteMethod(DataSourceDefinition.prototype.discoverModelDefinition, {
     accepts: [{
-      arg: 'tableName', type: 'string', required: true,
+      arg: 'tableName', type: 'String', required: true,
     }, {
-      arg: 'options', type: 'object',
+      arg: 'options', type: 'Object',
     }],
-    returns: { arg: 'status', type: 'boolean' },
+    returns: { arg: 'status', type: 'Boolean' },
   });
 
   DataSourceDefinition.prototype.getDefaultBaseModel = function(cb) {
@@ -226,8 +224,8 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
-    accepts: { arg: 'options', type: 'object' },
-    returns: { arg: 'models', type: 'array' },
+    accepts: { arg: 'options', type: 'Object' },
+    returns: { arg: 'models', type: 'Array' },
   });
 
   DataSourceDefinition.prototype._setDefaultSchema = function(options) {
@@ -269,8 +267,8 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.automigrate, {
-    accepts: { arg: 'modelName', type: 'string' },
-    returns: { arg: 'success', type: 'boolean' },
+    accepts: { arg: 'modelName', type: 'String' },
+    returns: { arg: 'success', type: 'Boolean' },
     http: { verb: 'POST' },
   });
 
@@ -288,8 +286,8 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
-    accepts: { arg: 'modelName', type: 'string' },
-    returns: { arg: 'success', type: 'boolean' },
+    accepts: { arg: 'modelName', type: 'String' },
+    returns: { arg: 'success', type: 'Boolean' },
     http: { verb: 'POST' },
   });
 
@@ -461,9 +459,12 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.createModel, {
-    accepts: { arg: 'discoveredDef', type: 'object',
-      description: 'usually the result of discoverModelDefinition' },
-    returns: { arg: 'modelDefinitionId', type: 'string' },
+    accepts: {
+      arg: 'discoveredDef',
+      type: 'Object',
+      description: 'usually the result of discoverModelDefinition',
+    },
+    returns: { arg: 'modelDefinitionId', type: 'String' },
     http: { verb: 'POST' },
   });
 };
