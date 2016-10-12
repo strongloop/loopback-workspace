@@ -173,7 +173,7 @@ function ready(DataSourceDefinition) {
     }, {
       arg: 'options', type: 'object',
     }],
-    returns: { arg: 'status', type: 'boolean' },
+    returns: { root: true, type: 'object' },
   });
 
   DataSourceDefinition.prototype.getDefaultBaseModel = function(cb) {
@@ -227,7 +227,7 @@ function ready(DataSourceDefinition) {
 
   loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
     accepts: { arg: 'options', type: 'object' },
-    returns: { arg: 'models', type: 'array' },
+    returns: { root: true, type: 'array' },
   });
 
   DataSourceDefinition.prototype._setDefaultSchema = function(options) {
