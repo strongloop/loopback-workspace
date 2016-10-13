@@ -1,3 +1,21 @@
+2016-10-13, Version 3.35.0
+==========================
+
+ * Update ja, ko and pt translation files (Candy)
+
+ * Fix CI timeouts and windows posix errors (Candy)
+
+ * Update translation files - round#2 (Candy)
+
+ * Handle non-string values in parseLoopBackVersion (Joseph Tary)
+
+ * Add lang files (jannyHou)
+
+ * Fix semver error on git url (Candy)
+
+ * Use "^3.0.0" when scaffolding LoopBack 3.x apps (Miroslav Bajtoš)
+
+
 2016-09-06, Version 3.34.0
 ==========================
 
