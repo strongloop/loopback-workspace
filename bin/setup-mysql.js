@@ -16,6 +16,9 @@ DATABASE = 'loopback_workspace_test';
 USER = 'lbws';
 PASSWORD = 'hbx42rec';
 
+if (process.argv.indexOf('--ci-only') !== -1 && !process.env.CI)
+  return;
+
 var connection, password;
 async.series([
   function askForPassword(next) {
