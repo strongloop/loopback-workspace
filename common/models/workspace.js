@@ -37,9 +37,11 @@ module.exports = function(Workspace) {
     var DEFAULT_TEMPLATE = 'api-server';
     var DEPENDENCIES_3_X = {
       'loopback': '^3.0.0',
+      'loopback-component-explorer': '^3.0.0',
     };
     var DEPENDENCIES_2_X = {
       'loopback': '^2.22.0',
+      'loopback-component-explorer': '^2.4.0',
       'loopback-datasource-juggler': '^2.39.0',
     };
     var debug = require('debug')('workspace');
