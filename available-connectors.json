@@ -20,6 +20,16 @@
     "supportedByStrongLoop": true
   },
   {
+    "name": "kv-memory",
+    "description": "In-memory key-value connector",
+    "baseModel": "KeyValueModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "supportedByStrongLoop": true
+  },
+  {
     "name": "db2",
     "description": "IBM DB2",
     "baseModel": "PersistedModel",
@@ -186,6 +196,42 @@
     },
     "package": {
       "name": "loopback-connector-db2z",
+      "version": "^1.0.0"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "kv-redis",
+    "description": "Redis key-value connector",
+    "baseModel": "KeyValueModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: redis://user:pass@host:port/db)"
+      },
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "db": {
+        "type": "number"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-kv-redis",
       "version": "^1.0.0"
     },
     "supportedByStrongLoop": true
