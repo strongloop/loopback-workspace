@@ -22,7 +22,6 @@ template.package = {
     'cors': '^2.5.2',
     'helmet': '^1.3.0',
     'loopback-boot': '^2.6.5',
-    'loopback-component-explorer': '^2.4.0',
     'serve-favicon': '^2.0.1',
     'strong-error-handler': '^1.0.1',
   },
