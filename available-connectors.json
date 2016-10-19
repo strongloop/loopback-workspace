@@ -219,9 +219,6 @@
       "port": {
         "type": "number"
       },
-      "user": {
-        "type": "string"
-      },
       "password": {
         "type": "string",
         "display": "password"
