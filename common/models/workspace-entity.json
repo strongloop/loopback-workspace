@@ -1,4 +1,5 @@
 {
+  "validateUpsert": true,
   "properties": {
     "configFile": {"type": "string", "json": false}
   }

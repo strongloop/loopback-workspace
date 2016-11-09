@@ -9,10 +9,12 @@ var ModelProperty = app.models.ModelProperty;
 var ModelDefinition = app.models.ModelDefinition;
 var ConfigFile = app.models.ConfigFile;
 var TestDataBuilder = require('./helpers/test-data-builder');
+var request = require('supertest');
 
 describe('ModelProperty', function() {
   beforeEach(givenBasicWorkspace);
   beforeEach(function(done) {
+    this.modelId = 'server.user';
     ModelDefinition.create({
       name: 'user',
       facetName: 'server',
@@ -152,6 +154,26 @@ describe('ModelProperty', function() {
         // it passes as long as the properties were loaded.
         done(err);
       });
+    });
+  });
+
+  describe('REST API', function() {
+    it('should reject PUT with a name containing a dot', function(done) {
+      request(app).put('/api/ModelProperties')
+        .send({
+          // it's important to include id property,
+          // otherwise upsert short-circuits to create
+          id: this.modelId + '.dot.name',
+          name: 'dot.name',
+          type: 'String',
+          modelId: this.modelId,
+        })
+        .expect(422)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body.error.details.codes).to.eql({ name: ['format'] });
+          done();
+        });
     });
   });
 });

@@ -1,4 +1,5 @@
 {
+  "validateUpsert": true,
   "properties": {
     "model": "string"
   },
