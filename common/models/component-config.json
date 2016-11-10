@@ -6,6 +6,7 @@
     "component-config.json",
     "component-config.*.json"
   ],
+  "validateUpsert": true,
   "properties": {
     "id": {
       "type": "string",
