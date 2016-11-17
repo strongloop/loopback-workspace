@@ -2,11 +2,13 @@
   "name": "loopback-workspace",
   "version": "4.0.0-alpha",
   "main": "server/server.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/strongloop/loopback-workspace.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "cucumber": "^1.3.1"
+  }
 }
