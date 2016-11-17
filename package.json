@@ -1,16 +1,8 @@
 {
   "name": "loopback-workspace",
-  "version": "3.35.0",
+  "version": "4.0.0-alpha",
   "main": "server/server.js",
-  "publishConfig": {
-    "export-tests": true
-  },
-  "scripts": {
-    "pretest": "node bin/setup-mysql.js --ci-only",
-    "lint": "eslint .",
-    "test": "mocha",
-    "posttest": "npm run lint"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/strongloop/loopback-workspace.git"
@@ -27,30 +19,11 @@
     "loopback-boot": "^2.0.0",
     "loopback-component-explorer": "^2.1.0",
     "loopback-datasource-juggler": "^2.27.0",
-    "method-override": "^2.1.1",
-    "morgan": "^1.2.0",
-    "ncp": "^2.0.0",
-    "normalize-git-url": "^3.0.2",
-    "semver": "^5.1.0",
-    "serve-favicon": "^2.0.1",
-    "stable": "^0.1.5",
     "strong-error-handler": "^1.0.1",
     "strong-globalize": "^2.6.6",
     "strong-wait-till-listening": "^1.0.0"
-  },
+  }, 
   "devDependencies": {
-    "better-stack-traces": "^1.0.1",
-    "bluebird": "^3.2.1",
-    "chai": "^1.10.0",
-    "eslint": "^2.13.1",
-    "eslint-config-loopback": "^2.0.0",
-    "grunt": "^1.0.0",
-    "grunt-docular": "~0.1.2",
-    "grunt-loopback-sdk-angular": "^1.2.0",
-    "mocha": "^2.4.5",
-    "mysql": "^2.4.2",
-    "read": "^1.0.5",
-    "strong-cached-install": "^2.0.0",
-    "supertest": "^1.2.0"
+    "cucumber": "^1.3.1"
   }
 }

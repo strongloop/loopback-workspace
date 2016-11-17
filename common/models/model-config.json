@@ -1,5 +1,4 @@
 {
-  "validateUpsert": true,
   "properties": {
     "id": {
       "type": "string",
@@ -28,23 +27,5 @@
     "configFiles": [
       "model-config.json"
     ]
-  },
-  "base": "WorkspaceEntity",
-  "relations": {
-    "facet": {
-      "type": "belongsTo",
-      "model": "Facet",
-      "foreignKey": "facetName"
-    },
-    "dataSourceRef": {
-      "type": "belongsTo",
-      "model": "DataSourceDefinition",
-      "foreignKey": "dataSource"
-    },
-    "definition": {
-      "type": "hasOne",
-      "model": "ModelDefinition",
-      "foreignKey": "name"
-    }
   }
 }

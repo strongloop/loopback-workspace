@@ -12,14 +12,9 @@ module.exports = function(ModelConfig) {
    * @inherits Definition
    */
 
-  /**
-   * - `name` is required and must be unique per `Facet`
-   * - `facetName` is required and must refer to an existing facet
-   *
-   * @header Property Validation
-   */
+  ModelConfig.find = function(callback) {
+    
+    callback(null,[{"count": 1}, {"count": 2}, {"count": 3}]);
+  }
 
-  ModelConfig.validatesUniquenessOf('name', { scopedTo: ['facetName'] });
-  ModelConfig.validatesPresenceOf('name');
-  ModelConfig.validatesPresenceOf('facetName');
 };

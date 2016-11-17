@@ -7,58 +7,17 @@ var path = require('path');
 var SG = require('strong-globalize');
 SG.SetRootDir(path.join(__dirname, '..'));
 var g = SG();
-
 var loopback = require('loopback');
-var methodOverride = require('method-override');
-var app = module.exports = loopback();
 var boot = require('loopback-boot');
 var cookieParser = require('cookie-parser');
 var errorHandler = require('strong-error-handler');
 
-// required to support base models
-app.dataSource('db', {
-  connector: loopback.Memory,
-  defaultForType: 'db',
-});
+var app = module.exports = loopback();
 
-// must define base models first
-// see: https://github.com/strongloop/loopback/issues/324
-// require('./models/workspace-entity');
-// require('./models/definition');
-
-/*
- * 1. Configure LoopBack models and datasources
- *
- * Read more at http://apidocs.strongloop.com/loopback#appbootoptions
- */
-
+// must define base models
 boot(app, __dirname);
 
-// file persistence
-require('./connector');
-
 app.emit('ready');
-
-/*
- * 2. Configure request preprocessing
- *
- *  LoopBack support all express-compatible middleware.
- */
-
-app.use(loopback.favicon());
-app.use(cookieParser(app.get('cookieSecret')));
-app.use(methodOverride());
-
-/*
- * EXTENSION POINT
- * Add your custom request-preprocessing middleware here.
- * Example:
- *   app.use(loopback.limit('5.5mb'))
- */
-
-/*
- * 3. Setup request handlers.
- */
 
 // LoopBack REST interface
 app.use(app.get('restApiRoot'), loopback.rest());
