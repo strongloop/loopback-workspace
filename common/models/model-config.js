@@ -2,6 +2,8 @@
 // Node module: loopback-workspace
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+var path = require('path');
+var fs = require('fs');
 
 module.exports = function(ModelConfig) {
   /**
@@ -12,9 +14,14 @@ module.exports = function(ModelConfig) {
    * @inherits Definition
    */
 
-  ModelConfig.find = function(callback) {
-    
-    callback(null,[{"count": 1}, {"count": 2}, {"count": 3}]);
+  ModelConfig.find = function(workspaceDir, id, callback) {
+    var absolutePath = path.join(workspaceDir, id);
+    fs.readJson(absolutePath, function(err, data) {
+      if (err && err.name === 'SyntaxError') {
+        err.message = g.f('Cannot parse %s: %s', id, err.message);
+      }
+      cb(err, err ? undefined : data);
+    });
   }
 
 };
