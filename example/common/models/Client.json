@@ -1,0 +1,28 @@
+{
+  "name": "Client",
+  "base": "Model",
+  "idInjection": false,
+  "indexes": {},
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "empid": {
+      "type": "string",
+      "id": true,
+      "required": true
+    },
+    "empname": {
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
