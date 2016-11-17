@@ -2,7 +2,7 @@
 
 ## About
 
-This is a WIP for a version of loopback workspace.
+This is a WIP for creating a new version of loopback workspace.
 
 The `loopback-workspace` module provides node.js and REST APIs for interacting
 with a set of loopback components. Components are organized in the following

@@ -9,3 +9,8 @@ Feature: Users should be able to read a list of artifacts
     Given I have a workspace containing 3 models
     When I list models for the workspace
     Then All the model configs are returned
+
+  Scenario: find a model definition
+    Given the model exists
+    When I query for the model definition
+    Then the model definition is returned

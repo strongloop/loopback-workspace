@@ -1,7 +1,7 @@
 'use strict';
 var util = require('util');
 var async = require('async');
-var app = require('../../../');
+var app = require('../../../../');
 var loopback = require('loopback');
 var ModelConfig = app.models.ModelConfig;
 
