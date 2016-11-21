@@ -1,0 +1,19 @@
+{
+  "name": "Customer",
+  "base": "Model",
+  "idInjection": true,
+  "indexes": {},
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "customerid": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

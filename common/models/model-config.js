@@ -2,6 +2,8 @@
 // Node module: loopback-workspace
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
+var path = require('path');
+var fs = require('fs');
 
 module.exports = function(ModelConfig) {
   /**
@@ -12,14 +14,14 @@ module.exports = function(ModelConfig) {
    * @inherits Definition
    */
 
-  /**
-   * - `name` is required and must be unique per `Facet`
-   * - `facetName` is required and must refer to an existing facet
-   *
-   * @header Property Validation
-   */
+  ModelConfig.find = function(workspaceDir, id, callback) {
+    var absolutePath = path.join(workspaceDir, id);
+    fs.readJson(absolutePath, function(err, data) {
+      if (err && err.name === 'SyntaxError') {
+        err.message = g.f('Cannot parse %s: %s', id, err.message);
+      }
+      cb(err, err ? undefined : data);
+    });
+  }
 
-  ModelConfig.validatesUniquenessOf('name', { scopedTo: ['facetName'] });
-  ModelConfig.validatesPresenceOf('name');
-  ModelConfig.validatesPresenceOf('facetName');
 };
