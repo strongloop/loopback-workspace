@@ -11,5 +11,8 @@
   },
   "ModelConfig": {
     "dataSource": null
+  },
+  "ModelDefinition": {
+    "dataSource": null
   }
 }

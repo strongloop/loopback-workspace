@@ -1,30 +1,6 @@
 {
   "name": "Users",
   "idInjection": false,
-  "postgresql": {
-    "schema": "public",
-    "table": "users"
-  },
-  "tempPassword": {
-    "type": "Boolean",
-    "required": false,
-    "length": null,
-    "precision": null,
-    "scale": null,
-    "postgresql": {
-      "columnName": "temp_password",
-      "dataType": "boolean",
-      "dataLength": null,
-      "dataPrecision": null,
-      "dataScale": null,
-      "nullable": "NO"
-    }
-  },
-  "hidden": [
-    "password",
-    "tokenhash",
-    "tempPassword"
-  ],
   "properties": {
     "id": {
       "type": "Number",
@@ -32,180 +8,84 @@
       "required": false,
       "length": null,
       "precision": 32,
-      "scale": 0,
-      "postgresql": {
-        "columnName": "id",
-        "dataType": "integer",
-        "dataLength": null,
-        "dataPrecision": 32,
-        "dataScale": 0,
-        "nullable": "NO"
-      }
+      "scale": 0
     },
     "fName": {
       "type": "String",
       "required": true,
       "length": 40,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "f_name",
-        "dataType": "character varying",
-        "dataLength": 40,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "NO"
-      }
+      "scale": null
     },
     "lName": {
       "type": "String",
       "required": true,
       "length": 40,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "l_name",
-        "dataType": "character varying",
-        "dataLength": 40,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "NO"
-      }
+      "scale": null
     },
     "username": {
       "type": "String",
       "required": true,
       "length": 40,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "username",
-        "dataType": "character varying",
-        "dataLength": 40,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "NO"
-      }
+      "scale": null
     },
     "emailAddress": {
       "type": "String",
       "required": true,
       "length": 40,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "email_address",
-        "dataType": "character varying",
-        "dataLength": 40,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "YES"
-      }
+      "scale": null
     },
     "approved": {
       "type": "Boolean",
       "required": true,
       "length": null,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "approved",
-        "dataType": "boolean",
-        "dataLength": null,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "NO"
-      }
+      "scale": null
     },
     "timeCreated": {
       "type": "Date",
       "required": false,
       "length": null,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "time_created",
-        "dataType": "date",
-        "dataLength": null,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "NO"
-      }
+      "scale": null
     },
     "dateModified": {
       "type": "Date",
       "required": false,
       "length": null,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "date_modified",
-        "dataType": "date",
-        "dataLength": null,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "NO"
-      }
+      "scale": null
     },
     "clientname": {
       "type": "String",
       "required": false,
       "length": null,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "clientname",
-        "dataType": "character",
-        "dataLength": null,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "YES"
-      }
+      "scale": null
     },
     "password": {
       "type": "String",
       "required": false,
       "length": null,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "password",
-        "dataType": "character",
-        "dataLength": null,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "YES"
-      }
+      "scale": null
     },
     "company": {
       "type": "String",
       "required": false,
       "length": 255,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "company",
-        "dataType": "character varying",
-        "dataLength": 255,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "YES"
-      }
+      "scale": null
     },
     "tokenhash": {
       "type": "String",
       "required": false,
       "length": 255,
       "precision": null,
-      "scale": null,
-      "postgresql": {
-        "columnName": "tokenhash",
-        "dataType": "character varying",
-        "dataLength": 255,
-        "dataPrecision": null,
-        "dataScale": null,
-        "nullable": "YES"
-      }
+      "scale": null
     }
   },
   "validations": [],

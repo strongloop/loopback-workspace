@@ -1,0 +1,53 @@
+{
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "json": false
+    },
+    "facetName": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
+    "readonly": {
+      "type": "boolean",
+      "json": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "plural": "string",
+    "base": "string",
+    "strict": "boolean",
+    "public": "boolean",
+    "idInjection": {
+      "type": "boolean",
+      "default": true
+    },
+    "scopes": "object",
+    "indexes": "object",
+    "options": {
+      "type": "object",
+      "default": {
+        "validateUpsert": true
+      }
+    }
+  },
+  "public": true,
+  "dataSource": "db",
+  "options": {
+    "defaultDir": "models",
+    "defaultConfigFile": "models/$name.json",
+    "configFiles": [
+      "models/*.json"
+    ],
+    "configExtensions": [
+      "json"
+    ]
+  }
+}

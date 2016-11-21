@@ -1,82 +1,39 @@
 'use strict';
 var util = require('util');
 var async = require('async');
-var app = require('../../../../');
+var app = require('../../../../../');
 var loopback = require('loopback');
+var chai = require('chai');
+var path = require('path');
+
 var ModelDefinition = app.models.ModelDefinition;
-
+var exampleWorkspace = path.resolve(__dirname, '../../../../../example/common/models');
 module.exports = function() {
-
   var testcase = this;
-
   this.Given(/^The model '(.+)' exists$/, function(modelName, next) {
-		
-		next();
+    testcase.modelName = modelName;
+    next();
   });
 
-  this.When(/^I query for the model definition of '(.+)'$/, function (modelName, next) {
-
-		next(); 
+  this.When(/^I query for the model definition of '(.+)'$/, function(modelName, next) {
+    ModelDefinition.find(exampleWorkspace, modelName, function(err, data) {
+      if (err) return next(err);
+      testcase.modelDef = data;
+      next();
+    });
   });
 
-  this.Then(/^The model definition of '(.+)' is returned$/, function (modelName, next) {
-      given.loopBackInSandboxModules();
-      ModelDefinition.find(function(err, list) {
-        if (err) return next(err);
-        var entries = list.map(function(modelDef) {
-          return modelDef.name + (modelDef.readonly ? ' (RO)' : '');
-        });
-
-        expect(entries).to.include.members([
-          'Application (RO)',
-          'Email (RO)',
-          'User (RO)',
-        ]);
-        expect(Object.keys(this.data)).to.eql([
-          'name',
-          'description',
-          'plural',
-          'base',
-          'strict',
-          'public',
-          'idInjection',
-          'scopes',
-          'indexes',
-          'options',
-          'custom',
-          'properties',
-          'validations',
-          'relations',
-          'acls',
-          'methods',
-        ]);
-        expect(Object.keys(this.data.properties.id)).to.eql([
-          'type',
-          'id',
-          'generated',
-          'required',
-          'index',
-          'description',
-          'custom',
-        ]);
-        expect(Object.keys(this.data.relations.self)).to.eql([
-          'type',
-          'model',
-          'as',
-          'foreignKey',
-          'custom',
-        ]);
-        expect(Object.keys(this.data.acls[0])).to.eql([
-          'accessType',
-          'principalType',
-          'principalId',
-          'permission',
-          'property',
-          'custom',
-        ]);
-
-		    next();
-      });
+  this.Then(/^The model definition is returned$/, function(next) {
+    var expect = chai.expect;
+    expect(Object.keys(testcase.modelDef)).to.eql([
+      'name',
+      'idInjection',
+      'properties',
+      'validations',
+      'relations',
+      'acls',
+      'methods',
+    ]);
+    next();
   });
-
 };

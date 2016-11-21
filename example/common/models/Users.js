@@ -1,5 +1,7 @@
-var app = require("../../server/app.js");
+'use strict';
+
+var app = require('../../server/app.js');
 
 module.exports = function(Users) {
 
-}
+};

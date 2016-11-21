@@ -11,17 +11,17 @@ Feature: Users should be able to read a list of artifacts
     Then All the model configs are returned
 
   Scenario: find a model definition
-    Given The model 'User' exists
-    When I query for the model definition of 'User'
-    Then The model definition of 'User' is returned
+    Given The model 'Users' exists
+    When I query for the model definition of 'Users'
+    Then The model definition is returned
 
   Scenario: find a model property
-    Given The model 'User' exists and the property 'role' exists
+    Given The model 'Users' exists and the property 'role' exists
     When I query for the model property 'common.user.role'
     Then The model property config for 'common.user.role' is returned
 
   Scenario: find a model method
-    Given The model 'User' exists and the method 'testMethod' exists
+    Given The model 'Users' exists and the method 'testMethod' exists
     When I query for the model method 'common.user.testMethod'
     Then The model method config for 'common.user.testMethod' is returned
 
