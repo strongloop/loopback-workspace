@@ -5,9 +5,9 @@
 'use strict';
 
 var path = require('path');
-var fs = require('fs');
+var fs = require('fs-extra');
 
-module.exports = function(ModelConfig) {
+module.exports = function(ModelDefinition) {
   /**
    * Defines a model configuration which attaches a model to a facet and a
    * dataSource. It also can extend a model definition with additional configuration.
@@ -16,13 +16,13 @@ module.exports = function(ModelConfig) {
    * @inherits Definition
    */
 
-  ModelConfig.find = function(workspaceDir, id, callback) {
-    var absolutePath = path.join(workspaceDir, id);
-    fs.readJson(absolutePath, function(err, data) {
+  ModelDefinition.find = function(workspaceDir, id, callback) {
+    var file = path.resolve(workspaceDir, id + '.json');
+    fs.readJson(file, function(err, data) {
       if (err && err.name === 'SyntaxError') {
         err.message = g.f('Cannot parse %s: %s', id, err.message);
       }
-      cb(err, err ? undefined : data);
+      callback(err, err ? undefined : data);
     });
   };
 };

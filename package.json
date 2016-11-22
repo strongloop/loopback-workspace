@@ -2,7 +2,11 @@
   "name": "loopback-workspace",
   "version": "4.0.0-alpha",
   "main": "server/server.js",
-  "scripts": {},
+  "scripts": {
+    "test": "./node_modules/.bin/cucumber.js test/acceptance-tests/workspace-devtime",
+    "lint": "eslint .",
+    "posttest": "npm run lint"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/strongloop/loopback-workspace.git"
@@ -24,6 +28,9 @@
     "strong-wait-till-listening": "^1.0.0"
   }, 
   "devDependencies": {
-    "cucumber": "^1.3.1"
+    "cucumber": "^1.3.1",
+    "chai": "latest",
+    "eslint": "^2.13.1",
+    "eslint-config-loopback": "^4.0.0"
   }
 }

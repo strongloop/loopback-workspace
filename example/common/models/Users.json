@@ -1,0 +1,107 @@
+{
+  "name": "Users",
+  "idInjection": false,
+  "properties": {
+    "id": {
+      "type": "Number",
+      "id": true,
+      "required": false,
+      "length": null,
+      "precision": 32,
+      "scale": 0
+    },
+    "fName": {
+      "type": "String",
+      "required": true,
+      "length": 40,
+      "precision": null,
+      "scale": null
+    },
+    "lName": {
+      "type": "String",
+      "required": true,
+      "length": 40,
+      "precision": null,
+      "scale": null
+    },
+    "username": {
+      "type": "String",
+      "required": true,
+      "length": 40,
+      "precision": null,
+      "scale": null
+    },
+    "emailAddress": {
+      "type": "String",
+      "required": true,
+      "length": 40,
+      "precision": null,
+      "scale": null
+    },
+    "approved": {
+      "type": "Boolean",
+      "required": true,
+      "length": null,
+      "precision": null,
+      "scale": null
+    },
+    "timeCreated": {
+      "type": "Date",
+      "required": false,
+      "length": null,
+      "precision": null,
+      "scale": null
+    },
+    "dateModified": {
+      "type": "Date",
+      "required": false,
+      "length": null,
+      "precision": null,
+      "scale": null
+    },
+    "clientname": {
+      "type": "String",
+      "required": false,
+      "length": null,
+      "precision": null,
+      "scale": null
+    },
+    "password": {
+      "type": "String",
+      "required": false,
+      "length": null,
+      "precision": null,
+      "scale": null
+    },
+    "company": {
+      "type": "String",
+      "required": false,
+      "length": 255,
+      "precision": null,
+      "scale": null
+    },
+    "tokenhash": {
+      "type": "String",
+      "required": false,
+      "length": 255,
+      "precision": null,
+      "scale": null
+    }
+  },
+  "validations": [],
+  "relations": {
+    "roles": {
+      "type": "hasMany",
+      "model": "Roles",
+      "foreignKey": "userId",
+      "through": "RoleUsers"
+    },
+    "clients": {
+      "type": "hasMany",
+      "model": "Client",
+      "foreignKey": "userId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
