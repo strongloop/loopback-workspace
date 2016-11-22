@@ -3,9 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
-
+var fs = require('fs-extra');
 var path = require('path');
-var fs = require('fs');
 
 module.exports = function(ModelConfig) {
   /**
@@ -16,13 +15,15 @@ module.exports = function(ModelConfig) {
    * @inherits Definition
    */
 
-  ModelConfig.find = function(workspaceDir, id, callback) {
-    var absolutePath = path.join(workspaceDir, id);
-    fs.readJson(absolutePath, function(err, data) {
+  ModelConfig.find = function(workspaceDir, cb) {
+    var modelConfigFilePath = path.join(workspaceDir, 'server/model-config.json');
+    fs.readJson(modelConfigFilePath, function(err, data) {
       if (err && err.name === 'SyntaxError') {
         err.message = g.f('Cannot parse %s: %s', id, err.message);
+        cb(err);
+      } else {
+        cb(null, Object.keys(data));
       }
-      cb(err, err ? undefined : data);
     });
   };
 };
