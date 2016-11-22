@@ -17,5 +17,9 @@
   },
   "ModelProperty": {
     "dataSource": null
+  },
+  "ModelMethod": {
+    "dataSource": null
   }
 }
+

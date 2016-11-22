@@ -3,7 +3,7 @@
   "version": "4.0.0-alpha",
   "main": "server/server.js",
   "scripts": {
-    "test": "./node_modules/.bin/cucumber.js test/acceptance-tests/workspace-devtime",
+    "test": "grunt",
     "lint": "eslint .",
     "posttest": "npm run lint"
   },
@@ -26,11 +26,14 @@
     "strong-error-handler": "^1.0.1",
     "strong-globalize": "^2.6.6",
     "strong-wait-till-listening": "^1.0.0"
-  }, 
+  },
   "devDependencies": {
-    "cucumber": "^1.3.1",
     "chai": "latest",
+    "cucumber": "^1.3.1",
     "eslint": "^2.13.1",
-    "eslint-config-loopback": "^4.0.0"
+    "eslint-config-loopback": "^4.0.0",
+    "grunt": "^0.4.5",
+    "grunt-cli": "latest",
+    "grunt-cucumber": "^0.3.0"
   }
 }

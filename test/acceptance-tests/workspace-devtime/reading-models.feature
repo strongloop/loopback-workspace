@@ -21,9 +21,9 @@ Feature: Users should be able to read a list of artifacts
     Then The model property config is returned
 
   Scenario: find a model method
-    Given The model 'Users' exists and the method 'testMethod' exists
-    When I query for the model method 'common.user.testMethod'
-    Then The model method config for 'common.user.testMethod' is returned
+    Given The model 'users' has a method 'greet'
+    When I query for the model method
+    Then The model method config is returned
 
   Scenario: find a model relation
     Given The model 'User' exists and the relation 'roles' exists
