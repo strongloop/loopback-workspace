@@ -1,32 +1,10 @@
 {
-  "_meta": {
-    "sources": [
-      "loopback/common/models",
-      "loopback/server/models",
-      "../common/models",
-      "./models"
-    ],
-    "mixins": [
-      "loopback/common/mixins",
-      "loopback/server/mixins",
-      "../common/mixins",
-      "./mixins"
-    ]
-  },
-  "Client": {
-    "dataSource": "postgresql",
+  "Users": {
+    "dataSource": null,
     "public": true
   },
   "Roles": {
-    "dataSource": "postgresql",
-    "public": true
-  },
-  "Users": {
-    "dataSource": "postgresql",
-    "public": true
-  },
-  "RoleUsers": {
-    "dataSource": "postgresql",
+    "dataSource": null,
     "public": true
   }
 }

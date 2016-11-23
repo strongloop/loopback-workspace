@@ -1,0 +1,24 @@
+{
+  "name": "Roles",
+  "idInjection": false,
+  "properties": {
+    "id": {
+      "type": "Number",
+      "id": true,
+      "required": false,
+      "length": null,
+      "precision": 32,
+      "scale": 0
+    },
+    "type": {
+      "type": "String",
+      "required": false,
+      "length": 40,
+      "precision": null,
+      "scale": null
+    }
+  },
+  "validations": [],
+  "acls": [],
+  "methods": {}
+}
