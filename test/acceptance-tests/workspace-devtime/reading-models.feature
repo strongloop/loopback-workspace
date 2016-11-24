@@ -16,9 +16,9 @@ Feature: Users should be able to read a list of artifacts
     Then The model definition is returned
 
   Scenario: find a model property
-    Given The model 'Users' exists and the property 'role' exists
-    When I query for the model property 'common.user.role'
-    Then The model property config for 'common.user.role' is returned
+    Given The model 'Users' has a property 'id'
+    When I query for the model property
+    Then The model property config is returned
 
   Scenario: find a model method
     Given The model 'Users' exists and the method 'testMethod' exists
