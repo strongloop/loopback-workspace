@@ -373,7 +373,7 @@
     },
     "package": {
       "name": "loopback-connector-oracle",
-      "version": "^2.4"
+      "version": "^3.0"
     },
     "supportedByStrongLoop": true
   },
