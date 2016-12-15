@@ -1,0 +1,21 @@
+{
+  "name": "loopback-workspace",
+  "version": "4.0.0-alpha.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "node .",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strongloop/loopback-workspace.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "loopback": "^3.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.12.2",
+    "eslint-config-loopback": "^6.1.0"
+  }
+}
