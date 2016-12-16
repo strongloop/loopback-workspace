@@ -55,7 +55,7 @@ describe('end-to-end', function() {
       request(app)
         .get('/')
         .expect(200, function(err, res) {
-          if (err) done(err);
+          if (err) return done(err);
           expect(res.body).to.have.property('uptime');
           done();
         });
@@ -264,7 +264,7 @@ describe('end-to-end', function() {
       request(app)
         .get('/')
         .expect(200, function(err, res) {
-          if (err) done(err);
+          if (err) return done(err);
           expect(res.body).to.have.property('uptime');
           done();
         });
@@ -408,13 +408,9 @@ describe('end-to-end', function() {
       .post('/api/Notes')
       .send(sample)
       .expect(200, function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.body).
-            to.have.property('title', 'myTitle');
-          done();
-        };
+        if (err) return done(err);
+        expect(res.body).to.have.property('title', 'myTitle');
+        done();
       });
     });
 
@@ -424,13 +420,9 @@ describe('end-to-end', function() {
       .put('/api/Notes')
       .send(sample)
       .expect(200, function(err, res) {
-        if (err) {
-          done(err);
-        } else {
-          expect(res.body).
-            to.have.property('title', 'myTitle');
-          done();
-        };
+        if (err) return done(err);
+        expect(res.body).to.have.property('title', 'myTitle');
+        done();
       });
     });
 
@@ -443,13 +435,9 @@ describe('end-to-end', function() {
           request(app)
           .delete('/api/Notes/' + note.id)
           .expect(200, function(err, res) {
-            if (err) {
-              done(err);
-            } else {
-              expect(res.body).
-                to.have.property('count', 1);
-              done();
-            }
+            if (err) return done(err);
+            expect(res.body).to.have.property('count', 1);
+            done();
           });
         }
       });
@@ -482,7 +470,7 @@ describe('end-to-end', function() {
       request(app)
         .get('/api/Messages/greet?msg=Tester')
         .expect(200, function(err, res) {
-          if (err) done(err);
+          if (err) return done(err);
           expect(res.body)
             .to.have.property('greeting', 'Sender says Tester to receiver');
           done();
@@ -629,9 +617,9 @@ describe('end-to-end', function() {
 
     it('updates a single model in the database', function(done) {
       db.autoupdate('Custom', function(err) {
-        if (err) done(err);
+        if (err) return done(err);
         listTableNames(connection, function(err, tables) {
-          if (err) done(err);
+          if (err) return done(err);
           expect(tables).to.match(/CUSTOM/i);
           done();
         });
@@ -640,9 +628,9 @@ describe('end-to-end', function() {
 
     it('updates all models in the database', function(done) {
       db.autoupdate(undefined, function(err) {
-        if (err) done(err);
+        if (err) return done(err);
         listTableNames(connection, function(err, tables) {
-          if (err) done(err);
+          if (err) return done(err);
           expect(tables).to.match(/CUSTOM/i);
           expect(tables).to.match(/User/i);
           expect(tables).to.match(/AccessToken/i);
