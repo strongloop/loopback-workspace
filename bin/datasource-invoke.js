@@ -12,23 +12,13 @@ var assert = require('assert');
 process.once('message', function(msg) {
   invoke(msg, function(err) {
     if (err) {
-      if (!err.origin) err.origin = 'invoke';
-      return done(err);
+      err.origin = err.origin || 'invoke';
     }
-    done(null, Array.prototype.slice.call(arguments, 0));
+    done(err, Array.prototype.slice.call(arguments, 0));
   });
-
-  function done(err, args) {
-    send({
-      error: err,
-      callbackArgs: args,
-    });
-
-    process.nextTick(function() {
-      process.exit();
-    });
-  }
 });
+
+process.on('uncaughtException', done);
 
 function invoke(msg, cb) {
   var dataSourceName = msg.dataSourceName;
@@ -68,31 +58,22 @@ function invoke(msg, cb) {
   }
 }
 
-process.on('uncaughtException', function(err) {
-  if (process.send) {
-    send({
-      error: err,
-    });
-  } else {
+function done(err, args) {
+  if (!process.send) {
     throw err;
   }
-});
 
-function send(msg) {
-  if (msg.error) {
-    msg.error = toSerializableError(msg.error);
-  }
-
-  try {
-    process.send(msg);
-  } catch (e) {
-    g.error('failed to send message to parent process');
-    console.error(e);
-    process.exit(1);
-  }
+  process.send({
+    error: toSerializableError(err),
+    callbackArgs: args,
+  });
 }
 
 function toSerializableError(err) {
+  if (!err) {
+    return null;
+  }
+
   var alt = {};
 
   Object.getOwnPropertyNames(err).forEach(function(key) {

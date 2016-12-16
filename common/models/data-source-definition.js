@@ -325,6 +325,7 @@ function ready(DataSourceDefinition) {
       }
 
       done.apply(self, msg.callbackArgs);
+      child.kill();
     });
 
     child.stderr.on('data', storeErrors);
