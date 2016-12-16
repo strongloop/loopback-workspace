@@ -22,9 +22,15 @@ process.once('message', function(msg) {
     send({
       error: err,
       callbackArgs: args,
-    });
-
-    process.nextTick(function() {
+    }, function() {
+      // XXX better to do this when the send has completed, which may be the
+      // actual source of your bug.
+      //
+      // But even better would be to not do this here. kill your child in your
+      // parent process after its received its message (assuming that you don't
+      // control the invoked methods... they shouldn't have side effects, and
+      // node should exit by itself, but if you don't trust them, best to kill
+      // from the parent where it cannot be stopped).
       process.exit();
     });
   }
@@ -68,12 +74,19 @@ function invoke(msg, cb) {
   }
 }
 
+// XXX(sam) don't do this, its unnecessary and dangerous, its not guaranteed
+// by node that this is valid, and the default behaviour of writing to stderr
+// is perfect for you, since you already collect the stderr in the parent.
 process.on('uncaughtException', function(err) {
+  // XXX(sam) the only way this is reachable is if globalize fails to
+  // initialize, AND this process doesn't have an IPC channel... delete all this
+  // code along with the uncaught exception handler.
   if (process.send) {
     send({
       error: err,
     });
   } else {
+    // XXX(sam) loses the stack trace :-(
     throw err;
   }
 });
@@ -86,6 +99,10 @@ function send(msg) {
   try {
     process.send(msg);
   } catch (e) {
+    // XXX(sam) get rid of this, too, the exception will already kill node,
+    // writing to stderr, and hit your top level stderr collector. There are way
+    // to many methods of sending errors to the parent in this code. Its un-unit
+    // testable, and unpredictable.
     g.error('failed to send message to parent process');
     console.error(e);
     process.exit(1);

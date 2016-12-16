@@ -293,11 +293,16 @@ function ready(DataSourceDefinition) {
     http: { verb: 'POST' },
   });
 
+  // XXX(sam) This could really use a comment... it looks like the purpose here
+  // is not co-processing, but to workaround the fact that so much of what
+  // loopback does depends on the CWD from which its loaded?
   DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
     // TODO(bajtos) We should ensure there is never more than one instance
     // of this code running at any given time.
     var isDone = false;
     var self = this;
+    // XXX(sam) why not call slice as (arguments, 1) instead of shifting off
+    // arguments[0] later?
     var args = Array.prototype.slice.call(arguments, 0);
     var child, cb;
     var stdErrs = [];
@@ -310,6 +315,9 @@ function ready(DataSourceDefinition) {
       cb = args.pop();
     } else {
       cb = function invokeComplete(err) {
+        // XXX(sam) when someone sees this, they won't know where its logged
+        // from, maybe use console.trace(), or put some kind of greppable string
+        // as first arg to console.error
         if (err) console.error(err);
       };
     }
@@ -327,9 +335,19 @@ function ready(DataSourceDefinition) {
       done.apply(self, msg.callbackArgs);
     });
 
+    // XXX(sam) use https://www.npmjs.com/package/concat-stream
     child.stderr.on('data', storeErrors);
 
-    child.on('exit', function(code) {
+    // XXX(sam) don't use exit here, its racy. The child can exit while its data
+    // is still unread from the pipes, in which case stderr will not be
+    // complete. Use 'close', it exists for this purpose, and has the same args.
+    child.on('exit', function(code, signal) {
+      // XXX(sam) code can be null/undefined iff exit event has a second arg,
+      // signal, iff the child terminated by signal. Rewrite below as:
+      // function(code, signal) {
+      //   var reason = signal || code;
+      //   if (reason !== 0) done(...
+      // and log the reason, as well as the stderr
       if (code > 0) {
         done(new Error(stdErrs.join('')));
       }
@@ -350,12 +368,22 @@ function ready(DataSourceDefinition) {
         return;
       }
 
+      // XXX(sam) what is this for? its not needed for mem leaks, the child will
+      // gc once it exits and writes to its pipes. perhaps its meant to stop the
+      // stderr listener on success? unpiping stdout on child close would make
+      // more sense as a defensive measure
       child.stderr.removeListener('data', storeErrors);
 
       cb.apply(self, arguments);
+      // XXX(sam) what is this? some kind of defensive programming in case a
+      // child exits *twice*? That won't happen.
+      // Actually, looking at how isDone is only short-circuiting when there is
+      // an error, I think this code may exist because you are getting errors
+      // from stderr, and from on message?
       isDone = true;
     }
 
+    // XXX(sam) concat-stream
     function storeErrors(buf) {
       stdErrs.push(buf.toString());
     }
