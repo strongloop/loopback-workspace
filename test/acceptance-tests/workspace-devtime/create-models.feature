@@ -7,5 +7,5 @@ Feature: Users should be able to create models
   Scenario: Create a model
     Given that I have loaded the workspace
     When I create model 'Customer'
-    Then the model definition json is created
+    Then the model definition is created
     

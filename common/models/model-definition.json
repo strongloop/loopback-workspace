@@ -1,0 +1,37 @@
+{
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "json": false
+    },
+    "facetName": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
+    "readonly": {
+      "type": "boolean",
+      "json": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "plural": "string",
+    "base": "string",
+    "strict": "boolean",
+    "public": "boolean",
+    "idInjection": {
+      "type": "boolean",
+      "default": true
+    },
+    "scopes": "object",
+    "indexes": "object"
+  },
+  "public": true,
+  "dataSource": null
+}

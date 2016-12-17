@@ -8,6 +8,10 @@
       "../common/mixins",
       "./mixins"
     ]
+  },
+  "ModelDefinition": {
+    "public": true,
+    "dataSource": "db"
   }
 }
 
