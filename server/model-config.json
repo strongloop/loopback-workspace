@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "sources": [
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "../common/mixins",
+      "./mixins"
+    ]
+  }
+}
+

@@ -148,4 +148,4 @@ Contributing to `loopback-workspace` is easy. In a few simple steps:
 ```
 
 [Google C++ Style Guide]: https://google.github.io/styleguide/cppguide.html
-[Google Javascript Style Guide]: https://google.github.io/styleguide/javascriptguide.xml
+[Google Javascript Style Guide]: http://loopback.io/doc/en/contrib/style-guide.html
