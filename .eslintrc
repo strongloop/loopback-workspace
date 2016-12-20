@@ -1,6 +1,3 @@
 {
-  "extends": "loopback",
-  "parserOptions": {
-    "sourceType": "module"
-  }
+  "extends": "loopback"
 }

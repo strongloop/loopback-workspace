@@ -7,8 +7,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "posttest": "npm run lint",
-    "test": "eslint ."
+    "test": "eslint .",
+    "posttest": "npm run lint"
   },
   "repository": {
     "type": "git",
