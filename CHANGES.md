@@ -1,3 +1,35 @@
+2016-12-21, Version 3.36.0
+==========================
+
+ * Update LBVersion description (jannyHou)
+
+ * Use the correct version of the explorer (Ritchie Martori)
+
+ * change when child process datasource/invoke exits (Eddie Monge)
+
+ * return after err done in tests (Eddie Monge)
+
+ * Update tr translation file (Candy)
+
+ * Update paid support URL (Siddhi Pai)
+
+ * use 3.0 oracle connector version (rashmihunt)
+
+ * Update pt translation file (Candy)
+
+ * Validate upserts (Miroslav Bajtoš)
+
+ * using 3.0.0 version of soap connector (rashmihunt)
+
+ * Remove undocumented user option for kv-redis (#338) (Simon Ho)
+
+ * Add key-value connectors (#332) (Simon Ho)
+
+ * Use explorer@3 when scaffolding loopback@3 apps (Miroslav Bajtoš)
+
+ * Fix "npm test" to not run MySQL setup outside CI (Miroslav Bajtoš)
+
+
 2016-10-13, Version 3.35.0
 ==========================
 
