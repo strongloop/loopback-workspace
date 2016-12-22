@@ -1,6 +1,9 @@
 'use strict';
 
-var chai = require('chai');
-chai.use(require('dirty-chai'));
+const chai = require('chai');
+const dirtyChai = require('dirty-chai');
 
-module.exports = chai.expect;
+chai.use(dirtyChai);
+const expect = chai.expect;
+
+module.exports = expect;

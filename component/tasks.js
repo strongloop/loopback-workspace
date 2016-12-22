@@ -1,6 +1,7 @@
 'use strict';
-var Model = require('./datamodel/model');
-var DataSource = require('./datamodel/datasource');
+const Model = require('./datamodel/model');
+const ModelProperty = require('./datamodel/model-property');
+const DataSource = require('./datamodel/datasource');
 
 /**
  * @class Tasks
@@ -10,16 +11,25 @@ var DataSource = require('./datamodel/datasource');
  */
 class Tasks {
   addModel(modelId, modelDef, cb) {
-    var workspace = this;
+    const workspace = this;
     //Model is a self-aware node which adds itself to the Workspace graph
     new Model(workspace, modelId, modelDef);
     cb(null, modelDef);
   }
   addDataSource(id, datasource, cb) {
-    var workspace = this;
+    const workspace = this;
     //Datasource is a self-aware node which adds itself to the Workspace graph
     new DataSource(workspace, id, datasource);
     cb(null, datasource);
+  }
+  addModelProperty(modelId, propertyName, propertyDef, cb) {
+    const workspace = this;
+    const id = modelId + '.' + propertyName;
+    //ModelProperty is a self-aware node which adds itself to the Workspace graph
+    const property = new ModelProperty(workspace, id, propertyDef);
+    const model = workspace.getModel(modelId);
+    model.setProperty(propertyName, property);
+    cb(null, propertyDef);
   }
 };
 

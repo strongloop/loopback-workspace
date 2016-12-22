@@ -16,6 +16,10 @@
   "ModelDefinition": {
     "public": true,
     "dataSource": "db"
+  },
+  "ModelProperty": {
+    "public": true,
+    "dataSource": "db"
   }
 }
 

@@ -1,5 +1,5 @@
 'use strict';
-var Node = require('./graph').Node;
+const Node = require('./graph').Node;
 
 /**
  * @class Model
@@ -16,6 +16,9 @@ class Model extends Node {
     this.options = options;
     //Model adds itself to the workspace
     Workspace.addNode(this);
+  }
+  setProperty(name, property) {
+    this.properties[name] = property;
   }
 };
 
