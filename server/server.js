@@ -8,7 +8,11 @@ var loopback = require('loopback');
 var boot = require('loopback-boot');
 var app = module.exports = loopback();
 
-boot(app, __dirname);
+boot(app, __dirname, function() {
+  app.emit('ready');
+});
+//add workspace operations to connector
+require('../connector/connector.js');
 
 app.start = function() {
   return app.listen(function() {
