@@ -1,5 +1,5 @@
 'use strict';
-var Graph = require('./datamodel/graph.js').Graph;
+var Graph = require('./datamodel/graph');
 var Tasks = require('./tasks.js');
 
 /**
@@ -19,6 +19,10 @@ class Workspace extends Graph {
   getModel(modelId) {
     var model = this.getNode('ModelDefinition', modelId);
     return model._content;
+  }
+  getDataSource(id) {
+    var ds = this.getNode('DataSource', id);
+    return ds._content;
   }
 };
 

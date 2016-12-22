@@ -9,6 +9,10 @@
       "./mixins"
     ]
   },
+  "DataSourceDefinition": {
+    "public": true,
+    "dataSource": "db"
+  },
   "ModelDefinition": {
     "public": true,
     "dataSource": "db"

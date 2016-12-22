@@ -14,6 +14,7 @@ class Model extends Node {
     this.relations = {};
     this.config = {};
     this.options = options;
+    //Model adds itself to the workspace
     Workspace.addNode(this);
   }
 };
