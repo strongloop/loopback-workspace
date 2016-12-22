@@ -12,3 +12,8 @@ connector.createModel = function(id, data, cb) {
   var workspace = WorkspaceManager.getWorkspace();
   workspace.addModel(id, data, cb);
 };
+
+connector.createDataSource = function(id, data, cb) {
+  var workspace = WorkspaceManager.getWorkspace();
+  workspace.addDataSource(id, data, cb);
+};

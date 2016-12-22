@@ -1,6 +1,6 @@
 'use strict';
 var app = require('../../../../');
-var chai = require('chai');
+var expect = require('../../../helpers/expect');
 var loopback = require('loopback');
 var path = require('path');
 var util = require('util');
@@ -37,7 +37,6 @@ module.exports = function() {
   });
 
   this.Then(/^the model definition is created$/, function(next) {
-    var expect = chai.expect;
     var workspace = workspaceManager.getWorkspace();
     var storedModel = workspace.getModel(testsuite.modelId);
     expect(testsuite.expectedModel).to.eql(storedModel);

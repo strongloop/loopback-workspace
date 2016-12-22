@@ -1,5 +1,6 @@
 'use strict';
 var Model = require('./datamodel/model');
+var DataSource = require('./datamodel/datasource');
 
 /**
  * @class Tasks
@@ -10,8 +11,15 @@ var Model = require('./datamodel/model');
 class Tasks {
   addModel(modelId, modelDef, cb) {
     var workspace = this;
-    var model = new Model(workspace, modelId, modelDef);
+    //Model is a self-aware node which adds itself to the Workspace graph
+    new Model(workspace, modelId, modelDef);
     cb(null, modelDef);
+  }
+  addDataSource(id, datasource, cb) {
+    var workspace = this;
+    //Datasource is a self-aware node which adds itself to the Workspace graph
+    new DataSource(workspace, id, datasource);
+    cb(null, datasource);
   }
 };
 

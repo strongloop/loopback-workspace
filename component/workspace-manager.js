@@ -11,6 +11,7 @@ const Manager = class Manager {
     //TODO(Deepak) - use Path to resolve directory
     this.createWorkspace('/');
     this.workspace.addDomain('ModelDefinition');
+    this.workspace.addDomain('DataSource');
   }
   createWorkspace(dir) {
     this.workspace = new Workspace(dir);
