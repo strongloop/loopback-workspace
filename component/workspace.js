@@ -1,6 +1,6 @@
 'use strict';
-var Graph = require('./datamodel/graph');
-var Tasks = require('./tasks.js');
+const Graph = require('./datamodel/graph');
+const Tasks = require('./tasks.js');
 
 /**
  * @class Workspace
@@ -17,20 +17,24 @@ class Workspace extends Graph {
     mixin(this, Tasks.prototype);
   }
   getModel(modelId) {
-    var model = this.getNode('ModelDefinition', modelId);
-    return model._content;
+    const model = this.getNode('ModelDefinition', modelId);
+    return model;
   }
   getDataSource(id) {
-    var ds = this.getNode('DataSource', id);
-    return ds._content;
+    const ds = this.getNode('DataSource', id);
+    return ds;
+  }
+  getModelProperty(id) {
+    const property = this.getNode('ModelProperty', id);
+    return property;
   }
 };
 
 function mixin(target, source) {
-  var attributes = Object.getOwnPropertyNames(source);
+  const attributes = Object.getOwnPropertyNames(source);
   attributes.forEach(function(ix) {
     if (typeof source[ix] === 'function') {
-      var mx = source[ix];
+      const mx = source[ix];
       target[ix] = mx;
     }
   });

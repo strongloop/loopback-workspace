@@ -16,8 +16,8 @@ module.exports = function(DataSourceDefinition) {
         cb = options;
         options = null;
       }
-      var connector = DataSourceDefinition.getConnector();
-      var id = data.id;
+      const connector = DataSourceDefinition.getConnector();
+      const id = data.id;
       //TODO(Deepak) - add response handling later as part of the callback
       connector.createDataSource(id, data, cb);
     };

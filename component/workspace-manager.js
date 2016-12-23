@@ -1,5 +1,5 @@
 'use strict';
-var Workspace = require('./workspace.js');
+const Workspace = require('./workspace.js');
 
 /**
  * @class WorkspaceManager
@@ -12,6 +12,7 @@ const Manager = class Manager {
     this.createWorkspace('/');
     this.workspace.addDomain('ModelDefinition');
     this.workspace.addDomain('DataSource');
+    this.workspace.addDomain('ModelProperty');
   }
   createWorkspace(dir) {
     this.workspace = new Workspace(dir);

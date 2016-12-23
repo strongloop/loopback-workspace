@@ -1,17 +1,18 @@
 'use strict';
-var app = require('../../../../');
-var expect = require('../../../helpers/expect');
-var loopback = require('loopback');
-var path = require('path');
-var util = require('util');
-var workspaceManager = require('../../../../component/workspace-manager.js');
-var DataSourceDefinition = app.models.DataSourceDefinition;
+const app = require('../../../../');
+const expect = require('../../../helpers/expect');
+const loopback = require('loopback');
+const path = require('path');
+const util = require('util');
+const workspaceManager = require('../../../../component/workspace-manager');
+
+const DataSourceDefinition = app.models.DataSourceDefinition;
 app.on('booted', function() {
   app.emit('ready');
 });
 
 module.exports = function() {
-  var testsuite = this;
+  const testsuite = this;
   this.Given(/^that I have loaded the workspace$/, function(next) {
     //TODO(DEEPAK) - modify here to load a particular workspace dir
     next();
@@ -20,7 +21,7 @@ module.exports = function() {
   this.When(/^I create datasource '(.+)' with connector '(.+)'$/,
     function(dsName, connector, next) {
       testsuite.datasourceId = 'common.datasources.' + dsName;
-      var datasource = {
+      const datasource = {
         'id': testsuite.datasourceId,
         'name': dsName,
         'connector': connector,
@@ -33,9 +34,9 @@ module.exports = function() {
     });
 
   this.Then(/^the datasource definition is created$/, function(next) {
-    var workspace = workspaceManager.getWorkspace();
-    var storedDs = workspace.getDataSource(testsuite.datasourceId);
-    expect(testsuite.expectedDs).to.eql(storedDs);
+    const workspace = workspaceManager.getWorkspace();
+    const storedDs = workspace.getDataSource(testsuite.datasourceId);
+    expect(testsuite.expectedDs).to.eql(storedDs._content);
     next();
   });
 };

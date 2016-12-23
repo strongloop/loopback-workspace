@@ -1,5 +1,5 @@
 'use strict';
-var Node = require('./graph').Node;
+const Node = require('./graph').Node;
 
 /**
  * @class DataSource

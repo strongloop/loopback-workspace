@@ -13,8 +13,8 @@ class Graph {
     this._cache[name] = {};
   }
   addNode(node) {
-    var domain = node._domain;
-    var name = node._name;
+    const domain = node._domain;
+    const name = node._name;
     this._cache[domain][name] = node;
   }
   getNode(domain, name) {

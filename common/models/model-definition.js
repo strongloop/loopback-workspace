@@ -11,13 +11,13 @@ module.exports = function(ModelDefinition) {
    * @class ModelDefinition
    */
   ModelDefinition.on('dataSourceAttached', function(eventData) {
-    var connector = ModelDefinition.getConnector();
+    const connector = ModelDefinition.getConnector();
     ModelDefinition.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = null;
       }
-      var id = data.id;
+      const id = data.id;
       //TODO(Deepak) - add response handling later
       connector.createModel(id, data, cb);
     };
