@@ -1,5 +1,6 @@
 'use strict';
 const Graph = require('./datamodel/graph');
+const Processor = require('./datamodel/util/processor');
 const Tasks = require('./tasks.js');
 
 /**
@@ -13,8 +14,19 @@ class Workspace extends Graph {
   constructor(rootFolder) {
     super();
     this.directory = rootFolder;
+    this.processor = new Processor();
     //mixin the atomic tasks with the workspace graph
     mixin(this, Tasks.prototype);
+  }
+  execute(transaction, callBack) {
+    var task = this.processor.createTask(callBack);
+    transaction.forEach(function(t) {
+      task.addFunction(t);
+    });
+    this.processor.emit('execute', task);
+  }
+  getDirectory() {
+    return this.directory;
   }
   getModel(modelId) {
     const model = this.getNode('ModelDefinition', modelId);

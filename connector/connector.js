@@ -2,7 +2,7 @@
 const app = require('../server/server.js');
 const connector = app.dataSources.db.connector;
 const WorkspaceManager = require('../component/workspace-manager.js');
-
+const ModelHandler = require('./model-handler');
 /**
  * @class Connector
  *
@@ -10,7 +10,7 @@ const WorkspaceManager = require('../component/workspace-manager.js');
  */
 connector.createModel = function(id, data, cb) {
   const workspace = WorkspaceManager.getWorkspace();
-  workspace.addModel(id, data, cb);
+  ModelHandler.createModel(workspace, id, data, cb);
 };
 
 connector.createDataSource = function(id, data, cb) {

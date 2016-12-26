@@ -2,7 +2,7 @@
 const Model = require('./datamodel/model');
 const ModelProperty = require('./datamodel/model-property');
 const DataSource = require('./datamodel/datasource');
-
+const WriteOperations = require('./datamodel/util/write');
 /**
  * @class Tasks
  *
@@ -13,8 +13,8 @@ class Tasks {
   addModel(modelId, modelDef, cb) {
     const workspace = this;
     //Model is a self-aware node which adds itself to the Workspace graph
-    new Model(workspace, modelId, modelDef);
-    cb(null, modelDef);
+    const model = new Model(workspace, modelId, modelDef);
+    WriteOperations.writeModel(model, cb);
   }
   addDataSource(id, datasource, cb) {
     const workspace = this;

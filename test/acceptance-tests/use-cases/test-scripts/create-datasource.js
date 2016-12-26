@@ -13,10 +13,11 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^that I have loaded the workspace$/, function(next) {
-    //TODO(DEEPAK) - modify here to load a particular workspace dir
-    next();
-  });
+  this.Given(/^that I have a workspace created from a template$/,
+    function(next) {
+      //TODO(DEEPAK) - modify here to load a particular workspace dir
+      next();
+    });
 
   this.When(/^I create datasource '(.+)' with connector '(.+)'$/,
     function(dsName, connector, next) {

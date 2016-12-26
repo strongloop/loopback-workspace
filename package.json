@@ -16,9 +16,13 @@
   },
   "license": "MIT",
   "dependencies": {
+    "async": "^2.1.4",
+    "fs-extra": "^1.0.0",
+    "lodash": "^4.17.3",
     "loopback": "^3.0.0",
     "loopback-boot": "^2.23.0",
-    "loopback-component-explorer": "^3.0.0"
+    "loopback-component-explorer": "^3.0.0",
+    "mkdirp": "^0.5.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
