@@ -12,6 +12,9 @@ class DataSource extends Node {
     this.options = options;
     Workspace.addNode(this);
   }
+  getDefinition() {
+    return this._content;
+  }
 };
 
 module.exports = DataSource;

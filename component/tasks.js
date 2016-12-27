@@ -20,7 +20,7 @@ class Tasks {
     const workspace = this;
     //Datasource is a self-aware node which adds itself to the Workspace graph
     new DataSource(workspace, id, datasource);
-    cb(null, datasource);
+    WriteOperations.writeDataSourceConfig(workspace, cb);
   }
   addModelProperty(modelId, propertyName, propertyDef, cb) {
     const workspace = this;

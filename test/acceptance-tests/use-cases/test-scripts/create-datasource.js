@@ -3,6 +3,7 @@ const app = require('../../../../');
 const expect = require('../../../helpers/expect');
 const loopback = require('loopback');
 const path = require('path');
+const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
 
@@ -15,7 +16,7 @@ module.exports = function() {
   const testsuite = this;
   this.Given(/^that I have a workspace created from a template$/,
     function(next) {
-      //TODO(DEEPAK) - modify here to load a particular workspace dir
+      workspaceManager.createWorkspace(testSupport.givenSandboxDir());
       next();
     });
 

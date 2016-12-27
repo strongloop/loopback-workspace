@@ -12,8 +12,10 @@ class Processor extends EventEmitter {
     async.series(task.list, function(err, data) {
       if (err) {
         task.callBack(err);
+        next();
       } else {
         task.callBack(null, data);
+        next();
       }
     });
   }

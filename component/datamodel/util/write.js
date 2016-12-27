@@ -15,6 +15,19 @@ class WriteOperations {
       cb(null, data);
     });
   }
+  static writeDataSourceConfig(workspace, cb) {
+    const dsList = workspace.getAllDataSource();
+    const configData = {};
+    Object.keys(dsList).forEach(function(key) {
+      const ds = dsList[key];
+      configData[key] = ds.getDefinition();
+    });
+    const filePath = workspace.getDataSourceConfigFilePath();
+    fs.writeJson(filePath, configData, function(err) {
+      if (err) return cb(err);
+      cb(null, configData);
+    });
+  }
 }
 
 module.exports = WriteOperations;

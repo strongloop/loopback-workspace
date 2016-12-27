@@ -8,11 +8,15 @@ const createSandboxDir = function(dir, cb) {
   fs.mkdir(dir, function(err) {
     if (err) return cb(err);
     const modelsDir = path.resolve(dir, 'common', 'models');
+    const serverDir = path.resolve(dir, 'server');
     mkdirp(modelsDir, function(err) {
       if (err) return cb(err);
-      const result = {};
-      result.dir = dir;
-      cb(null, result);
+      mkdirp(serverDir, function(err) {
+        if (err) return cb(err);
+        const result = {};
+        result.dir = dir;
+        cb(null, result);
+      });
     });
   });
 };
@@ -22,4 +26,8 @@ module.exports.givenEmptySandbox = function(cb) {
     if (err) return cb(err);
     createSandboxDir(sandboxDir, cb);
   });
+};
+
+module.exports.givenSandboxDir = function() {
+  return sandboxDir;
 };

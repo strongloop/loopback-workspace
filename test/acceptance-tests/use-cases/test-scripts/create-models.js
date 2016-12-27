@@ -18,11 +18,8 @@ app.on('booted', function() {
 module.exports = function() {
   const testsuite = this;
   this.Given(/^that I have loaded the workspace$/, function(next) {
-    testSupport.givenEmptySandbox(function(err, result) {
-      if (err) return next(err);
-      workspaceManager.createWorkspace(result.dir);
-      next();
-    });
+    workspaceManager.createWorkspace(testSupport.givenSandboxDir());
+    next();
   });
 
   this.When(/^I create model '(.+)'$/, function(modelName, next) {
