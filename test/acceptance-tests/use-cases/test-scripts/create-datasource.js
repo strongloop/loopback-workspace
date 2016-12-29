@@ -3,6 +3,7 @@ const app = require('../../../../');
 const expect = require('../../../helpers/expect');
 const loopback = require('loopback');
 const path = require('path');
+const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
 
@@ -14,25 +15,25 @@ app.on('booted', function() {
 module.exports = function() {
   const testsuite = this;
   this.Given(/^that I have a workspace created from a template$/,
-    function(next) {
-      //TODO(DEEPAK) - modify here to load a particular workspace dir
-      next();
-    });
+  function(next) {
+    workspaceManager.createWorkspace(testSupport.givenSandboxDir());
+    next();
+  });
 
   this.When(/^I create datasource '(.+)' with connector '(.+)'$/,
-    function(dsName, connector, next) {
-      testsuite.datasourceId = 'common.datasources.' + dsName;
-      const datasource = {
-        'id': testsuite.datasourceId,
-        'name': dsName,
-        'connector': connector,
-      };
-      DataSourceDefinition.create(datasource, {}, function(err, data) {
-        if (err) return next(err);
-        testsuite.expectedDs = datasource;
-        next();
-      });
+  function(dsName, connector, next) {
+    testsuite.datasourceId = 'common.datasources.' + dsName;
+    const datasource = {
+      id: testsuite.datasourceId,
+      name: dsName,
+      connector: connector,
+    };
+    DataSourceDefinition.create(datasource, {}, function(err, data) {
+      if (err) return next(err);
+      testsuite.expectedDs = datasource;
+      next();
     });
+  });
 
   this.Then(/^the datasource definition is created$/, function(next) {
     const workspace = workspaceManager.getWorkspace();

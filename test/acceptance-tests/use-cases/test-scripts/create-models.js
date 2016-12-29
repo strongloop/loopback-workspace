@@ -18,24 +18,21 @@ app.on('booted', function() {
 module.exports = function() {
   const testsuite = this;
   this.Given(/^that I have loaded the workspace$/, function(next) {
-    testSupport.givenEmptySandbox(function(err, result) {
-      if (err) return next(err);
-      workspaceManager.createWorkspace(result.dir);
-      next();
-    });
+    workspaceManager.createWorkspace(testSupport.givenSandboxDir());
+    next();
   });
 
   this.When(/^I create model '(.+)'$/, function(modelName, next) {
     testsuite.modelId = 'common.' + modelName;
     const model = {
-      'id': testsuite.modelId,
-      'facetName': 'common',
-      'name': modelName,
-      'readonly': true,
-      'plural': 'customers',
-      'strict': true,
-      'public': true,
-      'idInjection': true,
+      id: testsuite.modelId,
+      facetName: 'common',
+      name: modelName,
+      readonly: true,
+      plural: 'customers',
+      strict: true,
+      public: true,
+      idInjection: true,
     };
     testsuite.modelName = modelName;
     ModelDefinition.create(model, {}, function(err, data) {

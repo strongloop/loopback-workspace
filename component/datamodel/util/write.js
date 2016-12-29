@@ -6,15 +6,30 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-class WriteOperations {
-  static writeModel(model, cb) {
-    const filePath = model.getFilePath();
-    const data = model.getDefinition();
-    fs.writeJson(filePath, data, function(err) {
-      if (err) return cb(err);
-      cb(null, data);
-    });
-  }
+module.exports = {
+  writeDataSourceConfig: writeDataSourceConfig,
+  writeModel: writeModel,
+};
+
+function writeModel(model, cb) {
+  const filePath = model.getFilePath();
+  const data = model.getDefinition();
+  fs.writeJson(filePath, data, function(err) {
+    if (err) return cb(err);
+    cb(null, data);
+  });
 }
 
-module.exports = WriteOperations;
+function writeDataSourceConfig(workspace, cb) {
+  const dsList = workspace.getAllDataSources();
+  const configData = {};
+  Object.keys(dsList).forEach(function(key) {
+    const ds = dsList[key];
+    configData[key] = ds.getDefinition();
+  });
+  const filePath = workspace.getDataSourceConfigFilePath();
+  fs.writeJson(filePath, configData, function(err) {
+    if (err) return cb(err);
+    cb(null, configData);
+  });
+}

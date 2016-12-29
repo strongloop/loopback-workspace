@@ -4,22 +4,33 @@ const mkdirp = require('mkdirp');
 const path = require('path');
 const sandboxDir = path.resolve(__dirname, '../sandbox/');
 
-const createSandboxDir = function(dir, cb) {
+exports.givenEmptySandbox = givenEmptySandbox;
+exports.givenSandboxDir = givenSandboxDir;
+
+function createSandboxDir(dir, cb) {
   fs.mkdir(dir, function(err) {
     if (err) return cb(err);
     const modelsDir = path.resolve(dir, 'common', 'models');
+    const serverDir = path.resolve(dir, 'server');
     mkdirp(modelsDir, function(err) {
       if (err) return cb(err);
-      const result = {};
-      result.dir = dir;
-      cb(null, result);
+      mkdirp(serverDir, function(err) {
+        if (err) return cb(err);
+        const result = {};
+        result.dir = dir;
+        cb(null, result);
+      });
     });
   });
 };
 
-module.exports.givenEmptySandbox = function(cb) {
+function givenEmptySandbox(cb) {
   fs.remove(sandboxDir, function(err) {
     if (err) return cb(err);
     createSandboxDir(sandboxDir, cb);
   });
-};
+}
+
+function givenSandboxDir() {
+  return sandboxDir;
+}

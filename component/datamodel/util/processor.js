@@ -5,20 +5,18 @@ const EventEmitter = require('events');
 class Processor extends EventEmitter {
   constructor() {
     super();
-    this.queue = async.queue(this.executor, 1);
+    const concurrency = 1;
+    this.queue = async.queue(this.executor, concurrency);
     this.on('execute', this.execute);
   }
   executor(task, next) {
     async.series(task.list, function(err, data) {
-      if (err) {
-        task.callBack(err);
-      } else {
-        task.callBack(null, data);
-      }
+      task.callback(err, data);
+      next();
     });
   }
-  createTask(callBack) {
-    return new Task(callBack);
+  createTask(callback) {
+    return new Task(callback);
   }
   execute(task) {
     this.queue.push(task);
@@ -28,7 +26,7 @@ class Processor extends EventEmitter {
 class Task {
   constructor(cb) {
     this.list = [];
-    this.callBack = cb;
+    this.callback = cb;
   }
   addFunction(f) {
     this.list.push(f);

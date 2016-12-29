@@ -1,7 +1,9 @@
 'use strict';
+const config = require('./config.json');
 const Graph = require('./datamodel/graph');
+const path = require('path');
 const Processor = require('./datamodel/util/processor');
-const Tasks = require('./tasks.js');
+const Tasks = require('./tasks');
 
 /**
  * @class Workspace
@@ -28,12 +30,22 @@ class Workspace extends Graph {
   getDirectory() {
     return this.directory;
   }
+  getDataSourceConfigFilePath() {
+    const workspace = this;
+    const filePath = path.resolve(workspace.directory, 'server',
+      config.DataSourceConfigFile);
+    return filePath;
+  }
   getModel(modelId) {
     const model = this.getNode('ModelDefinition', modelId);
     return model;
   }
   getDataSource(id) {
     const ds = this.getNode('DataSource', id);
+    return ds;
+  }
+  getAllDataSources() {
+    const ds = this._cache['DataSource'];
     return ds;
   }
   getModelProperty(id) {

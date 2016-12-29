@@ -23,24 +23,30 @@ class Model extends Node {
   }
   getDefinition() {
     const model = this;
-    const data = model._content;
-    const modelDef = clone(data);
-    const properties = modelDef['properties'] = {};
-    const methods = modelDef['methods'] = {};
-    const relations = modelDef['relations'] = {};
-    const id = model._name;
+
+    const properties = {};
     Object.keys(model.properties).forEach(function(key) {
       const modelProperty = model.properties[key];
       properties[key] = modelProperty._content;
     });
+
+    const methods = {};
     Object.keys(model.methods).forEach(function(key) {
       const modelMethod = model.methods[key];
       methods[key] = modelMethod._content;
     });
+
+    const relations = {};
     Object.keys(model.relations).forEach(function(key) {
       const modelRelation = model.relations[key];
       relations[key] = modelRelation._content;
     });
+
+    const data = model._content;
+    const modelDef = clone(data);
+    modelDef.properties = properties;
+    modelDef.methods = methods;
+    modelDef.relations = relations;
     return modelDef;
   }
   getFilePath() {

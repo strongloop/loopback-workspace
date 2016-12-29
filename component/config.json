@@ -16,5 +16,6 @@
      ]
    },
    "ModelConfigFile": "model-config.json",
-   "ModelDefaultDir": "models"
+   "ModelDefaultDir": "models",
+   "DataSourceConfigFile": "datasources.json"
 }

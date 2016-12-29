@@ -1,17 +1,17 @@
 'use strict';
 class ModelHandler {
   static createModel(workspace, modelId, modelData, cb) {
-    const create = function(next) {
+    function create(next) {
       workspace.addModel(modelId, modelData, function(err) {
         next(err);
       });
-    };
-    const callBack = function(err, results) {
+    }
+    function callback(err, results) {
       if (err) return cb(err);
       cb(null, modelData);
-    };
+    }
     const taskList = [create];
-    workspace.execute(taskList, callBack);
+    workspace.execute(taskList, callback);
   }
 }
 module.exports = ModelHandler;
