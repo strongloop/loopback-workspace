@@ -10,8 +10,7 @@ const Manager = class Manager {
   constructor() {
   }
   createWorkspace(dir) {
-    if (this.workspace &&
-      this.workspace.getDirectory() === dir) {
+    if (this.workspace && this.workspace.getDirectory() === dir) {
       return;
     }
     this.workspace = new Workspace(dir);

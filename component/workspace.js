@@ -44,7 +44,7 @@ class Workspace extends Graph {
     const ds = this.getNode('DataSource', id);
     return ds;
   }
-  getAllDataSource(id) {
+  getAllDataSource() {
     const ds = this._cache['DataSource'];
     return ds;
   }

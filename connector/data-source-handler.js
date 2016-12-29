@@ -1,12 +1,12 @@
 'use strict';
 class DataSourceHandler {
   static createDataSource(workspace, id, data, cb) {
-    const create = function(next) {
+    function create(next) {
       workspace.addDataSource(id, data, function(err) {
         next(err);
       });
     };
-    const callBack = function(err, results) {
+    function callBack(err, results) {
       if (err) return cb(err);
       cb(null, data);
     };
