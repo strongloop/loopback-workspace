@@ -8,17 +8,15 @@ const Workspace = require('./workspace.js');
  */
 const Manager = class Manager {
   constructor() {
-    //TODO(Deepak) - use Path to resolve directory
-    this.createWorkspace('/');
+  }
+  createWorkspace(dir) {
+    if (this.workspace && this.workspace.getDirectory() === dir) {
+      return;
+    }
+    this.workspace = new Workspace(dir);
     this.workspace.addDomain('ModelDefinition');
     this.workspace.addDomain('DataSource');
     this.workspace.addDomain('ModelProperty');
-  }
-  createWorkspace(dir) {
-    this.workspace = new Workspace(dir);
-  }
-  getDirectory() {
-    return this.workspace.directory;
   }
   getWorkspace() {
     return this.workspace;

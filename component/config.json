@@ -1,0 +1,21 @@
+{
+  "files": {
+     "Models": [
+       "models/*.json"
+     ],
+     "ModelConfig": [
+       "model-config.json"
+     ],
+     "Datasources": [
+      "datasources.json",
+      "datasources.*.json"
+     ],
+     "Middleware": [
+      "middleware.json",
+      "middleware.*.json"
+     ]
+   },
+   "ModelConfigFile": "model-config.json",
+   "ModelDefaultDir": "models",
+   "DataSourceConfigFile": "datasources.json"
+}

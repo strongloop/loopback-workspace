@@ -5,6 +5,6 @@ Feature: Users should be able to create datasources
   Background: Workspace is loaded in a given directory
 
   Scenario: Create a DataSource
-    Given that I have loaded the workspace
+    Given that I have a workspace created from a template
     When I create datasource 'db' with connector 'memory'
     Then the datasource definition is created

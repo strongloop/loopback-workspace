@@ -1,6 +1,9 @@
 'use strict';
+const config = require('./config.json');
 const Graph = require('./datamodel/graph');
-const Tasks = require('./tasks.js');
+const path = require('path');
+const Processor = require('./datamodel/util/processor');
+const Tasks = require('./tasks');
 
 /**
  * @class Workspace
@@ -13,8 +16,25 @@ class Workspace extends Graph {
   constructor(rootFolder) {
     super();
     this.directory = rootFolder;
+    this.processor = new Processor();
     //mixin the atomic tasks with the workspace graph
     mixin(this, Tasks.prototype);
+  }
+  execute(transaction, callBack) {
+    var task = this.processor.createTask(callBack);
+    transaction.forEach(function(t) {
+      task.addFunction(t);
+    });
+    this.processor.emit('execute', task);
+  }
+  getDirectory() {
+    return this.directory;
+  }
+  getDataSourceConfigFilePath() {
+    const workspace = this;
+    const filePath = path.resolve(workspace.directory, 'server',
+      config.DataSourceConfigFile);
+    return filePath;
   }
   getModel(modelId) {
     const model = this.getNode('ModelDefinition', modelId);
@@ -22,6 +42,10 @@ class Workspace extends Graph {
   }
   getDataSource(id) {
     const ds = this.getNode('DataSource', id);
+    return ds;
+  }
+  getAllDataSources() {
+    const ds = this._cache['DataSource'];
     return ds;
   }
   getModelProperty(id) {
