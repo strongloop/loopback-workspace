@@ -18,3 +18,8 @@ Feature: Users should be able to create models
     Given the model 'Customer' exists
     When I add property 'name' of type 'string'
     Then the model property is created
+
+  Scenario: Add a relation to the model
+    Given I add relation 'orders' from 'Customer' to 'Order' 
+    When the relation is of type 'hasMany' and foreignKey 'customerId'
+    Then the model relation is created

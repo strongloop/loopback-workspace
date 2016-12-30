@@ -11,6 +11,8 @@ class Node {
     this._name = name;
     this._content = data;
     this._domain = domain;
+    this._outboundLinks = {};
+    this._inboundLinks = {};
   }
 };
 

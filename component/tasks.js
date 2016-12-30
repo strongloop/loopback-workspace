@@ -1,8 +1,8 @@
 'use strict';
+const DataSource = require('./datamodel/datasource');
 const Model = require('./datamodel/model');
 const ModelProperty = require('./datamodel/model-property');
-const DataSource = require('./datamodel/datasource');
-const writeOperations = require('./datamodel/util/write');
+const fsWriter = require('./datamodel/util/write');
 /**
  * @class Tasks
  *
@@ -14,13 +14,13 @@ class Tasks {
     const workspace = this;
     //Model is a self-aware node which adds itself to the Workspace graph
     const model = new Model(workspace, modelId, modelDef);
-    writeOperations.writeModel(model, cb);
+    fsWriter.writeModel(model, cb);
   }
   addDataSource(id, datasource, cb) {
     const workspace = this;
     //Datasource is a self-aware node which adds itself to the Workspace graph
     new DataSource(workspace, id, datasource);
-    writeOperations.writeDataSourceConfig(workspace, cb);
+    fsWriter.writeDataSourceConfig(workspace, cb);
   }
   addModelProperty(modelId, propertyName, propertyDef, cb) {
     const workspace = this;
@@ -30,6 +30,13 @@ class Tasks {
     const model = workspace.getModel(modelId);
     model.setProperty(propertyName, property);
     cb(null, propertyDef);
+  }
+  addModelRelation(relationName, fromModelId, toModelId, data, cb) {
+    const workspace = this;
+    const model = workspace.getModel(fromModelId);
+    const relation = model.addRelation(relationName, toModelId, data);
+    model.setRelation(relationName, relation);
+    fsWriter.writeModel(model, cb);
   }
 };
 

@@ -11,6 +11,8 @@ const workspaceManager = require('../../../../component/workspace-manager');
 
 const ModelDefinition = app.models.ModelDefinition;
 const ModelProperty = app.models.ModelProperty;
+const ModelRelation = app.models.ModelRelation;
+
 app.on('booted', function() {
   app.emit('ready');
 });
@@ -85,5 +87,53 @@ module.exports = function() {
     const property = workspace.getModelProperty(testsuite.propertyId);
     expect(testsuite.expectedProperty).to.eql(property._content);
     next();
+  });
+
+  this.Given(/^I add relation '(.+)' from '(.+)' to '(.+)'$/,
+  function(relationName, fromModelName, toModelName, next) {
+    testsuite.fromModelName = fromModelName;
+    testsuite.toModelName = toModelName;
+    testsuite.relationName = relationName;
+    next();
+  });
+
+  this.When(/^the relation is of type '(.+)' and foreignKey '(.+)'$/,
+    function(relationType, foreignKey, next) {
+      const relationDef = {
+        id: testsuite.relationName,
+        type: relationType,
+        foreignKey: foreignKey,
+        modelId: testsuite.fromModelName,
+        model: testsuite.toModelName,
+        facetName: 'common',
+      };
+      ModelRelation.create(relationDef, {}, function(err) {
+        if (err) return next(err);
+        testsuite.expectedRelation = relationDef;
+        testsuite.relationTest = {};
+        testsuite.relationTest.facetName = relationDef.facetName;
+        testsuite.relationTest.fromModelName = relationDef.modelId;
+        delete relationDef.id;
+        delete relationDef.facetName;
+        delete relationDef.modelId;
+        next();
+      });
+    });
+
+  this.Then(/^the model relation is created$/, function(next) {
+    const workspace = workspaceManager.getWorkspace();
+    const facetName = testsuite.relationTest.facetName;
+    const fromModelName = testsuite.relationTest.fromModelName;
+    const model = workspace.getModel(facetName + '.' + fromModelName);
+    const file = model.getFilePath();
+    fs.readJson(file, function(err, data) {
+      if (err) return next(err);
+      const relations = data.relations;
+      expect(relations).to.not.to.be.undefined();
+      const relation = relations[testsuite.relationName];
+      expect(relation).to.not.to.be.undefined();
+      expect(testsuite.expectedRelation).to.eql(relation);
+      next();
+    });
   });
 };

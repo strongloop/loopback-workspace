@@ -1,0 +1,37 @@
+{
+  "validateUpsert": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "json": false
+    },
+    "modelId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
+    "facetName": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
+    "type": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
+    "model": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
+    "as": {
+      "type": "string"
+    },
+    "foreignKey": {
+      "type": "string"
+    }
+  },
+  "public": true
+}

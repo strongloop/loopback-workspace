@@ -3,6 +3,7 @@ const config = require('../config.json');
 const clone = require('lodash').clone;
 const Node = require('./graph').Node;
 const path = require('path');
+const ModelRelation = require('./model-relationship');
 /**
  * @class Model
  *
@@ -20,6 +21,9 @@ class Model extends Node {
   }
   setProperty(name, property) {
     this.properties[name] = property;
+  }
+  setRelation(name, relation) {
+    this.relations[name] = relation;
   }
   getDefinition() {
     const model = this;
@@ -39,9 +43,8 @@ class Model extends Node {
     const relations = {};
     Object.keys(model.relations).forEach(function(key) {
       const modelRelation = model.relations[key];
-      relations[key] = modelRelation._content;
+      relations[key] = modelRelation._attributes;
     });
-
     const data = model._content;
     const modelDef = clone(data);
     modelDef.properties = properties;
@@ -54,6 +57,12 @@ class Model extends Node {
     const filePath = path.resolve(this._graph.directory, modelDef.facetName,
       config.ModelDefaultDir, modelDef.name + '.json');
     return filePath;
+  }
+  addRelation(relationName, toModelId, data) {
+    const workspace = this._graph;
+    const id = this._name + '.' + relationName;
+    const toModel = workspace.getModel(toModelId);
+    return new ModelRelation(id, this, toModel, data);
   }
 };
 
