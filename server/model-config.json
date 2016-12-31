@@ -24,6 +24,10 @@
   "ModelRelation": {
     "public": true,
     "dataSource": "db"
+  },
+  "Middleware": {
+    "public": true,
+    "dataSource": "db"
   }
 }
 

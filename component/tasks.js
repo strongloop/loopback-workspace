@@ -38,6 +38,12 @@ class Tasks {
     model.setRelation(relationName, relation);
     fsWriter.writeModel(model, cb);
   }
+  addMiddleware(phaseName, path, data, cb) {
+    const workspace = this;
+    const phase = workspace.getMiddlewarePhase(phaseName);
+    phase.addMiddleware(workspace, path, data);
+    fsWriter.writeMiddleware(workspace, cb);
+  }
 };
 
 module.exports = Tasks;

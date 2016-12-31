@@ -15,6 +15,7 @@
       "middleware.*.json"
      ]
    },
+   "DefaultMiddlewareFile": "middleware.json",
    "ModelConfigFile": "model-config.json",
    "ModelDefaultDir": "models",
    "DataSourceConfigFile": "datasources.json"
