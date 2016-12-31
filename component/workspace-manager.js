@@ -14,9 +14,10 @@ const Manager = class Manager {
       return;
     }
     this.workspace = new Workspace(dir);
-    this.workspace.addDomain('ModelDefinition');
     this.workspace.addDomain('DataSource');
+    this.workspace.addDomain('ModelDefinition');
     this.workspace.addDomain('ModelProperty');
+    this.workspace.addDomain('ModelRelation');
   }
   getWorkspace() {
     return this.workspace;

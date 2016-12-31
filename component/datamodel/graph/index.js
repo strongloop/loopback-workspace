@@ -23,3 +23,4 @@ class Graph {
 };
 module.exports = Graph;
 module.exports.Node = require('./node');
+module.exports.Edge = require('./edge');

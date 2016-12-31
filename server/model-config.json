@@ -20,6 +20,10 @@
   "ModelProperty": {
     "public": true,
     "dataSource": "db"
+  },
+  "ModelRelation": {
+    "public": true,
+    "dataSource": "db"
   }
 }
 
