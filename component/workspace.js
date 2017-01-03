@@ -22,6 +22,9 @@ class Workspace extends Graph {
     mixin(this, Tasks.prototype);
     this.middlewarePhases = [];
   }
+  getConfig() {
+    return config;
+  }
   execute(transaction, callBack) {
     var task = this.processor.createTask(callBack);
     transaction.forEach(function(t) {
@@ -43,6 +46,10 @@ class Workspace extends Graph {
     const filePath = path.resolve(workspace.directory, 'server',
       config.DefaultMiddlewareFile);
     return filePath;
+  }
+  getFacet(name) {
+    const facet = this.getNode('Facet', name);
+    return facet;
   }
   getModel(modelId) {
     const model = this.getNode('ModelDefinition', modelId);

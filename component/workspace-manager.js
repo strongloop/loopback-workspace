@@ -14,13 +14,17 @@ const Manager = class Manager {
       return;
     }
     this.workspace = new Workspace(dir);
+    this.workspace.addDomain('Facet');
+    this.workspace.addDomain('FacetConfig');
     this.workspace.addDomain('DataSource');
     this.workspace.addDomain('MiddlewarePhase');
     this.workspace.addDomain('Middleware');
+    this.workspace.addDomain('ModelConfig');
     this.workspace.addDomain('ModelDefinition');
     this.workspace.addDomain('ModelProperty');
     this.workspace.addDomain('ModelRelation');
     this.initMiddleware(this.workspace);
+    this.workspace.addFacet('server', {});
   }
   getWorkspace() {
     return this.workspace;

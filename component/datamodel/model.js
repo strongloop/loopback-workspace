@@ -43,7 +43,7 @@ class Model extends Node {
     const relations = {};
     Object.keys(model.relations).forEach(function(key) {
       const modelRelation = model.relations[key];
-      relations[key] = modelRelation._attributes;
+      relations[key] = modelRelation._content;
     });
     const data = model._content;
     const modelDef = clone(data);
@@ -62,7 +62,7 @@ class Model extends Node {
     const workspace = this._graph;
     const id = this._name + '.' + relationName;
     const toModel = workspace.getModel(toModelId);
-    return new ModelRelation(id, this, toModel, data);
+    return new ModelRelation(workspace, id, data, this, toModel);
   }
 };
 

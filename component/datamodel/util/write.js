@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
+const async = require('async');
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -10,7 +11,27 @@ module.exports = {
   writeDataSourceConfig: writeDataSourceConfig,
   writeModel: writeModel,
   writeMiddleware: writeMiddleware,
+  writeFacetConfig: writeFacetConfig,
+  writeModelConfig: writeModelConfig,
 };
+
+function writeFacetConfig(facet, cb) {
+  const facetConfigFile = facet.getConfigPath();
+  const facetConfig = facet.getConfig();
+  fs.writeJson(facetConfigFile, facetConfig, function(err) {
+    if (err) return cb(err);
+    cb();
+  });
+}
+
+function writeModelConfig(facet, cb) {
+  const filePath = facet.getModelConfigPath();
+  const data = facet.getModelConfig();
+  fs.writeJson(filePath, data, function(err) {
+    if (err) return cb(err);
+    cb(null, data);
+  });
+}
 
 function writeModel(model, cb) {
   const filePath = model.getFilePath();

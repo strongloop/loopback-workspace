@@ -28,6 +28,10 @@
   "Middleware": {
     "public": true,
     "dataSource": "db"
+  },
+  "ModelConfig": {
+    "public": true,
+    "dataSource": "db"
   }
 }
 
