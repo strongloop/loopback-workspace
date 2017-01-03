@@ -1,6 +1,8 @@
 'use strict';
 const DataSource = require('./datamodel/datasource');
+const Facet = require('./datamodel/facet');
 const Model = require('./datamodel/model');
+const ModelConfig = require('./datamodel/model-config');
 const ModelProperty = require('./datamodel/model-property');
 const fsWriter = require('./datamodel/util/write');
 /**
@@ -10,11 +12,22 @@ const fsWriter = require('./datamodel/util/write');
  * Every task can be performed using a processor.
  */
 class Tasks {
+  addFacet(id, facetDef, cb) {
+    const workspace = this;
+    const facet = new Facet(workspace, id, facetDef);
+    fsWriter.writeFacet(workspace, facet, cb);
+  }
   addModel(modelId, modelDef, cb) {
     const workspace = this;
     //Model is a self-aware node which adds itself to the Workspace graph
     const model = new Model(workspace, modelId, modelDef);
     fsWriter.writeModel(model, cb);
+  }
+  addModelConfig(modelId, modelConfig, cb) {
+    const workspace = this;
+    const facet = workspace.getFacet(modelConfig.facetName);
+    facet.addModelConfig(workspace, modelId, modelConfig);
+    fsWriter.writeModelConfig(facet, cb);
   }
   addDataSource(id, datasource, cb) {
     const workspace = this;

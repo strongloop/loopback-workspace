@@ -22,6 +22,9 @@ class Workspace extends Graph {
     mixin(this, Tasks.prototype);
     this.middlewarePhases = [];
   }
+  getConfig() {
+    return config;
+  }
   execute(transaction, callBack) {
     var task = this.processor.createTask(callBack);
     transaction.forEach(function(t) {
@@ -34,15 +37,19 @@ class Workspace extends Graph {
   }
   getDataSourceConfigFilePath() {
     const workspace = this;
-    const filePath = path.resolve(workspace.directory, 'server',
+    const filePath = path.join(workspace.directory, 'server',
       config.DataSourceConfigFile);
     return filePath;
   }
   getMiddlewareFilePath() {
     const workspace = this;
-    const filePath = path.resolve(workspace.directory, 'server',
+    const filePath = path.join(workspace.directory, 'server',
       config.DefaultMiddlewareFile);
     return filePath;
+  }
+  getFacet(name) {
+    const facet = this.getNode('Facet', name);
+    return facet;
   }
   getModel(modelId) {
     const model = this.getNode('ModelDefinition', modelId);

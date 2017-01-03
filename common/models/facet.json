@@ -1,0 +1,18 @@
+{
+  "validateUpsert": true,
+  "properties": {
+    "name": {
+      "id": true,
+      "type": "string",
+      "json": false
+    },
+    "modelsMetadata": {
+      "type": "object",
+      "json": false
+    },
+    "defaultPermission": {
+      "type": "string"
+    }
+  },
+  "public": true
+}

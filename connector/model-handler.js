@@ -13,5 +13,19 @@ class ModelHandler {
     const taskList = [create];
     workspace.execute(taskList, callback);
   }
+
+  static createModelConfig(workspace, modelId, modelConfig, cb) {
+    function create(next) {
+      workspace.addModelConfig(modelId, modelConfig, function(err) {
+        next(err);
+      });
+    }
+    function callback(err, results) {
+      if (err) return cb(err);
+      cb(null, modelConfig);
+    }
+    const taskList = [create];
+    workspace.execute(taskList, callback);
+  }
 }
 module.exports = ModelHandler;

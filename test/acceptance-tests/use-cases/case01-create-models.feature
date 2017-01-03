@@ -4,10 +4,20 @@ Feature: Users should be able to create models
 
   Background: Workspace is loaded in a given directory
 
+  Scenario: Create a Facet
+    Given that I have loaded the workspace
+    When I create a facet 'server'
+    Then the facet is created
+
   Scenario: Create a model
     Given that I have loaded the workspace
     When I create model 'Customer'
     Then the model definition is created
+
+  Scenario: Add model config to facet
+    Given that the model 'Customer' exists
+    When I create a model config in facet 'server'
+    Then the model configuration is created
 
   Scenario: Create a model
     Given that I have loaded the workspace
@@ -23,3 +33,4 @@ Feature: Users should be able to create models
     Given I add relation 'orders' from 'Customer' to 'Order' 
     When the relation is of type 'hasMany' and foreignKey 'customerId'
     Then the model relation is created
+

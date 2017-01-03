@@ -1,14 +1,18 @@
 'use strict';
 const Edge = require('./graph').Edge;
+const Node = require('./graph').Node;
 
 /**
  * @class ModelRelation
  *
- * Represents a ModelProperty artifact in the Workspace graph.
+ * Represents a ModelRelation artifact in the Workspace graph.
  */
-class ModelRelation extends Edge {
-  constructor(id, fromModel, toModel, data) {
-    super('ModelRelation', id, fromModel, toModel, data);
+class ModelRelation extends Node {
+  constructor(Workspace, id, data, fromModel, toModel, options) {
+    super(Workspace, 'ModelRelation', id, data);
+    //ModelRelation adds itself to the workspace
+    Workspace.addNode(this);
+    new Edge(fromModel, toModel, options);
   }
 };
 
