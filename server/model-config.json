@@ -32,6 +32,10 @@
   "ModelConfig": {
     "public": true,
     "dataSource": "db"
+  },
+  "Facet": {
+    "public": true,
+    "dataSource": "db"
   }
 }
 

@@ -12,9 +12,10 @@ const fsWriter = require('./datamodel/util/write');
  * Every task can be performed using a processor.
  */
 class Tasks {
-  addFacet(id, facetDef) {
+  addFacet(id, facetDef, cb) {
     const workspace = this;
     const facet = new Facet(workspace, id, facetDef);
+    fsWriter.writeFacet(workspace, facet, cb);
   }
   addModel(modelId, modelDef, cb) {
     const workspace = this;

@@ -24,7 +24,6 @@ const Manager = class Manager {
     this.workspace.addDomain('ModelProperty');
     this.workspace.addDomain('ModelRelation');
     this.initMiddleware(this.workspace);
-    this.workspace.addFacet('server', {});
   }
   getWorkspace() {
     return this.workspace;

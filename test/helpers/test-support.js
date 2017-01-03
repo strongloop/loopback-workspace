@@ -11,15 +11,11 @@ function createSandboxDir(dir, cb) {
   fs.mkdir(dir, function(err) {
     if (err) return cb(err);
     const modelsDir = path.resolve(dir, 'common', 'models');
-    const serverDir = path.resolve(dir, 'server');
     mkdirp(modelsDir, function(err) {
       if (err) return cb(err);
-      mkdirp(serverDir, function(err) {
-        if (err) return cb(err);
-        const result = {};
-        result.dir = dir;
-        cb(null, result);
-      });
+      const result = {};
+      result.dir = dir;
+      cb(null, result);
     });
   });
 };
