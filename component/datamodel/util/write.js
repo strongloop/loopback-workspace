@@ -9,6 +9,7 @@ const path = require('path');
 module.exports = {
   writeDataSourceConfig: writeDataSourceConfig,
   writeModel: writeModel,
+  writeMiddleware: writeMiddleware,
 };
 
 function writeModel(model, cb) {
@@ -31,5 +32,14 @@ function writeDataSourceConfig(workspace, cb) {
   fs.writeJson(filePath, configData, function(err) {
     if (err) return cb(err);
     cb(null, configData);
+  });
+}
+
+function writeMiddleware(workspace, cb) {
+  const data = workspace.getMiddlewareConfig();
+  const file = workspace.getMiddlewareFilePath();
+  fs.writeJson(file, data, function(err) {
+    if (err) return cb(err);
+    cb(null);
   });
 }

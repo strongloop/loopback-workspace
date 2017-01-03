@@ -1,6 +1,7 @@
 'use strict';
 const config = require('./config.json');
 const Graph = require('./datamodel/graph');
+const MiddlewarePhase = require('./datamodel/middleware-phase');
 const path = require('path');
 const Processor = require('./datamodel/util/processor');
 const Tasks = require('./tasks');
@@ -19,6 +20,7 @@ class Workspace extends Graph {
     this.processor = new Processor();
     //mixin the atomic tasks with the workspace graph
     mixin(this, Tasks.prototype);
+    this.middlewarePhases = [];
   }
   execute(transaction, callBack) {
     var task = this.processor.createTask(callBack);
@@ -36,6 +38,12 @@ class Workspace extends Graph {
       config.DataSourceConfigFile);
     return filePath;
   }
+  getMiddlewareFilePath() {
+    const workspace = this;
+    const filePath = path.resolve(workspace.directory, 'server',
+      config.DefaultMiddlewareFile);
+    return filePath;
+  }
   getModel(modelId) {
     const model = this.getNode('ModelDefinition', modelId);
     return model;
@@ -51,6 +59,31 @@ class Workspace extends Graph {
   getModelProperty(id) {
     const property = this.getNode('ModelProperty', id);
     return property;
+  }
+  addMiddlewarePhase(phaseName) {
+    new MiddlewarePhase(this, phaseName + ':before');
+    new MiddlewarePhase(this, phaseName);
+    new MiddlewarePhase(this, phaseName + ':after');
+    this.middlewarePhases.push(phaseName);
+  }
+  getMiddlewarePhase(phaseName) {
+    return this.getNode('MiddlewarePhase', phaseName);
+  }
+  getMiddlewareConfig() {
+    const phases = this.middlewarePhases;
+    const config = {};
+    for (let index = 0; index < phases.length; index++) {
+      let phaseName = phases[index];
+      let phase = this.getMiddlewarePhase(phaseName);
+      let middlewareList = phase.getMiddlewareList();
+      config[phase._name] = {};
+      Object.keys(middlewareList).forEach(function(middlewareName) {
+        let middleware = middlewareList[middlewareName];
+        let functionName = middleware.getFunction();
+        config[phase._name][functionName] = middleware.getConfig();
+      });
+    }
+    return config;
   }
 };
 

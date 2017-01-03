@@ -1,0 +1,37 @@
+{
+  "validateUpsert": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "id": true,
+      "json": false
+    },
+    "function": {
+      "type": "string",
+      "json": false
+    },
+    "phase": {
+      "type": "string",
+      "json": false
+    },
+    "subPhase": {
+      "type": "string",
+      "json": false
+    },
+    "methods": {
+      "type": [
+        "string"
+      ]
+    },
+    "paths": {
+      "type": [
+        "string"
+      ]
+    },
+    "params": {
+      "type": "object"
+    }
+  },
+  "public": true,
+  "dataSource": "db"
+}
