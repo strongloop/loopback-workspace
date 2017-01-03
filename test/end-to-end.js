@@ -201,6 +201,40 @@ describe('end-to-end', function() {
           });
       });
     });
+
+    it('disables built-in REST error handler', function(done) {
+      var loopback = require(SANDBOX + '/node_modules/loopback');
+      var boot = require(SANDBOX + '/node_modules/loopback-boot');
+      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      var bootOptions = {
+        appRootDir: SANDBOX + '/server',
+        // In "production", strong-error-handler hides error messages too,
+        // while the built-in REST error handler does not
+        env: 'production',
+      };
+      boot(app, bootOptions, function(err) {
+        if (err) return done(err);
+
+        // create a model with a custom remote method returning a 500 error
+        var TestModel = app.registry.createModel('TestModel');
+        app.model(TestModel, { dataSource: null });
+        TestModel.fail = function(cb) { cb(new Error('sensitive message')); };
+        TestModel.remoteMethod('fail', {
+          http: { verb: 'get', path: '/fail' },
+        });
+
+        request(app)
+          .get('/api/TestModels/fail')
+          .expect(500)
+          .end(function(err, res) {
+            if (err) return done(err);
+            // Assert that the response body contains a generic message only
+            // (produced by strong-error-handler).
+            expect(res.body.error.message).to.equal('Internal Server Error');
+            done();
+          });
+      });
+    });
   });
 
   describe('empty-server template without explorer', function() {

@@ -67,6 +67,7 @@ template.server = {
     { name: 'remoting', value: {
       context: false,
       rest: {
+        handleErrors: false,
         normalizeHttpPath: false,
         xml: false,
       },
@@ -79,7 +80,6 @@ template.server = {
         limit: '100kb',
       },
       cors: false,
-      handleErrors: false,
     }},
   ],
 
