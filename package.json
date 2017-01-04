@@ -6,7 +6,7 @@
     "export-tests": true
   },
   "scripts": {
-    "pretest": "node bin/setup-mysql.js --ci-only",
+    "pretest": "node test/helpers/setup-mysql.js --ci-only",
     "lint": "eslint .",
     "test": "mocha",
     "posttest": "npm run lint"

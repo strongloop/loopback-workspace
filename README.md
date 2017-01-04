@@ -50,7 +50,10 @@ In order to use the REST api, mount the app on an existing express app or call
 
 ## Test
 
-To run end-to-end tests, you will need a local MySQL instance. Once you have
-that running, you can run [the MySQL setup script](/bin/setup-mysql.js) to
-autoconfigure your database. Finally, use the `npm test` command to run the
-tests.
+**To run end-to-end tests, you will need a local MySQL instance.**
+
+Run `node test/helpers/setup-mysql.js` to create a test database and
+a test user. This is a one-time task to run only once when setting up your
+development environment.
+
+Use the `npm test` command to run the tests.
