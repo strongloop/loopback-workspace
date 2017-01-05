@@ -30,6 +30,9 @@ class TemplateRegistry {
       });
     });
   }
+  getTemplate(name) {
+    return this.templates[name];
+  }
 }
 
 const templateRegistry = new TemplateRegistry();

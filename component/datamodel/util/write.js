@@ -15,6 +15,7 @@ module.exports = {
   writeModel: writeModel,
   writeMiddleware: writeMiddleware,
   writeModelConfig: writeModelConfig,
+  writePackageDefinition: writePackageDefinition,
 };
 
 function writeFacet(workspace, facet, cb) {
@@ -77,4 +78,10 @@ function writeMiddleware(workspace, cb) {
       cb(null);
     });
   });
+}
+
+function writePackageDefinition(packageDef, cb) {
+  const filePath = packageDef.getFilePath();
+  const data = packageDef.getDefinition();
+  fs.writeJson(filePath, data, cb);
 }

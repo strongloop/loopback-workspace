@@ -4,7 +4,7 @@ class TemplateHandler {
     const taskList = [];
     if (template.package) {
       taskList.push(function(next) {
-        workspace.createPackage(template.package, next);
+        workspace.addPackageDefinition(template.package, next);
       });
     }
 

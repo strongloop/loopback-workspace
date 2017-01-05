@@ -40,8 +40,9 @@
     },
     "modelConfigs": [
       {
-        "id": "common.Customer",
-        "name": "Customer",
+        "id": "User",
+        "facetName": "server",
+        "name": "User",
         "dataSource": "db"
       }
     ],

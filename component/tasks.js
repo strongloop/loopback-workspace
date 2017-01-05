@@ -4,6 +4,7 @@ const Facet = require('./datamodel/facet');
 const Model = require('./datamodel/model');
 const ModelConfig = require('./datamodel/model-config');
 const ModelProperty = require('./datamodel/model-property');
+const PackageDefinition = require('./datamodel/package-definition');
 const fsWriter = require('./datamodel/util/write');
 /**
  * @class Tasks
@@ -56,6 +57,10 @@ class Tasks {
     const phase = workspace.getMiddlewarePhase(phaseName);
     phase.addMiddleware(workspace, path, data);
     fsWriter.writeMiddleware(workspace, cb);
+  }
+  addPackageDefinition(definition, cb) {
+    const packageDef = new PackageDefinition(this, 'package.json', definition);
+    fsWriter.writePackageDefinition(packageDef, cb);
   }
 };
 

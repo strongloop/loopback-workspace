@@ -12,6 +12,7 @@ const templateRegistry = require('../component/template-registry');
 templateRegistry.loadTemplates(function(err, status) {
   if (err) throw err;
   console.log(status);
+  app.emit('templates-loaded');
 });
 
 boot(app, __dirname, function() {

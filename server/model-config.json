@@ -36,6 +36,10 @@
   "Facet": {
     "public": true,
     "dataSource": "db"
+  },
+  "Workspace": {
+    "public": true,
+    "dataSource": "db"
   }
 }
 
