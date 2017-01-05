@@ -1,3 +1,9 @@
+2017-01-05, Version 3.36.1
+==========================
+
+ * Fix handleErrors config in the template (Miroslav Bajtoš)
+
+
 2016-12-21, Version 3.36.0
 ==========================
 
