@@ -1,0 +1,56 @@
+{
+  "name": "api-server",  
+  "description": "A LoopBack API server with local User auth",
+  "package": {
+    "version": "1.0.0",
+    "main": "server/server.js",
+    "scripts": {
+      "lint": "eslint .",
+      "start": "node .",
+      "posttest": "npm run lint && nsp check"
+    },
+    "dependencies": {
+      "compression": "^1.0.3",
+      "cors": "^2.5.2",
+      "helmet": "^1.3.0",
+      "loopback-boot": "^2.6.5",
+      "serve-favicon": "^2.0.1",
+      "strong-error-handler": "^1.0.1"
+    }
+  },
+  "server": {
+    "modelsMetadata": {
+        "sources": [
+            "loopback/common/models",
+            "loopback/server/models",
+            "../common/models",
+            "./models"
+        ],
+        "mixins": [
+            "loopback/common/mixins",
+            "loopback/server/mixins",
+            "../common/mixins",
+            "./mixins"
+        ]
+    },
+    "config": {
+      "restApiRoot": "/api" ,
+      "host": "0.0.0.0",
+      "port": 3000
+    },
+    "modelConfigs": [
+      {
+        "id": "common.Customer",
+        "name": "Customer",
+        "dataSource": "db"
+      }
+    ],
+    "datasources": [
+      {
+        "id": "common.datasources.memory",
+        "name": "db",
+        "connector": "memory"
+      }
+    ] 
+  }   
+}

@@ -4,9 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-var loopback = require('loopback');
-var boot = require('loopback-boot');
-var app = module.exports = loopback();
+const loopback = require('loopback');
+const boot = require('loopback-boot');
+const app = module.exports = loopback();
+
+const templateRegistry = require('../component/template-registry');
+templateRegistry.loadTemplates(function(err, status) {
+  if (err) throw err;
+  console.log(status);
+});
 
 boot(app, __dirname, function() {
   app.emit('ready');
