@@ -1,6 +1,6 @@
 'use strict';
 const Workspace = require('./workspace.js');
-
+const templateRegistry = require('./template-registry');
 /**
  * @class WorkspaceManager
  *
@@ -39,6 +39,9 @@ const Manager = class Manager {
     workspace.addMiddlewarePhase('routes');
     workspace.addMiddlewarePhase('files');
     workspace.addMiddlewarePhase('final');
+  }
+  getTemplate(name) {
+    return templateRegistry.getTemplate(name);
   }
 };
 

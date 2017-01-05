@@ -24,6 +24,7 @@ class Workspace extends Graph {
     this.middlewarePhases = [];
   }
   addBuiltInModel(name) {
+    //add ModelDefinition to the workspace graph for a builtin loopback model
     new Model(this, name, {}, {builtIn: true});
   }
   getConfig() {

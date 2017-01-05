@@ -54,7 +54,6 @@ module.exports = function() {
     const facet = workspace.getFacet(testsuite.facetName);
     expect(facet).to.not.to.be.undefined();
     const dir = facet.getPath();
-    console.log(dir);
     fs.exists(dir, function(isExists) {
       expect(isExists).to.be.true();
     });

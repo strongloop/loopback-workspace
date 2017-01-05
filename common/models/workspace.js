@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
+const templateRegistry = require('../../component/template-registry');
 
 /**
   * Represents a LoopBack Workspace.
@@ -11,7 +12,6 @@
   */
 module.exports = function(Workspace) {
   Workspace.on('dataSourceAttached', function(eventData) {
-    const templateRegistry = require('../../component/template-registry');
     Workspace.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;

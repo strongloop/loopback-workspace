@@ -38,6 +38,8 @@ class Facet extends Node {
       if (modelId.length && modelId.length > 1) {
         const modelName = modelId[1];
         config[modelName] = modelConfigNodes[key]._content;
+      } else {
+        config[modelId] = modelConfigNodes[key]._content;
       }
     });
     return config;

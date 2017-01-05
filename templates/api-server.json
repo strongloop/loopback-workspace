@@ -20,18 +20,18 @@
   },
   "server": {
     "modelsMetadata": {
-        "sources": [
-            "loopback/common/models",
-            "loopback/server/models",
-            "../common/models",
-            "./models"
-        ],
-        "mixins": [
-            "loopback/common/mixins",
-            "loopback/server/mixins",
-            "../common/mixins",
-            "./mixins"
-        ]
+      "sources": [
+        "loopback/common/models",
+        "loopback/server/models",
+        "../common/models",
+        "./models"
+      ],
+      "mixins": [
+        "loopback/common/mixins",
+        "loopback/server/mixins",
+        "../common/mixins",
+        "./mixins"
+      ]
     },
     "config": {
       "restApiRoot": "/api" ,
@@ -48,7 +48,7 @@
     ],
     "datasources": [
       {
-        "id": "common.datasources.memory",
+        "id": "memory",
         "name": "db",
         "connector": "memory"
       }
