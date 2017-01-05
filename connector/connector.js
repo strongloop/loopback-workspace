@@ -1,8 +1,9 @@
 'use strict';
 const app = require('../server/server.js');
 const connector = app.dataSources.db.connector;
-const DataSourceHandler = require('./data-source-handler');
 const clone = require('lodash').clone;
+const DataSourceHandler = require('./data-source-handler');
+const FacetHandler = require('./facet-handler');
 const MiddlewareHandler = require('./middleware-handler');
 const ModelHandler = require('./model-handler');
 const RelationsHandler = require('./relation-handler');
@@ -13,9 +14,22 @@ const WorkspaceManager = require('../component/workspace-manager.js');
  *
  * performs CRUD operations on the Workspace graph.
  */
+
+connector.createFacet = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  FacetHandler.createFacet(workspace, id, data, cb);
+};
+
 connector.createModel = function(id, data, cb) {
   const workspace = WorkspaceManager.getWorkspace();
   ModelHandler.createModel(workspace, id, data, cb);
+};
+
+connector.createModelConfig = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  const modelConfig = clone(data);
+  delete modelConfig.id;
+  ModelHandler.createModelConfig(workspace, id, modelConfig, cb);
 };
 
 connector.createDataSource = function(id, data, cb) {
