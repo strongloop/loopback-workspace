@@ -34,3 +34,10 @@ Feature: Users should be able to create models
     When the relation is of type 'hasMany' and foreignKey 'customerId'
     Then the model relation is created
 
+  Scenario: query the created model
+    When I query for the model 'Customer'
+    Then the model definition is returned
+
+  Scenario: query the created model config
+    When I query for the model config 'Customer'
+    Then the model config is returned

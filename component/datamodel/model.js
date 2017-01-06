@@ -52,6 +52,15 @@ class Model extends Node {
     modelDef.relations = relations;
     return modelDef;
   }
+  updateDefinition(modelDef) {
+    var modelData = clone(modelDef);
+    delete modelData['properties'];
+    delete modelData['methods'];
+    delete modelData['relations'];
+    delete modelData['validations'];
+    delete modelData['acls'];
+    this._content = modelData;
+  }
   getFilePath() {
     const modelDef = this._content;
     const filePath = path.join(this._graph.directory, modelDef.facetName,

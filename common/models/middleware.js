@@ -24,7 +24,7 @@ module.exports = function(Middleware) {
       }
       const phase = this.getPhase(data);
       const connector = Middleware.getConnector();
-      //TODO(Deepak) - add response handling later
+      // TODO(Deepak) - add response handling later
       connector.createMiddleware(phase, data, cb);
     };
   });
