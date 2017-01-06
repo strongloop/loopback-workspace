@@ -8,7 +8,6 @@ const clone = require('lodash').clone;
   * Represents a relation between two LoopBack `Model`s.
   *
   * @class ModelRelation
-  * @inherits WorkspaceEntity
   */
 module.exports = function(ModelRelation) {
   ModelRelation.getValidTypes = function(cb) {

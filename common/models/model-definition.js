@@ -18,8 +18,17 @@ module.exports = function(ModelDefinition) {
         options = null;
       }
       const id = data.id;
-      //TODO(Deepak) - add response handling later
+      // TODO(Deepak) - add response handling later
       connector.createModel(id, data, cb);
+    };
+    ModelDefinition.find = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = null;
+      }
+      const id = filter.where.id;
+      // TODO(Deepak) - add response handling later
+      connector.findModel(id, cb);
     };
   });
 };

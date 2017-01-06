@@ -41,4 +41,23 @@ module.exports = function() {
     expect(testsuite.expectedDs).to.eql(storedDs._content);
     next();
   });
+
+  this.When(/^I query for datasource '(.+)'$/,
+  function(dsName, next) {
+    testsuite.datasourceId = 'common.datasources.' + dsName;
+    const filter = {
+      where: {id: testsuite.datasourceId},
+    };
+    DataSourceDefinition.find(filter, function(err, data) {
+      if (err) return next(err);
+      testsuite.datasource = data;
+      next();
+    });
+  });
+
+  this.Then(/^the datasource definition is returned$/, function(next) {
+    expect(Object.keys(testsuite.datasource))
+    .to.include.members(['connector', 'name']);
+    next();
+  });
 };

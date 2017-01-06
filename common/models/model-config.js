@@ -19,8 +19,18 @@ module.exports = function(ModelConfig) {
       }
       const id = data.id;
       const connector = ModelConfig.getConnector();
-      //TODO(Deepak) - add response handling later
+      // TODO(Deepak) - add response handling later
       connector.createModelConfig(id, data, cb);
+    };
+    ModelConfig.find = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = null;
+      }
+      const id = filter.where.id;
+      const connector = ModelConfig.getConnector();
+      // TODO(Deepak) - add response handling later
+      connector.findModelConfig(id, cb);
     };
   });
 };

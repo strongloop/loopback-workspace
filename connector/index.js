@@ -70,3 +70,35 @@ connector.createMiddleware = function(phase, data, cb) {
   middlewareDef,
   cb);
 };
+
+connector.createModel = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  ModelHandler.createModel(workspace, id, data, cb);
+};
+
+connector.createModelConfig = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  const modelConfig = clone(data);
+  delete modelConfig.id;
+  ModelHandler.createModelConfig(workspace, id, modelConfig, cb);
+};
+
+connector.createDataSource = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  DataSourceHandler.createDataSource(workspace, id, data, cb);
+};
+
+connector.findModel = function(id, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  ModelHandler.findModel(workspace, id, cb);
+};
+
+connector.findModelConfig = function(id, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  ModelHandler.findModelConfig(workspace, id, cb);
+};
+
+connector.findDataSource = function(id, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  DataSourceHandler.findDataSource(workspace, id, cb);
+};

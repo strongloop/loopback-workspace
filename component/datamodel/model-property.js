@@ -9,7 +9,7 @@ const Node = require('./graph').Node;
 class ModelProperty extends Node {
   constructor(Workspace, id, propertyDef, options) {
     super(Workspace, 'ModelProperty', id, propertyDef);
-    //ModelProperty adds itself to the workspace
+    // ModelProperty adds itself to the workspace
     Workspace.addNode(this);
   }
 };
