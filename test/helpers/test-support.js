@@ -19,7 +19,7 @@ function createSandboxDir(dir, cb) {
   });
 };
 
-function givenEmptySandbox(cb) {
+function givenEmptySandbox(sandboxDir, cb) {
   fs.remove(sandboxDir, function(err) {
     if (err) return cb(err);
     createSandboxDir(sandboxDir, cb);

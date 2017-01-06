@@ -3,10 +3,17 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
+const boot = require('loopback-boot');
+const loopback = require('loopback');
+const templateRegistry = require('../component/template-registry');
 
-var loopback = require('loopback');
-var boot = require('loopback-boot');
-var app = module.exports = loopback();
+const app = loopback();
+module.exports = app;
+
+templateRegistry.loadTemplates(function(err, status) {
+  if (err) throw err;
+  app.emit('templates-loaded');
+});
 
 boot(app, __dirname, function() {
   app.emit('ready');

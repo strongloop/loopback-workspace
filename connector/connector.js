@@ -7,6 +7,7 @@ const FacetHandler = require('./facet-handler');
 const MiddlewareHandler = require('./middleware-handler');
 const ModelHandler = require('./model-handler');
 const RelationsHandler = require('./relation-handler');
+const TemplateHandler = require('./template-handler');
 const WorkspaceManager = require('../component/workspace-manager.js');
 
 /**
@@ -14,6 +15,11 @@ const WorkspaceManager = require('../component/workspace-manager.js');
  *
  * performs CRUD operations on the Workspace graph.
  */
+
+connector.createFromTemplate = function(template, destinationFolder, cb) {
+  const workspace = WorkspaceManager.createWorkspace(destinationFolder);
+  TemplateHandler.createFromTemplate(workspace, template, cb);
+};
 
 connector.createFacet = function(id, data, cb) {
   const workspace = WorkspaceManager.getWorkspace();

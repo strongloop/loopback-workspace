@@ -1,6 +1,6 @@
 'use strict';
 const Workspace = require('./workspace.js');
-
+const templateRegistry = require('./template-registry');
 /**
  * @class WorkspaceManager
  *
@@ -11,7 +11,7 @@ const Manager = class Manager {
   }
   createWorkspace(dir) {
     if (this.workspace && this.workspace.getDirectory() === dir) {
-      return;
+      return this.workspace;
     }
     this.workspace = new Workspace(dir);
     this.workspace.addDomain('Facet');
@@ -23,7 +23,10 @@ const Manager = class Manager {
     this.workspace.addDomain('ModelDefinition');
     this.workspace.addDomain('ModelProperty');
     this.workspace.addDomain('ModelRelation');
+    this.workspace.addDomain('PackageDefinition');
     this.initMiddleware(this.workspace);
+    this.workspace.addBuiltInModel('User');
+    return this.workspace;
   }
   getWorkspace() {
     return this.workspace;
@@ -36,6 +39,9 @@ const Manager = class Manager {
     workspace.addMiddlewarePhase('routes');
     workspace.addMiddlewarePhase('files');
     workspace.addMiddlewarePhase('final');
+  }
+  getTemplate(name) {
+    return templateRegistry.getTemplate(name);
   }
 };
 

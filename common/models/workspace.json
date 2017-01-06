@@ -1,0 +1,15 @@
+{
+  "properties": {
+    "templateName": {
+      "type": "string",
+      "id": true,
+      "json": false
+    },
+    "destinationPath": {
+      "type": "string",
+      "required": true,
+      "json": false
+    }
+  },
+  "public": true
+}

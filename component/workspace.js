@@ -1,6 +1,7 @@
 'use strict';
 const config = require('./config.json');
 const Graph = require('./datamodel/graph');
+const Model = require('./datamodel/model');
 const MiddlewarePhase = require('./datamodel/middleware-phase');
 const path = require('path');
 const Processor = require('./datamodel/util/processor');
@@ -21,6 +22,10 @@ class Workspace extends Graph {
     //mixin the atomic tasks with the workspace graph
     mixin(this, Tasks.prototype);
     this.middlewarePhases = [];
+  }
+  addBuiltInModel(name) {
+    //add ModelDefinition to the workspace graph for a builtin loopback model
+    new Model(this, name, {}, {builtIn: true});
   }
   getConfig() {
     return config;
