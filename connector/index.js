@@ -102,3 +102,8 @@ connector.findDataSource = function(id, cb) {
   const workspace = WorkspaceManager.getWorkspace();
   DataSourceHandler.findDataSource(workspace, id, cb);
 };
+
+connector.findMiddleware = function(phase, name, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  MiddlewareHandler.findMiddleware(workspace, phase, name, cb);
+};

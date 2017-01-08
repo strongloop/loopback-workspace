@@ -123,6 +123,24 @@ class Workspace extends Graph {
     }
     return config;
   }
+  setMiddlewareConfig(config) {
+    const workspace = this;
+    Object.keys(config).forEach(function(phaseName) {
+      let phase = workspace.getMiddlewarePhase(phaseName);
+      if (phase) {
+        let middlewareList = config[phaseName];
+        Object.keys(middlewareList).forEach(function(middlewareName) {
+          let middlewareConfig = middlewareList[middlewareName];
+          let middleware = phase.getMiddleware(middlewareName);
+          if (middleware) {
+            middleware.setConfig(middlewareConfig);
+          } else {
+            phase.addMiddleware(workspace, middlewareName, middlewareConfig);
+          }
+        });
+      }
+    });
+  }
 };
 
 function mixin(target, source) {

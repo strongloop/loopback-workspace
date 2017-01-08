@@ -28,6 +28,12 @@ class MiddlewarePhase extends Node {
     }
     return {};
   }
+  getMiddleware(middlewarePath) {
+    const contains = this._contains;
+    const middlewares = this._contains.Middleware;
+    const pointer = middlewares && middlewares[middlewarePath];
+    return pointer && pointer.getNode();
+  }
 };
 
 module.exports = MiddlewarePhase;
