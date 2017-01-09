@@ -1,12 +1,12 @@
 'use strict';
-const Node = require('./graph').Node;
+const Entity = require('./entity');
 
 /**
  * @class Middleware
  *
  * Represents a Middleware in the Workspace graph.
  */
-class Middleware extends Node {
+class Middleware extends Entity {
   constructor(Workspace, name, data) {
     super(Workspace, 'Middleware', name, data);
     Workspace.addNode(this);

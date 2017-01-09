@@ -30,5 +30,9 @@ module.exports = function(DataSourceDefinition) {
       const connector = DataSourceDefinition.getConnector();
       connector.findDataSource(id, cb);
     };
+    DataSourceDefinition.updateAttributes = function(id, data, options, cb) {
+      const connector = DataSourceDefinition.getConnector();
+      connector.updateDataSource(id, data, cb);
+    };
   });
 };

@@ -63,5 +63,38 @@ class ModelHandler {
     const taskList = [refresh];
     workspace.execute(taskList, callback);
   }
+
+  static updateModel(workspace, modelId, modelDef, cb) {
+    function refresh(next) {
+      workspace.refreshModel(modelId, next);
+    }
+    function update(next) {
+      workspace.updateModel(modelId, modelDef, next);
+    }
+    function callback(err, results) {
+      if (err) return cb(err);
+      const model = workspace.getModel(modelId);
+      cb(null, model.getDefinition());
+    }
+    const taskList = [refresh, update];
+    workspace.execute(taskList, callback);
+  }
+
+  static updateModelConfig(workspace, modelId, facetName, modelConfig, cb) {
+    function refresh(next) {
+      workspace.refreshModelConfig(facetName, next);
+    }
+    function update(next) {
+      workspace.updateModelConfig(facetName, modelId, modelConfig, next);
+    }
+    function callback(err, results) {
+      if (err) return cb(err);
+      const facet = workspace.getFacet(facetName);
+      const config = facet.getModelConfig(modelId);
+      cb(null, config);
+    }
+    const taskList = [refresh, update];
+    workspace.execute(taskList, callback);
+  }
 }
 module.exports = ModelHandler;
