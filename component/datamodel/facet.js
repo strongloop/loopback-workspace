@@ -1,5 +1,5 @@
 'use strict';
-const Node = require('./graph').Node;
+const Entity = require('./entity');
 const path = require('path');
 const ModelConfig = require('./model-config');
 /**
@@ -7,7 +7,7 @@ const ModelConfig = require('./model-config');
  *
  * Represents a Facet artifact in the Workspace graph.
  */
-class Facet extends Node {
+class Facet extends Entity {
   constructor(Workspace, name, data, options) {
     super(Workspace, 'Facet', name, data);
     // Facet adds itself to the workspace
