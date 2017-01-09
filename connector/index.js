@@ -107,3 +107,18 @@ connector.findMiddleware = function(phase, name, cb) {
   const workspace = WorkspaceManager.getWorkspace();
   MiddlewareHandler.findMiddleware(workspace, phase, name, cb);
 };
+
+connector.updateDataSource = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  DataSourceHandler.updateDataSource(workspace, id, data, cb);
+};
+
+connector.updateModel = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  ModelHandler.updateModel(workspace, id, data, cb);
+};
+
+connector.updateModelConfig = function(id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace();
+  ModelHandler.updateModelConfig(workspace, id, data.facetName, data, cb);
+};

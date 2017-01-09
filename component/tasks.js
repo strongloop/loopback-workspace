@@ -93,6 +93,25 @@ class Tasks {
     const workspace = this;
     fsUtility.readMiddleware(workspace, cb);
   }
+  updateModel(modelId, modelDef, cb) {
+    const workspace = this;
+    const model = workspace.getModel(modelId);
+    model.update(modelDef);
+    fsUtility.writeModel(model, cb);
+  }
+  updateModelConfig(facetName, modelId, config, cb) {
+    const workspace = this;
+    const facet = workspace.getFacet(facetName);
+    const modelConfig = facet.getContainedNode('ModelConfig', modelId);
+    modelConfig.update(config);
+    fsUtility.writeModelConfig(facet, cb);
+  }
+  updateDataSource(id, config, cb) {
+    const workspace = this;
+    const dataSource = workspace.getDataSource(id);
+    dataSource.update(config);
+    fsUtility.writeDataSourceConfig(workspace, cb);
+  }
 };
 
 module.exports = Tasks;
