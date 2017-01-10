@@ -7,3 +7,7 @@ Feature: Users should be able to query workspace artifacts
   Scenario: Query a DataSource
     When I query for datasource 'db'
     Then the datasource definition is returned
+
+  Scenario: Query a DataSource
+    When I query for datasource 'common.datasources.db'
+    Then the datasource definition is returned
