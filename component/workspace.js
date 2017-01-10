@@ -1,6 +1,7 @@
 'use strict';
 const config = require('./config.json');
 const Graph = require('./datamodel/graph');
+const clone = require('lodash').clone;
 const Model = require('./datamodel/model');
 const MiddlewarePhase = require('./datamodel/middleware-phase');
 const path = require('path');
@@ -19,12 +20,12 @@ class Workspace extends Graph {
     super();
     this.directory = rootFolder;
     this.processor = new Processor();
-    //mixin the atomic tasks with the workspace graph
+    // mixin the atomic tasks with the workspace graph
     mixin(this, Tasks.prototype);
     this.middlewarePhases = [];
   }
   addBuiltInModel(name) {
-    //add ModelDefinition to the workspace graph for a builtin loopback model
+    // add ModelDefinition to the workspace graph for a builtin loopback model
     new Model(this, name, {}, {builtIn: true});
   }
   getConfig() {
@@ -52,9 +53,27 @@ class Workspace extends Graph {
       config.DefaultMiddlewareFile);
     return filePath;
   }
+  getFacets() {
+    return this._cache['Facet'];
+  }
   getFacet(name) {
     const facet = this.getNode('Facet', name);
     return facet;
+  }
+  getModelDefinitionPath(facetName, modelName) {
+    const filePath = path.join(this.directory, facetName,
+      config.ModelDefaultDir, modelName + '.json');
+    return filePath;
+  }
+  createModelDefinition(id, modelDef) {
+    const modelData = clone(modelDef);
+    delete modelData['properties'];
+    delete modelData['methods'];
+    delete modelData['relations'];
+    delete modelData['validations'];
+    delete modelData['acls'];
+    // new Model node is created and added to workspace
+    new Model(this, id, modelData);
   }
   getModel(modelId) {
     const model = this.getNode('ModelDefinition', modelId);
@@ -67,6 +86,13 @@ class Workspace extends Graph {
   getAllDataSources() {
     const ds = this._cache['DataSource'];
     return ds;
+  }
+  setDatasources(config) {
+    const datasources = this._cache['DataSource'];
+    Object.keys(datasources).forEach(function(key) {
+      let ds = datasources[key];
+      ds._content = config[key];
+    });
   }
   getModelProperty(id) {
     const property = this.getNode('ModelProperty', id);
@@ -96,6 +122,24 @@ class Workspace extends Graph {
       });
     }
     return config;
+  }
+  setMiddlewareConfig(config) {
+    const workspace = this;
+    Object.keys(config).forEach(function(phaseName) {
+      let phase = workspace.getMiddlewarePhase(phaseName);
+      if (phase) {
+        let middlewareList = config[phaseName];
+        Object.keys(middlewareList).forEach(function(middlewareName) {
+          let middlewareConfig = middlewareList[middlewareName];
+          let middleware = phase.getMiddleware(middlewareName);
+          if (middleware) {
+            middleware.setConfig(middlewareConfig);
+          } else {
+            phase.addMiddleware(workspace, middlewareName, middlewareConfig);
+          }
+        });
+      }
+    });
   }
 };
 

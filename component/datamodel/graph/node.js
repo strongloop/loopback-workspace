@@ -21,6 +21,21 @@ class Node {
     }
     this._contains[node._domain][node._name] = new Pointer(node);
   }
+  getContainedNode(domain, name) {
+    const pointer = this._contains[domain][name];
+    return pointer.getNode();
+  }
+  getContainedSet(domain) {
+    const pointers = this._contains[domain];
+    if (pointers) {
+      const nodes = {};
+      Object.keys(pointers).forEach(function(key) {
+        let pointer = pointers[key];
+        nodes[key] = pointer.getNode();
+      });
+      return nodes;
+    }
+  }
 };
 
 class Pointer {

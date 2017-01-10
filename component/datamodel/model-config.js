@@ -1,5 +1,5 @@
 'use strict';
-const Node = require('./graph').Node;
+const Entity = require('./entity');
 const Edge = require('./graph').Edge;
 
 /**
@@ -7,13 +7,16 @@ const Edge = require('./graph').Edge;
  *
  * Represents a ModelConfig artifact in the Workspace graph.
  */
-class ModelConfig extends Node {
+class ModelConfig extends Entity {
   constructor(Workspace, modelId, data, options) {
     super(Workspace, 'ModelConfig', modelId, data);
-    //ModelConfig adds itself to the workspace
+    // ModelConfig adds itself to the workspace
     Workspace.addNode(this);
     const model = Workspace.getModel(modelId);
     new Edge(this, model);
+  }
+  getDefinition() {
+    return this._content;
   }
 };
 

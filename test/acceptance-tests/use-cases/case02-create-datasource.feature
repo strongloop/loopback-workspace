@@ -8,3 +8,7 @@ Feature: Users should be able to create datasources
     Given that I have a workspace created from a template
     When I create datasource 'db' with connector 'memory'
     Then the datasource definition is created
+
+  Scenario: Update a DataSource
+    When I update datasource 'db' with connector 'sqllite'
+    Then the datasource configuration is updated

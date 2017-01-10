@@ -9,6 +9,10 @@ const fs = require('fs-extra');
 const path = require('path');
 
 module.exports = {
+  readModel: readModel,
+  readModelConfig: readModelConfig,
+  readDataSource: readDataSource,
+  readMiddleware: readMiddleware,
   writeDataSourceConfig: writeDataSourceConfig,
   writeFacet: writeFacet,
   writeFacetConfig: writeFacetConfig,
@@ -84,4 +88,36 @@ function writePackageDefinition(packageDef, cb) {
   const filePath = packageDef.getFilePath();
   const data = packageDef.getDefinition();
   fs.writeJson(filePath, data, cb);
+}
+
+function readModelConfig(facet, cb) {
+  const filePath = facet.getModelConfigPath();
+  fs.readJson(filePath, function(err, data) {
+    if (err) return err;
+    facet.setModelConfig(data);
+    cb(null, data);
+  });
+}
+
+function readModel(facetName, modelName, workspace, cb) {
+  const filePath = workspace.getModelDefinitionPath(facetName, modelName);
+  fs.readJson(filePath, cb);
+}
+
+function readDataSource(workspace, cb) {
+  const filePath = workspace.getDataSourceConfigFilePath();
+  fs.readJson(filePath, function(err, data) {
+    if (err) return err;
+    workspace.setDatasources(data);
+    cb(null, data);
+  });
+}
+
+function readMiddleware(workspace, cb) {
+  const filePath = workspace.getMiddlewareFilePath();
+  fs.readJson(filePath, function(err, data) {
+    if (err) return cb(err);
+    workspace.setMiddlewareConfig(data);
+    cb(null, data);
+  });
 }
