@@ -1,5 +1,5 @@
 'use strict';
-const Node = require('./graph').Node;
+const Entity = require('./entity');
 const path = require('path');
 
 /**
@@ -7,7 +7,7 @@ const path = require('path');
  *
  * Represents a PackageDefinition artifact in the Workspace.
  */
-class PackageDefinition extends Node {
+class PackageDefinition extends Entity {
   constructor(Workspace, id, definition, options) {
     super(Workspace, 'PackageDefinition', id, definition);
     Workspace.addNode(this);

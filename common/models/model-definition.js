@@ -11,15 +11,28 @@ module.exports = function(ModelDefinition) {
    * @class ModelDefinition
    */
   ModelDefinition.on('dataSourceAttached', function(eventData) {
-    const connector = ModelDefinition.getConnector();
     ModelDefinition.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = null;
       }
       const id = data.id;
-      //TODO(Deepak) - add response handling later
+      const connector = ModelDefinition.getConnector();
+      // TODO(Deepak) - add response handling later
       connector.createModel(id, data, cb);
+    };
+    ModelDefinition.find = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = null;
+      }
+      const id = filter.where.id;
+      const connector = ModelDefinition.getConnector();
+      connector.findModel(id, cb);
+    };
+    ModelDefinition.updateAttributes = function(id, data, options, cb) {
+      const connector = ModelDefinition.getConnector();
+      connector.updateModel(id, data, cb);
     };
   });
 };

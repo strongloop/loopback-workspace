@@ -1,12 +1,12 @@
 'use strict';
-const Node = require('./graph').Node;
+const Entity = require('./entity');
 const Middleware = require('./middleware');
 /**
  * @class MiddlewarePhase
  *
  * Represents a Middleware Phase artifact in the Workspace graph.
  */
-class MiddlewarePhase extends Node {
+class MiddlewarePhase extends Entity {
   constructor(Workspace, name) {
     super(Workspace, 'MiddlewarePhase', name, {});
     Workspace.addNode(this);
@@ -27,6 +27,12 @@ class MiddlewarePhase extends Node {
       return middlewareList;
     }
     return {};
+  }
+  getMiddleware(middlewarePath) {
+    const contains = this._contains;
+    const middlewares = this._contains.Middleware;
+    const pointer = middlewares && middlewares[middlewarePath];
+    return pointer && pointer.getNode();
   }
 };
 

@@ -1,15 +1,15 @@
 'use strict';
-const Node = require('./graph').Node;
+const Entity = require('./entity');
 
 /**
  * @class ModelProperty
  *
  * Represents a ModelProperty artifact in the Workspace graph.
  */
-class ModelProperty extends Node {
+class ModelProperty extends Entity {
   constructor(Workspace, id, propertyDef, options) {
     super(Workspace, 'ModelProperty', id, propertyDef);
-    //ModelProperty adds itself to the workspace
+    // ModelProperty adds itself to the workspace
     Workspace.addNode(this);
   }
 };
