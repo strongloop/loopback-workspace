@@ -52,4 +52,25 @@ module.exports = function() {
       next();
     });
   });
+
+  this.When(/^I query for the model config '(.+)'$/, function(modelName, next) {
+    testsuite.modelName = modelName;
+    const modelId = 'common.' + testsuite.modelName;
+    const filter = {
+      where: {id: modelId},
+    };
+    ModelConfig.find(filter, function(err, data) {
+      if (err) return next(err);
+      testsuite.modelConfig = data;
+      next();
+    });
+  });
+
+  this.Then(/^the model config is returned$/, function(next) {
+    expect(Object.keys(testsuite.modelConfig)).to.include.members([
+      'dataSource',
+      'facetName',
+    ]);
+    next();
+  });
 };

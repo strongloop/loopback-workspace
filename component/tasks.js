@@ -89,6 +89,10 @@ class Tasks {
     const workspace = this;
     fsUtility.readDataSource(workspace, cb);
   }
+  refreshMiddleware(cb) {
+    const workspace = this;
+    fsUtility.readMiddleware(workspace, cb);
+  }
 };
 
 module.exports = Tasks;

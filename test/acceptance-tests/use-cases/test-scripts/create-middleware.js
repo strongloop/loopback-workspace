@@ -55,4 +55,23 @@ module.exports = function() {
       next();
     });
   });
+
+  this.When(/^I query for the middleware method '(.+)'$/,
+  function(middlewareId, next) {
+    testsuite.middlewareId = middlewareId;
+    Middleware.find(testsuite.middlewareId, {}, function(err, config) {
+      if (err) return next(err);
+      testsuite.middlewareConfig = config;
+      next();
+    });
+  });
+
+  this.Then(/^The middleware config for the method is returned$/,
+  function(next) {
+    expect(Object.keys(testsuite.middlewareConfig)).to.include.members([
+      'name',
+      'path',
+    ]);
+    next();
+  });
 };

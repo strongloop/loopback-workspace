@@ -12,6 +12,7 @@ module.exports = {
   readModel: readModel,
   readModelConfig: readModelConfig,
   readDataSource: readDataSource,
+  readMiddleware: readMiddleware,
   writeDataSourceConfig: writeDataSourceConfig,
   writeFacet: writeFacet,
   writeFacetConfig: writeFacetConfig,
@@ -108,6 +109,15 @@ function readDataSource(workspace, cb) {
   fs.readJson(filePath, function(err, data) {
     if (err) return err;
     workspace.setDatasources(data);
+    cb(null, data);
+  });
+}
+
+function readMiddleware(workspace, cb) {
+  const filePath = workspace.getMiddlewareFilePath();
+  fs.readJson(filePath, function(err, data) {
+    if (err) return cb(err);
+    workspace.setMiddlewareConfig(data);
     cb(null, data);
   });
 }

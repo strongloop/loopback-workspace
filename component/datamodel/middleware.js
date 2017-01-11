@@ -17,6 +17,9 @@ class Middleware extends Node {
   getConfig() {
     return this._content;
   }
+  setConfig(config) {
+    this._content = config;
+  }
 };
 
 module.exports = Middleware;
