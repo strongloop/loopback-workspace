@@ -35,17 +35,21 @@ module.exports = function(Middleware) {
       const phase = this.getPhase(data);
       const connector = Middleware.getConnector();
       // TODO(Deepak) - add response handling later
-      connector.createMiddleware(phase, data, cb);
+      connector.createMiddleware(data.workspaceId, phase, data, cb);
     };
-    Middleware.find = function(id, options, cb) {
+    Middleware.find = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = null;
       }
-      const phase = Middleware.getPhaseFromId(id);
-      const middlewarePath = Middleware.getMiddlewarePath(id);
+      const phase = Middleware.getPhaseFromId(filter.where.id);
+      const middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
       const connector = Middleware.getConnector();
-      connector.findMiddleware(phase, middlewarePath, cb);
+      connector.findMiddleware(
+        filter.where.workspaceId,
+        phase,
+        middlewarePath,
+        cb);
     };
   });
 };

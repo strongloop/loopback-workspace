@@ -19,7 +19,7 @@ module.exports = function(DataSourceDefinition) {
       const connector = DataSourceDefinition.getConnector();
       const id = data.id;
       // TODO(Deepak) - add response handling later as part of the callback
-      connector.createDataSource(id, data, cb);
+      connector.createDataSource(data.workpaceId, id, data, cb);
     };
     DataSourceDefinition.find = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -28,11 +28,34 @@ module.exports = function(DataSourceDefinition) {
       }
       const id = filter.where.id;
       const connector = DataSourceDefinition.getConnector();
-      connector.findDataSource(id, cb);
+      connector.findDataSource(filter.where.workpaceId, id, cb);
     };
     DataSourceDefinition.updateAttributes = function(id, data, options, cb) {
       const connector = DataSourceDefinition.getConnector();
-      connector.updateDataSource(id, data, cb);
+      connector.updateDataSource(data.workpaceId, id, data, cb);
     };
+    declareRemoteMethods(DataSourceDefinition);
   });
 };
+
+function declareRemoteMethods(Workspace) {
+  Workspace.queryDataSource = function(workpaceId, id, cb) {
+    const filter = {};
+    filter.where = {
+      id: id,
+      workpaceId: workpaceId,
+    };
+    this.find(filter, {}, cb);
+  };
+  Workspace.remoteMethod('queryDataSource', {
+    accepts: [{arg: 'id', type: 'string'}, {arg: 'workpaceId', type: 'string'}],
+    returns: [{arg: 'response',
+      type: Workspace,
+      http: {source: 'res'},
+      root: true}],
+    http: {
+      verb: 'GET',
+      path: '/:id/workspace/:workpaceId',
+    },
+  });
+}

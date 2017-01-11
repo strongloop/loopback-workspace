@@ -34,7 +34,12 @@ module.exports = function(ModelRelation) {
       delete relationDef.modelId;
       delete relationDef.facetName;
       const connector = ModelRelation.getConnector();
-      connector.createModelRelation(modelId, toModelId, relationDef, cb);
+      connector.createModelRelation(
+        data.workpaceId,
+        modelId,
+        toModelId,
+        relationDef,
+        cb);
     };
   });
 };

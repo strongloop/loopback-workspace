@@ -56,6 +56,20 @@ module.exports = function() {
     });
   });
 
+  this.When(/^I query for datasource '(.+)' from the default workspace$/,
+  function(dsName, next) {
+    const workspace = workspaceManager.getWorkspace();
+    const workspaceId = workspace.getId();
+    testsuite.datasourceId = 'common.datasources.' + dsName;
+    DataSourceDefinition.queryDataSource(workspaceId,
+      testsuite.datasourceId,
+      function(err, data) {
+        if (err) return next(err);
+        testsuite.datasource = data;
+        next();
+      });
+  });
+
   this.Then(/^the datasource definition is returned$/, function(next) {
     expect(Object.keys(testsuite.datasource))
     .to.include.members(['connector', 'name']);

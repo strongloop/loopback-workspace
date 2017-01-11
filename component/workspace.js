@@ -31,6 +31,12 @@ class Workspace extends Graph {
   getConfig() {
     return config;
   }
+  setId(id) {
+    this.id = id;
+  }
+  getId() {
+    return this.id;
+  }
   execute(transaction, callBack) {
     var task = this.processor.createTask(callBack);
     transaction.forEach(function(t) {
