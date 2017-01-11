@@ -46,7 +46,7 @@ module.exports = function() {
     const file = facet.getModelConfigPath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
-      const config = data[testsuite.modelName];
+      const config = data[testsuite.modelId];
       expect(config).to.not.to.be.undefined();
       expect(testsuite.ModelConfig).to.eql(config);
       next();

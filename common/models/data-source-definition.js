@@ -18,8 +18,17 @@ module.exports = function(DataSourceDefinition) {
       }
       const connector = DataSourceDefinition.getConnector();
       const id = data.id;
-      //TODO(Deepak) - add response handling later as part of the callback
+      // TODO(Deepak) - add response handling later as part of the callback
       connector.createDataSource(id, data, cb);
+    };
+    DataSourceDefinition.find = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = null;
+      }
+      const id = filter.where.id;
+      const connector = DataSourceDefinition.getConnector();
+      connector.findDataSource(id, cb);
     };
   });
 };

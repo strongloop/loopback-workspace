@@ -18,8 +18,8 @@ templateRegistry.loadTemplates(function(err, status) {
 boot(app, __dirname, function() {
   app.emit('ready');
 });
-//add workspace operations to connector
-require('../connector/connector.js');
+// add workspace operations to connector
+require('../connector');
 
 app.start = function() {
   return app.listen(function() {

@@ -10,7 +10,7 @@ const Node = require('./graph').Node;
 class ModelRelation extends Node {
   constructor(Workspace, id, data, fromModel, toModel, options) {
     super(Workspace, 'ModelRelation', id, data);
-    //ModelRelation adds itself to the workspace
+    // ModelRelation adds itself to the workspace
     Workspace.addNode(this);
     new Edge(fromModel, toModel, options);
   }

@@ -13,5 +13,20 @@ class DataSourceHandler {
     const taskList = [create];
     workspace.execute(taskList, callBack);
   }
+
+  static findDataSource(workspace, id, cb) {
+    function refresh(next) {
+      workspace.refreshDataSource(function(err) {
+        next(err);
+      });
+    };
+    function callBack(err, results) {
+      if (err) return cb(err);
+      const ds = workspace.getDataSource(id);
+      cb(null, ds.getDefinition());
+    };
+    const taskList = [refresh];
+    workspace.execute(taskList, callBack);
+  }
 }
 module.exports = DataSourceHandler;

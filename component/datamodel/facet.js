@@ -10,8 +10,11 @@ const ModelConfig = require('./model-config');
 class Facet extends Node {
   constructor(Workspace, name, data, options) {
     super(Workspace, 'Facet', name, data);
-    //Facet adds itself to the workspace
+    // Facet adds itself to the workspace
     Workspace.addNode(this);
+  }
+  getName() {
+    return this._name;
   }
   addModelConfig(workspace, modelId, config) {
     const modelConfig = new ModelConfig(workspace, modelId, config);
@@ -30,19 +33,24 @@ class Facet extends Node {
       this._graph.getConfig().ModelConfigFile);
     return filePath;
   }
-  getModelConfig() {
-    const modelConfigNodes = this._graph._cache['ModelConfig'];
+  setModelConfig(config) {
+    const modelConfigNodes = this.getContainedSet('ModelConfig');
+    if (modelConfigNodes) {
+      Object.keys(modelConfigNodes).forEach(function(key) {
+        modelConfigNodes[key]._content = config[key];
+      });
+    }
+  }
+  getModelConfig(id) {
+    const modelConfigNodes = this.getContainedSet('ModelConfig');
     const config = {};
-    Object.keys(modelConfigNodes).forEach(function(key) {
-      const modelId = key.split('.');
-      if (modelId.length && modelId.length > 1) {
-        const modelName = modelId[1];
-        config[modelName] = modelConfigNodes[key]._content;
-      } else {
-        config[modelId] = modelConfigNodes[key]._content;
-      }
-    });
-    return config;
+    if (modelConfigNodes) {
+      Object.keys(modelConfigNodes).forEach(function(key) {
+        config[key] = modelConfigNodes[key]._content;
+      });
+    }
+    if (id) return config[id];
+    else return config;
   }
   getConfig() {
     const facetNodes = this._graph._cache['FacetConfig'];

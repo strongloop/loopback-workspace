@@ -10,10 +10,13 @@ const Edge = require('./graph').Edge;
 class ModelConfig extends Node {
   constructor(Workspace, modelId, data, options) {
     super(Workspace, 'ModelConfig', modelId, data);
-    //ModelConfig adds itself to the workspace
+    // ModelConfig adds itself to the workspace
     Workspace.addNode(this);
     const model = Workspace.getModel(modelId);
     new Edge(this, model);
+  }
+  getDefinition() {
+    return this._content;
   }
 };
 
