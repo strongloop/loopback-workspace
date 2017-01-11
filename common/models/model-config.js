@@ -32,5 +32,9 @@ module.exports = function(ModelConfig) {
       // TODO(Deepak) - add response handling later
       connector.findModelConfig(id, cb);
     };
+    ModelConfig.updateAttributes = function(id, data, options, cb) {
+      const connector = ModelConfig.getConnector();
+      connector.updateModelConfig(id, data, cb);
+    };
   });
 };

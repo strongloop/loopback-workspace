@@ -1,7 +1,7 @@
 'use strict';
 const config = require('../config.json');
 const clone = require('lodash').clone;
-const Node = require('./graph').Node;
+const Entity = require('./entity');
 const path = require('path');
 const ModelRelation = require('./model-relationship');
 /**
@@ -9,7 +9,7 @@ const ModelRelation = require('./model-relationship');
  *
  * Represents a Model artifact in the Workspace graph.
  */
-class Model extends Node {
+class Model extends Entity {
   constructor(Workspace, id, modelDef, options) {
     super(Workspace, 'ModelDefinition', id, modelDef);
     this.properties = {};
