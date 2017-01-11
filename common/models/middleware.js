@@ -30,23 +30,23 @@ module.exports = function(Middleware) {
     Middleware.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
-        options = null;
+        options = {};
       }
       const phase = this.getPhase(data);
       const connector = Middleware.getConnector();
       // TODO(Deepak) - add response handling later
-      connector.createMiddleware(data.workspaceId, phase, data, cb);
+      connector.createMiddleware(options.workspaceId, phase, data, cb);
     };
     Middleware.find = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
-        options = null;
+        options = {};
       }
       const phase = Middleware.getPhaseFromId(filter.where.id);
       const middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
       const connector = Middleware.getConnector();
       connector.findMiddleware(
-        filter.where.workspaceId,
+        options.workspaceId,
         phase,
         middlewarePath,
         cb);

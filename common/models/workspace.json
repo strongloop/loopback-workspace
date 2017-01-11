@@ -5,6 +5,11 @@
       "id": true,
       "json": false
     },
+    "workspaceId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
     "destinationPath": {
       "type": "string",
       "required": true,

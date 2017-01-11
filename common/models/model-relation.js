@@ -23,7 +23,7 @@ module.exports = function(ModelRelation) {
     ModelRelation.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
-        options = null;
+        options = {};
       }
       const relationDef = clone(data);
       const fromModelName = relationDef.modelId;
@@ -35,7 +35,7 @@ module.exports = function(ModelRelation) {
       delete relationDef.facetName;
       const connector = ModelRelation.getConnector();
       connector.createModelRelation(
-        data.workpaceId,
+        options.workpaceId,
         modelId,
         toModelId,
         relationDef,

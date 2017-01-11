@@ -25,5 +25,24 @@ module.exports = function(Workspace) {
       const connector = Workspace.getConnector();
       connector.createFromTemplate(template, destinationPath, cb);
     };
+    Workspace.loadWorkspace = function(workspaceDir, cb) {
+      const connector = Workspace.getConnector();
+      connector.loadWorkspace(workspaceDir, cb);
+    };
+    Workspace.remoteMethod('loadWorkspace', {
+      accepts: [{
+        arg: 'directory',
+        type: 'string',
+        http: {source: 'body'}}],
+      returns: [{
+        arg: 'response',
+        type: 'object',
+        http: {source: 'res'},
+        root: true}],
+      http: {
+        verb: 'POST',
+        path: '/load-workspace',
+      },
+    });
   });
 };

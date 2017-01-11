@@ -8,6 +8,7 @@ const MiddlewareHandler = require('./middleware-handler');
 const ModelHandler = require('./model-handler');
 const RelationsHandler = require('./relation-handler');
 const TemplateHandler = require('./template-handler');
+const WorkspaceHandler = require('./workspace-handler');
 const WorkspaceManager = require('../component/workspace-manager.js');
 
 /**
@@ -19,6 +20,11 @@ const WorkspaceManager = require('../component/workspace-manager.js');
 connector.createFromTemplate = function(template, destinationFolder, cb) {
   const workspace = WorkspaceManager.createWorkspace(destinationFolder);
   TemplateHandler.createFromTemplate(workspace, template, cb);
+};
+
+connector.loadWorkspace = function(workspaceFolder, cb) {
+  const workspace = WorkspaceManager.createWorkspace(workspaceFolder);
+  WorkspaceHandler.loadWorkspace(workspace, cb);
 };
 
 connector.createFacet = function(workspaceId, id, data, cb) {

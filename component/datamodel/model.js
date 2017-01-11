@@ -4,6 +4,7 @@ const clone = require('lodash').clone;
 const Entity = require('./entity');
 const path = require('path');
 const ModelRelation = require('./model-relationship');
+
 /**
  * @class Model
  *

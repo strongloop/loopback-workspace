@@ -5,6 +5,11 @@
       "id": true,
       "json": false
     },
+    "workspaceId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
     "facetName": {
       "type": "string",
       "required": true,
@@ -33,5 +38,5 @@
     "indexes": "object"
   },
   "public": true,
-  "dataSource": null
+  "http": {"path": "/Workspace/:workspaceId/ModelDefinition"}
 }

@@ -41,7 +41,7 @@ module.exports = function(ModelProperty) {
     ModelProperty.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
-        options = null;
+        options = {};
       }
       const connector = ModelProperty.getConnector();
       const id = data.id;
@@ -52,7 +52,7 @@ module.exports = function(ModelProperty) {
         const propertyName = tokens[2];
         const modelId = facet + '.' + modelName;
         connector.createModelProperty(
-          data.workpaceId,
+          options.workpaceId,
           modelId,
           propertyName,
           data,

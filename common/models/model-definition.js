@@ -14,25 +14,29 @@ module.exports = function(ModelDefinition) {
     ModelDefinition.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
-        options = null;
+        options = {};
       }
       const id = data.id;
       const connector = ModelDefinition.getConnector();
       // TODO(Deepak) - add response handling later
-      connector.createModel(data.workpaceId, id, data, cb);
+      connector.createModel(options.workpaceId, id, data, cb);
     };
     ModelDefinition.find = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
-        options = null;
+        options = {};
       }
       const id = filter.where.id;
       const connector = ModelDefinition.getConnector();
-      connector.findModel(filter.where.workpaceId, id, cb);
+      connector.findModel(options.workpaceId, id, cb);
     };
     ModelDefinition.updateAttributes = function(id, data, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
       const connector = ModelDefinition.getConnector();
-      connector.updateModel(data.workpaceId, id, data, cb);
+      connector.updateModel(options.workpaceId, id, data, cb);
     };
   });
 };

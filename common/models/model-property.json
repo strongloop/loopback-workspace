@@ -6,6 +6,11 @@
       "id": true,
       "json": false
     },
+    "workspaceId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
     "modelId": {
       "type": "string",
       "required": true,
@@ -39,5 +44,6 @@
       "type": "string"
     }
   },
-  "public": true
+  "public": true,
+  "http": {"path": "/Workspace/:workspaceId/ModelProperty"}
 }
