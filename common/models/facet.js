@@ -16,7 +16,7 @@ module.exports = function(Facet) {
       }
       const id = data.name;
       const connector = Facet.getConnector();
-      connector.createFacet(id, data, cb);
+      connector.createFacet(data.workpaceId, id, data, cb);
     };
   });
 };

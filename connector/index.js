@@ -21,35 +21,37 @@ connector.createFromTemplate = function(template, destinationFolder, cb) {
   TemplateHandler.createFromTemplate(workspace, template, cb);
 };
 
-connector.createFacet = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createFacet = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   FacetHandler.createFacet(workspace, id, data, cb);
 };
 
-connector.createModel = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createModel = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.createModel(workspace, id, data, cb);
 };
 
-connector.createModelConfig = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createModelConfig = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   const modelConfig = clone(data);
   delete modelConfig.id;
   ModelHandler.createModelConfig(workspace, id, modelConfig, cb);
 };
 
-connector.createDataSource = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createDataSource = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   DataSourceHandler.createDataSource(workspace, id, data, cb);
 };
 
-connector.createModelProperty = function(modelId, propertyName, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createModelProperty =
+function(workspaceId, modelId, propertyName, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   workspace.addModelProperty(modelId, propertyName, data, cb);
 };
 
-connector.createModelRelation = function(fromModelId, toModelId, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createModelRelation =
+function(workspaceId, fromModelId, toModelId, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   const relationDef = clone(data);
   const relationName = relationDef.id;
   delete relationDef.id;
@@ -57,8 +59,8 @@ connector.createModelRelation = function(fromModelId, toModelId, data, cb) {
       workspace, relationName, fromModelId, toModelId, relationDef, cb);
 };
 
-connector.createMiddleware = function(phase, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createMiddleware = function(workspaceId, phase, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   const middlewareDef = clone(data);
   const middlewarePath = middlewareDef.function;
   delete middlewareDef.phase;
@@ -71,54 +73,54 @@ connector.createMiddleware = function(phase, data, cb) {
   cb);
 };
 
-connector.createModel = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createModel = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.createModel(workspace, id, data, cb);
 };
 
-connector.createModelConfig = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createModelConfig = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   const modelConfig = clone(data);
   delete modelConfig.id;
   ModelHandler.createModelConfig(workspace, id, modelConfig, cb);
 };
 
-connector.createDataSource = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.createDataSource = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   DataSourceHandler.createDataSource(workspace, id, data, cb);
 };
 
-connector.findModel = function(id, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.findModel = function(workspaceId, id, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.findModel(workspace, id, cb);
 };
 
-connector.findModelConfig = function(id, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.findModelConfig = function(workspaceId, id, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.findModelConfig(workspace, id, cb);
 };
 
-connector.findDataSource = function(id, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.findDataSource = function(workspaceId, id, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   DataSourceHandler.findDataSource(workspace, id, cb);
 };
 
-connector.findMiddleware = function(phase, name, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.findMiddleware = function(workspaceId, phase, name, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   MiddlewareHandler.findMiddleware(workspace, phase, name, cb);
 };
 
-connector.updateDataSource = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.updateDataSource = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   DataSourceHandler.updateDataSource(workspace, id, data, cb);
 };
 
-connector.updateModel = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.updateModel = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.updateModel(workspace, id, data, cb);
 };
 
-connector.updateModelConfig = function(id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace();
+connector.updateModelConfig = function(workspaceId, id, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.updateModelConfig(workspace, id, data.facetName, data, cb);
 };

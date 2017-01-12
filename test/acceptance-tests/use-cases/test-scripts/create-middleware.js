@@ -59,7 +59,8 @@ module.exports = function() {
   this.When(/^I query for the middleware method '(.+)'$/,
   function(middlewareId, next) {
     testsuite.middlewareId = middlewareId;
-    Middleware.find(testsuite.middlewareId, {}, function(err, config) {
+    const filter = {where: {id: testsuite.middlewareId}};
+    Middleware.find(filter, {}, function(err, config) {
       if (err) return next(err);
       testsuite.middlewareConfig = config;
       next();

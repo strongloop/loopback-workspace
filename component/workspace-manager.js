@@ -8,28 +8,51 @@ const templateRegistry = require('./template-registry');
  */
 const Manager = class Manager {
   constructor() {
+    this.listOfWorkspaces = {};
+    this.index = 0;
+    this.folderMap = {};
   }
   createWorkspace(dir) {
-    if (this.workspace && this.workspace.getDirectory() === dir) {
-      return this.workspace;
+    if (this.folderMap[dir] && this.listOfWorkspaces[this.folderMap[dir]]) {
+      return this.listOfWorkspaces[this.folderMap[dir]];
     }
-    this.workspace = new Workspace(dir);
-    this.workspace.addDomain('Facet');
-    this.workspace.addDomain('FacetConfig');
-    this.workspace.addDomain('DataSource');
-    this.workspace.addDomain('MiddlewarePhase');
-    this.workspace.addDomain('Middleware');
-    this.workspace.addDomain('ModelConfig');
-    this.workspace.addDomain('ModelDefinition');
-    this.workspace.addDomain('ModelProperty');
-    this.workspace.addDomain('ModelRelation');
-    this.workspace.addDomain('PackageDefinition');
-    this.initMiddleware(this.workspace);
-    this.workspace.addBuiltInModel('User');
-    return this.workspace;
+    const workspace = new Workspace(dir);
+    workspace.addDomain('Facet');
+    workspace.addDomain('FacetConfig');
+    workspace.addDomain('DataSource');
+    workspace.addDomain('MiddlewarePhase');
+    workspace.addDomain('Middleware');
+    workspace.addDomain('ModelConfig');
+    workspace.addDomain('ModelDefinition');
+    workspace.addDomain('ModelProperty');
+    workspace.addDomain('ModelRelation');
+    workspace.addDomain('PackageDefinition');
+    this.initMiddleware(workspace);
+    workspace.addBuiltInModel('User');
+    workspace.setId(this.getWorkspaceId());
+    this.listOfWorkspaces[workspace.getId()] = workspace;
+    this.folderMap[dir] = workspace.getId();
+    if (this.index === 1) this.defaultWorkspace = workspace;
+    return workspace;
   }
-  getWorkspace() {
-    return this.workspace;
+  getWorkspaceId() {
+    this.index++;
+    const prefix = '0000';
+    let id = '' + this.index;
+    return prefix.substring(0, (prefix.length - id.length)).concat(id);
+  }
+  getWorkspace(id) {
+    return id ? this.listOfWorkspaces[id] : this.defaultWorkspace;
+  }
+  getWorkspaceByFolder(dir) {
+    if (this.folderMap[dir]) return this.listOfWorkspaces[this.folderMap[dir]];
+  }
+  deleteWorkspace(id) {
+    if (this.listOfWorkspaces[id]) {
+      const dir = this.listOfWorkspaces[id].getDirectory();
+      delete this.folderMap[dir];
+      delete this.listOfWorkspaces[id];
+    }
   }
   initMiddleware(workspace) {
     workspace.addMiddlewarePhase('initial');

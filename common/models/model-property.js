@@ -51,7 +51,12 @@ module.exports = function(ModelProperty) {
         const modelName = tokens[1];
         const propertyName = tokens[2];
         const modelId = facet + '.' + modelName;
-        connector.createModelProperty(modelId, propertyName, data, cb);
+        connector.createModelProperty(
+          data.workpaceId,
+          modelId,
+          propertyName,
+          data,
+          cb);
       } else {
         return cb('invalid id field');
       }
