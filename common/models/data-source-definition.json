@@ -6,6 +6,11 @@
       "id": true,
       "json": false
     },
+    "workspaceId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
     "host": {
       "type": "string"
     },
@@ -31,5 +36,6 @@
     }
   },
   "public": true,
-  "dataSource": "db"
+  "dataSource": "db",
+  "http": {"path": "/Workspace/:workspaceId/DataSourceDefinition"}
 }

@@ -5,6 +5,11 @@
       "id": true,
       "json": false
     },
+    "workspaceId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
     "facetName": {
       "type": "string",
       "required": true,
@@ -21,5 +26,6 @@
       "type": "boolean"
     }
   },
-  "dataSource": "db"
+  "dataSource": "db",
+  "http": {"path": "/Workspace/:workspaceId/ModelConfig"}
 }

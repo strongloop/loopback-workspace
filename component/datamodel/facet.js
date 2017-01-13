@@ -2,6 +2,7 @@
 const Entity = require('./entity');
 const path = require('path');
 const ModelConfig = require('./model-config');
+
 /**
  * @class Facet
  *

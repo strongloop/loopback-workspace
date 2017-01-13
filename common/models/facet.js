@@ -12,11 +12,11 @@ module.exports = function(Facet) {
     Facet.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
-        options = null;
+        options = {};
       }
       const id = data.name;
       const connector = Facet.getConnector();
-      connector.createFacet(data.workpaceId, id, data, cb);
+      connector.createFacet(options.workpaceId, id, data, cb);
     };
   });
 };

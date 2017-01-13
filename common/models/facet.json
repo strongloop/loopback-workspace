@@ -6,6 +6,11 @@
       "type": "string",
       "json": false
     },
+    "workspaceId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
     "modelsMetadata": {
       "type": "object",
       "json": false
@@ -14,5 +19,6 @@
       "type": "string"
     }
   },
-  "public": true
+  "public": true,
+  "http": {"path": "/Workspace/:workspaceId/Facet"}
 }

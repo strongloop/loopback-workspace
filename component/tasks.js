@@ -1,11 +1,14 @@
 'use strict';
 const DataSource = require('./datamodel/datasource');
 const Facet = require('./datamodel/facet');
+const fsUtility = require('./datamodel/util/file-utility');
+const lodash = require('lodash');
 const Model = require('./datamodel/model');
 const ModelConfig = require('./datamodel/model-config');
 const ModelProperty = require('./datamodel/model-property');
 const PackageDefinition = require('./datamodel/package-definition');
-const fsUtility = require('./datamodel/util/file-utility');
+const path = require('path');
+
 /**
  * @class Tasks
  *
@@ -111,6 +114,21 @@ class Tasks {
     const dataSource = workspace.getDataSource(id);
     dataSource.update(config);
     fsUtility.writeDataSourceConfig(workspace, cb);
+  }
+  loadModel(filePath, fileData, cb) {
+    const workspace = this;
+    const fileName = path.basename(filePath);
+    const modelName = lodash.capitalize(lodash.camelCase(fileName));
+    const facetName = fileData.facetName;
+    if (facetName && modelName) {
+      const modelId = facetName + '.' + modelName;
+      workspace.refreshModel(modelId, function(err, modelDef) {
+        if (err) return cb(err);
+        cb(null, modelDef);
+      });
+    } else {
+      cb('file ignored: ' + filePath);
+    }
   }
 };
 

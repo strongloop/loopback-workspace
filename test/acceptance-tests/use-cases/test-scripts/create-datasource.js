@@ -60,9 +60,12 @@ module.exports = function() {
   function(dsName, next) {
     const workspace = workspaceManager.getWorkspace();
     const workspaceId = workspace.getId();
+    const options = {workspaceId: workspaceId};
     testsuite.datasourceId = 'common.datasources.' + dsName;
-    DataSourceDefinition.queryDataSource(workspaceId,
-      testsuite.datasourceId,
+    const filter = {where: {id: testsuite.datasourceId}};
+    DataSourceDefinition.find(
+      filter,
+      options,
       function(err, data) {
         if (err) return next(err);
         testsuite.datasource = data;

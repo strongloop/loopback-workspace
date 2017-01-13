@@ -1,6 +1,7 @@
 'use strict';
 const Entity = require('./entity');
 const Middleware = require('./middleware');
+
 /**
  * @class MiddlewarePhase
  *

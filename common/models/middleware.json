@@ -6,6 +6,11 @@
       "id": true,
       "json": false
     },
+    "workspaceId": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
     "function": {
       "type": "string",
       "json": false
@@ -33,5 +38,5 @@
     }
   },
   "public": true,
-  "dataSource": "db"
+  "http": {"path": "/Workspace/:workspaceId/Middleware"}
 }
