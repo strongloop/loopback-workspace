@@ -52,6 +52,26 @@
         "name": "db",
         "connector": "memory"
       }
+    ],
+    "middleware": [
+      {
+        "phase": "initial",
+        "subPhase": "before",
+        "function": "loopback#favicon"
+      },
+      {
+        "phase": "initial",
+        "function": "compression"
+      },
+      {
+        "phase": "initial",
+        "function": "cors",
+        "params": {
+          "origin": true,
+          "credentials": true,
+          "maxAge": 86400
+        }
+      }
     ] 
   }   
 }

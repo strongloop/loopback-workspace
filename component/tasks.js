@@ -122,12 +122,36 @@ class Tasks {
     const facetName = fileData.facetName;
     if (facetName && modelName) {
       const modelId = facetName + '.' + modelName;
-      workspace.refreshModel(modelId, function(err, modelDef) {
-        if (err) return cb(err);
-        cb(null, modelDef);
-      });
+      workspace.refreshModel(modelId, cb);
     } else {
-      cb('file ignored: ' + filePath);
+      cb(new Error('file ignored: ' + filePath));
+    }
+  }
+  loadModelConfig(filePath, cb) {
+    const workspace = this;
+    const facetName = path.dirname(filePath);
+    if (facetName) {
+      workspace.refreshModelConfig(facetName, cb);
+    } else {
+      cb(new Error('file ignored: ' + filePath));
+    }
+  }
+  loadMiddleware(filePath, cb) {
+    const workspace = this;
+    const facetName = path.dirname(filePath);
+    if (facetName) {
+      workspace.refreshMiddleware(cb);
+    } else {
+      cb(new Error('file ignored: ' + filePath));
+    }
+  }
+  loadDataSources(filePath, cb) {
+    const workspace = this;
+    const facetName = path.dirname(filePath);
+    if (facetName) {
+      workspace.refreshDataSource(cb);
+    } else {
+      cb(new Error('file ignored: ' + filePath));
     }
   }
 };

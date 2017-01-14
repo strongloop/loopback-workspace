@@ -32,6 +32,19 @@ class TemplateHandler {
           });
         });
       }
+      if (facet.middleware) {
+        facet.middleware.forEach(function(configData) {
+          taskList.push(function(next) {
+            let phase = configData.phase;
+            const subPhase = configData.subPhase;
+            phase = (subPhase) ? phase + ':' + subPhase : phase;
+            const path = configData.function;
+            delete configData.phase;
+            delete configData.subPhase;
+            workspace.addMiddleware(phase, path, configData, next);
+          });
+        });
+      }
     });
     workspace.execute(taskList, callback);
   }

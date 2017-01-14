@@ -41,11 +41,8 @@ class ModelHandler {
     });
     function callback(err, results) {
       if (err) return cb(err);
-      let config = {};
-      Object.keys(facets).forEach(function(key) {
-        let facet = facets[key];
-        config = facet.getModelConfig(modelId);
-      });
+      const facet = facets['server'];
+      const config = facet.getModelConfig(modelId);
       cb(null, config);
     }
     workspace.execute(taskList, callback);
