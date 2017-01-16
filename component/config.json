@@ -6,7 +6,7 @@
      "ModelConfig": [
        "model-config.json"
      ],
-     "Datasources": [
+     "DataSources": [
       "datasources.json",
       "datasources.*.json"
      ],

@@ -16,5 +16,6 @@
       "json": false
     }
   },
-  "public": true
+  "public": true,
+  "http": {"path": "/Workspace"}
 }

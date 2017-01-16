@@ -6,7 +6,7 @@ Feature: Users should be able to create models
 
   Scenario: Create a Facet
     Given that I have loaded the workspace
-    When I create a facet 'server'
+    When I create a facet 'client'
     Then the facet is created
 
   Scenario: Create a model
