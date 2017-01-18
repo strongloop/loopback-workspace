@@ -21,6 +21,10 @@
     "public": true,
     "dataSource": "db"
   },
+  "ModelMethod": {
+    "public": true,
+    "dataSource": "db"
+  },
   "ModelRelation": {
     "public": true,
     "dataSource": "db"

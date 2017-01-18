@@ -34,6 +34,13 @@ Feature: Users should be able to create models
     When I add property 'name' of type 'string'
     Then the model property is created
 
+  Scenario: Add a custom method to the model
+    Given I add model method 'addReview'
+    When the method has an argument 'description' type 'string'
+    And the method has a return parameter 'status' type 'string'
+    And I call the model method api
+    Then the model method is created
+
   Scenario: Add a relation to the model
     Given I add relation 'orders' from 'Customer' to 'Order' 
     When the relation is of type 'hasMany' and foreignKey 'customerId'

@@ -25,6 +25,7 @@ const Manager = class Manager {
     workspace.addDomain('ModelConfig');
     workspace.addDomain('ModelDefinition');
     workspace.addDomain('ModelProperty');
+    workspace.addDomain('ModelMethod');
     workspace.addDomain('ModelRelation');
     workspace.addDomain('PackageDefinition');
     this.initMiddleware(workspace);

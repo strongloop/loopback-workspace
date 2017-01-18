@@ -52,7 +52,19 @@ connector.createDataSource = function(workspaceId, id, data, cb) {
 connector.createModelProperty =
 function(workspaceId, modelId, propertyName, data, cb) {
   const workspace = WorkspaceManager.getWorkspace(workspaceId);
-  workspace.addModelProperty(modelId, propertyName, data, cb);
+  ModelHandler.createModelProperty(workspace, modelId, propertyName, data, cb);
+};
+
+connector.createModelMethod =
+function(workspaceId, modelId, name, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
+  ModelHandler.createModelMethod(workspace, modelId, name, data, cb);
+};
+
+connector.findModelProperty =
+function(workspaceId, modelId, propertyName, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
+  ModelHandler.findModelProperty(workspace, modelId, propertyName, cb);
 };
 
 connector.createModelRelation =
