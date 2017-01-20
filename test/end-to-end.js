@@ -154,14 +154,10 @@ describe('end-to-end', function() {
     });
 
     it('includes sensitive error details in development mode', function(done) {
-      var loopback = require(SANDBOX + '/node_modules/loopback');
-      var boot = require(SANDBOX + '/node_modules/loopback-boot');
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
       var bootOptions = {
-        appRootDir: SANDBOX + '/server',
         env: 'development',
       };
-      boot(app, bootOptions, function(err) {
+      bootSandboxWithOptions(bootOptions, function(err, app) {
         if (err) return done(err);
         request(app)
           .get('/url-does-not-exist')
@@ -176,14 +172,10 @@ describe('end-to-end', function() {
     });
 
     it('omits sensitive error details in production mode', function(done) {
-      var loopback = require(SANDBOX + '/node_modules/loopback');
-      var boot = require(SANDBOX + '/node_modules/loopback-boot');
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
       var bootOptions = {
-        appRootDir: SANDBOX + '/server',
         env: 'production',
       };
-      boot(app, bootOptions, function(err) {
+      bootSandboxWithOptions(bootOptions, function(err, app) {
         if (err) return done(err);
         request(app)
           .get('/url-does-not-exist')
@@ -203,16 +195,12 @@ describe('end-to-end', function() {
     });
 
     it('disables built-in REST error handler', function(done) {
-      var loopback = require(SANDBOX + '/node_modules/loopback');
-      var boot = require(SANDBOX + '/node_modules/loopback-boot');
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
       var bootOptions = {
-        appRootDir: SANDBOX + '/server',
         // In "production", strong-error-handler hides error messages too,
         // while the built-in REST error handler does not
         env: 'production',
       };
-      boot(app, bootOptions, function(err) {
+      bootSandboxWithOptions(bootOptions, function(err, app) {
         if (err) return done(err);
 
         // create a model with a custom remote method returning a 500 error
@@ -1184,4 +1172,17 @@ function readBuiltinPhasesFromSanbox() {
   var app = loopback();
   app.lazyrouter(); // initialize request handling phases
   return app._requestHandlingPhases;
+}
+
+function bootSandboxWithOptions(options, done) {
+  var loopback = require(SANDBOX + '/node_modules/loopback');
+  var boot = require(SANDBOX + '/node_modules/loopback-boot');
+  var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+  var bootOptions = extend({
+    appRootDir: SANDBOX + '/server',
+  }, options);
+
+  boot(app, bootOptions, function(err) {
+    done(err, app);
+  });
 }
