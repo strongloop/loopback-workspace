@@ -61,5 +61,14 @@ module.exports = function(ModelProperty) {
         return cb('invalid id field');
       }
     };
+    ModelProperty.find = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
+      const id = filter.where.id;
+      const connector = ModelProperty.getConnector();
+      connector.findModelProperty(options.workpaceId, id, cb);
+    };
   });
 };

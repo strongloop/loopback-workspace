@@ -10,6 +10,7 @@ const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
 
 const ModelDefinition = app.models.ModelDefinition;
+const ModelMethod = app.models.ModelMethod;
 const ModelProperty = app.models.ModelProperty;
 const ModelRelation = app.models.ModelRelation;
 
@@ -84,9 +85,17 @@ module.exports = function() {
 
   this.Then(/^the model property is created$/, function(next) {
     const workspace = workspaceManager.getWorkspace();
-    const property = workspace.getModelProperty(testsuite.propertyId);
-    expect(testsuite.expectedProperty).to.eql(property._content);
-    next();
+    const model = workspace.getModel(testsuite.modelId);
+    const file = model.getFilePath();
+    fs.readJson(file, function(err, data) {
+      if (err) return next(err);
+      const property = data &&
+        data.properties &&
+        data.properties[testsuite.expectedProperty.name];
+      expect(property).to.not.to.be.undefined();
+      expect(testsuite.expectedProperty).to.eql(property);
+      next();
+    });
   });
 
   this.Given(/^I add relation '(.+)' from '(.+)' to '(.+)'$/,
@@ -107,32 +116,76 @@ module.exports = function() {
         model: testsuite.toModelName,
         facetName: 'common',
       };
+      testsuite.expectedRelation = relationDef;
       ModelRelation.create(relationDef, {}, function(err) {
         if (err) return next(err);
-        testsuite.expectedRelation = relationDef;
-        testsuite.relationTest = {};
-        testsuite.relationTest.facetName = relationDef.facetName;
-        testsuite.relationTest.fromModelName = relationDef.modelId;
-        delete relationDef.id;
-        delete relationDef.facetName;
-        delete relationDef.modelId;
         next();
       });
     });
 
   this.Then(/^the model relation is created$/, function(next) {
+    const relationDef = testsuite.expectedRelation;
+    const facetName = relationDef.facetName;
+    const fromModelName = relationDef.modelId;
+    delete relationDef.id;
+    delete relationDef.facetName;
+    delete relationDef.modelId;
     const workspace = workspaceManager.getWorkspace();
-    const facetName = testsuite.relationTest.facetName;
-    const fromModelName = testsuite.relationTest.fromModelName;
     const model = workspace.getModel(facetName + '.' + fromModelName);
     const file = model.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
-      const relations = data.relations;
-      expect(relations).to.not.to.be.undefined();
-      const relation = relations[testsuite.relationName];
+      const relation = data &&
+        data.relations &&
+        data.relations[testsuite.relationName];
       expect(relation).to.not.to.be.undefined();
       expect(testsuite.expectedRelation).to.eql(relation);
+      next();
+    });
+  });
+
+  this.Given(/^I add model method '(.+)'$/,
+  function(methodName, next) {
+    testsuite.methodName = methodName;
+    testsuite.modelMethod = {accepts: [], returns: []};
+    next();
+  });
+
+  this.When(/^the method has an argument '(.+)' type '(.+)'$/,
+    function(name, type, next) {
+      const argument = {arg: name, type: type};
+      testsuite.modelMethod.accepts.push(argument);
+      next();
+    });
+
+  this.When(/^the method has a return parameter '(.+)' type '(.+)'$/,
+    function(name, type, next) {
+      const param = {arg: name, type: type};
+      testsuite.modelMethod.returns.push(param);
+      next();
+    });
+
+  this.When(/^I call the model method api$/,
+    function(next) {
+      const methodId = testsuite.modelId + '.' + testsuite.methodName;
+      testsuite.modelMethod.id = methodId;
+      ModelMethod.create(testsuite.modelMethod, {}, function(err) {
+        if (err) return next(err);
+        next();
+      });
+    });
+
+  this.Then(/^the model method is created$/, function(next) {
+    const workspace = workspaceManager.getWorkspace();
+    const model = workspace.getModel(testsuite.modelId);
+    const file = model.getFilePath();
+    fs.readJson(file, function(err, data) {
+      if (err) return next(err);
+      const method = data &&
+        data.methods &&
+        data.methods[testsuite.methodName];
+      expect(method).to.not.to.be.undefined();
+      expect(testsuite.modelMethod).to.eql(method);
       next();
     });
   });

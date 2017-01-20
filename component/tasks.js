@@ -5,6 +5,7 @@ const fsUtility = require('./datamodel/util/file-utility');
 const lodash = require('lodash');
 const Model = require('./datamodel/model');
 const ModelConfig = require('./datamodel/model-config');
+const ModelMethod = require('./datamodel/model-method');
 const ModelProperty = require('./datamodel/model-property');
 const PackageDefinition = require('./datamodel/package-definition');
 const path = require('path');
@@ -45,14 +46,22 @@ class Tasks {
     // ModelProperty is a self-aware node which adds itself to the Workspace graph
     const property = new ModelProperty(workspace, id, propertyDef);
     const model = workspace.getModel(modelId);
-    model.setProperty(propertyName, property);
-    cb(null, propertyDef);
+    model.setProperty(property);
+    fsUtility.writeModel(model, cb);
+  }
+  addModelMethod(modelId, methodName, methodDef, cb) {
+    const workspace = this;
+    const id = modelId + '.' + methodName;
+    // ModelMethod is a self-aware node which adds itself to the Workspace graph
+    const method = new ModelMethod(workspace, id, methodDef);
+    const model = workspace.getModel(modelId);
+    model.setMethod(method);
+    fsUtility.writeModel(model, cb);
   }
   addModelRelation(relationName, fromModelId, toModelId, data, cb) {
     const workspace = this;
     const model = workspace.getModel(fromModelId);
     const relation = model.addRelation(relationName, toModelId, data);
-    model.setRelation(relationName, relation);
     fsUtility.writeModel(model, cb);
   }
   addMiddleware(phaseName, path, data, cb) {

@@ -13,12 +13,31 @@ class ModelHandler {
     const taskList = [create];
     workspace.execute(taskList, callback);
   }
-
+  static createModelProperty(workspace, modelId, name, propertyDef, cb) {
+    function create(next) {
+      workspace.addModelProperty(modelId, name, propertyDef, next);
+    }
+    function callback(err, results) {
+      if (err) return cb(err);
+      cb(null, propertyDef);
+    }
+    const taskList = [create];
+    workspace.execute(taskList, callback);
+  }
+  static createModelMethod(workspace, modelId, name, methodDef, cb) {
+    function create(next) {
+      workspace.addModelMethod(modelId, name, methodDef, next);
+    }
+    function callback(err, results) {
+      if (err) return cb(err);
+      cb(null, methodDef);
+    }
+    const taskList = [create];
+    workspace.execute(taskList, callback);
+  }
   static createModelConfig(workspace, modelId, modelConfig, cb) {
     function create(next) {
-      workspace.addModelConfig(modelId, modelConfig, function(err) {
-        next(err);
-      });
+      workspace.addModelConfig(modelId, modelConfig, next);
     }
     function callback(err, results) {
       if (err) return cb(err);
