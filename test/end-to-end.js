@@ -528,12 +528,14 @@ describe('end-to-end', function() {
     });
   });
 
-  describe('scaffold 2.x loopback project with option 2.x', function(done) {
+  describe('empty-server using LoopBack 2.x', function(done) {
     before(resetWorkspace);
     before(function createWorkspace(done) {
       var options = { loopbackVersion: '2.x' };
       givenWorkspaceFromTemplate('empty-server', options, done);
     });
+
+    before(installSandboxPackages);
 
     it('contains dependencies with 2.x version', function(done) {
       var dependencies = readPackageJsonSync().dependencies;
@@ -549,6 +551,45 @@ describe('end-to-end', function() {
       var config = fs.readJsonSync(path.resolve(SANDBOX, 'server/config.json'));
       expect(config).to.have.property('legacyExplorer', false);
       done();
+    });
+
+    it('enables AccessToken invalidation', function(done) {
+      bootSandboxWithOptions({}, function(err, app) {
+        if (err) return done(err);
+
+        // enable the authentication
+        app.dataSource('db', { connector: 'memory' });
+        app.enableAuth({ dataSource: 'db' });
+
+        // create and login a user
+        var CREDENTIALS = { email: 'test@example.com', password: 'pass' };
+        var User = app.models.User;
+        var user;
+
+        async.series([
+          function createUser(next) {
+            User.create(CREDENTIALS, function(err, u) {
+              if (err) return done(err);
+              user = u;
+              next();
+            });
+          },
+          function createToken(next) {
+            User.login(CREDENTIALS, next);
+          },
+          function changeEmail(next) {
+            user.updateAttribute('email', 'new@example.com', next);
+          },
+          function verify(next) {
+            app.models.AccessToken.find(function(err, list) {
+              if (err) return next(err);
+              list = list.map(function(t) { return t.toObject(); });
+              expect(list).to.eql([]);
+              next();
+            });
+          },
+        ], done);
+      });
     });
   });
 
