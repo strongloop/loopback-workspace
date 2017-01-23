@@ -154,14 +154,10 @@ describe('end-to-end', function() {
     });
 
     it('includes sensitive error details in development mode', function(done) {
-      var loopback = require(SANDBOX + '/node_modules/loopback');
-      var boot = require(SANDBOX + '/node_modules/loopback-boot');
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
       var bootOptions = {
-        appRootDir: SANDBOX + '/server',
         env: 'development',
       };
-      boot(app, bootOptions, function(err) {
+      bootSandboxWithOptions(bootOptions, function(err, app) {
         if (err) return done(err);
         request(app)
           .get('/url-does-not-exist')
@@ -176,14 +172,10 @@ describe('end-to-end', function() {
     });
 
     it('omits sensitive error details in production mode', function(done) {
-      var loopback = require(SANDBOX + '/node_modules/loopback');
-      var boot = require(SANDBOX + '/node_modules/loopback-boot');
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
       var bootOptions = {
-        appRootDir: SANDBOX + '/server',
         env: 'production',
       };
-      boot(app, bootOptions, function(err) {
+      bootSandboxWithOptions(bootOptions, function(err, app) {
         if (err) return done(err);
         request(app)
           .get('/url-does-not-exist')
@@ -203,16 +195,12 @@ describe('end-to-end', function() {
     });
 
     it('disables built-in REST error handler', function(done) {
-      var loopback = require(SANDBOX + '/node_modules/loopback');
-      var boot = require(SANDBOX + '/node_modules/loopback-boot');
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
       var bootOptions = {
-        appRootDir: SANDBOX + '/server',
         // In "production", strong-error-handler hides error messages too,
         // while the built-in REST error handler does not
         env: 'production',
       };
-      boot(app, bootOptions, function(err) {
+      bootSandboxWithOptions(bootOptions, function(err, app) {
         if (err) return done(err);
 
         // create a model with a custom remote method returning a 500 error
@@ -540,12 +528,14 @@ describe('end-to-end', function() {
     });
   });
 
-  describe('scaffold 2.x loopback project with option 2.x', function(done) {
+  describe('empty-server using LoopBack 2.x', function(done) {
     before(resetWorkspace);
     before(function createWorkspace(done) {
       var options = { loopbackVersion: '2.x' };
       givenWorkspaceFromTemplate('empty-server', options, done);
     });
+
+    before(installSandboxPackages);
 
     it('contains dependencies with 2.x version', function(done) {
       var dependencies = readPackageJsonSync().dependencies;
@@ -561,6 +551,45 @@ describe('end-to-end', function() {
       var config = fs.readJsonSync(path.resolve(SANDBOX, 'server/config.json'));
       expect(config).to.have.property('legacyExplorer', false);
       done();
+    });
+
+    it('enables AccessToken invalidation', function(done) {
+      bootSandboxWithOptions({}, function(err, app) {
+        if (err) return done(err);
+
+        // enable the authentication
+        app.dataSource('db', { connector: 'memory' });
+        app.enableAuth({ dataSource: 'db' });
+
+        // create and login a user
+        var CREDENTIALS = { email: 'test@example.com', password: 'pass' };
+        var User = app.models.User;
+        var user;
+
+        async.series([
+          function createUser(next) {
+            User.create(CREDENTIALS, function(err, u) {
+              if (err) return done(err);
+              user = u;
+              next();
+            });
+          },
+          function createToken(next) {
+            User.login(CREDENTIALS, next);
+          },
+          function changeEmail(next) {
+            user.updateAttribute('email', 'new@example.com', next);
+          },
+          function verify(next) {
+            app.models.AccessToken.find(function(err, list) {
+              if (err) return next(err);
+              list = list.map(function(t) { return t.toObject(); });
+              expect(list).to.eql([]);
+              next();
+            });
+          },
+        ], done);
+      });
     });
   });
 
@@ -1184,4 +1213,17 @@ function readBuiltinPhasesFromSanbox() {
   var app = loopback();
   app.lazyrouter(); // initialize request handling phases
   return app._requestHandlingPhases;
+}
+
+function bootSandboxWithOptions(options, done) {
+  var loopback = require(SANDBOX + '/node_modules/loopback');
+  var boot = require(SANDBOX + '/node_modules/loopback-boot');
+  var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+  var bootOptions = extend({
+    appRootDir: SANDBOX + '/server',
+  }, options);
+
+  boot(app, bootOptions, function(err) {
+    done(err, app);
+  });
 }

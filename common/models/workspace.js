@@ -217,10 +217,16 @@ module.exports = function(Workspace) {
             .filter(function(cc) { return cc.name != explorer; });
       }
 
-      // Add legacyExplorer flag to support creating LoopBack 2.x apps
+      // Add LoopBack 2.x specific flags to preven warnings on startup
       if (loopbackVersion === '2.x' &&
         template.server && template.server.config) {
+        // Disable legacy routes describing remote methods
         template.server.config.push({ name: 'legacyExplorer', value: false });
+        // Enable AccessToken invalidation on email/password change
+        template.server.config.push({
+          name: 'logoutSessionsOnSensitiveChanges',
+          value: true,
+        });
       }
 
       var dest = path.join(ConfigFile.getWorkspaceDir(), name);
