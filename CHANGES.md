@@ -1,3 +1,11 @@
+2017-01-23, Version 3.37.0
+==========================
+
+ * Enable "logoutSessionsOnSensitiveChanges" (Miroslav Bajtoš)
+
+ * test cleanup: extract bootSandboxWithOptions() (Miroslav Bajtoš)
+
+
 2017-01-05, Version 3.36.1
 ==========================
 
