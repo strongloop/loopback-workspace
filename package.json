@@ -50,7 +50,7 @@
     "mocha": "^2.4.5",
     "mysql": "^2.4.2",
     "read": "^1.0.5",
-    "strong-cached-install": "^2.0.0",
+    "strong-cached-install": "^2.0.5",
     "supertest": "^1.2.0"
   }
 }
