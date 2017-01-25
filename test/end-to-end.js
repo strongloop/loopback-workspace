@@ -7,7 +7,6 @@ var async = require('async');
 var exec = require('child_process').exec;
 var extend = require('util')._extend;
 var fs = require('fs-extra');
-var install = require('strong-cached-install');
 var mysql = require('mysql');
 var path = require('path');
 var request = require('supertest');
@@ -18,6 +17,7 @@ var models = workspace.models;
 var TestDataBuilder = require('./helpers/test-data-builder');
 var ref = TestDataBuilder.ref;
 var given = require('./helpers/given');
+var platform = require('./helpers/platform');
 var should = require('chai').should();
 
 var Workspace = workspace.models.Workspace;
@@ -28,6 +28,14 @@ var PKG_CACHE = path.resolve(__dirname, '.pkgcache');
 var MYSQL_DATABASE = 'loopback_workspace_test';
 var MYSQL_USER = 'lbws';
 var MYSQL_PASSWORD = 'hbx42rec';
+
+it.skipIf = function(condition, desc, fn) {
+  if (condition) {
+    it.skip(desc, fn);
+  } else {
+    it(desc, fn);
+  }
+};
 
 describe('end-to-end', function() {
   this.timeout(15000);
@@ -704,7 +712,8 @@ describe('end-to-end', function() {
       });
     });
 
-    it('updates all models in the database', function(done) {
+    it.skipIf(platform.isWindows, 'updates all models in the database',
+    function(done) {
       db.autoupdate(undefined, function(err) {
         if (err) return done(err);
         listTableNames(connection, function(err, tables) {
@@ -1179,7 +1188,8 @@ function execNpm(args, options, cb) {
 
 function installSandboxPackages(cb) {
   this.timeout(300 * 1000);
-  install(SANDBOX, PKG_CACHE, ['dependencies', 'devDependencies'], cb);
+  initializePackage();
+  localInstall(SANDBOX, cb);
 }
 
 function listTableNames(connection, cb) {
@@ -1242,3 +1252,22 @@ function bootSandboxWithOptions(options, done) {
     done(err, app);
   });
 }
+
+function localInstall(cwd, cb) {
+  var options = {
+    cwd: cwd,
+  };
+  var script = 'npm install';
+  debug('Running `%s` in %s', script, cwd);
+  return exec(script, options, function(err, stdout, stderr) {
+    debug('--npm stdout--\n%s\n--npm stderr--\n%s\n--end--',
+      stdout, stderr);
+    cb(err);
+  });
+}
+
+function initializePackage() {
+  //npm install works for windows consistently only
+  //when node_modules folder is available in the working dir
+  fs.mkdirSync(path.join(SANDBOX, 'node_modules'));
+};
