@@ -1,7 +1,13 @@
 'use strict';
+
+const fs = require('fs-extra');
+const ncp = require('ncp');
+const path = require('path');
+
 class TemplateHandler {
   static createFromTemplate(workspace, template, callback) {
     const taskList = [];
+
     if (template.package) {
       taskList.push(function(next) {
         workspace.addPackageDefinition(template.package, next);
@@ -18,6 +24,9 @@ class TemplateHandler {
       taskList.push(function(next) {
         workspace.addFacet(facetName, config, next);
       });
+      if (template.files) {
+        TemplateHandler.copyTemplateFiles(workspace, template, taskList);
+      }
       if (facet.datasources) {
         facet.datasources.forEach(function(datasource) {
           taskList.push(function(next) {
@@ -36,9 +45,9 @@ class TemplateHandler {
         facet.middleware.forEach(function(configData) {
           taskList.push(function(next) {
             let phase = configData.phase;
-            const subPhase = configData.subPhase;
+            let subPhase = configData.subPhase;
             phase = (subPhase) ? phase + ':' + subPhase : phase;
-            const path = configData.function;
+            let path = configData.function;
             delete configData.phase;
             delete configData.subPhase;
             workspace.addMiddleware(phase, path, configData, next);
@@ -47,6 +56,31 @@ class TemplateHandler {
       }
     });
     workspace.execute(taskList, callback);
+  }
+  static copyTemplateDir(dir, destinationPath, cb) {
+    ncp(dir, destinationPath, cb);
+  }
+  static copyTemplateFiles(workspace, template, taskList) {
+    const templateFiles = [];
+    if (template.files.parent) {
+      let filePath = path.join(__dirname,
+        '../templates/files',
+        template.files.parent.path);
+      templateFiles.push(filePath);
+    }
+    let filePath = path.join(__dirname,
+      '../templates/files',
+      template.files.path);
+    templateFiles.push(filePath);
+
+    templateFiles.forEach(function(dir) {
+      taskList.push(function(next) {
+        TemplateHandler.copyTemplateDir(
+          dir,
+          workspace.getDirectory(),
+          next);
+      });
+    });
   }
 }
 

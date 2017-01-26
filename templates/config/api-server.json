@@ -1,0 +1,8 @@
+{
+  "name": "api-server",  
+  "description": "A LoopBack API server with local User auth",
+  "extends": "empty-server",
+  "files": {
+    "path": "/api-server"
+  }
+}

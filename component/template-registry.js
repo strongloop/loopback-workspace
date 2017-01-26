@@ -13,25 +13,57 @@ class TemplateRegistry {
     this.templates = {};
   }
   loadTemplates(callback) {
+    const registry = this;
     const templates = this.templates;
-    const dir = path.resolve(__dirname, '../', 'templates');
-    fs.readdir(dir, function(err, items) {
-      let index = 0;
-      items.forEach(function(fileName) {
-        let filePath = path.resolve(dir, fileName);
-        fs.readJson(filePath, function(err, jsonData) {
-          if (err) return callback(err);
-          templates[jsonData.name] = jsonData;
-          index++;
-          if (index === items.length) {
-            return callback(null, 'templates are loaded');
-          }
-        });
-      });
+    const baseDir = path.resolve(__dirname, '../', 'templates/config/base');
+    const dir = path.resolve(__dirname, '../', 'templates/config');
+    const tasks = [];
+    const files = [];
+    tasks.push(function(next) {
+      registry.getTemplateFilePaths(files, baseDir, next);
     });
+    tasks.push(function(next) {
+      registry.getTemplateFilePaths(files, dir, next);
+    });
+    tasks.push(function(next) {
+      registry.readTemplateFiles(templates, files, next);
+    });
+    async.series(tasks, callback);
   }
   getTemplate(name) {
     return this.templates[name];
+  }
+  getTemplateFilePaths(files, dir, next) {
+    fs.readdir(dir, function(err, items) {
+      if (err) return next(err);
+      items.forEach(function(item) {
+        const filePath = path.resolve(dir, item);
+        if (fs.lstatSync(filePath).isFile()) {
+          files.push(filePath);
+        }
+      });
+      next();
+    });
+  }
+  readTemplateFiles(templates, files, callback) {
+    let index = 0;
+    files.forEach(function(filePath) {
+      fs.readJson(filePath, function(err, jsonData) {
+        if (err) return callback(err);
+        if (jsonData.extends) {
+          const parent = templates[jsonData.extends];
+          const child = jsonData;
+          jsonData = {};
+          Object.assign(jsonData, parent, child);
+          jsonData.files.parent = parent.files;
+        }
+        templates[jsonData.name] = jsonData;
+        index++;
+        if (index === files.length) {
+          return callback(null, 'templates are loaded');
+        }
+      });
+    });
   }
 }
 
