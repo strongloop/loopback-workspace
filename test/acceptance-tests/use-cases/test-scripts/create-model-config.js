@@ -2,6 +2,7 @@
 const app = require('../../../../');
 const expect = require('../../../helpers/expect');
 const fs = require('fs-extra');
+const clone = require('lodash').clone;
 const loopback = require('loopback');
 const path = require('path');
 const testSupport = require('../../../helpers/test-support');
@@ -15,12 +16,13 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^that the model '(.+)' exists$/,
-  function(modelName, next) {
+  this.Given(/^that the model '(.+)' exists in workspace '(.+)'$/,
+  function(modelName, workspaceName, next) {
     testsuite.modelName = modelName;
-    testsuite.modelId = 'common.' + modelName;
-    const workspace = workspaceManager.getWorkspace();
-    const model = workspace.getModel(testsuite.modelId);
+    testsuite.modelId = 'common.models.' + modelName;
+    const dir = testSupport.givenSandboxDir(workspaceName);
+    testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
+    const model = testsuite.workspace.getModel(testsuite.modelId);
     expect(model).to.not.to.be.undefined();
     next();
   });
@@ -31,37 +33,39 @@ module.exports = function() {
       facetName: facetName,
       id: testsuite.modelId,
       dataSource: 'db',
-      public: true,
     };
-    ModelConfig.create(config, {}, function(err, data) {
+    testsuite.ModelConfig = clone(config);
+    const options = {workspaceId: testsuite.workspace.getId()};
+    ModelConfig.create(config, options, function(err, data) {
       if (err) return next(err);
-      testsuite.ModelConfig = config;
       next();
     });
   });
 
   this.Then(/^the model configuration is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const facet = workspace.getFacet(testsuite.ModelConfig.facetName);
+    const config = testsuite.ModelConfig;
+    const facet = testsuite.workspace.getFacet(config.facetName);
     const file = facet.getModelConfigPath();
-    const expectedConfig = Object.assign(testsuite.ModelConfig);
-    delete expectedConfig.id;
-    delete expectedConfig.facetName;
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
       const storedConfig = data[testsuite.modelId];
-      expect(storedConfig).to.eql(expectedConfig);
+      expect(storedConfig).to.not.to.be.undefined();
+      delete config.id;
+      delete config.facetName;
+      expect(storedConfig).to.eql(config);
       next();
     });
   });
 
-  this.When(/^I query for the model config '(.+)'$/, function(modelName, next) {
+  this.When(/^I query for the model config '(.+)' in workspace '(.+)'$/,
+  function(modelName, workspaceName, next) {
     testsuite.modelName = modelName;
-    const modelId = 'common.' + testsuite.modelName;
+    const modelId = 'common.models.' + testsuite.modelName;
     const filter = {
       where: {id: modelId},
     };
-    ModelConfig.find(filter, function(err, data) {
+    const options = {workspaceId: testsuite.workspace.getId()};
+    ModelConfig.find(filter, options, function(err, data) {
       if (err) return next(err);
       testsuite.modelConfig = data;
       next();
@@ -69,7 +73,9 @@ module.exports = function() {
   });
 
   this.Then(/^the model config is returned$/, function(next) {
-    expect(testsuite.modelConfig).to.include.keys('dataSource');
+    expect(Object.keys(testsuite.modelConfig)).to.include.members([
+      'dataSource',
+    ]);
     next();
   });
 };

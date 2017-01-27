@@ -16,8 +16,11 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^The workspace has a '(.+)' phase$/, function(phaseName, next) {
+  this.Given(/^The workspace '(.+)' has a '(.+)' phase$/,
+  function(workspaceName, phaseName, next) {
     testsuite.middlewarePhase = phaseName;
+    const dir = testSupport.givenSandboxDir(workspaceName);
+    testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     next();
   });
 
@@ -35,7 +38,8 @@ module.exports = function() {
       phase: testsuite.middlewarePhase,
       path: routesArray,
     };
-    Middleware.create(middlewareDef, {}, function(err, data) {
+    const options = {workspaceId: testsuite.workspace.getId()};
+    Middleware.create(middlewareDef, options, function(err, data) {
       if (err) return next(err);
       testsuite.middlewareDef = middlewareDef;
       testsuite.expectedMiddleware = clone(middlewareDef);
@@ -45,8 +49,7 @@ module.exports = function() {
   });
 
   this.Then(/^The middleware config is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const middlewareFile = workspace.getMiddlewareFilePath();
+    const middlewareFile = testsuite.workspace.getMiddlewareFilePath();
     fs.readJson(middlewareFile, function(err, middleware) {
       if (err) return next(err);
       const middlewarePhase = middleware[testsuite.middlewarePhase];
@@ -60,7 +63,8 @@ module.exports = function() {
   function(middlewareId, next) {
     testsuite.middlewareId = middlewareId;
     const filter = {where: {id: testsuite.middlewareId}};
-    Middleware.find(filter, {}, function(err, config) {
+    const options = {workspaceId: testsuite.workspace.getId()};
+    Middleware.find(filter, options, function(err, config) {
       if (err) return next(err);
       testsuite.middlewareConfig = config;
       next();
@@ -69,10 +73,7 @@ module.exports = function() {
 
   this.Then(/^The middleware config for the method is returned$/,
   function(next) {
-    expect(Object.keys(testsuite.middlewareConfig)).to.include.members([
-      'name',
-      'path',
-    ]);
+    expect(testsuite.middlewareConfig).to.not.to.be.undefined();
     next();
   });
 };

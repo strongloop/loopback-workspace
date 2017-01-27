@@ -15,8 +15,10 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^that I have loaded the workspace$/, function(next) {
-    workspaceManager.createWorkspace(testSupport.givenSandboxDir());
+  this.Given(/^that I have loaded the workspace '(.+)'$/,
+  function(workspaceName, next) {
+    const dir = testSupport.givenSandboxDir(workspaceName);
+    testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     next();
   });
 
@@ -40,8 +42,8 @@ module.exports = function() {
       name: facetName,
       modelsMetadata: modelsMeta,
     };
-
-    Facet.create(config, {}, function(err, data) {
+    const options = {workspaceId: testsuite.workspace.getId()};
+    Facet.create(config, options, function(err, data) {
       if (err) return next(err);
       delete config.id;
       testsuite.facetName = facetName;
@@ -50,8 +52,7 @@ module.exports = function() {
   });
 
   this.Then(/^the facet is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const facet = workspace.getFacet(testsuite.facetName);
+    const facet = testsuite.workspace.getFacet(testsuite.facetName);
     expect(facet).to.not.to.be.undefined();
     const dir = facet.getPath();
     fs.exists(dir, function(isExists) {
