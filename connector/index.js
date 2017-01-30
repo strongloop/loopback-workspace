@@ -37,11 +37,10 @@ connector.createModel = function(workspaceId, id, data, cb) {
   ModelHandler.createModel(workspace, id, data, cb);
 };
 
-connector.createModelConfig = function(workspaceId, id, data, cb) {
+connector.createModelConfig =
+function(workspaceId, id, facetName, modelConfig, cb) {
   const workspace = WorkspaceManager.getWorkspace(workspaceId);
-  const modelConfig = clone(data);
-  delete modelConfig.id;
-  ModelHandler.createModelConfig(workspace, id, modelConfig, cb);
+  ModelHandler.createModelConfig(workspace, id, facetName, modelConfig, cb);
 };
 
 connector.createDataSource = function(workspaceId, id, data, cb) {
@@ -94,18 +93,6 @@ connector.createMiddleware = function(workspaceId, phase, data, cb) {
 connector.createModel = function(workspaceId, id, data, cb) {
   const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.createModel(workspace, id, data, cb);
-};
-
-connector.createModelConfig = function(workspaceId, id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace(workspaceId);
-  const modelConfig = clone(data);
-  delete modelConfig.id;
-  ModelHandler.createModelConfig(workspace, id, modelConfig, cb);
-};
-
-connector.createDataSource = function(workspaceId, id, data, cb) {
-  const workspace = WorkspaceManager.getWorkspace(workspaceId);
-  DataSourceHandler.createDataSource(workspace, id, data, cb);
 };
 
 connector.findModel = function(workspaceId, id, cb) {

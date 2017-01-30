@@ -7,7 +7,3 @@ Feature: Users should be able to query workspace artifacts
   Scenario: Query a DataSource
     When I query for datasource 'db'
     Then the datasource definition is returned
-
-  Scenario: Query a DataSource using Multiple Workspace remote methods
-    When I query for datasource 'db' from the default workspace
-    Then the datasource definition is returned

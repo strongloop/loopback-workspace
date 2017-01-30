@@ -3,17 +3,18 @@
 const fs = require('fs-extra');
 const ncp = require('ncp');
 const path = require('path');
+const WorkspaceHandler = require('./workspace-handler');
 
 class TemplateHandler {
   static createFromTemplate(workspace, template, callback) {
     const taskList = [];
-
     if (template.package) {
-      taskList.push(function(next) {
-        workspace.addPackageDefinition(template.package, next);
-      });
+      TemplateHandler.addTask(
+        taskList,
+        workspace,
+        workspace.addPackageDefinition,
+        [template.package]);
     }
-
     ['server', 'client'].forEach(function(facetName) {
       const facet = template[facetName];
       if (!facet) return;
@@ -21,12 +22,17 @@ class TemplateHandler {
         name: facetName,
         modelsMetadata: facet.modelsMetadata,
       };
-      taskList.push(function(next) {
-        workspace.addFacet(facetName, config, next);
-      });
+
+      TemplateHandler.addTask(
+        taskList,
+        workspace,
+        workspace.addFacet,
+        [facetName, config]);
+
       if (template.files) {
         TemplateHandler.copyTemplateFiles(workspace, template, taskList);
       }
+
       if (facet.datasources) {
         facet.datasources.forEach(function(datasource) {
           taskList.push(function(next) {
@@ -37,13 +43,18 @@ class TemplateHandler {
       if (facet.modelConfigs) {
         facet.modelConfigs.forEach(function(modelConfig) {
           taskList.push(function(next) {
-            workspace.addModelConfig(modelConfig.id, modelConfig, next);
+            workspace.addModelConfig(
+              modelConfig.name,
+              facetName,
+              modelConfig,
+              next);
           });
         });
       }
       if (facet.middleware) {
-        facet.middleware.forEach(function(configData) {
+        facet.middleware.forEach(function(middleware) {
           taskList.push(function(next) {
+            let configData = Object.assign({}, middleware);
             let phase = configData.phase;
             let subPhase = configData.subPhase;
             phase = (subPhase) ? phase + ':' + subPhase : phase;
@@ -56,6 +67,12 @@ class TemplateHandler {
       }
     });
     workspace.execute(taskList, callback);
+  }
+  static addTask(list, object, fn, args) {
+    list.push(function(next) {
+      args.push(next);
+      fn.apply(object, args);
+    });
   }
   static copyTemplateDir(dir, destinationPath, cb) {
     ncp(dir, destinationPath, cb);

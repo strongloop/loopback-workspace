@@ -28,9 +28,9 @@ class Tasks {
     const model = new Model(workspace, modelId, modelDef);
     fsUtility.writeModel(model, cb);
   }
-  addModelConfig(modelId, modelConfig, cb) {
+  addModelConfig(modelId, facetName, modelConfig, cb) {
     const workspace = this;
-    const facet = workspace.getFacet(modelConfig.facetName);
+    const facet = workspace.getFacet(facetName);
     facet.addModelConfig(workspace, modelId, modelConfig);
     fsUtility.writeModelConfig(facet, cb);
   }

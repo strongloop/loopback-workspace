@@ -19,7 +19,7 @@ module.exports = function(DataSourceDefinition) {
       const connector = DataSourceDefinition.getConnector();
       const id = data.id;
       // TODO(Deepak) - add response handling later as part of the callback
-      connector.createDataSource(options.workpaceId, id, data, cb);
+      connector.createDataSource(options.workspaceId, id, data, cb);
     };
     DataSourceDefinition.find = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -28,7 +28,7 @@ module.exports = function(DataSourceDefinition) {
       }
       const id = filter.where.id;
       const connector = DataSourceDefinition.getConnector();
-      connector.findDataSource(options.workpaceId, id, cb);
+      connector.findDataSource(options.workspaceId, id, cb);
     };
     DataSourceDefinition.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
@@ -36,7 +36,7 @@ module.exports = function(DataSourceDefinition) {
         options = {};
       }
       const connector = DataSourceDefinition.getConnector();
-      connector.updateDataSource(options.workpaceId, id, data, cb);
+      connector.updateDataSource(options.workspaceId, id, data, cb);
     };
   });
 };

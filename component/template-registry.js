@@ -53,9 +53,8 @@ class TemplateRegistry {
         if (jsonData.extends) {
           const parent = templates[jsonData.extends];
           const child = jsonData;
-          jsonData = {};
-          Object.assign(jsonData, parent, child);
-          jsonData.files.parent = parent.files;
+          child.files.parent = parent.files;
+          jsonData = Object.assign({}, parent, child);
         }
         templates[jsonData.name] = jsonData;
         index++;

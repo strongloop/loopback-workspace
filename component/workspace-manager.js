@@ -1,4 +1,5 @@
 'use strict';
+const config = require('./config.json');
 const Workspace = require('./workspace.js');
 const templateRegistry = require('./template-registry');
 /**
@@ -29,7 +30,7 @@ const Manager = class Manager {
     workspace.addDomain('ModelRelation');
     workspace.addDomain('PackageDefinition');
     this.initMiddleware(workspace);
-    workspace.addBuiltInModel('User');
+    workspace.addBuiltInModels(config.builtInModels);
     workspace.setId(this.getWorkspaceId());
     this.listOfWorkspaces[workspace.getId()] = workspace;
     this.folderMap[dir] = workspace.getId();

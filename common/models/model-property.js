@@ -52,7 +52,7 @@ module.exports = function(ModelProperty) {
         const propertyName = tokens[2];
         const modelId = facet + '.' + modelName;
         connector.createModelProperty(
-          options.workpaceId,
+          options.workspaceId,
           modelId,
           propertyName,
           data,
@@ -68,7 +68,7 @@ module.exports = function(ModelProperty) {
       }
       const id = filter.where.id;
       const connector = ModelProperty.getConnector();
-      connector.findModelProperty(options.workpaceId, id, cb);
+      connector.findModelProperty(options.workspaceId, id, cb);
     };
   });
 };

@@ -25,7 +25,7 @@ module.exports = function(ModelMethod) {
         const methodName = tokens[2];
         const modelId = facet + '.' + modelName;
         connector.createModelMethod(
-          options.workpaceId,
+          options.workspaceId,
           modelId,
           methodName,
           data,
@@ -41,7 +41,7 @@ module.exports = function(ModelMethod) {
       }
       const id = filter.where.id;
       const connector = ModelMethod.getConnector();
-      connector.findModelMethod(options.workpaceId, id, cb);
+      connector.findModelMethod(options.workspaceId, id, cb);
     };
   });
 };

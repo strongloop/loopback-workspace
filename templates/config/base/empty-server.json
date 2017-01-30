@@ -40,10 +40,29 @@
     },
     "modelConfigs": [
       {
-        "id": "User",
-        "facetName": "server",
         "name": "User",
-        "dataSource": "db"
+        "dataSource": "db",
+        "public": false
+      },
+      {
+        "name": "AccessToken",
+        "dataSource": "db",
+        "public": false
+      },
+      {
+         "name": "ACL",
+         "dataSource": "db",
+         "public": false
+      },
+      {
+         "name": "RoleMapping",
+         "dataSource": "db",
+         "public": false
+      },
+      {
+         "name": "Role",
+         "dataSource": "db",
+         "public": false
       }
     ],
     "datasources": [

@@ -55,7 +55,11 @@ function writeModelConfig(facet, cb) {
 function writeModel(model, cb) {
   const filePath = model.getFilePath();
   const data = model.getDefinition();
-  fs.writeJson(filePath, data, cb);
+  const dir = path.dirname(filePath);
+  fs.mkdirp(dir, function(err) {
+    if (err) return cb(err);
+    fs.writeJson(filePath, data, cb);
+  });
 }
 
 function writeDataSourceConfig(workspace, cb) {
