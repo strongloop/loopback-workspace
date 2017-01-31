@@ -19,7 +19,7 @@ module.exports = function(ModelDefinition) {
       const id = data.id;
       const connector = ModelDefinition.getConnector();
       // TODO(Deepak) - add response handling later
-      connector.createModel(options.workpaceId, id, data, cb);
+      connector.createModel(options.workspaceId, id, data, cb);
     };
     ModelDefinition.find = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -28,7 +28,7 @@ module.exports = function(ModelDefinition) {
       }
       const id = filter.where.id;
       const connector = ModelDefinition.getConnector();
-      connector.findModel(options.workpaceId, id, cb);
+      connector.findModel(options.workspaceId, id, cb);
     };
     ModelDefinition.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
@@ -36,7 +36,7 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const connector = ModelDefinition.getConnector();
-      connector.updateModel(options.workpaceId, id, data, cb);
+      connector.updateModel(options.workspaceId, id, data, cb);
     };
   });
 };

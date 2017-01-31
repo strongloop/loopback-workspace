@@ -15,6 +15,7 @@
       "middleware.*.json"
      ]
    },
+   "builtInModels": ["User", "AccessToken", "ACL", "RoleMapping", "Role"],
    "FacetConfigFile": "config.json",
    "DefaultMiddlewareFile": "middleware.json",
    "ModelConfigFile": "model-config.json",

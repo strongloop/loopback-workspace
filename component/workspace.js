@@ -24,9 +24,11 @@ class Workspace extends Graph {
     mixin(this, Tasks.prototype);
     this.middlewarePhases = [];
   }
-  addBuiltInModel(name) {
-    // add ModelDefinition to the workspace graph for a builtin loopback model
-    new Model(this, name, {}, {builtIn: true});
+  addBuiltInModels(list) {
+    list.forEach(function(name) {
+      // add ModelDefinition to the workspace graph for a builtin loopback model
+      new Model(this, name, {}, {builtIn: true});
+    }, this);
   }
   getConfig() {
     return config;

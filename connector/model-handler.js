@@ -35,9 +35,9 @@ class ModelHandler {
     const taskList = [create];
     workspace.execute(taskList, callback);
   }
-  static createModelConfig(workspace, modelId, modelConfig, cb) {
+  static createModelConfig(workspace, modelId, facetName, modelConfig, cb) {
     function create(next) {
-      workspace.addModelConfig(modelId, modelConfig, next);
+      workspace.addModelConfig(modelId, facetName, modelConfig, next);
     }
     function callback(err, results) {
       if (err) return cb(err);

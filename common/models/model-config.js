@@ -17,10 +17,18 @@ module.exports = function(ModelConfig) {
         cb = options;
         options = {};
       }
-      const id = data.id;
+      const modelConfig = Object.assign({}, data);
+      const id = modelConfig.id;
+      const facetName = modelConfig.facetName;
+      delete modelConfig.id;
+      delete modelConfig.facetName;
       const connector = ModelConfig.getConnector();
       // TODO(Deepak) - add response handling later
-      connector.createModelConfig(options.workpaceId, id, data, cb);
+      connector.createModelConfig(options.workspaceId,
+        id,
+        facetName,
+        modelConfig,
+        cb);
     };
     ModelConfig.find = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -30,7 +38,7 @@ module.exports = function(ModelConfig) {
       const id = filter.where.id;
       const connector = ModelConfig.getConnector();
       // TODO(Deepak) - add response handling later
-      connector.findModelConfig(options.workpaceId, id, cb);
+      connector.findModelConfig(options.workspaceId, id, cb);
     };
     ModelConfig.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
@@ -38,7 +46,7 @@ module.exports = function(ModelConfig) {
         options = {};
       }
       const connector = ModelConfig.getConnector();
-      connector.updateModelConfig(options.workpaceId, id, data, cb);
+      connector.updateModelConfig(options.workspaceId, id, data, cb);
     };
   });
 };

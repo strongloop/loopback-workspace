@@ -31,10 +31,10 @@ module.exports = function() {
       facetName: facetName,
       id: testsuite.modelId,
       dataSource: 'db',
+      public: true,
     };
     ModelConfig.create(config, {}, function(err, data) {
       if (err) return next(err);
-      delete config.id;
       testsuite.ModelConfig = config;
       next();
     });
@@ -44,11 +44,13 @@ module.exports = function() {
     const workspace = workspaceManager.getWorkspace();
     const facet = workspace.getFacet(testsuite.ModelConfig.facetName);
     const file = facet.getModelConfigPath();
+    const expectedConfig = Object.assign(testsuite.ModelConfig);
+    delete expectedConfig.id;
+    delete expectedConfig.facetName;
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
-      const config = data[testsuite.modelId];
-      expect(config).to.not.to.be.undefined();
-      expect(testsuite.ModelConfig).to.eql(config);
+      const storedConfig = data[testsuite.modelId];
+      expect(storedConfig).to.eql(expectedConfig);
       next();
     });
   });
@@ -67,10 +69,7 @@ module.exports = function() {
   });
 
   this.Then(/^the model config is returned$/, function(next) {
-    expect(Object.keys(testsuite.modelConfig)).to.include.members([
-      'dataSource',
-      'facetName',
-    ]);
+    expect(testsuite.modelConfig).to.include.keys('dataSource');
     next();
   });
 };
