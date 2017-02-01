@@ -2,6 +2,7 @@
 const config = require('../config.json');
 const clone = require('lodash').clone;
 const Entity = require('./entity');
+const lodash = require('lodash');
 const path = require('path');
 const ModelRelation = require('./model-relationship');
 
@@ -89,8 +90,16 @@ class Model extends Entity {
   getFilePath() {
     const modelDef = this._content;
     const filePath = path.join(this._graph.directory, modelDef.facetName,
-      config.ModelDefaultDir, modelDef.name + '.json');
+      config.ModelDefaultDir, lodash.kebabCase(modelDef.name) + '.json');
     return filePath;
+  }
+  getFacetName() {
+    const modelDef = this._content;
+    return modelDef.facetName;
+  }
+  getName() {
+    const modelDef = this._content;
+    return modelDef.name;
   }
   addRelation(relationName, toModelId, data) {
     const workspace = this._graph;

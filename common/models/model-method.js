@@ -17,22 +17,12 @@ module.exports = function(ModelMethod) {
         options = {};
       }
       const connector = ModelMethod.getConnector();
-      const id = data.id;
-      const tokens = id.split('.');
-      if (tokens && tokens.length === 3) {
-        const facet = tokens[0];
-        const modelName = tokens[1];
-        const methodName = tokens[2];
-        const modelId = facet + '.' + modelName;
-        connector.createModelMethod(
-          options.workspaceId,
-          modelId,
-          methodName,
-          data,
-          cb);
-      } else {
-        return cb(new Error('invalid id field'));
-      }
+      connector.createModelMethod(
+        options.workspaceId,
+        data.modelId,
+        data.name,
+        data,
+        cb);
     };
     ModelMethod.find = function(filter, options, cb) {
       if (typeof options === 'function') {

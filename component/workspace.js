@@ -4,6 +4,7 @@ const Graph = require('./datamodel/graph');
 const clone = require('lodash').clone;
 const Model = require('./datamodel/model');
 const MiddlewarePhase = require('./datamodel/middleware-phase');
+const lodash = require('lodash');
 const path = require('path');
 const Processor = require('./datamodel/util/processor');
 const Tasks = require('./tasks');
@@ -70,7 +71,7 @@ class Workspace extends Graph {
   }
   getModelDefinitionPath(facetName, modelName) {
     const filePath = path.join(this.directory, facetName,
-      config.ModelDefaultDir, modelName + '.json');
+      config.ModelDefaultDir, lodash.kebabCase(modelName) + '.json');
     return filePath;
   }
   createModelDefinition(id, modelDef) {
