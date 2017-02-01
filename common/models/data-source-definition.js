@@ -18,6 +18,7 @@ module.exports = function(DataSourceDefinition) {
       }
       const connector = DataSourceDefinition.getConnector();
       const id = data.id;
+      delete data.id;
       // TODO(Deepak) - add response handling later as part of the callback
       connector.createDataSource(options.workspaceId, id, data, cb);
     };

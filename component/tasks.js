@@ -77,20 +77,19 @@ class Tasks {
   refreshModel(modelId, cb) {
     const workspace = this;
     const model = workspace.getModel(modelId);
-    const parts = modelId.split('.');
-    const facetName = parts[0];
-    const modelName = parts[1];
-    fsUtility.readModel(facetName, modelName, workspace,
-    function(err, modelDef) {
-      if (err) return cb(err);
-      if (model) {
-        model.updateDefinition(modelDef);
+    fsUtility.readModel(
+      model.getFacetName(),
+      model.getName(),
+      workspace,
+      function(err, modelDef) {
+        if (err) return cb(err);
+        if (model) {
+          model.updateDefinition(modelDef);
+        } else {
+          workspace.createModelDefinition(modelId, modelDef);
+        }
         cb(null, model.getDefinition());
-      } else {
-        workspace.createModelDefinition(modelId, modelDef);
-        cb(null, model.getDefinition());
-      }
-    });
+      });
   }
   refreshModelConfig(facetName, cb) {
     const workspace = this;
@@ -126,15 +125,15 @@ class Tasks {
   }
   loadModel(filePath, fileData, cb) {
     const workspace = this;
-    const fileName = path.basename(filePath);
+    const dir = path.dirname(filePath);
+    const facetName = dir.split('/').join('.');
+    const fileName = path.basename(filePath, 'json');
     const modelName = lodash.capitalize(lodash.camelCase(fileName));
-    const facetName = fileData.facetName;
-    if (facetName && modelName) {
-      const modelId = facetName + '.' + modelName;
-      workspace.refreshModel(modelId, cb);
-    } else {
-      cb(new Error('file ignored: ' + filePath));
-    }
+    const id = facetName + '.' + modelName;
+    if (workspace.getModel(id))
+      return cb(new Error('Model is already loaded'));
+    new Model(workspace, id, fileData);
+    cb();
   }
   loadModelConfig(filePath, cb) {
     const workspace = this;

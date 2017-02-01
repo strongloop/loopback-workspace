@@ -44,22 +44,14 @@ module.exports = function(ModelProperty) {
         options = {};
       }
       const connector = ModelProperty.getConnector();
-      const id = data.id;
-      const tokens = id.split('.');
-      if (tokens && tokens.length === 3) {
-        const facet = tokens[0];
-        const modelName = tokens[1];
-        const propertyName = tokens[2];
-        const modelId = facet + '.' + modelName;
-        connector.createModelProperty(
-          options.workspaceId,
-          modelId,
-          propertyName,
-          data,
-          cb);
-      } else {
-        return cb('invalid id field');
-      }
+      const propertyName = data.name;
+      const modelId = data.modelId;
+      connector.createModelProperty(
+        options.workspaceId,
+        modelId,
+        propertyName,
+        data,
+        cb);
     };
     ModelProperty.find = function(filter, options, cb) {
       if (typeof options === 'function') {

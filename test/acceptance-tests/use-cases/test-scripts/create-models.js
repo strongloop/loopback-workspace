@@ -70,11 +70,10 @@ module.exports = function() {
 
   this.When(/^I add property '(.+)' of type '(.+)'$/,
     function(propertyName, type, next) {
-      testsuite.propertyId = testsuite.modelId + '.' + propertyName;
       const propertyDef = {
-        'id': testsuite.propertyId,
-        'name': propertyName,
-        'type': type,
+        modelId: testsuite.modelId,
+        name: propertyName,
+        type: type,
       };
       ModelProperty.create(propertyDef, {}, function(err, data) {
         if (err) return next(err);
@@ -167,8 +166,8 @@ module.exports = function() {
 
   this.When(/^I call the model method api$/,
     function(next) {
-      const methodId = testsuite.modelId + '.' + testsuite.methodName;
-      testsuite.modelMethod.id = methodId;
+      testsuite.modelMethod.name = testsuite.methodName;
+      testsuite.modelMethod.modelId = testsuite.modelId;
       ModelMethod.create(testsuite.modelMethod, {}, function(err) {
         if (err) return next(err);
         next();

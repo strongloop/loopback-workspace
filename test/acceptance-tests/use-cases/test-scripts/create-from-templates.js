@@ -68,7 +68,7 @@ module.exports = function() {
             if (err) return cb(err);
             const expectedList = [];
             template.server.datasources.forEach(function(ds) {
-              expectedList.push(ds.id);
+              expectedList.push(ds.name);
             });
             expect(Object.keys(datasources)).to.include.members(expectedList);
             cb();

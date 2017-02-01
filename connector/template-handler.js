@@ -1,12 +1,43 @@
 'use strict';
 
+const async = require('async');
 const fs = require('fs-extra');
-const ncp = require('ncp');
 const path = require('path');
 const WorkspaceHandler = require('./workspace-handler');
 
 class TemplateHandler {
   static createFromTemplate(workspace, template, callback) {
+    const tasks = [];
+    if (template.files) {
+      const templateFiles = TemplateHandler.getTemplateFiles(template);
+      templateFiles.forEach(function(dir) {
+        tasks.push(function(next) {
+          TemplateHandler.copyTemplateDir(
+          dir,
+          workspace.getDirectory(),
+          next);
+        });
+      });
+    }
+    const afterCopy = (function(err) {
+      if (err) return callback(err);
+      this.loadWorkspace(workspace, template, (function(err) {
+        if (err) return callback(err);
+        this.configureWorkspace(workspace, template, callback);
+      }).bind(this));
+    }).bind(this);
+    async.series(tasks, afterCopy);
+  }
+  static loadWorkspace(workspace, template, callback) {
+    const erroredFiles = [];
+    WorkspaceHandler.getFileList(workspace, function(err, files) {
+      if (err) return callback(err);
+      const taskList =
+        WorkspaceHandler.getLoadTasks(workspace, files, erroredFiles);
+      workspace.execute(taskList, callback);
+    });
+  }
+  static configureWorkspace(workspace, template, callback) {
     const taskList = [];
     if (template.package) {
       TemplateHandler.addTask(
@@ -16,57 +47,57 @@ class TemplateHandler {
         [template.package]);
     }
     ['server', 'client'].forEach(function(facetName) {
-      const facet = template[facetName];
-      if (!facet) return;
-      const config = {
-        name: facetName,
-        modelsMetadata: facet.modelsMetadata,
-      };
-
-      TemplateHandler.addTask(
-        taskList,
-        workspace,
-        workspace.addFacet,
-        [facetName, config]);
-
-      if (template.files) {
-        TemplateHandler.copyTemplateFiles(workspace, template, taskList);
-      }
-
-      if (facet.datasources) {
-        facet.datasources.forEach(function(datasource) {
-          taskList.push(function(next) {
-            workspace.addDataSource(datasource.id, datasource, next);
-          });
-        });
-      }
-      if (facet.modelConfigs) {
-        facet.modelConfigs.forEach(function(modelConfig) {
-          taskList.push(function(next) {
-            workspace.addModelConfig(
-              modelConfig.name,
-              facetName,
-              modelConfig,
-              next);
-          });
-        });
-      }
-      if (facet.middleware) {
-        facet.middleware.forEach(function(middleware) {
-          taskList.push(function(next) {
-            let configData = Object.assign({}, middleware);
-            let phase = configData.phase;
-            let subPhase = configData.subPhase;
-            phase = (subPhase) ? phase + ':' + subPhase : phase;
-            let path = configData.function;
-            delete configData.phase;
-            delete configData.subPhase;
-            workspace.addMiddleware(phase, path, configData, next);
-          });
-        });
-      }
+      TemplateHandler.addFacet(taskList, facetName, workspace, template);
     });
     workspace.execute(taskList, callback);
+  }
+  static addFacet(taskList, facetName, workspace, template) {
+    const facet = template[facetName];
+    if (!facet) return;
+    const config = {
+      name: facetName,
+      modelsMetadata: facet.modelsMetadata,
+    };
+    TemplateHandler.addTask(
+      taskList,
+      workspace,
+      workspace.addFacet,
+      [facetName, config]);
+    TemplateHandler.addArtifacts(taskList, facet, facetName, workspace);
+  }
+  static addArtifacts(taskList, facet, facetName, workspace) {
+    if (facet.datasources) {
+      facet.datasources.forEach(function(datasource) {
+        taskList.push(function(next) {
+          workspace.addDataSource(datasource.name, datasource, next);
+        });
+      });
+    }
+    if (facet.modelConfigs) {
+      facet.modelConfigs.forEach(function(modelConfig) {
+        taskList.push(function(next) {
+          workspace.addModelConfig(
+            modelConfig.name,
+            facetName,
+            modelConfig,
+            next);
+        });
+      });
+    }
+    if (facet.middleware) {
+      facet.middleware.forEach(function(middleware) {
+        taskList.push(function(next) {
+          let configData = Object.assign({}, middleware);
+          let phase = configData.phase;
+          let subPhase = configData.subPhase;
+          phase = (subPhase) ? phase + ':' + subPhase : phase;
+          let path = configData.function;
+          delete configData.phase;
+          delete configData.subPhase;
+          workspace.addMiddleware(phase, path, configData, next);
+        });
+      });
+    }
   }
   static addTask(list, object, fn, args) {
     list.push(function(next) {
@@ -75,9 +106,10 @@ class TemplateHandler {
     });
   }
   static copyTemplateDir(dir, destinationPath, cb) {
-    ncp(dir, destinationPath, cb);
+    const options = {clobber: false};
+    fs.copy(dir, destinationPath, options, cb);
   }
-  static copyTemplateFiles(workspace, template, taskList) {
+  static getTemplateFiles(template) {
     const templateFiles = [];
     if (template.files.parent) {
       let filePath = path.join(__dirname,
@@ -89,15 +121,7 @@ class TemplateHandler {
       '../templates/files',
       template.files.path);
     templateFiles.push(filePath);
-
-    templateFiles.forEach(function(dir) {
-      taskList.push(function(next) {
-        TemplateHandler.copyTemplateDir(
-          dir,
-          workspace.getDirectory(),
-          next);
-      });
-    });
+    return templateFiles;
   }
 }
 
