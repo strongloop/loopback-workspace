@@ -18,19 +18,15 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^The model '(.+)' exists$/, function(modelName, next) {
-    const workspace = workspaceManager.getWorkspace();
-    testsuite.modelName = modelName;
-    next();
-  });
 
   this.When(/^I change property '(.+)' to '(.+)'$/,
   function(fieldName, value, next) {
-    testsuite.modelId = 'common.' + testsuite.modelName;
+    testsuite.modelId = 'common.models.' + testsuite.modelName;
     const model = {};
     model[fieldName] = value;
     testsuite.expectedFields = {};
-    ModelDefinition.updateAttributes(testsuite.modelId, model, {},
+    const options = {workspaceId: testsuite.workspaceId};
+    ModelDefinition.updateAttributes(testsuite.modelId, model, options,
     function(err) {
       if (err) return next(err);
       testsuite.expectedFields[fieldName] = value;
@@ -39,8 +35,7 @@ module.exports = function() {
   });
 
   this.Then(/^The model definition json is updated$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const storedModel = workspace.getModel(testsuite.modelId);
+    const storedModel = testsuite.workspace.getModel(testsuite.modelId);
     const file = storedModel.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
@@ -51,8 +46,10 @@ module.exports = function() {
     });
   });
 
-  this.When(/^I change '(.+)' facet Model Config property '(.+)' to '(.+)'$/,
-  function(facetName, fieldName, value, next) {
+  this.When(new RegExp(['^I change \'(.+)\' ',
+    'facet Model Config property \'(.+)\' to \'(.+)\' ',
+    'in workspace \'(.+)\'$'].join('')),
+  function(facetName, fieldName, value, workspaceName, next) {
     const model = {
       facetName: facetName,
     };
@@ -60,7 +57,8 @@ module.exports = function() {
     testsuite.ModelConfig = {};
     testsuite.ModelConfig.facetName = facetName;
     testsuite.ModelConfig.expectedFields = {};
-    ModelConfig.updateAttributes(testsuite.modelId, model, {},
+    const options = {workspaceId: testsuite.workspaceId};
+    ModelConfig.updateAttributes(testsuite.modelId, model, options,
     function(err) {
       if (err) return next(err);
       testsuite.ModelConfig.expectedFields[fieldName] = value;
@@ -69,8 +67,7 @@ module.exports = function() {
   });
 
   this.Then(/^The model config json is updated$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const facet = workspace.getFacet(testsuite.ModelConfig.facetName);
+    const facet = testsuite.workspace.getFacet(testsuite.ModelConfig.facetName);
     const file = facet.getModelConfigPath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);

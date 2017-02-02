@@ -20,13 +20,17 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^that I have loaded the workspace$/, function(next) {
-    workspaceManager.createWorkspace(testSupport.givenSandboxDir());
+  this.Given(/^that I have loaded the workspace '(.+)'$/,
+  function(templateName, next) {
+    testsuite.workspaceDir = testSupport.givenSandboxDir(templateName);
+    testsuite.workspace =
+      workspaceManager.getWorkspaceByFolder(testsuite.workspaceDir);
+    testsuite.workspaceId = testsuite.workspace.getId();
     next();
   });
 
   this.When(/^I create model '(.+)'$/, function(modelName, next) {
-    testsuite.modelId = 'common.' + modelName;
+    testsuite.modelId = 'common.models.' + modelName;
     const model = {
       id: testsuite.modelId,
       facetName: 'common',
@@ -37,8 +41,9 @@ module.exports = function() {
       public: true,
       idInjection: true,
     };
+    const options = {workspaceId: testsuite.workspaceId};
     testsuite.modelName = modelName;
-    ModelDefinition.create(model, {}, function(err, data) {
+    ModelDefinition.create(model, options, function(err, data) {
       if (err) return next(err);
       testsuite.expectedModel = model;
       testsuite.expectedModel.properties = {};
@@ -49,8 +54,7 @@ module.exports = function() {
   });
 
   this.Then(/^the model definition is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const storedModel = workspace.getModel(testsuite.modelId);
+    const storedModel = testsuite.workspace.getModel(testsuite.modelId);
     const file = storedModel.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
@@ -59,10 +63,13 @@ module.exports = function() {
     });
   });
 
-  this.Given(/^the model '(.+)' exists$/, function(modelName, next) {
-    testsuite.modelId = 'common.' + modelName;
-    const workspace = workspaceManager.getWorkspace();
-    const storedModel = workspace.getModel(testsuite.modelId);
+  this.Given(/^the model '(.+)' exists in workspace '(.+)'$/,
+  function(modelName, workspaceName, next) {
+    testsuite.modelId = 'common.models.' + modelName;
+    const dir = testSupport.givenSandboxDir(workspaceName);
+    testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
+    testsuite.workspaceId = testsuite.workspace.getId();
+    const storedModel = testsuite.workspace.getModel(testsuite.modelId);
     expect(storedModel).to.not.to.be.undefined();
     expect(storedModel).to.be.an.instanceOf(ModelClass);
     next();
@@ -70,12 +77,14 @@ module.exports = function() {
 
   this.When(/^I add property '(.+)' of type '(.+)'$/,
     function(propertyName, type, next) {
+      testsuite.propertyId = propertyName;
       const propertyDef = {
         modelId: testsuite.modelId,
         name: propertyName,
         type: type,
       };
-      ModelProperty.create(propertyDef, {}, function(err, data) {
+      const options = {workspaceId: testsuite.workspaceId};
+      ModelProperty.create(propertyDef, options, function(err, data) {
         if (err) return next(err);
         testsuite.expectedProperty = propertyDef;
         next();
@@ -83,8 +92,7 @@ module.exports = function() {
     });
 
   this.Then(/^the model property is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const model = workspace.getModel(testsuite.modelId);
+    const model = testsuite.workspace.getModel(testsuite.modelId);
     const file = model.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
@@ -113,10 +121,11 @@ module.exports = function() {
         foreignKey: foreignKey,
         modelId: testsuite.fromModelName,
         model: testsuite.toModelName,
-        facetName: 'common',
+        facetName: 'common.models',
       };
+      const options = {workspaceId: testsuite.workspaceId};
       testsuite.expectedRelation = relationDef;
-      ModelRelation.create(relationDef, {}, function(err) {
+      ModelRelation.create(relationDef, options, function(err) {
         if (err) return next(err);
         next();
       });
@@ -129,8 +138,8 @@ module.exports = function() {
     delete relationDef.id;
     delete relationDef.facetName;
     delete relationDef.modelId;
-    const workspace = workspaceManager.getWorkspace();
-    const model = workspace.getModel(facetName + '.' + fromModelName);
+    const model =
+      testsuite.workspace.getModel(facetName + '.' + fromModelName);
     const file = model.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
@@ -168,15 +177,15 @@ module.exports = function() {
     function(next) {
       testsuite.modelMethod.name = testsuite.methodName;
       testsuite.modelMethod.modelId = testsuite.modelId;
-      ModelMethod.create(testsuite.modelMethod, {}, function(err) {
+      const options = {workspaceId: testsuite.workspaceId};
+      ModelMethod.create(testsuite.modelMethod, options, function(err) {
         if (err) return next(err);
         next();
       });
     });
 
   this.Then(/^the model method is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const model = workspace.getModel(testsuite.modelId);
+    const model = testsuite.workspace.getModel(testsuite.modelId);
     const file = model.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);

@@ -15,9 +15,12 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^that I have a workspace created from a template$/,
-  function(next) {
-    workspaceManager.createWorkspace(testSupport.givenSandboxDir());
+  this.Given(/^that I have a workspace created from a template '(.+)'$/,
+  function(templateName, next) {
+    testsuite.workspaceDir = testSupport.givenSandboxDir(templateName);
+    testsuite.workspace =
+      workspaceManager.getWorkspaceByFolder(testsuite.workspaceDir);
+    testsuite.workspaceId = testsuite.workspace.getId();
     next();
   });
 
@@ -29,7 +32,8 @@ module.exports = function() {
       name: dsName,
       connector: connector,
     };
-    DataSourceDefinition.create(datasource, {}, function(err, data) {
+    const options = {workspaceId: testsuite.workspaceId};
+    DataSourceDefinition.create(datasource, options, function(err, data) {
       if (err) return next(err);
       testsuite.expectedDs = datasource;
       next();
@@ -37,31 +41,16 @@ module.exports = function() {
   });
 
   this.Then(/^the datasource definition is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const storedDs = workspace.getDataSource(testsuite.datasourceId);
+    const storedDs = testsuite.workspace.getDataSource(testsuite.datasourceId);
     expect(testsuite.expectedDs).to.eql(storedDs._content);
     next();
   });
 
-  this.When(/^I query for datasource '(.+)'$/,
-  function(dsName, next) {
-    testsuite.datasourceId = 'common.datasources.' + dsName;
-    const filter = {
-      where: {id: testsuite.datasourceId},
-    };
-    DataSourceDefinition.find(filter, function(err, data) {
-      if (err) return next(err);
-      testsuite.datasource = data;
-      next();
-    });
-  });
-
-  this.When(/^I query for datasource '(.+)' from the default workspace$/,
-  function(dsName, next) {
-    const workspace = workspaceManager.getWorkspace();
-    const workspaceId = workspace.getId();
+  this.When(/^I query for datasource '(.+)' from workspace '(.+)'$/,
+  function(dsName, workspaceName, next) {
+    const workspaceId = testsuite.workspace.getId();
     const options = {workspaceId: workspaceId};
-    testsuite.datasourceId = 'common.datasources.' + dsName;
+    testsuite.datasourceId = dsName;
     const filter = {where: {id: testsuite.datasourceId}};
     DataSourceDefinition.find(
       filter,
@@ -81,13 +70,14 @@ module.exports = function() {
 
   this.When(/^I update datasource '(.+)' with connector '(.+)'$/,
   function(dsName, connector, next) {
-    testsuite.datasourceId = 'common.datasources.' + dsName;
+    testsuite.datasourceId = dsName;
     const datasource = {
       connector: connector,
     };
+    const options = {workspaceId: testsuite.workspaceId};
     testsuite.expectedFields = {};
     DataSourceDefinition.updateAttributes(testsuite.datasourceId, datasource,
-    {},
+    options,
     function(err, data) {
       if (err) return next(err);
       testsuite.expectedFields.datasource = datasource;
@@ -96,7 +86,7 @@ module.exports = function() {
   });
 
   this.Then(/^the datasource configuration is updated$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
+    const workspace = workspaceManager.getWorkspace(testsuite.workspaceId);
     const file = workspace.getDataSourceConfigFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);

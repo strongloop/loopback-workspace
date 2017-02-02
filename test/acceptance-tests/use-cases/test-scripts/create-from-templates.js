@@ -17,22 +17,27 @@ app.on('booted', function() {
 module.exports = function() {
   const testsuite = this;
   this.Given(/^that the templates are loaded$/, function(next) {
-    testsuite.destinationPath = testSupport.givenSandboxDir();
     app.on('templates-loaded', next);
   });
 
   this.When(/^I create a workspace from the template '(.+)'$/,
   function(templateName, next) {
     testsuite.templateName = templateName;
-    const data = {
-      templateName: testsuite.templateName,
-      destinationPath: testsuite.destinationPath,
-    };
-    Workspace.create(data, {}, next);
+    testsuite.destinationPath =
+      testSupport.givenSandboxDir(testsuite.templateName);
+    testSupport.givenEmptySandbox(testsuite.destinationPath, function(err) {
+      if (err) return next(err);
+      const data = {
+        templateName: testsuite.templateName,
+        destinationPath: testsuite.destinationPath,
+      };
+      Workspace.create(data, {}, next);
+    });
   });
 
   this.Then(/^the workspace is created$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
+    const workspace =
+      workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
     const dir = workspace.getDirectory();
     const template = workspaceManager.getTemplate(testsuite.templateName);
     const tasks = [];

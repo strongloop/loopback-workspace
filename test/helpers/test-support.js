@@ -9,13 +9,7 @@ exports.givenSandboxDir = givenSandboxDir;
 function createSandboxDir(dir, cb) {
   fs.mkdirp(dir, function(err) {
     if (err) return cb(err);
-    const modelsDir = path.join(dir, 'common', 'models');
-    fs.mkdirp(modelsDir, function(err) {
-      if (err) return cb(err);
-      const result = {};
-      result.dir = dir;
-      cb(null, result);
-    });
+    cb();
   });
 };
 
@@ -26,6 +20,6 @@ function givenEmptySandbox(sandboxDir, cb) {
   });
 }
 
-function givenSandboxDir() {
-  return sandboxDir;
+function givenSandboxDir(templateName) {
+  return path.join(sandboxDir, templateName);
 }

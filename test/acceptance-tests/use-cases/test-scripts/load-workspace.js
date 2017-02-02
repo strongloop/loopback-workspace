@@ -18,16 +18,20 @@ app.on('booted', function() {
 
 module.exports = function() {
   const testsuite = this;
-  this.Given(/^the workspace is not already loaded$/, function(next) {
-    testsuite.destinationPath = testSupport.givenSandboxDir();
+  this.Given(/^the '(.+)' workspace is not already loaded$/,
+  function(templateName, next) {
+    testsuite.destinationPath = testSupport.givenSandboxDir(templateName);
     const workspace =
       workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
     workspaceManager.deleteWorkspace(workspace.getId());
     next();
   });
 
-  this.When(/^I load the workspace from the sandbox directory$/,
-  function(next) {
+  this.When(/^I load the '(.+)' workspace from the sandbox directory$/,
+  function(templateName, next) {
+    testsuite.destinationPath = testSupport.givenSandboxDir(templateName);
+    testsuite.workspace =
+      workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
     const app = require('../../../../');
     const directory = testsuite.destinationPath;
     supertest(app)
@@ -37,7 +41,6 @@ module.exports = function() {
       if (err) return next(err);
       const data = response.body;
       expect(data.workspaceId).to.not.to.be.undefined();
-      expect(data.workspaceId).to.be.eql('0002');
       expect(data.errors).to.not.to.be.undefined();
       expect(data.errors.length).to.be.eql(0);
       next();
@@ -45,13 +48,12 @@ module.exports = function() {
   });
 
   this.Then(/^the workspace is loaded with datasources$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const dir = workspace.getDirectory();
-    expect(dir).to.be.eql(testSupport.givenSandboxDir());
-    const file = workspace.getDataSourceConfigFilePath();
+    const dir = testsuite.workspace.getDirectory();
+    expect(dir).to.be.eql(testsuite.destinationPath);
+    const file = testsuite.workspace.getDataSourceConfigFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
-      const dsList = workspace.getAllDataSources();
+      const dsList = testsuite.workspace.getAllDataSources();
       const configData = {};
       Object.keys(dsList).forEach(function(key) {
         const ds = dsList[key];
@@ -66,12 +68,11 @@ module.exports = function() {
   });
 
   this.Then(/^the workspace is loaded with middleware$/, function(next) {
-    const workspace = workspaceManager.getWorkspace();
-    const dir = workspace.getDirectory();
-    const middlewareFile = workspace.getMiddlewareFilePath();
+    const dir = testsuite.workspace.getDirectory();
+    const middlewareFile = testsuite.workspace.getMiddlewareFilePath();
     fs.readJson(middlewareFile, function(err, middleware) {
       if (err) return next(err);
-      const configData = workspace.getMiddlewareConfig();
+      const configData = testsuite.workspace.getMiddlewareConfig();
       Object.keys(configData).forEach(function(key) {
         expect(configData[key]).to.deep.eql(middleware[key]);
       });

@@ -12,6 +12,7 @@ const path = require('path');
 
 module.exports = {
   getConfigFiles: getConfigFiles,
+  readFile: readFile,
   readModel: readModel,
   readModelConfig: readModelConfig,
   readDataSource: readDataSource,

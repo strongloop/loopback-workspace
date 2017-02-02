@@ -1,7 +1,8 @@
 {
   "name": "Message",
-  "base": "Model",
+  "facetName": "common",
   "properties": {},
+  "idInjection": true,
   "methods": {
     "greet": {
       "isStatic": true,

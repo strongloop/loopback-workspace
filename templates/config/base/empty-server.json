@@ -67,7 +67,6 @@
     ],
     "datasources": [
       {
-        "id": "memory",
         "name": "db",
         "connector": "memory"
       }

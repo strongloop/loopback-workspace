@@ -14,13 +14,17 @@ const ModelDefinition = app.models.ModelDefinition;
 module.exports = function() {
   var testsuite = this;
 
-  this.When(/^I query for the model '(.+)'$/, function(modelName, next) {
+  this.When(/^I query for the model '(.+)' in workspace '(.+)'$/,
+  function(modelName, workspaceName, next) {
+    const dir = testSupport.givenSandboxDir(workspaceName);
+    testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     testsuite.modelName = modelName;
-    const modelId = 'common.' + testsuite.modelName;
+    const modelId = 'common.models.' + testsuite.modelName;
     const filter = {
       where: {id: modelId},
     };
-    ModelDefinition.find(filter, function(err, data) {
+    const options = {workspaceId: testsuite.workspace.getId()};
+    ModelDefinition.find(filter, options, function(err, data) {
       if (err) return next(err);
       testsuite.modelDef = data;
       next();
@@ -31,7 +35,6 @@ module.exports = function() {
     expect(Object.keys(testsuite.modelDef)).to.include.members([
       'name',
       'idInjection',
-      'public',
     ]);
     next();
   });
