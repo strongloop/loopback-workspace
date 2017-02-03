@@ -1,4 +1,5 @@
 'use strict';
+const config = require('../config.json');
 const Entity = require('./entity');
 const path = require('path');
 const ModelConfig = require('./model-config');
@@ -36,23 +37,40 @@ class Facet extends Entity {
     return filePath;
   }
   setModelConfig(config) {
-    const modelConfigNodes = this.getContainedSet('ModelConfig');
-    if (modelConfigNodes) {
-      Object.keys(modelConfigNodes).forEach(function(key) {
-        modelConfigNodes[key]._content = config[key];
-      });
-    }
+    const workspace = this._graph;
+    let modelConfigNodes = this.getContainedSet('ModelConfig');
+    modelConfigNodes = modelConfigNodes || {};
+    Object.keys(config).forEach(function(key) {
+      if (key === '_meta') return;
+      let modelConfig = modelConfigNodes[key];
+      if (modelConfig) {
+        modelConfig._content = config[key];
+      } else {
+        if (workspace.getModel(key)) {
+          this.addModelConfig(workspace, key, config[key]);
+        } else
+        this.addModelConfig(workspace, 'common.models.' + key, config[key]);
+      }
+    }, this);
   }
-  getModelConfig(id) {
+  getModelConfig(modelId) {
     const modelConfigNodes = this.getContainedSet('ModelConfig');
-    const config = {};
+    const modelConfig = {};
     if (modelConfigNodes) {
       Object.keys(modelConfigNodes).forEach(function(key) {
-        config[key] = modelConfigNodes[key]._content;
+        let parts = key.split('.');
+        let modelName = parts[parts.length - 1];
+        modelConfig[modelName] = modelConfigNodes[key]._content;
       });
     }
-    if (id) return config[id];
-    else return config;
+    if (modelId) {
+      const parts = modelId.split('.');
+      const modelName = parts[parts.length - 1];
+      return modelConfig[modelName];
+    } else {
+      modelConfig._meta = config.modelsMetadata;
+      return modelConfig;
+    }
   }
   getConfig() {
     const facetNodes = this.getContainedSet('FacetConfig');

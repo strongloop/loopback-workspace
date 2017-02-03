@@ -1,28 +1,42 @@
 {
   "files": {
-     "Models": [
-       "models/*.json"
-     ],
-     "ModelConfig": [
-       "model-config.json"
-     ],
-     "DataSources": [
+    "Models": [
+      "models/*.json"
+    ],
+    "ModelConfig": [
+      "model-config.json"
+    ],
+    "DataSources": [
       "datasources.json",
       "datasources.*.json"
-     ],
-     "Middleware": [
+    ],
+    "Middleware": [
       "middleware.json",
       "middleware.*.json"
-     ],
-     "FacetConfig": [
+    ],
+    "FacetConfig": [
       "config.json",
       "config.*.json"
-     ]
-   },
-   "builtInModels": ["User", "AccessToken", "ACL", "RoleMapping", "Role"],
-   "FacetConfigFile": "config.json",
-   "DefaultMiddlewareFile": "middleware.json",
-   "ModelConfigFile": "model-config.json",
-   "ModelDefaultDir": "models",
-   "DataSourceConfigFile": "datasources.json"
+    ]
+  },
+  "builtInModels": ["User", "AccessToken", "ACL", "RoleMapping", "Role"],
+  "FacetConfigFile": "config.json",
+  "DefaultMiddlewareFile": "middleware.json",
+  "ModelConfigFile": "model-config.json",
+  "ModelDefaultDir": "models",
+  "DataSourceConfigFile": "datasources.json",
+  "modelsMetadata": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  }
 }

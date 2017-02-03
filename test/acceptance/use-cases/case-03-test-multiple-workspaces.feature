@@ -7,11 +7,11 @@ Feature: Users should be able to create middleware configurations
   Scenario: Create a middleware function
     Given The workspace 'api-server' has a 'initial' phase
     When I create a middleware 'ErrorHandler' 
-    And with middleware function '/middleware/log-error' for paths '/Customer'
+    And with middleware function './middleware/log-error' for paths '/Customer'
     Then The middleware config is created
 
   Scenario: Find a middleware method
-    When I query for the middleware method 'initial./middleware/log-error'
+    When I query for the middleware method 'initial:./middleware/log-error'
     Then The middleware config for the method is returned
 
   Scenario: Update a DataSource

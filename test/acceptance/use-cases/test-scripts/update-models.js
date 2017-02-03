@@ -71,7 +71,7 @@ module.exports = function() {
     const file = facet.getModelConfigPath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
-      const config = data[testsuite.modelId];
+      const config = data[testsuite.modelName];
       expect(config).to.not.to.be.undefined();
       Object.keys(testsuite.ModelConfig.expectedFields).forEach(function(key) {
         expect(testsuite.ModelConfig.expectedFields[key]).to.eql(config[key]);

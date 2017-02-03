@@ -154,11 +154,13 @@ class Tasks {
   loadModelConfig(filePath, cb) {
     const workspace = this;
     const facetName = path.dirname(filePath);
-    if (facetName) {
-      workspace.refreshModelConfig(facetName, cb);
-    } else {
-      cb(new Error('file ignored: ' + filePath));
-    }
+    const dir = path.join(workspace.getDirectory(), filePath);
+    fsUtility.readFile(dir, function(err, fileData) {
+      if (err) return cb(err);
+      const facet = workspace.getFacet(facetName);
+      facet.setModelConfig(fileData);
+      cb();
+    });
   }
   loadMiddleware(filePath, cb) {
     const workspace = this;

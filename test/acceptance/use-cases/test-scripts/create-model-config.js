@@ -48,7 +48,7 @@ module.exports = function() {
     const file = facet.getModelConfigPath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
-      const storedConfig = data[testsuite.modelId];
+      const storedConfig = data[testsuite.modelName];
       expect(storedConfig).to.not.to.be.undefined();
       delete config.id;
       delete config.facetName;

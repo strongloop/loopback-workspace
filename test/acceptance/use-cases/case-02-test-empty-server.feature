@@ -13,7 +13,7 @@ Feature: Users should be able to create an empty workspace
     Then the datasource definition is returned
 
   Scenario: Find a middleware method
-    When I query for the middleware method 'initial.compression'
+    When I query for the middleware method 'initial:compression'
     Then The middleware config for the method is returned
 
   Scenario: Add model config to facet

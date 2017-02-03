@@ -4,13 +4,5 @@
   "extends": "empty-server",
   "files": {
     "path": "/hello-world"
-  },
-  "server": {
-    "modelConfig": [
-      {
-         "name": "Message",
-         "dataSource": null
-      }
-    ]
   }
 }
