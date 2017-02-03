@@ -150,6 +150,11 @@ class Workspace extends Graph {
       }
     });
   }
+  setFacetConfig(facetName, facetConfig) {
+    const workspace = this;
+    const facet = workspace.getFacet(facetName);
+    facet.setConfig(facetConfig);
+  }
 };
 
 function mixin(target, source) {

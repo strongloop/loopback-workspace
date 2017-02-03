@@ -26,3 +26,7 @@ Feature: Users should be able to create workspace from templates
     When I load the 'api-server' workspace from the sandbox directory
     Then the workspace is loaded with datasources
     And the workspace is loaded with middleware
+
+  Scenario: Load hello-world workspace
+    When I load the 'hello-world' workspace from the sandbox directory
+    Then the workspace is loaded with datasources

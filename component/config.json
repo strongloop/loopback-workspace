@@ -13,6 +13,10 @@
      "Middleware": [
       "middleware.json",
       "middleware.*.json"
+     ],
+     "FacetConfig": [
+      "config.json",
+      "config.*.json"
      ]
    },
    "builtInModels": ["User", "AccessToken", "ACL", "RoleMapping", "Role"],

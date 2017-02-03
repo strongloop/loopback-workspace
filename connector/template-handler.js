@@ -57,6 +57,7 @@ class TemplateHandler {
     const config = {
       name: facetName,
       modelsMetadata: facet.modelsMetadata,
+      settings: facet.config,
     };
     TemplateHandler.addTask(
       taskList,

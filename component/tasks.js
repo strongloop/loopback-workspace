@@ -17,9 +17,12 @@ const path = require('path');
  * Every task can be performed using a processor.
  */
 class Tasks {
-  addFacet(id, facetDef, cb) {
+  addFacet(name, facetDef, cb) {
     const workspace = this;
-    const facet = new Facet(workspace, id, facetDef);
+    const facet = new Facet(workspace, name, facetDef.modelsMetaData);
+    if (facetDef.settings) {
+      facet.addConfig(facetDef.settings);
+    }
     fsUtility.writeFacet(workspace, facet, cb);
   }
   addModel(modelId, modelDef, cb) {
@@ -122,6 +125,19 @@ class Tasks {
     const dataSource = workspace.getDataSource(id);
     dataSource.update(config);
     fsUtility.writeDataSourceConfig(workspace, cb);
+  }
+  loadFacet(filePath, cb) {
+    const workspace = this;
+    const facetName = path.dirname(filePath);
+    const dir = path.join(workspace.getDirectory(), filePath);
+    let facet = workspace.getFacet(facetName);
+    if (!facet)
+      facet = new Facet(workspace, facetName, {});
+    fsUtility.readFile(dir, function(err, fileData) {
+      if (err) return cb(err);
+      facet.addConfig(facetName, fileData);
+      cb();
+    });
   }
   loadModel(filePath, fileData, cb) {
     const workspace = this;
