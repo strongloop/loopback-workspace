@@ -2,6 +2,7 @@
 const Entity = require('./entity');
 const path = require('path');
 const ModelConfig = require('./model-config');
+const FacetConfig = require('./facet-config');
 
 /**
  * @class Facet
@@ -54,15 +55,21 @@ class Facet extends Entity {
     else return config;
   }
   getConfig() {
-    const facetNodes = this._graph._cache['FacetConfig'];
-    const config = {};
-    Object.keys(facetNodes).forEach(function(key) {
-      let facetConfig = facetNodes[key];
-      if (facetConfig && facetConfig.getDefinition()) {
-        config = facetConfig.getDefinition();
-      }
-    });
+    const facetNodes = this.getContainedSet('FacetConfig');
+    let config = {};
+    if (facetNodes) {
+      Object.keys(facetNodes).forEach(function(key) {
+        let facetConfig = facetNodes[key];
+        if (facetConfig && facetConfig.getDefinition()) {
+          config = facetConfig.getDefinition();
+        }
+      });
+    }
     return config;
+  }
+  addConfig(config) {
+    const facetConfig = new FacetConfig(this._graph, this._name, config);
+    this.addContainsRelation(facetConfig);
   }
 };
 

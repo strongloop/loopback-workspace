@@ -17,6 +17,9 @@ class Entity extends Node {
       data[key] = config[key];
     });
   }
+  getDefinition() {
+    return this._content;
+  }
 }
 
 module.exports = Entity;

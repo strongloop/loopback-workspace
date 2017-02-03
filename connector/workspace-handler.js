@@ -11,7 +11,13 @@ class WorkspaceHandler {
     const modelConfigFiles = files.ModelConfig || [];
     const dataSourceFiles = files.DataSources || [];
     const middlewareFiles = files.Middleware || [];
+    const facetConfigFiles = files.FacetConfig || [];
 
+    facetConfigFiles.forEach(function(filePath) {
+      taskList.push(function(next) {
+        handler.loadFacet(workspace, filePath, erroredFiles, next);
+      });
+    });
     modelFiles.forEach(function(filePath) {
       taskList.push(function(next) {
         handler.loadModelDefinition(workspace, filePath, erroredFiles, next);
@@ -75,6 +81,12 @@ class WorkspaceHandler {
   }
   static loadMiddleware(workspace, filePath, erroredFiles, next) {
     workspace.loadMiddleware(filePath, function(err) {
+      if (err) erroredFiles.push(err);
+      next();
+    });
+  }
+  static loadFacet(workspace, filePath, erroredFiles, next) {
+    workspace.loadFacet(filePath, function(err) {
       if (err) erroredFiles.push(err);
       next();
     });
