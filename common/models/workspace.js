@@ -32,8 +32,7 @@ module.exports = function(Workspace) {
     Workspace.remoteMethod('loadWorkspace', {
       accepts: [{
         arg: 'directory',
-        type: 'string',
-        http: {source: 'body'}}],
+        type: 'string'}],
       returns: [{
         arg: 'response',
         type: 'object',

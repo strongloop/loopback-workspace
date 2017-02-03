@@ -18,11 +18,13 @@ Feature: Users should be able to create workspace from templates
     Then the workspace is created
 
   Scenario: Load empty-server workspace
+    Given the 'empty-server' workspace is not already loaded
     When I load the 'empty-server' workspace from the sandbox directory
     Then the workspace is loaded with datasources
     And the workspace is loaded with middleware
 
   Scenario: Load api-server workspace
+    Given the 'api-server' workspace is not already loaded
     When I load the 'api-server' workspace from the sandbox directory
     Then the workspace is loaded with datasources
     And the workspace is loaded with middleware

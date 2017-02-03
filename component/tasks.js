@@ -163,20 +163,22 @@ class Tasks {
   loadMiddleware(filePath, cb) {
     const workspace = this;
     const facetName = path.dirname(filePath);
-    if (facetName) {
-      workspace.refreshMiddleware(cb);
-    } else {
-      cb(new Error('file ignored: ' + filePath));
-    }
+    const dir = path.join(workspace.getDirectory(), filePath);
+    fsUtility.readFile(dir, function(err, fileData) {
+      if (err) return cb(err);
+      workspace.setMiddlewareConfig(fileData);
+      cb();
+    });
   }
   loadDataSources(filePath, cb) {
     const workspace = this;
     const facetName = path.dirname(filePath);
-    if (facetName) {
-      workspace.refreshDataSource(cb);
-    } else {
-      cb(new Error('file ignored: ' + filePath));
-    }
+    const dir = path.join(workspace.getDirectory(), filePath);
+    fsUtility.readFile(dir, function(err, fileData) {
+      if (err) return cb(err);
+      workspace.setDatasources(fileData);
+      cb();
+    });
   }
 };
 

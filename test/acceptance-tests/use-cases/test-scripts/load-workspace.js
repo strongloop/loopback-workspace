@@ -29,20 +29,20 @@ module.exports = function() {
 
   this.When(/^I load the '(.+)' workspace from the sandbox directory$/,
   function(templateName, next) {
-    testsuite.destinationPath = testSupport.givenSandboxDir(templateName);
-    testsuite.workspace =
-      workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
     const app = require('../../../../');
     const directory = testsuite.destinationPath;
     supertest(app)
     .post('/api/Workspace/load-workspace')
-    .send(directory)
+    .send({directory: directory})
     .expect(200, function(err, response) {
       if (err) return next(err);
       const data = response.body;
       expect(data.workspaceId).to.not.to.be.undefined();
-      expect(data.errors).to.not.to.be.undefined();
       expect(data.errors.length).to.be.eql(0);
+      testsuite.destinationPath = testSupport.givenSandboxDir(templateName);
+      testsuite.workspace =
+        workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
+      expect(testsuite.workspace).to.not.to.be.undefined();
       next();
     });
   });
