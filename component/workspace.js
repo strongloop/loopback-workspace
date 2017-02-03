@@ -1,5 +1,6 @@
 'use strict';
 const config = require('./config.json');
+const DataSource = require('./datamodel/datasource');
 const Graph = require('./datamodel/graph');
 const clone = require('lodash').clone;
 const Model = require('./datamodel/model');
@@ -97,10 +98,15 @@ class Workspace extends Graph {
     return ds;
   }
   setDatasources(config) {
+    const workspace = this;
     const datasources = this._cache['DataSource'];
-    Object.keys(datasources).forEach(function(key) {
+    Object.keys(config).forEach(function(key) {
       let ds = datasources[key];
-      ds._content = config[key];
+      if (ds) {
+        ds._content = config[key];
+      } else {
+        new DataSource(workspace, key, config[key]);
+      }
     });
   }
   getModelProperty(id) {
@@ -108,10 +114,11 @@ class Workspace extends Graph {
     return property;
   }
   addMiddlewarePhase(phaseName) {
-    new MiddlewarePhase(this, phaseName + ':before');
-    new MiddlewarePhase(this, phaseName);
-    new MiddlewarePhase(this, phaseName + ':after');
-    this.middlewarePhases.push(phaseName);
+    const phaseArr = [phaseName + ':before', phaseName, phaseName + ':after'];
+    phaseArr.forEach(function(phase) {
+      this.middlewarePhases.push(phase);
+      new MiddlewarePhase(this, phase);
+    }, this);
   }
   getMiddlewarePhase(phaseName) {
     return this.getNode('MiddlewarePhase', phaseName);

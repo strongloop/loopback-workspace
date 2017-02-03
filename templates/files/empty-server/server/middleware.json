@@ -7,14 +7,12 @@
         "credentials": true,
         "maxAge": 86400
       }
-    },
-    "session": {},
-    "auth": {},
-    "parse": {},
-    "routes": {},
-    "files": {},
-    "final": {
-      "loopback#urlNotFound": {}
     }
-  }
+  },
+  "session": {},
+  "auth": {},
+  "parse": {},
+  "routes": {},
+  "files": {},
+  "final": {}
 }
