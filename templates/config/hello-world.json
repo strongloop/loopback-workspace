@@ -1,8 +1,42 @@
 {
   "name": "hello-world",  
   "description": "A LoopBack API server with local User auth",
-  "extends": "empty-server",
+  "extends": "api-server",
   "files": {
     "path": "/hello-world"
+  },
+  "server": {
+    "modelConfigs": [
+      {
+         "name": "common.models.Message",
+         "dataSource": "db",
+         "public": true
+      }
+    ],
+    "middleware": [
+      {
+        "phase": "initial",
+        "subPhase": "before",
+        "function": "loopback#favicon"
+      },
+      {
+        "phase": "initial",
+        "function": "compression"
+      },
+      {
+        "phase": "initial",
+        "function": "cors",
+        "params": {
+          "origin": true,
+          "credentials": true,
+          "maxAge": 86400
+        }
+      },
+      {
+        "phase": "parse",
+        "subPhase": "before",
+        "function": "./middleware/save-raw"
+      }
+    ] 
   }
 }
