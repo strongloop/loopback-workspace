@@ -36,7 +36,6 @@ module.exports = function() {
       facetName: 'common',
       name: modelName,
       readonly: true,
-      plural: 'customers',
       strict: true,
       public: true,
       idInjection: true,
@@ -152,8 +151,8 @@ module.exports = function() {
     });
   });
 
-  this.Given(/^I add model method '(.+)'$/,
-  function(methodName, next) {
+  this.Given(/^I add model method '(.+)' in workspace '(.+)'$/,
+  function(methodName, workspaceName, next) {
     testsuite.methodName = methodName;
     testsuite.modelMethod = {accepts: [], returns: []};
     next();
