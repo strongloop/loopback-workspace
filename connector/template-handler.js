@@ -107,16 +107,17 @@ class TemplateHandler {
     });
   }
   static copyTemplateDir(dir, destinationPath, cb) {
-    const options = {clobber: false};
+    const options = {clobber: true};
     fs.copy(dir, destinationPath, options, cb);
   }
   static getTemplateFiles(template) {
     const templateFiles = [];
-    if (template.files.parent) {
-      let filePath = path.join(__dirname,
-        '../templates/files',
-        template.files.parent.path);
-      templateFiles.push(filePath);
+    if (template.dirList) {
+      template.dirList.forEach(function(dir) {
+        let filePath = path.join(__dirname,
+          '../templates/files', dir);
+        templateFiles.push(filePath);
+      });
     }
     let filePath = path.join(__dirname,
       '../templates/files',

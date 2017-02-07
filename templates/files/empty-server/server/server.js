@@ -22,6 +22,5 @@ app.start = function() {
   });
 };
 
-if (require.main === module) {
-  app.start();
-}
+// API explorer
+require('loopback-component-explorer')(app);

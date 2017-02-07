@@ -1,0 +1,8 @@
+{
+  "name": "notes",  
+  "description": "A LoopBack API server with notes model",
+  "extends": "api-server",
+  "files": {
+    "path": "/hello-world"
+  }
+}

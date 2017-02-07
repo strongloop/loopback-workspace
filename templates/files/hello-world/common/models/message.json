@@ -2,10 +2,12 @@
   "name": "Message",
   "facetName": "common",
   "properties": {},
+  "readonly": true,
+  "strict": true,
+  "public": true,
   "idInjection": true,
   "methods": {
     "greet": {
-      "isStatic": true,
       "accepts": [{
         "arg": "msg",
         "type": "string",

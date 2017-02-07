@@ -59,9 +59,12 @@ module.exports = function() {
             if (err) return cb(err);
             const expectedList = [];
             template.server.modelConfigs.forEach(function(modelConfig) {
-              expectedList.push(modelConfig.name);
+              if (modelConfig.name)
+                expectedList.push(modelConfig.name);
             });
-            expect(Object.keys(modelConfigs)).to.include.members(expectedList);
+            delete modelConfigs._meta;
+            expect(Object.keys(modelConfigs).length).to
+              .eql(expectedList.length);
             cb();
           });
         });
