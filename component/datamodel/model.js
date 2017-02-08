@@ -36,6 +36,9 @@ class Model extends Entity {
   getRelation(relationName) {
     return this.getContainedNode(relationName);
   }
+  getContents() {
+    return clone(this._content);
+  }
   getDefinition() {
     const model = this;
 

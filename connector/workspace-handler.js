@@ -15,27 +15,47 @@ class WorkspaceHandler {
 
     facetConfigFiles.forEach(function(filePath) {
       taskList.push(function(next) {
-        handler.loadFacet(workspace, filePath, erroredFiles, next);
+        handler.loadFacet(workspace, filePath, function(err) {
+          if (err)
+            erroredFiles.push({file: filePath, error: err});
+          next();
+        });
       });
     });
     modelFiles.forEach(function(filePath) {
       taskList.push(function(next) {
-        handler.loadModelDefinition(workspace, filePath, erroredFiles, next);
+        handler.loadModelDefinition(workspace, filePath, function(err) {
+          if (err)
+            erroredFiles.push({file: filePath, error: err});
+          next();
+        });
       });
     });
     dataSourceFiles.forEach(function(filePath) {
       taskList.push(function(next) {
-        handler.loadDataSources(workspace, filePath, erroredFiles, next);
+        handler.loadDataSources(workspace, filePath, function(err) {
+          if (err)
+            erroredFiles.push({file: filePath, error: err});
+          next();
+        });
       });
     });
     modelConfigFiles.forEach(function(filePath) {
       taskList.push(function(next) {
-        handler.loadModelConfig(workspace, filePath, erroredFiles, next);
+        handler.loadModelConfig(workspace, filePath, function(err) {
+          if (err)
+            erroredFiles.push({file: filePath, error: err});
+          next();
+        });
       });
     });
     middlewareFiles.forEach(function(filePath) {
       taskList.push(function(next) {
-        handler.loadMiddleware(workspace, filePath, erroredFiles, next);
+        handler.loadMiddleware(workspace, filePath, function(err) {
+          if (err)
+            erroredFiles.push({file: filePath, error: err});
+          next();
+        });
       });
     });
     return taskList;
@@ -57,39 +77,24 @@ class WorkspaceHandler {
       workspace.execute(taskList, callback);
     });
   }
-  static loadModelDefinition(workspace, filePath, erroredFiles, next) {
+  static loadModelDefinition(workspace, filePath, cb) {
     const modelFilePath = path.join(workspace.getDirectory(), filePath);
     fsUtility.readFile(modelFilePath, function(err, fileData) {
-      if (err) return next(err);
-      workspace.loadModel(filePath, fileData, function(err) {
-        if (err) erroredFiles.push(err);
-        next();
-      });
+      if (err) return cb(err);
+      workspace.loadModel(filePath, fileData, cb);
     });
   }
-  static loadDataSources(workspace, filePath, erroredFiles, next) {
-    workspace.loadDataSources(filePath, function(err) {
-      if (err) erroredFiles.push(err);
-      next();
-    });
+  static loadDataSources(workspace, filePath, cb) {
+    workspace.loadDataSources(filePath, cb);
   }
-  static loadModelConfig(workspace, filePath, erroredFiles, next) {
-    workspace.loadModelConfig(filePath, function(err) {
-      if (err) erroredFiles.push(err);
-      next();
-    });
+  static loadModelConfig(workspace, filePath, cb) {
+    workspace.loadModelConfig(filePath, cb);
   }
-  static loadMiddleware(workspace, filePath, erroredFiles, next) {
-    workspace.loadMiddleware(filePath, function(err) {
-      if (err) erroredFiles.push(err);
-      next();
-    });
+  static loadMiddleware(workspace, filePath, cb) {
+    workspace.loadMiddleware(filePath, cb);
   }
-  static loadFacet(workspace, filePath, erroredFiles, next) {
-    workspace.loadFacet(filePath, function(err) {
-      if (err) erroredFiles.push(err);
-      next();
-    });
+  static loadFacet(workspace, filePath, cb) {
+    workspace.loadFacet(filePath, cb);
   }
 }
 

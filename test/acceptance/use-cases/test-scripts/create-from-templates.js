@@ -8,6 +8,7 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
+const TYPE_OF_TEST = 'acceptance';
 
 const Workspace = app.models.Workspace;
 app.on('booted', function() {
@@ -24,7 +25,7 @@ module.exports = function() {
   function(templateName, next) {
     testsuite.templateName = templateName;
     testsuite.destinationPath =
-      testSupport.givenSandboxDir(testsuite.templateName);
+      testSupport.givenSandboxDir(TYPE_OF_TEST, testsuite.templateName);
     testSupport.givenEmptySandbox(testsuite.destinationPath, function(err) {
       if (err) return next(err);
       const data = {

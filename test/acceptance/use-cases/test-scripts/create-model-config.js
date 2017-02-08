@@ -8,6 +8,7 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
+const TYPE_OF_TEST = 'acceptance';
 
 const ModelConfig = app.models.ModelConfig;
 app.on('booted', function() {
@@ -20,7 +21,7 @@ module.exports = function() {
   function(modelName, workspaceName, next) {
     testsuite.modelName = modelName;
     testsuite.modelId = 'common.models.' + modelName;
-    const dir = testSupport.givenSandboxDir(workspaceName);
+    const dir = testSupport.givenSandboxDir(TYPE_OF_TEST, workspaceName);
     testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     const model = testsuite.workspace.getModel(testsuite.modelId);
     expect(model).to.not.to.be.undefined();

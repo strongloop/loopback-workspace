@@ -21,12 +21,21 @@ module.exports = function(ModelDefinition) {
       // TODO(Deepak) - add response handling later
       connector.createModel(options.workspaceId, id, data, cb);
     };
-    ModelDefinition.find = function(filter, options, cb) {
+    ModelDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
       const id = filter.where.id;
+      const connector = ModelDefinition.getConnector();
+      connector.findModel(options.workspaceId, id, cb);
+    };
+    ModelDefinition.all = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
+      const id = filter.where && filter.where.id;
       const connector = ModelDefinition.getConnector();
       connector.findModel(options.workspaceId, id, cb);
     };

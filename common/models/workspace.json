@@ -2,11 +2,11 @@
   "properties": {
     "templateName": {
       "type": "string",
-      "id": true,
       "json": false
     },
     "workspaceId": {
       "type": "string",
+      "id": true,
       "required": true,
       "json": false
     },

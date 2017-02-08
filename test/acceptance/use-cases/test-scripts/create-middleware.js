@@ -8,6 +8,7 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
+const TYPE_OF_TEST = 'acceptance';
 
 const Middleware = app.models.Middleware;
 app.on('booted', function() {
@@ -19,7 +20,7 @@ module.exports = function() {
   this.Given(/^The workspace '(.+)' has a '(.+)' phase$/,
   function(workspaceName, phaseName, next) {
     testsuite.middlewarePhase = phaseName;
-    const dir = testSupport.givenSandboxDir(workspaceName);
+    const dir = testSupport.givenSandboxDir(TYPE_OF_TEST, workspaceName);
     testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     next();
   });

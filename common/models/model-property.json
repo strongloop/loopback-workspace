@@ -6,11 +6,6 @@
       "id": true,
       "json": false
     },
-    "workspaceId": {
-      "type": "string",
-      "required": true,
-      "json": false
-    },
     "modelId": {
       "type": "string",
       "required": true,
@@ -45,5 +40,12 @@
     }
   },
   "public": true,
-  "http": {"path": "/Workspace/:workspaceId/ModelProperty"}
+  "http": {"path": "/Workspace/:workspaceId/ModelProperty"},
+  "relations": {
+    "model": {
+      "type": "belongsTo",
+      "model": "ModelDefinition",
+      "foreignKey": "modelId"
+    }
+  }
 }

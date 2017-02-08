@@ -5,11 +5,6 @@
       "id": true,
       "json": false
     },
-    "workspaceId": {
-      "type": "string",
-      "required": true,
-      "json": false
-    },
     "facetName": {
       "type": "string",
       "required": true,
@@ -37,6 +32,12 @@
     "scopes": "object",
     "indexes": "object"
   },
-  "public": true,
+  "relations": {
+    "properties": {
+      "type": "hasMany",
+      "model": "ModelProperty",
+      "foreignKey": "modelId"
+    }
+  },
   "http": {"path": "/Workspace/:workspaceId/ModelDefinition"}
 }

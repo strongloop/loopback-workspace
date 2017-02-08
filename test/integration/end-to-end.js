@@ -14,7 +14,7 @@ describe('end-to-end', function() {
   describe('api-server template', function() {
     this.timeout(50000);
     let app;
-    const dir = testSupport.givenSandboxDir('api-server');
+    const dir = testSupport.givenSandboxDir('acceptance', 'api-server');
     before(function loadApp(done) {
       testSupport.installSandboxPackages(dir, function(err) {
         if (err) return done(err);
@@ -56,7 +56,7 @@ describe('end-to-end', function() {
   describe('hello-world template', function() {
     this.timeout(50000);
     let app;
-    const dir = testSupport.givenSandboxDir('hello-world');
+    const dir = testSupport.givenSandboxDir('acceptance', 'hello-world');
     before(function loadApp(done) {
       testSupport.installSandboxPackages(dir, function(err) {
         if (err) return done(err);
