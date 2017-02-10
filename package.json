@@ -8,9 +8,10 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "node test/helpers/pretest.js",
-    "test": "npm run acceptance && npm run integration",
-    "acceptance": "grunt",
+    "test": "npm run unit && npm run acceptance && npm run integration",
+    "unit": "mocha test/unit/*.js",
     "integration": "mocha test/integration/*.js",
+    "acceptance": "grunt",
     "posttest": "npm run lint"
   },
   "repository": {

@@ -7,6 +7,7 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
+const TYPE_OF_TEST = 'acceptance';
 
 const Facet = app.models.Facet;
 app.on('booted', function() {
@@ -17,7 +18,7 @@ module.exports = function() {
   const testsuite = this;
   this.Given(/^that I have loaded the workspace '(.+)'$/,
   function(workspaceName, next) {
-    const dir = testSupport.givenSandboxDir(workspaceName);
+    const dir = testSupport.givenSandboxDir(TYPE_OF_TEST, workspaceName);
     testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     next();
   });

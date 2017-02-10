@@ -62,5 +62,14 @@ module.exports = function(ModelProperty) {
       const connector = ModelProperty.getConnector();
       connector.findModelProperty(options.workspaceId, id, cb);
     };
+    ModelProperty.all = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
+      const id = filter.where.id;
+      const connector = ModelProperty.getConnector();
+      connector.findModelProperty(options.workspaceId, id, cb);
+    };
   });
 };

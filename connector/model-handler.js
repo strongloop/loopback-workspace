@@ -1,4 +1,7 @@
 'use strict';
+
+const workspaceHandler = require('./workspace-handler');
+
 class ModelHandler {
   static createModel(workspace, modelId, modelData, cb) {
     function create(next) {
@@ -74,10 +77,43 @@ class ModelHandler {
     function callback(err, results) {
       if (err) return cb(err);
       const model = workspace.getModel(modelId);
-      cb(null, model.getDefinition());
+      cb(null, [model.getContents()]);
     }
     const taskList = [refresh];
     workspace.execute(taskList, callback);
+  }
+
+  static findAllModels(workspace, cb) {
+    workspaceHandler.getFileList(workspace, function(err, files) {
+      if (err) return cb(err);
+      const modelFilePaths = files.Models || [];
+      const taskList = [];
+      const erroredFiles = [];
+      modelFilePaths.forEach(function(filePath) {
+        taskList.push(function(next) {
+          workspaceHandler.loadModelDefinition(workspace, filePath,
+          function(err) {
+            if (err)
+              erroredFiles.push({file: filePath, error: err});
+            next();
+          });
+        });
+      });
+      function callback(err) {
+        if (err) return cb(err);
+        let results = [];
+        const models = workspace.getAllModels();
+        if (models) {
+          Object.keys(models).forEach(function(key) {
+            let model = models[key];
+            results.push(model.getDefinition());
+          });
+        }
+        results = results.concat(erroredFiles);
+        cb(null, results);
+      }
+      workspace.execute(taskList, callback);
+    });
   }
 
   static updateModel(workspace, modelId, modelDef, cb) {

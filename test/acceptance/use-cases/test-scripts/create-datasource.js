@@ -9,6 +9,8 @@ const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
 
 const DataSourceDefinition = app.models.DataSourceDefinition;
+const TYPE_OF_TEST = 'acceptance';
+
 app.on('booted', function() {
   app.emit('ready');
 });
@@ -17,7 +19,8 @@ module.exports = function() {
   const testsuite = this;
   this.Given(/^that I have a workspace created from a template '(.+)'$/,
   function(templateName, next) {
-    testsuite.workspaceDir = testSupport.givenSandboxDir(templateName);
+    testsuite.workspaceDir =
+      testSupport.givenSandboxDir(TYPE_OF_TEST, templateName);
     testsuite.workspace =
       workspaceManager.getWorkspaceByFolder(testsuite.workspaceDir);
     testsuite.workspaceId = testsuite.workspace.getId();

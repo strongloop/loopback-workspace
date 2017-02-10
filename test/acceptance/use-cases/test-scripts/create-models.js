@@ -8,6 +8,7 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
+const TYPE_OF_TEST = 'acceptance';
 
 const ModelDefinition = app.models.ModelDefinition;
 const ModelMethod = app.models.ModelMethod;
@@ -22,7 +23,8 @@ module.exports = function() {
   const testsuite = this;
   this.Given(/^that I have loaded the workspace '(.+)'$/,
   function(templateName, next) {
-    testsuite.workspaceDir = testSupport.givenSandboxDir(templateName);
+    testsuite.workspaceDir =
+      testSupport.givenSandboxDir(TYPE_OF_TEST, templateName);
     testsuite.workspace =
       workspaceManager.getWorkspaceByFolder(testsuite.workspaceDir);
     testsuite.workspaceId = testsuite.workspace.getId();
@@ -65,7 +67,7 @@ module.exports = function() {
   this.Given(/^the model '(.+)' exists in workspace '(.+)'$/,
   function(modelName, workspaceName, next) {
     testsuite.modelId = 'common.models.' + modelName;
-    const dir = testSupport.givenSandboxDir(workspaceName);
+    const dir = testSupport.givenSandboxDir(TYPE_OF_TEST, workspaceName);
     testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     testsuite.workspaceId = testsuite.workspace.getId();
     const storedModel = testsuite.workspace.getModel(testsuite.modelId);

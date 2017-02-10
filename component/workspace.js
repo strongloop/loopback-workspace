@@ -97,6 +97,10 @@ class Workspace extends Graph {
     const ds = this._cache['DataSource'];
     return ds;
   }
+  getAllModels() {
+    const models = this._cache['ModelDefinition'];
+    return models;
+  }
   setDatasources(config) {
     const workspace = this;
     const datasources = this._cache['DataSource'];

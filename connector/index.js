@@ -16,6 +16,15 @@ const WorkspaceManager = require('../component/workspace-manager.js');
  *
  * performs CRUD operations on the Workspace graph.
  */
+connector.all = function(modelName, filter, options, cb) {
+  const model = app.models[modelName];
+  model.all(filter, options, cb);
+};
+
+connector.create = function(modelName, data, options, cb) {
+  const model = app.models[modelName];
+  model.create(data, options, cb);
+};
 
 connector.createFromTemplate = function(template, destinationFolder, cb) {
   const workspace = WorkspaceManager.createWorkspace(destinationFolder);
@@ -97,7 +106,10 @@ connector.createModel = function(workspaceId, id, data, cb) {
 
 connector.findModel = function(workspaceId, id, cb) {
   const workspace = WorkspaceManager.getWorkspace(workspaceId);
-  ModelHandler.findModel(workspace, id, cb);
+  if (id)
+    ModelHandler.findModel(workspace, id, cb);
+  else
+    ModelHandler.findAllModels(workspace, cb);
 };
 
 connector.findModelConfig = function(workspaceId, id, cb) {
