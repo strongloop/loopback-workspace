@@ -41,7 +41,7 @@ module.exports = function() {
       expect(data.workspaceId).to.not.to.be.undefined();
       expect(data.errors.length).to.be.eql(0);
       testsuite.destinationPath =
-        testSupport.givenSandboxDir(TYPE_OF_TEST, templateName);
+        testSupport.givenSandboxDir(templateName);
       testsuite.workspace =
         workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
       expect(testsuite.workspace).to.not.to.be.undefined();

@@ -8,7 +8,6 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
-const TYPE_OF_TEST = 'acceptance';
 
 const ModelDefinition = app.models.ModelDefinition;
 const ModelConfig = app.models.ModelConfig;
