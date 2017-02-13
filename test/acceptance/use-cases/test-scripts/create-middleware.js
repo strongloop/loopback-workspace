@@ -8,7 +8,6 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
-const TYPE_OF_TEST = 'acceptance';
 
 const Middleware = app.models.Middleware;
 app.on('booted', function() {
@@ -20,7 +19,7 @@ module.exports = function() {
   this.Given(/^The workspace '(.+)' has a '(.+)' phase$/,
   function(workspaceName, phaseName, next) {
     testsuite.middlewarePhase = phaseName;
-    const dir = testSupport.givenSandboxDir(TYPE_OF_TEST, workspaceName);
+    const dir = testSupport.givenSandboxDir(workspaceName);
     testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     next();
   });
@@ -58,23 +57,5 @@ module.exports = function() {
       expect(testsuite.expectedMiddleware).to.eql(config);
       next();
     });
-  });
-
-  this.When(/^I query for the middleware method '(.+)'$/,
-  function(middlewareId, next) {
-    testsuite.middlewareId = middlewareId;
-    const filter = {where: {id: testsuite.middlewareId}};
-    const options = {workspaceId: testsuite.workspace.getId()};
-    Middleware.find(filter, options, function(err, config) {
-      if (err) return next(err);
-      testsuite.middlewareConfig = config;
-      next();
-    });
-  });
-
-  this.Then(/^The middleware config for the method is returned$/,
-  function(next) {
-    expect(testsuite.middlewareConfig).to.not.to.be.undefined();
-    next();
   });
 };

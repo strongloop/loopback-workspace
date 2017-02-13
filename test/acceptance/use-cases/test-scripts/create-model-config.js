@@ -8,7 +8,6 @@ const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
-const TYPE_OF_TEST = 'acceptance';
 
 const ModelConfig = app.models.ModelConfig;
 app.on('booted', function() {
@@ -21,7 +20,7 @@ module.exports = function() {
   function(modelName, workspaceName, next) {
     testsuite.modelName = modelName;
     testsuite.modelId = 'common.models.' + modelName;
-    const dir = testSupport.givenSandboxDir(TYPE_OF_TEST, workspaceName);
+    const dir = testSupport.givenSandboxDir(workspaceName);
     testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     const model = testsuite.workspace.getModel(testsuite.modelId);
     expect(model).to.not.to.be.undefined();
@@ -56,27 +55,5 @@ module.exports = function() {
       expect(storedConfig).to.eql(config);
       next();
     });
-  });
-
-  this.When(/^I query for the model config '(.+)' in workspace '(.+)'$/,
-  function(modelName, workspaceName, next) {
-    testsuite.modelName = modelName;
-    const modelId = 'common.models.' + testsuite.modelName;
-    const filter = {
-      where: {id: modelId},
-    };
-    const options = {workspaceId: testsuite.workspace.getId()};
-    ModelConfig.find(filter, options, function(err, data) {
-      if (err) return next(err);
-      testsuite.modelConfig = data;
-      next();
-    });
-  });
-
-  this.Then(/^the model config is returned$/, function(next) {
-    expect(Object.keys(testsuite.modelConfig)).to.include.members([
-      'dataSource',
-    ]);
-    next();
   });
 };
