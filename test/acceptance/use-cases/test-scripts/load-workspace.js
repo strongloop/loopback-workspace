@@ -9,7 +9,6 @@ const supertest = require('supertest');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
 const workspaceManager = require('../../../../component/workspace-manager');
-const TYPE_OF_TEST = 'acceptance';
 
 const Workspace = app.models.Workspace;
 
@@ -22,7 +21,7 @@ module.exports = function() {
   this.Given(/^the '(.+)' workspace is not already loaded$/,
   function(templateName, next) {
     testsuite.destinationPath =
-      testSupport.givenSandboxDir(TYPE_OF_TEST, templateName);
+      testSupport.givenSandboxDir(templateName);
     const workspace =
       workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
     workspaceManager.deleteWorkspace(workspace.getId());
