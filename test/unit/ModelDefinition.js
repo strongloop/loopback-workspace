@@ -12,7 +12,7 @@ const ModelDefinition = app.models.ModelDefinition;
 describe('ModelDefinition', function() {
   describe('CRUD', function() {
     beforeEach(function(done) {
-      testSupport.givenBasicWorkspace('unit', 'empty-server', done);
+      testSupport.givenBasicWorkspace('empty-server', done);
     });
     describe('models', function() {
       const test = this;
