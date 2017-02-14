@@ -5,6 +5,7 @@ const Entity = require('./entity');
 const lodash = require('lodash');
 const path = require('path');
 const ModelRelation = require('./model-relationship');
+const ModelAccessControl = require('./acl');
 
 /**
  * @class Model
@@ -17,6 +18,15 @@ class Model extends Entity {
     this.config = {};
     this.options = options;
     Workspace.addNode(this);
+    const acl = new ModelAccessControl(Workspace, id, {});
+    this.setAcl(acl);
+  }
+  setAcl(acl) {
+    this.addContainsRelation(acl);
+  }
+  getAcl() {
+    const aclNodes = this.getContainedSet('ModelAccessControl');
+    return aclNodes[this._name];
   }
   setMethod(method) {
     this.addContainsRelation(method);

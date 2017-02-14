@@ -13,6 +13,10 @@
     "public": true,
     "dataSource": "db"
   },
+  "ModelAccessControl": {
+    "public": false,
+    "dataSource": "db"
+  },
   "ModelDefinition": {
     "public": true,
     "dataSource": "db"

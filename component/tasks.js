@@ -77,6 +77,11 @@ class Tasks {
     const packageDef = new PackageDefinition(this, 'package.json', definition);
     fsUtility.writePackageDefinition(packageDef, cb);
   }
+  writeModel(modelId, cb) {
+    const workspace = this;
+    const model = workspace.getModel(modelId);
+    fsUtility.writeModel(model, cb);
+  }
   refreshModel(modelId, cb) {
     const workspace = this;
     const model = workspace.getModel(modelId);

@@ -1,0 +1,40 @@
+{
+  "validateUpsert": true,
+  "properties": {
+    "index": {
+      "type": "number",
+      "json": false,
+      "default": 0,
+      "id": true
+    },
+    "facetName": {
+      "type": "string",
+      "required": true,
+      "json": false
+    },
+    "accessType": {
+      "type": "string"
+    },
+    "principalType": {
+      "type": "string"
+    },
+    "principalId": {
+      "type": "string"
+    },
+    "permission": {
+      "type": "string",
+      "required": true
+    },
+    "property": {
+      "type": "string"
+    }
+  },
+  "public": false,
+  "relations": {
+    "model": {
+      "type": "belongsTo",
+      "model": "ModelDefinition",
+      "foreignKey": "modelId"
+    }
+  }
+}
