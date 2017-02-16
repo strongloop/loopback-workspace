@@ -11,7 +11,7 @@ Feature: Users should be able to create middleware configurations
     Then The middleware config is created
 
   Scenario: Find a middleware method
-    When I query for the middleware method 'initial:./middleware/log-error'
+    When I query for the middleware method 'initial:./middleware/log-error' in the workspace 'api-server'
     Then The middleware config for the method is returned
 
   Scenario: Update a DataSource
@@ -49,7 +49,7 @@ Feature: Users should be able to create middleware configurations
     Then the model property is created
 
   Scenario: Add a custom method to the model
-    Given I add model method 'addReview' in workspace 'api-server'
+    Given I add model method 'addReview' to model 'Customer' in workspace 'api-server'
     When the method has an argument 'description' type 'string'
     And the method has a return parameter 'status' type 'string'
     And I call the model method api
@@ -67,7 +67,7 @@ Feature: Users should be able to create middleware configurations
     Then The model definition json is updated
 
   Scenario: Update model config
-    When I change 'server' facet Model Config property 'public' to 'true' in workspace 'api-server'
+    When I change 'server' facet Model Config property 'public' to 'true' in workspace 'api-server' for model 'Order'
     Then The model config json is updated
 
   Scenario: Query the created model

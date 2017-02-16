@@ -1,82 +1,59 @@
 'use strict';
-const app = require('../../../../');
-const async = require('async');
-const expect = require('../../../helpers/expect');
-const fs = require('fs-extra');
-const loopback = require('loopback');
-const path = require('path');
 const supertest = require('supertest');
-const testSupport = require('../../../helpers/test-support');
-const util = require('util');
-const workspaceManager = require('../../../../component/workspace-manager');
-
-const Workspace = app.models.Workspace;
-
-app.on('booted', function() {
-  app.emit('ready');
-});
 
 module.exports = function() {
-  const testsuite = this;
+  const testName = 'LoadWorkspace';
+  let templateName;
+
   this.Given(/^the '(.+)' workspace is not already loaded$/,
-  function(templateName, next) {
-    testsuite.destinationPath =
-      testSupport.givenSandboxDir(templateName);
-    const workspace =
-      workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
-    workspaceManager.deleteWorkspace(workspace.getId());
+  function(name, next) {
+    templateName = name;
+    this.setup(templateName);
     next();
   });
 
-  this.When(/^I load the '(.+)' workspace from the sandbox directory$/,
-  function(templateName, next) {
-    const app = require('../../../../');
-    const directory = testsuite.destinationPath;
-    supertest(app)
+  this.When(/^I load the workspace from the sandbox directory$/,
+  function(next) {
+    const testsuite = this;
+    const directory = testsuite.getWorkspaceDir(templateName);
+    supertest(this.getApp())
     .post('/api/Workspace/load-workspace')
     .send({directory: directory})
     .expect(200, function(err, response) {
       if (err) return next(err);
       const data = response.body;
-      expect(data.workspaceId).to.not.to.be.undefined();
-      expect(data.errors.length).to.be.eql(0);
-      testsuite.destinationPath =
-        testSupport.givenSandboxDir(templateName);
-      testsuite.workspace =
-        workspaceManager.getWorkspaceByFolder(testsuite.destinationPath);
-      expect(testsuite.workspace).to.not.to.be.undefined();
+      testsuite.expect(data.workspaceId).to.not.to.be.undefined();
+      testsuite.expect(data.errors.length).to.be.eql(0);
+      const workspace = testsuite.getWorkspace(templateName);
+      testsuite.expect(workspace).to.not.to.be.undefined();
       next();
     });
   });
 
   this.Then(/^the workspace is loaded with datasources$/, function(next) {
-    const dir = testsuite.workspace.getDirectory();
-    expect(dir).to.be.eql(testsuite.destinationPath);
-    const file = testsuite.workspace.getDataSourceConfigFilePath();
-    fs.readJson(file, function(err, data) {
+    const testsuite = this;
+    const dir = testsuite.getWorkspace(templateName).getDirectory();
+    const dsList = testsuite.getWorkspace(templateName).getAllDataSources();
+    const configData = {};
+    Object.keys(dsList).forEach(function(key) {
+      const ds = dsList[key];
+      configData[key] = ds.getDefinition();
+    });
+    testsuite.getDataSourceConfig(templateName, function(err, data) {
       if (err) return next(err);
-      const dsList = testsuite.workspace.getAllDataSources();
-      const configData = {};
-      Object.keys(dsList).forEach(function(key) {
-        const ds = dsList[key];
-        configData[key] = ds.getDefinition();
-      });
-      expect(data).to.not.to.be.undefined();
-      Object.keys(configData).forEach(function(key) {
-        expect(configData[key]).to.eql(data[key]);
-      });
+      testsuite.expect(configData).to.eql(data);
       next();
     });
   });
 
   this.Then(/^the workspace is loaded with middleware$/, function(next) {
-    const dir = testsuite.workspace.getDirectory();
-    const middlewareFile = testsuite.workspace.getMiddlewareFilePath();
-    fs.readJson(middlewareFile, function(err, middleware) {
+    const testsuite = this;
+    const configData =
+      testsuite.getWorkspace(templateName).getMiddlewareConfig();
+    this.getMiddlewareConfig(templateName, function(err, middleware) {
       if (err) return next(err);
-      const configData = testsuite.workspace.getMiddlewareConfig();
       Object.keys(configData).forEach(function(key) {
-        expect(configData[key]).to.deep.eql(middleware[key]);
+        testsuite.expect(configData[key]).to.deep.eql(middleware[key]);
       });
       next();
     });
