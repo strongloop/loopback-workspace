@@ -1,3 +1,9 @@
+2017-02-16, Version 3.37.1
+==========================
+
+ * Upgrade Explorer to fix security vulnerabilities (Miroslav Bajtoš)
+
+
 2017-01-23, Version 3.37.0
 ==========================
 
