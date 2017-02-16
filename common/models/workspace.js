@@ -491,6 +491,49 @@ module.exports = function(Workspace) {
     };
 
     /**
+     * Create the Bluemix files and directory.
+     * @param {object} options Commandline options
+     */
+    Workspace.createBluemixFiles = function(options) {
+      if (options.bluemix) {
+        var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
+                                  'templates', 'bluemix');
+        // Create .bluemix dir
+        var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
+        var bluemixDirDest = path.resolve(options.destDir, '.bluemix');
+        Workspace.copyRecursive(bluemixDirSrc, bluemixDirDest);
+        // Create .cfignore
+        var cfignoreSrc = path.resolve(bluemixTemplatesDir, 'cfignore');
+        var cfignoreDest = path.resolve(options.destDir, '.cfignore');
+        Workspace.copyRecursive(cfignoreSrc, cfignoreDest);
+        // Create .dockerignore
+        var dockerignoreSrc = path.resolve(bluemixTemplatesDir, 'dockerignore');
+        var dockerignoreDest = path.resolve(options.destDir, '.dockerignore');
+        Workspace.copyRecursive(dockerignoreSrc, dockerignoreDest);
+        // Create README.md
+        var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
+        var readmeDest = path.resolve(options.destDir, 'README.md');
+        Workspace.copyRecursive(readmeSrc, readmeDest);
+        // Create Dockerfile
+        var dockerfileSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
+        var dockerfileDest = path.resolve(options.destDir, 'Dockerfile');
+        Workspace.copyRecursive(dockerfileSrc, dockerfileDest);
+        // Create Dockerfile-run
+        var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile-run');
+        var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile-run');
+        Workspace.copyRecursive(dockerfileRunSrc, dockerfileRunDest);
+        // Create Dockerfile-tools
+        var dockerfileToolsSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile-tools');
+        var dockerfileToolsDest = path.resolve(options.destDir, 'Dockerfile-tools');
+        Workspace.copyRecursive(dockerfileToolsSrc, dockerfileToolsDest);
+        // Create manifest.yml
+        var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
+        var manifestDest = path.resolve(options.destDir, 'manifest.yml');
+        Workspace.copyRecursive(manifestSrc, manifestDest);
+      }
+    };
+
+    /**
      * Start the project (app) in the workspace.
      * @param {function(Error=,Object=)} cb callback
      */

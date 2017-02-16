@@ -1,0 +1,16 @@
+declared-services:
+  cloudant-db:
+    label: cloudantNoSQLDB
+    plan: Lite
+applications:
+- path: .
+  memory: 256M
+  instances: 1
+  domain: mybluemix.net
+  name: <%= config.appname %>
+  host: <%= config.appname %>
+  disk_quota: 1024M
+  services:
+  - cloudant-db
+env:
+  NODE_ENV: bluemix
