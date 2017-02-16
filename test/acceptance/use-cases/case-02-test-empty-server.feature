@@ -13,7 +13,7 @@ Feature: Users should be able to create an empty workspace
     Then the datasource definition is returned
 
   Scenario: Find a middleware method
-    When I query for the middleware method 'initial:compression'
+    When I query for the middleware method 'initial:compression' in the workspace 'empty-server'
     Then The middleware config for the method is returned
 
   Scenario: Add model config to facet
@@ -22,8 +22,7 @@ Feature: Users should be able to create an empty workspace
     Then the model configuration is created
 
   Scenario: Add a property to the model
-    Given the model 'TestModel' exists in workspace 'empty-server'
-    When I add property 'property1' of type 'string'
+    When I add property 'property1' of type 'string' for model 'TestModel' in workspace 'empty-server'
     Then the model property is created
 
   Scenario: Query the created model

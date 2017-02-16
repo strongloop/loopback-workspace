@@ -21,9 +21,9 @@ function createSandboxDir(dir, cb) {
   });
 };
 
-function givenBasicWorkspace(typeOfTest, templateName, next) {
+function givenBasicWorkspace(templateName, next) {
   const destinationPath =
-    givenSandboxDir(typeOfTest, templateName);
+    givenSandboxDir(templateName);
   givenEmptySandbox(destinationPath, function(err) {
     if (err) return next(err);
     const data = {
@@ -41,8 +41,8 @@ function givenEmptySandbox(sandboxDir, cb) {
   });
 }
 
-function givenSandboxDir(typeOfTest, templateName) {
-  return path.join(sandboxDir, typeOfTest, templateName);
+function givenSandboxDir(templateName) {
+  return path.join(sandboxDir, templateName);
 }
 
 function initializePackage(dir, cb) {

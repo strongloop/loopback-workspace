@@ -1,30 +1,16 @@
 'use strict';
-const app = require('../../../../');
-const expect = require('../../../helpers/expect');
-const fs = require('fs-extra');
-const clone = require('lodash').clone;
-const loopback = require('loopback');
-const path = require('path');
-const testSupport = require('../../../helpers/test-support');
-const util = require('util');
-const workspaceManager = require('../../../../component/workspace-manager');
-const TYPE_OF_TEST = 'acceptance';
-
-const ModelConfig = app.models.ModelConfig;
-app.on('booted', function() {
-  app.emit('ready');
-});
 
 module.exports = function() {
-  const testsuite = this;
+  const testName = 'CreateModelConfig';
+  let templateName, modelId, ModelName;
+
   this.Given(/^that the model '(.+)' exists in workspace '(.+)'$/,
   function(modelName, workspaceName, next) {
-    testsuite.modelName = modelName;
-    testsuite.modelId = 'common.models.' + modelName;
-    const dir = testSupport.givenSandboxDir(TYPE_OF_TEST, workspaceName);
-    testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
-    const model = testsuite.workspace.getModel(testsuite.modelId);
-    expect(model).to.not.to.be.undefined();
+    templateName = workspaceName;
+    ModelName = modelName;
+    modelId = 'common.models.' + modelName;
+    const model = this.getWorkspace(templateName).getModel(modelId);
+    this.expect(model).to.not.to.be.undefined();
     next();
   });
 
@@ -32,51 +18,22 @@ module.exports = function() {
   function(facetName, next) {
     const config = {
       facetName: facetName,
-      id: testsuite.modelId,
+      id: modelId,
       dataSource: 'db',
     };
-    testsuite.ModelConfig = clone(config);
-    const options = {workspaceId: testsuite.workspace.getId()};
-    ModelConfig.create(config, options, function(err, data) {
-      if (err) return next(err);
-      next();
-    });
+    const ModelConfig = this.getApp().models.ModelConfig;
+    this.createModel(ModelConfig, config, templateName, testName, next);
   });
 
   this.Then(/^the model configuration is created$/, function(next) {
-    const config = testsuite.ModelConfig;
-    const facet = testsuite.workspace.getFacet(config.facetName);
-    const file = facet.getModelConfigPath();
-    fs.readJson(file, function(err, data) {
+    const testsuite = this;
+    const config = this.getInputsToCompare(testName);
+    this.getModelConfig(templateName, function(err, data) {
       if (err) return next(err);
-      const storedConfig = data[testsuite.modelName];
-      expect(storedConfig).to.not.to.be.undefined();
-      delete config.id;
-      delete config.facetName;
-      expect(storedConfig).to.eql(config);
+      const storedConfig = data[ModelName];
+      testsuite.expect(storedConfig).to.not.to.be.undefined();
+      testsuite.expect(storedConfig).to.eql(config);
       next();
     });
-  });
-
-  this.When(/^I query for the model config '(.+)' in workspace '(.+)'$/,
-  function(modelName, workspaceName, next) {
-    testsuite.modelName = modelName;
-    const modelId = 'common.models.' + testsuite.modelName;
-    const filter = {
-      where: {id: modelId},
-    };
-    const options = {workspaceId: testsuite.workspace.getId()};
-    ModelConfig.find(filter, options, function(err, data) {
-      if (err) return next(err);
-      testsuite.modelConfig = data;
-      next();
-    });
-  });
-
-  this.Then(/^the model config is returned$/, function(next) {
-    expect(Object.keys(testsuite.modelConfig)).to.include.members([
-      'dataSource',
-    ]);
-    next();
   });
 };
