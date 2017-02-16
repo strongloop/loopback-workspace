@@ -44,8 +44,7 @@ Feature: Users should be able to create middleware configurations
     Then the model configuration is created
 
   Scenario: Add a property to the model
-    Given the model 'Customer' exists in workspace 'api-server'
-    When I add property 'name' of type 'string'
+    When I add property 'name' of type 'string' for model 'Order' in workspace 'api-server'
     Then the model property is created
 
   Scenario: Add a custom method to the model

@@ -22,8 +22,7 @@ Feature: Users should be able to create an empty workspace
     Then the model configuration is created
 
   Scenario: Add a property to the model
-    Given the model 'TestModel' exists in workspace 'empty-server'
-    When I add property 'property1' of type 'string'
+    When I add property 'property1' of type 'string' for model 'TestModel' in workspace 'empty-server'
     Then the model property is created
 
   Scenario: Query the created model
