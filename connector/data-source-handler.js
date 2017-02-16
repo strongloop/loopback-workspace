@@ -1,4 +1,7 @@
 'use strict';
+const boot = require('loopback-boot');
+const loopback = require('loopback');
+
 class DataSourceHandler {
   static createDataSource(workspace, id, data, cb) {
     function create(next) {
@@ -44,5 +47,30 @@ class DataSourceHandler {
     const taskList = [refresh, update];
     workspace.execute(taskList, callback);
   }
+
+  static autoMigrate(workspace, dataSourceName, modelName, cb) {
+    const app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    
+    function bootWithOptions(next) {
+      const bootOptions = {
+        appRootDir: workspace.getDirectory(),
+      };
+      boot(app, bootOptions, next);
+    }
+
+    function migrate(next) {
+      ds = app.dataSources[dataSourceName];
+      ds.autoMigrate(modelName, next);
+    }
+
+    function callback(err, results) {
+      if (err) return cb(err);
+      cb(null, true);
+    };
+
+    const taskList = [bootWithOptions, migrate];
+    workspace.execute(taskList, callback);
+  }
+
 }
 module.exports = DataSourceHandler;

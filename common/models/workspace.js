@@ -3,7 +3,10 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
+
+const dataSourceHandler = require('../../connector/data-source-handler');
 const templateRegistry = require('../../component/template-registry');
+const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**
   * Represents a LoopBack Workspace.
@@ -42,6 +45,36 @@ module.exports = function(Workspace) {
         verb: 'POST',
         path: '/load-workspace',
       },
+    });
+    /**
+    * Run a migration on the data source. Creates indexes, tables, collections, etc.
+    * **NOTE: this will destroy any existing data**
+    *
+    * @param {string} modelName
+    * @callback {Function} callback
+    */
+    Workspace.migrateDataSource = function(workspaceId, dataSourceName, modelName, cb) {
+      const workspace = WorkspaceManager.getWorkspaceId(workspaceId);
+      dataSourceHandler.autoMigrate(workspace, dataSourceName, modelName, cb);
+    };
+
+    Workspace.remoteMethod('migrateDataSource', {
+      accepts: [
+        {
+          arg: 'workspaceId',
+          type: 'string'
+        },
+        {
+          arg: 'dataSourceName',
+          type: 'string'
+        },
+        {
+          arg: 'modelName',
+          type: 'string',
+        },
+      ],
+      returns: { arg: 'success', type: 'boolean' },
+      http: { verb: 'POST', path: '/migrateDataSource' },
     });
   });
 };
