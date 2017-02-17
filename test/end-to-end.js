@@ -394,6 +394,11 @@ describe('end-to-end', function() {
         .expect(422)
         .end(done);
     });
+
+    it('enables strictObjectIDCoercion for RoleMapping model', function() {
+      expect(app.models.RoleMapping.settings.strictObjectIDCoercion)
+        .to.equal(true);
+    });
   });
 
   describe('notes template', function() {
@@ -464,6 +469,11 @@ describe('end-to-end', function() {
         }
       });
     });
+
+    it('enables strictObjectIDCoercion for RoleMapping model', function() {
+      expect(app.models.RoleMapping.settings.strictObjectIDCoercion)
+        .to.equal(true);
+    });
   });
 
   describe('hello-world template', function() {
@@ -503,6 +513,11 @@ describe('end-to-end', function() {
       request(app)
         .get('/api/Messages')
         .expect(404, done);
+    });
+
+    it('enables strictObjectIDCoercion for RoleMapping model', function() {
+      expect(app.models.RoleMapping.settings.strictObjectIDCoercion)
+        .to.equal(true);
     });
   });
 
