@@ -5,12 +5,23 @@
   "files": {
     "path": "/hello-world"
   },
+  "package": {
+    "dependencies": {
+      "loopback-connector-rest": "latest"
+    }
+  },
   "server": {
     "modelConfigs": [
       {
          "name": "common.models.Message",
          "dataSource": "db",
          "public": true
+      }
+    ],
+    "datasources": [
+      {
+        "name": "message",
+        "connector": "rest"
       }
     ],
     "middleware": [

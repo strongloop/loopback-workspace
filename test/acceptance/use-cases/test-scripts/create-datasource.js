@@ -2,20 +2,15 @@
 
 module.exports = function() {
   const testName = 'CreateDataSource';
-  let templateName, datasourceId;
-
-  this.Given(/^that I have a workspace created from a template '(.+)'$/,
-  function(tmplName, next) {
+  let templateName, datasourceName;
+  let it = this.When;
+  it(/^I create datasource '(.+)' with connector '(.+)' in workspace '(.+)'$/,
+  function(dsName, connectorName, tmplName, next) {
     templateName = tmplName;
-    next();
-  });
-
-  this.When(/^I create datasource '(.+)' with connector '(.+)'$/,
-  function(dsName, connectorName, next) {
-    datasourceId = 'common.datasources.' + dsName;
+    datasourceName = dsName;
     const datasource = {
-      id: datasourceId,
       name: dsName,
+      facetName: 'server',
       connector: connectorName,
     };
     const DataSourceDefinition = this.getApp().models.DataSourceDefinition;
@@ -28,7 +23,7 @@ module.exports = function() {
 
   this.Then(/^the datasource definition is created$/, function(next) {
     const storedDs =
-      this.getWorkspace(templateName).getDataSource(datasourceId);
+      this.getWorkspace(templateName).getDataSource('server.' + datasourceName);
     const expectedDs = this.getInputsToCompare(testName);
     this.expect(expectedDs).to.eql(storedDs._content);
     next();

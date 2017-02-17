@@ -1,12 +1,12 @@
 {
   "validateUpsert": true,
   "properties": {
-    "id": {
+    "name": {
       "type": "string",
       "id": true,
       "json": false
     },
-    "workspaceId": {
+    "facetName": {
       "type": "string",
       "required": true,
       "json": false
@@ -28,11 +28,6 @@
     },
     "password": {
       "type": "string"
-    },
-    "facetName": {
-      "type": "string",
-      "required": true,
-      "json": false
     }
   },
   "public": true,

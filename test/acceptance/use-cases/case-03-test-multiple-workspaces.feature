@@ -14,6 +14,10 @@ Feature: Users should be able to create middleware configurations
     When I query for the middleware method 'initial:./middleware/log-error' in the workspace 'api-server'
     Then The middleware config for the method is returned
 
+  Scenario: Create a DataSource
+    When I create datasource 'sampleRest' with connector 'rest' in workspace 'hello-world'
+    Then the datasource definition is created
+
   Scenario: Update a DataSource
     When I update datasource 'db' with connector 'sqllite'
     Then the datasource configuration is updated

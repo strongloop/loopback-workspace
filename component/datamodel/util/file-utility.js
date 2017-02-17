@@ -64,11 +64,10 @@ function writeModel(model, cb) {
 }
 
 function writeDataSourceConfig(workspace, cb) {
-  const dsList = workspace.getAllDataSources();
+  const dsList = workspace.getAllDataSourceConfig();
   const configData = {};
-  Object.keys(dsList).forEach(function(key) {
-    const ds = dsList[key];
-    configData[key] = ds.getDefinition();
+  dsList.forEach(function(ds) {
+    configData[ds.name] = ds;
   });
   const filePath = workspace.getDataSourceConfigFilePath();
   fs.mkdirp(path.dirname(filePath), function(err) {

@@ -26,8 +26,12 @@ class DataSourceHandler {
     };
     function callBack(err, results) {
       if (err) return cb(err);
-      const ds = workspace.getDataSource(id);
-      cb(null, ds.getDefinition());
+      if (id) {
+        const ds = workspace.getDataSource(id);
+        return cb(null, ds.getDefinition());
+      }
+      const dsList = workspace.getAllDataSourceConfig();
+      cb(null, dsList);
     };
     const taskList = [refresh];
     workspace.execute(taskList, callBack);

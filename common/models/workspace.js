@@ -6,7 +6,7 @@
 
 const dataSourceHandler = require('../../connector/data-source-handler');
 const templateRegistry = require('../../component/template-registry');
-const WorkspaceManager = require('../../component/workspace-manager.js');
+const WorkspaceManager = require('../../component/workspace-manager');
 
 /**
   * Represents a LoopBack Workspace.
@@ -61,12 +61,9 @@ module.exports = function(Workspace) {
 
     Workspace.remoteMethod('migrateDataSource', {
       accepts: [
-        {arg: 'workspaceId',
-          type: 'string'},
-        {arg: 'dataSourceName',
-          type: 'string'},
-        {arg: 'modelName',
-          type: 'string'},
+        {arg: 'workspaceId', type: 'string'},
+        {arg: 'dataSourceName', type: 'string'},
+        {arg: 'modelName', type: 'string'},
       ],
       returns: {arg: 'success', type: 'boolean'},
       http: {verb: 'POST', path: '/migrateDataSource'},
