@@ -53,28 +53,23 @@ module.exports = function(Workspace) {
     * @param {string} modelName
     * @callback {Function} callback
     */
-    Workspace.migrateDataSource = function(workspaceId, dataSourceName, modelName, cb) {
-      const workspace = WorkspaceManager.getWorkspaceId(workspaceId);
+    Workspace.migrateDataSource =
+    function(workspaceId, dataSourceName, modelName, cb) {
+      const workspace = WorkspaceManager.getWorkspace(workspaceId);
       dataSourceHandler.autoMigrate(workspace, dataSourceName, modelName, cb);
     };
 
     Workspace.remoteMethod('migrateDataSource', {
       accepts: [
-        {
-          arg: 'workspaceId',
-          type: 'string'
-        },
-        {
-          arg: 'dataSourceName',
-          type: 'string'
-        },
-        {
-          arg: 'modelName',
-          type: 'string',
-        },
+        {arg: 'workspaceId',
+          type: 'string'},
+        {arg: 'dataSourceName',
+          type: 'string'},
+        {arg: 'modelName',
+          type: 'string'},
       ],
-      returns: { arg: 'success', type: 'boolean' },
-      http: { verb: 'POST', path: '/migrateDataSource' },
+      returns: {arg: 'success', type: 'boolean'},
+      http: {verb: 'POST', path: '/migrateDataSource'},
     });
   });
 };
