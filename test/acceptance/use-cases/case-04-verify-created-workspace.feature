@@ -15,3 +15,8 @@ Feature: Test the created Workspace
      Then it provides status on the root url only
      Then it has favicon enabled
      Then it provides CORS headers for all URLs
+
+  Scenario: migrate datasources in the workspace
+     Given workspace 'api-server' has model 'Customer' attached to datasource 'db'
+     When I migrate the model
+     Then the model is migrated
