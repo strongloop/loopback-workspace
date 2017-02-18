@@ -111,4 +111,12 @@ module.exports = {
       this.getWorkspace(templateName).getMiddlewareFilePath();
     fs.readJson(middlewareFile, cb);
   },
+  injectMockDataSource: function(templateName, cb) {
+    const dir = this.getWorkspaceDir(templateName);
+    const bootDir =
+      path.join(dir, 'server', 'boot', 'inject-ds-bootscript.js');
+    const source =
+      path.join(__dirname, 'mock-scripts', 'inject-ds-bootscript.js');
+    fs.copy(source, bootDir, cb);
+  },
 };

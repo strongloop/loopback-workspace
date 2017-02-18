@@ -17,17 +17,26 @@ module.exports = function(DataSourceDefinition) {
         options = {};
       }
       const connector = DataSourceDefinition.getConnector();
-      const id = data.id;
-      delete data.id;
-      // TODO(Deepak) - add response handling later as part of the callback
+      const facetName = data.facetName;
+      const id = facetName + '.' + data.name;
+      delete data.facetName;
       connector.createDataSource(options.workspaceId, id, data, cb);
     };
-    DataSourceDefinition.find = function(filter, options, cb) {
+    DataSourceDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
       const id = filter.where.id;
+      const connector = DataSourceDefinition.getConnector();
+      connector.findDataSource(options.workspaceId, id, cb);
+    };
+    DataSourceDefinition.all = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
+      const id = filter.where && filter.where.id;
       const connector = DataSourceDefinition.getConnector();
       connector.findDataSource(options.workspaceId, id, cb);
     };

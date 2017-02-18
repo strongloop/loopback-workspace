@@ -93,6 +93,17 @@ class Workspace extends Graph {
     const ds = this.getNode('DataSource', id);
     return ds;
   }
+  getAllDataSourceConfig() {
+    const dsList = this.getAllDataSources();
+    const config = [];
+    Object.keys(dsList).forEach(function(key) {
+      let datasource = dsList[key];
+      if (datasource) {
+        config.push(datasource.getDefinition());
+      }
+    });
+    return config;
+  }
   getAllDataSources() {
     const ds = this._cache['DataSource'];
     return ds;
@@ -105,7 +116,7 @@ class Workspace extends Graph {
     const workspace = this;
     const datasources = this._cache['DataSource'];
     Object.keys(config).forEach(function(key) {
-      let ds = datasources[key];
+      let ds = datasources['server.' + key];
       if (ds) {
         ds._content = config[key];
       } else {
