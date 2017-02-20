@@ -494,7 +494,7 @@ module.exports = function(Workspace) {
      * Create the Bluemix files and directory.
      * @param {object} options Commandline options
      */
-    Workspace.createBluemixFiles = function(options) {
+    Workspace.generateBluemixFiles = function(options) {
       if (options.bluemix) {
         var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
                                   'templates', 'bluemix');
@@ -514,10 +514,6 @@ module.exports = function(Workspace) {
         var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
         var readmeDest = path.resolve(options.destDir, 'README.md');
         Workspace.copyRecursive(readmeSrc, readmeDest);
-        // Create Dockerfile
-        var dockerfileSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
-        var dockerfileDest = path.resolve(options.destDir, 'Dockerfile');
-        Workspace.copyRecursive(dockerfileSrc, dockerfileDest);
         // Create Dockerfile-run
         var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile-run');
         var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile-run');
