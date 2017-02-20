@@ -492,7 +492,7 @@ module.exports = function(Workspace) {
 
     /**
      * Create the Bluemix files and directory.
-     * @param {object} options Commandline options
+     * @param {object} options Bluemix options
      */
     Workspace.generateBluemixFiles = function(options) {
       if (options.bluemix) {
@@ -526,6 +526,42 @@ module.exports = function(Workspace) {
         var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
         var manifestDest = path.resolve(options.destDir, 'manifest.yml');
         Workspace.copyRecursive(manifestSrc, manifestDest);
+      }
+    };
+
+    /**
+     * Add optional default services to the app
+     * @param {object} options Bluemix options
+     */
+    Workspace.addDefaultServices = function(options) {
+      if (options.bluemix) {
+        var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
+                                  'templates', 'bluemix');
+        var serverFilePath = path.join(options.destDir, 'server', 'server.js');
+        var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
+        var inclusionString = '';
+        if (options.enableAutoScaling === 'yes') {
+          var autoScalingModuleTemplate = fs.readFileSync(path.resolve(
+            bluemixTemplatesDir, 'services', 'autoscaling-module.tpl'));
+          inclusionString += autoScalingModuleTemplate;
+        }
+
+        if (options.enableAppMetrics === 'yes') {
+          fileContent = fs.readFileSync(serverFilePath, 'utf8');
+          var appmetricsModuleTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
+                                    'services', 'appmetrics-module.tpl'));
+          var appmetricsStartTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
+                                    'services', 'appmetrics-start.tpl'));
+          inclusionString += appmetricsModuleTemplate;
+          serverFileContent = serverFileContent.replace('#APPMETRICS-CODE#',
+                              appmetricsStartTemplate);
+        } else {
+          serverFileContent = serverFileContent.replace('\n#APPMETRICS-CODE#', '');
+        }
+
+        serverFileContent = serverFileContent.replace('\n#INCLUSION-CODE#',
+                            inclusionString);
+        fs.writeFileSync(serverFilePath, serverFileContent);
       }
     };
 
