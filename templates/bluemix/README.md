@@ -2,8 +2,7 @@
 
 This is a sample application to demonstrate LoopBack integration with Bluemix as part of Cloud Native Developer Experience initiative.
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/strongloop/loopback-example-bluemix)
-[![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/?repository=https://github.com/strongloop/loopback-example-bluemix)
+[![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/)
 
 # Integration points
 
