@@ -12,5 +12,8 @@
        "../common/mixins",
        "./mixins"
      ]
-   }
+   },
+   "DATABASE": "loopback_workspace_test",
+   "USER": "lbws",
+   "PASSWORD": "hbx42rec"
  }   
