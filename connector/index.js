@@ -26,6 +26,11 @@ connector.create = function(modelName, data, options, cb) {
   model.create(data, options, cb);
 };
 
+connector.save = function(modelName, data, options, cb) {
+  const model = app.models[modelName];
+  model.create(data, options, cb);
+};
+
 connector.createFromTemplate = function(template, destinationFolder, cb) {
   const workspace = WorkspaceManager.createWorkspace(destinationFolder);
   TemplateHandler.createFromTemplate(workspace, template, cb);

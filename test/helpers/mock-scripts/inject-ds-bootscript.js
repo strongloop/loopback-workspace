@@ -7,14 +7,17 @@ module.exports = function(app) {
 
 function getMockDataSourceDef(dataSource) {
   const mockDataSource = {
+    schema: 'mock1',
     migratedModels: {},
+    connect: function(cb) {
+      cb();
+    },
     automigrate: function(modelName, cb) {
-      this.migratedModels[modelName] = this._models[modelName];
-      this.originalAutoMigrate(modelName, cb);
+      this.migratedModels[this.schema + '.' + modelName] = modelName;
+      cb();
     },
     discoverSchemas: function(modelName, options, cb) {
-      const data = this.migratedModels[modelName];
-      cb(null, data.properties);
+      cb(null, this.migratedModels);
     },
   };
   dataSource.originalAutoMigrate = dataSource.automigrate;
