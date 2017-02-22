@@ -40,6 +40,9 @@ template.server = {
     {
       name: 'RoleMapping',
       dataSource: 'db',
+      options: {
+        strictObjectIDCoercion: true,
+      },
       public: false,
     },
     {
