@@ -4,5 +4,10 @@
   "extends": "empty-server",
   "files": {
     "path": "/api-server"
+  },
+  "package": {
+    "dependencies": {
+      "loopback-connector-mysql": "^3.0.0"
+    }
   }
 }

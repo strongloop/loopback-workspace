@@ -2,6 +2,11 @@ Feature: Test the created Workspace
   
   Background: Workspace is created in a given directory
 
+  Scenario: migrate datasources in the workspace
+     Given workspace 'api-server' has model 'Customer' attached to datasource 'db'
+     When I migrate the model
+     Then the model is migrated
+
   Scenario: Boot the api-server workspace
      When I boot the 'api-server' workspace
      Then it provides status on the root url
@@ -15,8 +20,3 @@ Feature: Test the created Workspace
      Then it provides status on the root url only
      Then it has favicon enabled
      Then it provides CORS headers for all URLs
-
-  Scenario: migrate datasources in the workspace
-     Given workspace 'api-server' has model 'Customer' attached to datasource 'db'
-     When I migrate the model
-     Then the model is migrated

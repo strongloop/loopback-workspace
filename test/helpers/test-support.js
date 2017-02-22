@@ -1,13 +1,15 @@
 'use strict';
 
+const app = require('../..');
+const config = require('./config.json');
+const debug = require('debug')('test:util');
 const exec = require('child_process').exec;
 const fs = require('fs-extra');
 const path = require('path');
 const sandboxDir = path.resolve(__dirname, '../sandbox/');
-const debug = require('debug')('test:util');
-const app = require('../..');
 const Workspace = app.models.Workspace;
 
+exports.configureMySQLDataSource = configureMySQLDataSource;
 exports.givenEmptySandbox = givenEmptySandbox;
 exports.givenSandboxDir = givenSandboxDir;
 exports.initializePackage = initializePackage;
@@ -64,4 +66,27 @@ function localInstall(cwd, cb) {
   return exec(script, options, function(err) {
     cb(err);
   });
+}
+
+function configureMySQLDataSource(
+testsuite,
+DataSourceDefinition,
+templateName,
+testName,
+data,
+cb) {
+  testsuite.findOne(
+    DataSourceDefinition,
+    data,
+    templateName,
+    testName,
+    function(err, ds) {
+      if (err) return cb(err);
+      ds.connector = 'mysql';
+      ds.facetName = 'server';
+      ds.database = config.DATABASE;
+      ds.user = config.USER;
+      ds.password = config.PASSWORD;
+      ds.save(testsuite.getContext(templateName), cb);
+    });
 }

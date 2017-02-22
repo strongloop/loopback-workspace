@@ -33,6 +33,9 @@ module.exports = {
   getWorkspaceDir: function(templateName) {
     return this.cache[templateName] && this.cache[templateName].workspaceDir;
   },
+  getContext: function(templateName) {
+    return {workspaceId: this.getWorkspaceId(templateName)};
+  },
   createModel: function(model, data, templateName, testName, cb) {
     const testsuite = this;
     this.saveInputs(testName, data);
@@ -44,6 +47,12 @@ module.exports = {
     this.saveInputs(testName, filter);
     const options = {workspaceId: this.getWorkspaceId(templateName)};
     model.find(filter, options, cb);
+  },
+  findOne: function(model, filter, templateName, testName, cb) {
+    const testsuite = this;
+    this.saveInputs(testName, filter);
+    const options = {workspaceId: this.getWorkspaceId(templateName)};
+    model.findOne(filter, options, cb);
   },
   updateAttributes: function(model, modelId, data, templateName, testName, cb) {
     const testsuite = this;
