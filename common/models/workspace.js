@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var jsonfileUpdater = require('jsonfile-updater');
 var g = require('strong-globalize')();
 var _ = require('lodash');
 var helper = require('../../lib/helper');
@@ -540,13 +541,15 @@ module.exports = function(Workspace) {
         var serverFilePath = path.join(options.destDir, 'server', 'server.js');
         var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
         var inclusionString = '';
+        var newDependencies = {};
         if (options.enableAutoScaling === 'yes') {
+          newDependencies['bluemix-autoscaling-agent'] = '^1.0.7';
           var autoScalingModuleTemplate = fs.readFileSync(path.resolve(
             bluemixTemplatesDir, 'services', 'autoscaling-module.tpl'));
           inclusionString += autoScalingModuleTemplate;
         }
-
         if (options.enableAppMetrics === 'yes') {
+          newDependencies['appmetrics-dash'] = '^1.0.0';
           fileContent = fs.readFileSync(serverFilePath, 'utf8');
           var appmetricsModuleTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
                                     'services', 'appmetrics-module.tpl'));
@@ -562,6 +565,11 @@ module.exports = function(Workspace) {
         serverFileContent = serverFileContent.replace('\n#INCLUSION-CODE#',
                             inclusionString);
         fs.writeFileSync(serverFilePath, serverFileContent);
+        var packageFile = path.join(options.destDir, 'package.json');
+        jsonfileUpdater(packageFile).update('dependencies', newDependencies,
+        function(err) {
+          if (err) console.log(err);
+        });
       }
     };
 
