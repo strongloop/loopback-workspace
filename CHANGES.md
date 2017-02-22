@@ -1,3 +1,9 @@
+2017-02-22, Version 3.38.0
+==========================
+
+ * Enable strictObjectIDCoercion for RoleMapping (Miroslav Bajtoš)
+
+
 2017-02-16, Version 3.37.1
 ==========================
 
