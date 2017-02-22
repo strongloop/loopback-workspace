@@ -39,6 +39,18 @@ class Model extends Entity {
   getContents() {
     return clone(this._content);
   }
+  getMethodDefinitions() {
+    const model = this;
+    const methodNodes = model.getContainedSet('ModelMethod');
+    const methods = [];
+    Object.keys(methodNodes).forEach(function(key) {
+      let node = methodNodes[key];
+      let def = clone(node._content);
+      def.id = key;
+      methods.push(def);
+    });
+    return methods;
+  }
   getDefinition() {
     const model = this;
 

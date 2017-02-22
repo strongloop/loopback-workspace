@@ -1,4 +1,5 @@
 {
+  "idInjection": false,
   "properties": {
     "id": {
       "type": "string",

@@ -4,6 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const methodHandler = require('../../connector/model-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
+
 /**
   * Represents a method of a LoopBack `Model`.
   *
@@ -11,27 +14,40 @@
   */
 module.exports = function(ModelMethod) {
   ModelMethod.on('dataSourceAttached', function(eventData) {
-    ModelMethod.create = function(data, options, cb) {
+    ModelMethod.createModel = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
       const connector = ModelMethod.getConnector();
+      const name = data.name;
+      delete data.name;
       connector.createModelMethod(
         options.workspaceId,
         data.modelId,
-        data.name,
+        name,
         data,
         cb);
     };
-    ModelMethod.find = function(filter, options, cb) {
+    ModelMethod.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
       const id = filter.where.id;
       const connector = ModelMethod.getConnector();
-      connector.findModelMethod(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      methodHandler.findModelMethod(workspace, id, cb);
+    };
+    ModelMethod.all = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
+      const id = filter.where.modelId;
+      const connector = ModelMethod.getConnector();
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      methodHandler.findModelMethod(workspace, id, cb);
     };
   });
 };

@@ -11,7 +11,7 @@ class ModelHandler {
     }
     function callback(err, results) {
       if (err) return cb(err);
-      cb(null, modelData);
+      cb(null, modelId);
     }
     const taskList = [create];
     workspace.execute(taskList, callback);
@@ -78,6 +78,19 @@ class ModelHandler {
       if (err) return cb(err);
       const model = workspace.getModel(modelId);
       cb(null, [model.getContents()]);
+    }
+    const taskList = [refresh];
+    workspace.execute(taskList, callback);
+  }
+
+  static findModelMethod(workspace, modelId, cb) {
+    function refresh(next) {
+      workspace.refreshModel(modelId, next);
+    }
+    function callback(err, results) {
+      if (err) return cb(err);
+      const model = workspace.getModel(modelId);
+      cb(null, model.getMethodDefinitions());
     }
     const taskList = [refresh];
     workspace.execute(taskList, callback);
