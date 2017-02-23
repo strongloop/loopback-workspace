@@ -40,6 +40,22 @@ it.skipIf = function(condition, desc, fn) {
 describe('end-to-end', function() {
   this.timeout(15000);
 
+  describe('can pass LoopBack version to createFromTemplate()', function() {
+    before(resetWorkspace);
+    before(givenEmptySandbox);
+    it('create template 3.x', function(done) {
+      givenWorkspaceFromTemplate('hello-world', '3.x',
+      function(err) {
+        if (err) return done(err);
+        var dependencies = readPackageJsonSync().dependencies;
+        var lbVersion = dependencies.loopback;
+        if (lbVersion.charAt(0) === '^') lbVersion = lbVersion.substring(1);
+        expect(semver.satisfies(lbVersion, '>=3.0.0')).to.be.true;
+        done();
+      });
+    });
+  });
+
   describe('empty-server template', function() {
     var app;
 
