@@ -38,7 +38,7 @@ module.exports = function() {
         data.properties &&
         data.properties[PropertyName];
       testsuite.expect(property).to.not.to.be.undefined();
-      testsuite.expect(propertyDef).to.eql(property);
+      testsuite.expect({type: propertyDef.type}).to.eql(property);
       next();
     });
   });

@@ -15,11 +15,11 @@ const WorkspaceManager = require('../../component/workspace-manager');
 describe('ModelMethod', function() {
   let userModel;
 
-  beforeEach(function(done) {
+  before(function(done) {
     testSupport.givenBasicWorkspace('empty-server', done);
   });
 
-  beforeEach(function(done) {
+  before(function(done) {
     ModelDefinition.create(
       {
         id: 'server.models.user',
@@ -33,37 +33,39 @@ describe('ModelMethod', function() {
       });
   });
 
-  it('add static method', function(done) {
-    ModelMethod.create(
-      {
+  describe('CRUD', function() {
+    it('model.create()', function(done) {
+      ModelMethod.create({
         modelId: userModel.id,
         name: 'testMethod',
         isStatic: true,
       },
       function(err) {
         if (err) return done(err);
-        userModel.methods(function(err, list) {
+        const dir = testSupport.givenSandboxDir('empty-server');
+        const model =
+        WorkspaceManager.getWorkspaceByFolder(dir).getModel(userModel.id);
+        const file = model.getFilePath();
+        fs.readJson(file, function(err, data) {
           if (err) return done(err);
-          expect(list).to.have.length(1);
-          expect(list[0]).to.
-            have.property('id', 'server.models.user.testMethod');
-          expect(list[0]).to.have.property('isStatic', true);
-          const dir = testSupport.givenSandboxDir('empty-server');
-          const model =
-            WorkspaceManager.getWorkspaceByFolder(dir).getModel(userModel.id);
-          const file = model.getFilePath();
-          fs.readJson(file, function(err, data) {
-            if (err) return done(err);
-            var methods = data.methods;
-            expect(methods).to.be.an('object');
-            expect(methods).to.have.property('testMethod');
-            expect(methods).to.not.have.property('prototype.testMethod');
-            expect(methods.testMethod).to.not.have.property('id');
-            expect(methods.testMethod).to.not.have.property('facetName');
-            expect(methods.testMethod).to.not.have.property('name');
-            done();
-          });
+          var methods = data.methods;
+          expect(methods).to.not.have.property('prototype.testMethod');
+          expect(methods.testMethod).to.not.have.property('id');
+          expect(methods.testMethod).to.not.have.property('name');
+          done();
         });
       });
+    });
+
+    it('model.find()', function(done) {
+      userModel.methods(function(err, list) {
+        if (err) return done(err);
+        expect(list).to.have.length(1);
+        expect(list[0]).to.
+          have.property('id', 'server.models.user.testMethod');
+        expect(list[0]).to.have.property('isStatic', true);
+        done();
+      });
+    });
   });
 });

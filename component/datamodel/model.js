@@ -74,7 +74,11 @@ class Model extends Entity {
         const modelProperty = propertyNodes[key];
         const parts = key.split('.');
         const propertyName = parts[parts.length - 1];
-        properties[propertyName] = modelProperty._content;
+        const def = clone(modelProperty._content);
+        delete def.id;
+        delete def.name;
+        delete def.modelId;
+        properties[propertyName] = def;
       });
     }
 
