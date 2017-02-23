@@ -1,0 +1,8 @@
+describe('xxx', function() {
+  require('test-file-2');
+});
+
+
+describe('xx2', () => {
+  require('test-file-2')(abc);
+});

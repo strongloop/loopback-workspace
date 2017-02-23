@@ -57,15 +57,13 @@ describe('ModelDefinition', function() {
           modelId: test.model.id,
           name: 'property1',
           type: 'string',
-          facetName: 'common',
         };
         test.modelDef.properties.create(propertyDef, {}, function(err, data) {
           if (err) return done(err);
-          expect(Object.keys(data)).to.include.members([
+          expect(Object.keys(data.toObject())).to.include.members([
             'modelId',
             'type',
             'name',
-            'facetName',
           ]);
           done();
         });

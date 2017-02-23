@@ -4,6 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const modelHandler = require('../../connector/model-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
+
 /**
   * Represents a Property of a LoopBack `Model`.
   *
@@ -38,7 +41,7 @@ module.exports = function(ModelProperty) {
   });
 
   ModelProperty.on('dataSourceAttached', function(eventData) {
-    ModelProperty.create = function(data, options, cb) {
+    ModelProperty.createModel = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
@@ -53,7 +56,7 @@ module.exports = function(ModelProperty) {
         data,
         cb);
     };
-    ModelProperty.find = function(filter, options, cb) {
+    ModelProperty.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
@@ -67,9 +70,10 @@ module.exports = function(ModelProperty) {
         cb = options;
         options = {};
       }
-      const id = filter.where.id;
       const connector = ModelProperty.getConnector();
-      connector.findModelProperty(options.workspaceId, id, cb);
+      const id = filter.where.modelId;
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      modelHandler.allProperties(workspace, id, cb);
     };
   });
 };

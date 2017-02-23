@@ -51,6 +51,19 @@ class Model extends Entity {
     });
     return methods;
   }
+  getPropertyDefinitions() {
+    const model = this;
+    const propertyNodes = model.getContainedSet('ModelProperty');
+    if (!propertyNodes) return;
+    const properties = [];
+    Object.keys(propertyNodes).forEach(function(key) {
+      let node = propertyNodes[key];
+      let def = clone(node._content);
+      def.id = key;
+      properties.push(def);
+    });
+    return properties;
+  }
   getDefinition() {
     const model = this;
 
