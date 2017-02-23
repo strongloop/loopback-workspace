@@ -24,8 +24,8 @@
     "glob": "^7.0.0",
     "lodash": "^4.5.1",
     "loopback": "^2.0.0",
-    "loopback-boot": "^2.0.0",
-    "loopback-component-explorer": "^3.0.1",
+    "loopback-boot": "^2.6.5",
+    "loopback-component-explorer": "^2.1.0",
     "loopback-datasource-juggler": "^2.27.0",
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
@@ -50,7 +50,6 @@
     "mocha": "^2.4.5",
     "mysql": "^2.4.2",
     "read": "^1.0.5",
-    "strong-cached-install": "^2.0.0",
     "supertest": "^1.2.0"
   }
 }
