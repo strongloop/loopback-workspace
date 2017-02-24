@@ -68,6 +68,22 @@ module.exports = function(Workspace) {
       cb(null, availableLBVersions);
     };
 
+    Workspace.availableLBVersions = function(cb) {
+      Workspace.getAvailableLBVersions(function(err, data) {
+        var lbVersions = [];
+        Object.keys(data).forEach(function(key) {
+          var version = data[key];
+          lbVersions.push({ value: key, description: version.description });
+        });
+        cb(null, lbVersions);
+      });
+    };
+
+    loopback.remoteMethod(Workspace.availableLBVersions, {
+      http: { verb: 'get', path: '/loopback-versions' },
+      returns: { arg: 'versions', type: 'array' },
+    });
+
     /**
      * Get an array of available template names.
      *

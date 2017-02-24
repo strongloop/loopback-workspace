@@ -6,11 +6,23 @@
 var async = require('async');
 var fs = require('fs-extra');
 var app = require('../');
+var request = require('supertest');
 var TestDataBuilder = require('./helpers/test-data-builder');
 var Workspace = app.models.Workspace;
 var ConfigFile = app.models.ConfigFile;
 
 describe('Workspace', function() {
+  describe('Workspace.availableLBVersions()', function() {
+    it('Get an array of supported loopback versions', function(done) {
+      request(app).get('/api/workspaces/loopback-versions').expect(200, function(err, res) {
+        if (err) return done(err);
+        var versions = res.body.versions;
+        expect(versions.length).to.eql(2);
+        done();
+      });
+    });
+  });
+
   describe('Workspace.getAvailableTemplates(callback)', function() {
     it('Get an array of available template names.', function(done) {
       Workspace.getAvailableTemplates(function(err, templates) {
