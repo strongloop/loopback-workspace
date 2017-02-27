@@ -128,8 +128,24 @@ class Workspace extends Graph {
     const property = this.getNode('ModelProperty', id);
     return property;
   }
-  addMiddlewarePhase(phaseName) {
+  addMiddlewarePhase(phaseName, index, before) {
     const phaseArr = [phaseName + ':before', phaseName, phaseName + ':after'];
+    if (before) {
+      this.middlewarePhases.find(function(value, i) {
+        if (value.startsWith(before)) {
+          index = i;
+          return true;
+        }
+        return false;
+      });
+    }
+    if (index && index < this.middlewarePhases.length) {
+      phaseArr.forEach(function(phase) {
+        this.middlewarePhases.slice(index++, 0, phase);
+        new MiddlewarePhase(this, phase);
+      }, this);
+      return;
+    }
     phaseArr.forEach(function(phase) {
       this.middlewarePhases.push(phase);
       new MiddlewarePhase(this, phase);
@@ -145,12 +161,14 @@ class Workspace extends Graph {
       let phaseName = phases[index];
       let phase = this.getMiddlewarePhase(phaseName);
       let middlewareList = phase.getMiddlewareList();
-      config[phase._name] = {};
-      Object.keys(middlewareList).forEach(function(middlewareName) {
-        let middleware = middlewareList[middlewareName];
-        let functionName = middleware.getFunction();
-        config[phase._name][functionName] = middleware.getConfig();
-      });
+      if (middlewareList) {
+        config[phase._name] = {};
+        Object.keys(middlewareList).forEach(function(middlewareName) {
+          let middleware = middlewareList[middlewareName];
+          let functionName = middleware.getFunction();
+          config[phase._name][functionName] = middleware.getConfig();
+        });
+      }
     }
     return config;
   }

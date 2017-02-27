@@ -1,0 +1,21 @@
+{
+  "validateUpsert": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "id": true,
+      "json": false
+    },
+    "index": {
+      "type": "number",
+      "json": false,
+      "default": 0
+    },
+    "before": {
+      "type": "string",
+      "json": false
+    }
+  },
+  "public": true,
+  "http": {"path": "/Workspace/:workspaceId/MiddlewarePhase"}
+}

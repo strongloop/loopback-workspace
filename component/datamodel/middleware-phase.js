@@ -27,7 +27,7 @@ class MiddlewarePhase extends Entity {
       });
       return middlewareList;
     }
-    return {};
+    return;
   }
   getMiddleware(middlewarePath) {
     const contains = this._contains;
