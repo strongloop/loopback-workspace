@@ -386,38 +386,21 @@ module.exports = function(Workspace) {
      *
      * @param {String} templateName
      * @param {String} name
-     * @param {String} loopbackVersion
      * @param {Object} options
      * @callback {Function} callback
      * @param {Error} err
      */
 
-    Workspace.createFromTemplate = function(
-        templateName,
-        name,
-        loopbackVersion,
-        options,
-        cb
-    ) {
-      var lbVer = '3.x';
-      if (typeof loopbackVersion === 'string') {
-        // loopback version is the passed in as the 3rd argument
-        lbVer = loopbackVersion;
-        if (cb === undefined && typeof options === 'function') {
-          cb = options;
-          options = {};
-        }
-      } else if (typeof loopbackVersion === 'object') {
-        // options is the 3rd argument
-        options = loopbackVersion;
-        cb = options;
-      } else if (typeof loopbackVersion === 'function') {
-        // cb is the 3rd argument
-        cb = loopbackVersion;
+    Workspace.createFromTemplate = function(templateName, name, options, cb) {
+      if (typeof options === 'string') {
+        var loopbackVersion = options;
         options = {};
+        options.loopbackVersion = loopbackVersion;
       }
-      options = options || {};
-      options.loopbackVersion = lbVer;
+      if (cb === undefined && typeof options === 'function') {
+        cb = options;
+        options = undefined;
+      }
 
       // clone options so that we don't modify input arguments
       options = extend({}, options);
