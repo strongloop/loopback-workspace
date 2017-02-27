@@ -386,38 +386,16 @@ module.exports = function(Workspace) {
      *
      * @param {String} templateName
      * @param {String} name
-     * @param {String} loopbackVersion
      * @param {Object} options
      * @callback {Function} callback
      * @param {Error} err
      */
 
-    Workspace.createFromTemplate = function(
-      templateName,
-      name,
-      loopbackVersion,
-      options,
-      cb
-    ) {
-      var lbVer = '3.x';
-      if (typeof loopbackVersion === 'string') {
-        // loopback version is the passed in as the 3rd argument
-        lbVer = loopbackVersion;
-        if (cb === undefined && typeof options === 'function') {
-          cb = options;
-          options = {};
-        }
-      } else if (typeof loopbackVersion === 'object') {
-        // options is the 3rd argument
-        options = loopbackVersion;
+    Workspace.createFromTemplate = function(templateName, name, options, cb) {
+      if (cb === undefined && typeof options === 'function') {
         cb = options;
-      } else if (typeof loopbackVersion === 'function') {
-        // cb is the 3rd argument
-        cb = loopbackVersion;
-        options = {};
+        options = undefined;
       }
-      options = options || {};
-      options.loopbackVersion = lbVer;
 
       // clone options so that we don't modify input arguments
       options = extend({}, options);
@@ -430,16 +408,6 @@ module.exports = function(Workspace) {
 
       Workspace.addComponent(options, cb);
     };
-
-    loopback.remoteMethod(Workspace.createFromTemplate, {
-      http: { verb: 'post', path: '/' },
-      accepts: [
-        { arg: 'templateName', type: 'string' },
-        { arg: 'name', type: 'string' },
-        { arg: 'loopbackVersion', type: 'string' },
-      ],
-    });
-
     /**
      * @typedef {{name, description,supportedByStrongLoop}} ConnectorMeta
      */
