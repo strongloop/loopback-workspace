@@ -106,6 +106,8 @@ givenBasicWorkspace = function(cb) {
 };
 
 givenWorkspaceFromTemplate = function(template, options, cb) {
+  var loopbackVersion = options.loopbackVersion || '2.x';
+
   if (cb === undefined && typeof options === 'function') {
     cb = options;
     options = undefined;
@@ -114,7 +116,7 @@ givenWorkspaceFromTemplate = function(template, options, cb) {
   givenEmptySandbox(function(err) {
     if (err) return cb(err);
     workspace.set('workspace dir', SANDBOX);
-    models.Workspace.createFromTemplate(template, 'sandbox', options,
+    models.Workspace.createFromTemplate(template, 'sandbox', loopbackVersion, options,
       function(err) {
         if (err) return cb(err);
         debug('Created %j in %s', template, SANDBOX);

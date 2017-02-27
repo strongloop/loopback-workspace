@@ -44,7 +44,7 @@ describe('end-to-end', function() {
     before(resetWorkspace);
     before(givenEmptySandbox);
     it('create template 3.x', function(done) {
-      givenWorkspaceFromTemplate('hello-world', '3.x',
+      givenWorkspaceFromTemplate('hello-world', { loopbackVersion: '3.x' },
       function(err) {
         if (err) return done(err);
         var dependencies = readPackageJsonSync().dependencies;
