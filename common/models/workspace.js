@@ -408,6 +408,15 @@ module.exports = function(Workspace) {
 
       Workspace.addComponent(options, cb);
     };
+
+    loopback.remoteMethod(Workspace.createFromTemplate, {
+      http: { verb: 'post', path: '/' },
+      accepts: [
+        { arg: 'templateName', type: 'string' },
+        { arg: 'name', type: 'string' },
+      ],
+    });
+
     /**
      * @typedef {{name, description,supportedByStrongLoop}} ConnectorMeta
      */
