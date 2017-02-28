@@ -33,6 +33,10 @@
     "public": true,
     "dataSource": "db"
   },
+  "MiddlewarePhase": {
+    "public": true,
+    "dataSource": "db"
+  },
   "ModelConfig": {
     "public": true,
     "dataSource": "db"

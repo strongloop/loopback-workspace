@@ -57,13 +57,13 @@ const Manager = class Manager {
     }
   }
   initMiddleware(workspace) {
-    workspace.addMiddlewarePhase('initial');
-    workspace.addMiddlewarePhase('session');
-    workspace.addMiddlewarePhase('auth');
-    workspace.addMiddlewarePhase('parse');
-    workspace.addMiddlewarePhase('routes');
-    workspace.addMiddlewarePhase('files');
-    workspace.addMiddlewarePhase('final');
+    workspace.setMiddlewarePhase('initial');
+    workspace.setMiddlewarePhase('session');
+    workspace.setMiddlewarePhase('auth');
+    workspace.setMiddlewarePhase('parse');
+    workspace.setMiddlewarePhase('routes');
+    workspace.setMiddlewarePhase('files');
+    workspace.setMiddlewarePhase('final');
   }
   getTemplate(name) {
     return templateRegistry.getTemplate(name);

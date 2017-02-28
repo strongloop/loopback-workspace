@@ -5,6 +5,7 @@
 'use strict';
 
 const middlewareHandler = require('../../connector/middleware-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**
   * Defines a `MiddlewarePhase` configuration.
@@ -20,7 +21,8 @@ module.exports = function(MiddlewarePhase) {
       }
       const name = data.name;
       delete data.name;
-      middlewareHandler.addPhase(options.workspaceId, name, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      middlewareHandler.addPhase(workspace, name, data, cb);
     };
     MiddlewarePhase.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -28,7 +30,17 @@ module.exports = function(MiddlewarePhase) {
         options = {};
       }
       const id = filter.where.id;
-      middlewareHandler.findPhase(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      middlewareHandler.findPhase(workspace, id, cb);
+    };
+    MiddlewarePhase.all = function(filter, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
+      const id = filter.where.id;
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      middlewareHandler.findPhase(workspace, id, cb);
     };
   });
 };

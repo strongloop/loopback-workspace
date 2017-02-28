@@ -7,6 +7,7 @@ const Model = require('./datamodel/model');
 const ModelConfig = require('./datamodel/model-config');
 const ModelMethod = require('./datamodel/model-method');
 const ModelProperty = require('./datamodel/model-property');
+const MiddlewarePhase = require('./datamodel/middleware-phase');
 const PackageDefinition = require('./datamodel/package-definition');
 const path = require('path');
 
@@ -71,6 +72,44 @@ class Tasks {
     const workspace = this;
     const phase = workspace.getMiddlewarePhase(phaseName);
     phase.addMiddleware(workspace, path, data);
+    fsUtility.writeMiddleware(workspace, cb);
+  }
+  addMiddlewarePhase(phaseName, index, before, cb) {
+    const workspace = this;
+    const phaseArr = [phaseName + ':before', phaseName, phaseName + ':after'];
+    const existingPhase = this.middlewarePhases.find(function(value) {
+      if (value === phaseName) {
+        return true;
+      }
+      return false;
+    });
+    if (existingPhase) {
+      return cb(new Error('phase exists already'));
+    }
+    if (index === -1) {
+      index = this.middlewarePhases.length;
+    }
+    if (before) {
+      this.middlewarePhases.find(function(value, i) {
+        if (value.startsWith(before)) {
+          index = i;
+          return true;
+        }
+        return false;
+      });
+    }
+    if (index && index < this.middlewarePhases.length) {
+      phaseArr.forEach(function(phase) {
+        this.middlewarePhases.splice(index++, 0, phase);
+        new MiddlewarePhase(workspace, phase);
+      }, this);
+      fsUtility.writeMiddleware(workspace, cb);
+      return;
+    }
+    phaseArr.forEach(function(phase) {
+      this.middlewarePhases.push(phase);
+      new MiddlewarePhase(workspace, phase);
+    }, this);
     fsUtility.writeMiddleware(workspace, cb);
   }
   addPackageDefinition(definition, cb) {

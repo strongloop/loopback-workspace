@@ -2,7 +2,8 @@
 class MiddlewareHandler {
   static addPhase(workspace, name, data, cb) {
     function create(next) {
-      workspace.addMiddlewarePhase(name, data, function(err) {
+      workspace.addMiddlewarePhase(name, data.index, data.before,
+      function(err) {
         next(err);
       });
     }

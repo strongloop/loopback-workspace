@@ -128,29 +128,6 @@ class Workspace extends Graph {
     const property = this.getNode('ModelProperty', id);
     return property;
   }
-  addMiddlewarePhase(phaseName, index, before) {
-    const phaseArr = [phaseName + ':before', phaseName, phaseName + ':after'];
-    if (before) {
-      this.middlewarePhases.find(function(value, i) {
-        if (value.startsWith(before)) {
-          index = i;
-          return true;
-        }
-        return false;
-      });
-    }
-    if (index && index < this.middlewarePhases.length) {
-      phaseArr.forEach(function(phase) {
-        this.middlewarePhases.slice(index++, 0, phase);
-        new MiddlewarePhase(this, phase);
-      }, this);
-      return;
-    }
-    phaseArr.forEach(function(phase) {
-      this.middlewarePhases.push(phase);
-      new MiddlewarePhase(this, phase);
-    }, this);
-  }
   getMiddlewarePhase(phaseName) {
     return this.getNode('MiddlewarePhase', phaseName);
   }
@@ -189,6 +166,14 @@ class Workspace extends Graph {
         });
       }
     });
+  }
+  setMiddlewarePhase(phaseName) {
+    const workspace = this;
+    const phaseArr = [phaseName + ':before', phaseName, phaseName + ':after'];
+    phaseArr.forEach(function(phase) {
+      this.middlewarePhases.push(phase);
+      new MiddlewarePhase(this, phase);
+    }, this);
   }
   setFacetConfig(facetName, facetConfig) {
     const workspace = this;
