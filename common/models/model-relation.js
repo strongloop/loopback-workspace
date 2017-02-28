@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 const clone = require('lodash').clone;
-const RelationsHandler = require('../../connector/relation-handler');
+const RelationsHandler = require('../../lib/relation-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**

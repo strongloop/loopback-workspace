@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const datasourceHandler = require('../../connector/data-source-handler');
+const datasourceHandler = require('../../lib/data-source-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
 module.exports = function(DataSourceDefinition) {

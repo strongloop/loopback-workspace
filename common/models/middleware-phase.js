@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const middlewareHandler = require('../../connector/middleware-handler');
+const middlewareHandler = require('../../lib/middleware-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**
