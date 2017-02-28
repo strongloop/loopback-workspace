@@ -39,6 +39,31 @@ class Model extends Entity {
   getContents() {
     return clone(this._content);
   }
+  getMethodDefinitions() {
+    const model = this;
+    const methodNodes = model.getContainedSet('ModelMethod');
+    const methods = [];
+    Object.keys(methodNodes).forEach(function(key) {
+      let node = methodNodes[key];
+      let def = clone(node._content);
+      def.id = key;
+      methods.push(def);
+    });
+    return methods;
+  }
+  getPropertyDefinitions() {
+    const model = this;
+    const propertyNodes = model.getContainedSet('ModelProperty');
+    if (!propertyNodes) return;
+    const properties = [];
+    Object.keys(propertyNodes).forEach(function(key) {
+      let node = propertyNodes[key];
+      let def = clone(node._content);
+      def.id = key;
+      properties.push(def);
+    });
+    return properties;
+  }
   getDefinition() {
     const model = this;
 
@@ -49,7 +74,11 @@ class Model extends Entity {
         const modelProperty = propertyNodes[key];
         const parts = key.split('.');
         const propertyName = parts[parts.length - 1];
-        properties[propertyName] = modelProperty._content;
+        const def = clone(modelProperty._content);
+        delete def.id;
+        delete def.name;
+        delete def.modelId;
+        properties[propertyName] = def;
       });
     }
 

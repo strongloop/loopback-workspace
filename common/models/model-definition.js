@@ -11,7 +11,7 @@ module.exports = function(ModelDefinition) {
    * @class ModelDefinition
    */
   ModelDefinition.on('dataSourceAttached', function(eventData) {
-    ModelDefinition.create = function(data, options, cb) {
+    ModelDefinition.createModel = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};

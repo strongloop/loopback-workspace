@@ -46,7 +46,8 @@ module.exports = function() {
         data.methods &&
         data.methods[modelMethod.name];
       testsuite.expect(method).to.not.to.be.undefined();
-      testsuite.expect(modelMethod).to.eql(method);
+      testsuite.expect(modelMethod.accepts).to.eql(method.accepts);
+      testsuite.expect(modelMethod.returns).to.eql(method.returns);
       next();
     });
   });

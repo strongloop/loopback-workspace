@@ -11,11 +11,6 @@
       "required": true,
       "json": false
     },
-    "facetName": {
-      "type": "string",
-      "required": true,
-      "json": false
-    },
     "aliases": {
       "type": "array"
     },
@@ -38,5 +33,13 @@
       "type": "boolean"
     }
   },
-  "public": true
+  "public": true,
+  "http": {"path": "/Workspace/:workspaceId/ModelMethod"},
+  "relations": {
+    "model": {
+      "type": "belongsTo",
+      "model": "ModelDefinition",
+      "foreignKey": "modelId"
+    }
+  }
 }

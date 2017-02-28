@@ -4,50 +4,43 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const methodHandler = require('../../connector/model-handler');
+const middlewareHandler = require('../../connector/middleware-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**
-  * Represents a method of a LoopBack `Model`.
-  *
-  * @class ModelMethod
+  * Defines a `MiddlewarePhase` configuration.
+  * @class Middleware
+  * @inherits Definition
   */
-module.exports = function(ModelMethod) {
-  ModelMethod.on('dataSourceAttached', function(eventData) {
-    ModelMethod.createModel = function(data, options, cb) {
+module.exports = function(MiddlewarePhase) {
+  MiddlewarePhase.on('dataSourceAttached', function(eventData) {
+    MiddlewarePhase.createModel = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
-      const connector = ModelMethod.getConnector();
       const name = data.name;
       delete data.name;
-      connector.createModelMethod(
-        options.workspaceId,
-        data.modelId,
-        name,
-        data,
-        cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      middlewareHandler.addPhase(workspace, name, data, cb);
     };
-    ModelMethod.findById = function(filter, options, cb) {
+    MiddlewarePhase.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
       const id = filter.where.id;
-      const connector = ModelMethod.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      methodHandler.findModelMethod(workspace, id, cb);
+      middlewareHandler.findPhase(workspace, id, cb);
     };
-    ModelMethod.all = function(filter, options, cb) {
+    MiddlewarePhase.all = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
-      const id = filter.where.modelId;
-      const connector = ModelMethod.getConnector();
+      const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      methodHandler.findModelMethod(workspace, id, cb);
+      middlewareHandler.findPhase(workspace, id, cb);
     };
   });
 };

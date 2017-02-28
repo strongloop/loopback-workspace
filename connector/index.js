@@ -23,7 +23,7 @@ connector.all = function(modelName, filter, options, cb) {
 
 connector.create = function(modelName, data, options, cb) {
   const model = app.models[modelName];
-  model.create(data, options, cb);
+  model.createModel(data, options, cb);
 };
 
 connector.save = function(modelName, data, options, cb) {

@@ -11,11 +11,6 @@
       "required": true,
       "json": false
     },
-    "facetName": {
-      "type": "string",
-      "required": true,
-      "json": false
-    },
     "name": {
       "type": "string"
     },

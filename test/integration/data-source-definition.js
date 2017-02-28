@@ -13,20 +13,12 @@ const DataSource = loopback.DataSource;
 const DataSourceDefinition = app.models.DataSourceDefinition;
 
 describe('DataSourceDefinition', function() {
-  describe('DataSourceDefinition.create(def, cb)', function() {
+  describe('CRUD', function() {
     beforeEach(function(done) {
       testSupport.givenBasicWorkspace('empty-server', done);
     });
-    it('should be able to create multiple', function(done) {
-      function callback(err) {
-        if (err) return done(err);
-        DataSourceDefinition.find(function(err, defs) {
-          if (err) return done(err);
-          expect(defs).to.have.length(3);
-          done();
-        });
-      }
 
+    it('model.create()', function(done) {
       async.parallel([
         function(cb) {
           DataSourceDefinition.create({
@@ -42,6 +34,18 @@ describe('DataSourceDefinition', function() {
             connector: 'memory',
           }, cb);
         }], callback);
+      function callback(err) {
+        if (err) return done(err);
+        done();
+      }
+    });
+
+    it('model.find()', function(done) {
+      DataSourceDefinition.find(function(err, defs) {
+        if (err) return done(err);
+        expect(defs).to.have.length(3);
+        done();
+      });
     });
   });
 });
