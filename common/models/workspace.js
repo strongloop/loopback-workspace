@@ -392,11 +392,6 @@ module.exports = function(Workspace) {
      */
 
     Workspace.createFromTemplate = function(templateName, name, options, cb) {
-      if (typeof options === 'string') {
-        var loopbackVersion = options;
-        options = {};
-        options.loopbackVersion = loopbackVersion;
-      }
       if (cb === undefined && typeof options === 'function') {
         cb = options;
         options = undefined;
@@ -419,7 +414,6 @@ module.exports = function(Workspace) {
       accepts: [
         { arg: 'templateName', type: 'string' },
         { arg: 'name', type: 'string' },
-        { arg: 'loopbackVersion', type: 'string' },
       ],
     });
 
