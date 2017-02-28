@@ -23,6 +23,7 @@ const Manager = class Manager {
     workspace.addDomain('DataSource');
     workspace.addDomain('MiddlewarePhase');
     workspace.addDomain('Middleware');
+    workspace.addDomain('ModelAccessControl');
     workspace.addDomain('ModelConfig');
     workspace.addDomain('ModelDefinition');
     workspace.addDomain('ModelProperty');

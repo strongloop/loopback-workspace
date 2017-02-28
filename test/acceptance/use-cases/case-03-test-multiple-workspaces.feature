@@ -51,6 +51,10 @@ Feature: Users should be able to create middleware configurations
     When I add property 'name' of type 'string' for model 'Customer' in workspace 'api-server'
     Then the model property is created
 
+  Scenario: Add access control
+    When I add acl to model 'Customer'
+    Then the model acl is created
+
   Scenario: Add a custom method to the model
     Given I add model method 'addReview' to model 'Customer' in workspace 'api-server'
     When the method has an argument 'description' type 'string'

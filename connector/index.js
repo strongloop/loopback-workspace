@@ -5,6 +5,7 @@ const clone = require('lodash').clone;
 const DataSourceHandler = require('./data-source-handler');
 const FacetHandler = require('./facet-handler');
 const MiddlewareHandler = require('./middleware-handler');
+const ModelAccessHandler = require('./model-access-handler');
 const ModelHandler = require('./model-handler');
 const RelationsHandler = require('./relation-handler');
 const TemplateHandler = require('./template-handler');
@@ -145,4 +146,10 @@ connector.updateModel = function(workspaceId, id, data, cb) {
 connector.updateModelConfig = function(workspaceId, id, data, cb) {
   const workspace = WorkspaceManager.getWorkspace(workspaceId);
   ModelHandler.updateModelConfig(workspace, id, data.facetName, data, cb);
+};
+
+connector.createACL =
+function(workspaceId, modelId, index, data, cb) {
+  const workspace = WorkspaceManager.getWorkspace(workspaceId);
+  ModelAccessHandler.createACL(workspace, modelId, index, data, cb);
 };
