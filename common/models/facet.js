@@ -3,6 +3,10 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
+
+const FacetHandler = require('../../connector/facet-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
+
 /**
   * Add remote methods to loopback model: Facet.
   *
@@ -16,7 +20,8 @@ module.exports = function(Facet) {
       }
       const id = data.name;
       const connector = Facet.getConnector();
-      connector.createFacet(options.workspaceId, id, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      FacetHandler.createFacet(workspace, id, data, cb);
     };
   });
 };

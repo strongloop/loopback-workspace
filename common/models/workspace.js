@@ -7,6 +7,8 @@
 const dataSourceHandler = require('../../connector/data-source-handler');
 const templateRegistry = require('../../component/template-registry');
 const WorkspaceManager = require('../../component/workspace-manager');
+const WorkspaceHandler = require('../../connector/workspace-handler');
+const TemplateHandler = require('../../connector/template-handler');
 
 /**
   * Represents a LoopBack Workspace.
@@ -25,12 +27,12 @@ module.exports = function(Workspace) {
         return cb('Template not found');
       }
       const destinationPath = data.destinationPath;
-      const connector = Workspace.getConnector();
-      connector.createFromTemplate(template, destinationPath, cb);
+      const workspace = WorkspaceManager.createWorkspace(destinationPath);
+      TemplateHandler.createFromTemplate(workspace, template, cb);
     };
     Workspace.loadWorkspace = function(workspaceDir, cb) {
-      const connector = Workspace.getConnector();
-      connector.loadWorkspace(workspaceDir, cb);
+      const workspace = WorkspaceManager.createWorkspace(workspaceDir);
+      WorkspaceHandler.loadWorkspace(workspace, cb);
     };
     Workspace.remoteMethod('loadWorkspace', {
       accepts: [{

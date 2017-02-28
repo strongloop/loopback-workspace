@@ -22,12 +22,8 @@ module.exports = function(ModelMethod) {
       const connector = ModelMethod.getConnector();
       const name = data.name;
       delete data.name;
-      connector.createModelMethod(
-        options.workspaceId,
-        data.modelId,
-        name,
-        data,
-        cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      methodHandler.createModelMethod(workspace, data.modelId, name, data, cb);
     };
     ModelMethod.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -35,7 +31,6 @@ module.exports = function(ModelMethod) {
         options = {};
       }
       const id = filter.where.id;
-      const connector = ModelMethod.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       methodHandler.findModelMethod(workspace, id, cb);
     };
@@ -45,7 +40,6 @@ module.exports = function(ModelMethod) {
         options = {};
       }
       const id = filter.where.modelId;
-      const connector = ModelMethod.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       methodHandler.findModelMethod(workspace, id, cb);
     };

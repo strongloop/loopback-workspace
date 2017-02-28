@@ -49,8 +49,8 @@ module.exports = function(ModelProperty) {
       const connector = ModelProperty.getConnector();
       const propertyName = data.name;
       const modelId = data.modelId;
-      connector.createModelProperty(
-        options.workspaceId,
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      modelHandler.createModelProperty(workspace,
         modelId,
         propertyName,
         data,
@@ -62,8 +62,8 @@ module.exports = function(ModelProperty) {
         options = {};
       }
       const id = filter.where.id;
-      const connector = ModelProperty.getConnector();
-      connector.findModelProperty(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      modelHandler.findModelProperty(workspace, id, cb);
     };
     ModelProperty.all = function(filter, options, cb) {
       if (typeof options === 'function') {

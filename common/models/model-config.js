@@ -4,6 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const ModelHandler = require('../../connector/model-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
+
 /**
   * Defines a model configuration which attaches a model to a facet and a
   * dataSource. It also can extend a model definition with additional configuration.
@@ -23,12 +26,8 @@ module.exports = function(ModelConfig) {
       delete modelConfig.id;
       delete modelConfig.facetName;
       const connector = ModelConfig.getConnector();
-      // TODO(Deepak) - add response handling later
-      connector.createModelConfig(options.workspaceId,
-        id,
-        facetName,
-        modelConfig,
-        cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      ModelHandler.createModelConfig(workspace, id, facetName, modelConfig, cb);
     };
     ModelConfig.find = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -37,8 +36,8 @@ module.exports = function(ModelConfig) {
       }
       const id = filter.where.id;
       const connector = ModelConfig.getConnector();
-      // TODO(Deepak) - add response handling later
-      connector.findModelConfig(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      ModelHandler.findModelConfig(workspace, id, cb);
     };
     ModelConfig.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
@@ -46,7 +45,8 @@ module.exports = function(ModelConfig) {
         options = {};
       }
       const connector = ModelConfig.getConnector();
-      connector.updateModelConfig(options.workspaceId, id, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      ModelHandler.updateModelConfig(workspace, id, data.facetName, data, cb);
     };
   });
 };
