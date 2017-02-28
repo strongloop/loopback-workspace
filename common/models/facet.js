@@ -5,7 +5,7 @@
 'use strict';
 
 const FacetHandler = require('../../lib/facet-handler');
-const WorkspaceManager = require('../../component/workspace-manager.js');
+const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
   * Add remote methods to loopback model: Facet.

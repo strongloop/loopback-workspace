@@ -10,7 +10,7 @@ const fs = require('fs-extra');
 const testSupport = require('../helpers/test-support');
 const ModelDefinition = app.models.ModelDefinition;
 const ModelMethod = app.models.ModelMethod;
-const WorkspaceManager = require('../../component/workspace-manager');
+const WorkspaceManager = require('../../lib/workspace-manager');
 
 describe('ModelMethod', function() {
   let userModel;

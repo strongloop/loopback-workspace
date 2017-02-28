@@ -10,7 +10,7 @@ const fs = require('fs-extra');
 const testSupport = require('../helpers/test-support');
 const ModelDefinition = app.models.ModelDefinition;
 const ModelProperty = app.models.ModelProperty;
-const WorkspaceManager = require('../../component/workspace-manager');
+const WorkspaceManager = require('../../lib/workspace-manager');
 var request = require('supertest');
 
 describe('ModelProperty', function() {

@@ -6,7 +6,7 @@
 
 const clone = require('lodash').clone;
 const middlewareHandler = require('../../lib/middleware-handler');
-const WorkspaceManager = require('../../component/workspace-manager.js');
+const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
   * Defines a `Middleware` configuration.

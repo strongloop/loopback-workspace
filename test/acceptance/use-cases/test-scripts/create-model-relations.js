@@ -3,11 +3,10 @@ const app = require('../../../../');
 const expect = require('../../../helpers/expect');
 const fs = require('fs-extra');
 const loopback = require('loopback');
-const ModelClass = require('../../../../component/datamodel/model');
 const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
-const workspaceManager = require('../../../../component/workspace-manager');
+const workspaceManager = require('../../../../lib/workspace-manager');
 
 const ModelDefinition = app.models.ModelDefinition;
 const ModelMethod = app.models.ModelMethod;

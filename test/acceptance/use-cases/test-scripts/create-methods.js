@@ -1,6 +1,5 @@
 'use strict';
 const fs = require('fs-extra');
-const ModelClass = require('../../../../component/datamodel/model');
 
 module.exports = function() {
   const testName = 'CreateMethods';

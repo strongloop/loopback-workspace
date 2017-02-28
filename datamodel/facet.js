@@ -1,5 +1,5 @@
 'use strict';
-const config = require('../config.json');
+const config = require('../lib/config.json');
 const Entity = require('./entity');
 const path = require('path');
 const ModelConfig = require('./model-config');

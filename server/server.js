@@ -5,7 +5,7 @@
 'use strict';
 const boot = require('loopback-boot');
 const loopback = require('loopback');
-const templateRegistry = require('../component/template-registry');
+const templateRegistry = require('../lib/template-registry');
 
 const app = loopback();
 module.exports = app;
