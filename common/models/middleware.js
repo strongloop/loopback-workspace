@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const clone = require('lodash').clone;
 const middlewareHandler = require('../../connector/middleware-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
@@ -38,8 +39,17 @@ module.exports = function(Middleware) {
       }
       const phase = this.getPhase(data);
       const connector = Middleware.getConnector();
-      // TODO(Deepak) - add response handling later
-      connector.createMiddleware(options.workspaceId, phase, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      const middlewareDef = clone(data);
+      const middlewarePath = middlewareDef.function;
+      delete middlewareDef.phase;
+      delete middlewareDef.subPhase;
+      middlewareHandler.createMiddleware(
+        workspace,
+        phase,
+        middlewarePath,
+        middlewareDef,
+        cb);
     };
     Middleware.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -48,12 +58,8 @@ module.exports = function(Middleware) {
       }
       const phase = Middleware.getPhaseFromId(filter.where.id);
       const middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
-      const connector = Middleware.getConnector();
-      connector.findMiddleware(
-        options.workspaceId,
-        phase,
-        middlewarePath,
-        cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      middlewareHandler.findMiddleware(workspace, phase, middlewarePath, cb);
     };
     Middleware.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -64,7 +70,12 @@ module.exports = function(Middleware) {
         return this.findById(filter, options, cb);
       }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      middlewareHandler.findMiddleware(workspace, cb);
+      let phase, middlewarePath;
+      if (filter.where) {
+        phase = Middleware.getPhaseFromId(filter.where.id);
+        middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
+      }
+      middlewareHandler.findMiddleware(workspace, phase, middlewarePath, cb);
     };
   });
 };

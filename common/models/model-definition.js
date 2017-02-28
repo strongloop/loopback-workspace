@@ -4,6 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const ModelHandler = require('../../connector/model-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
+
 module.exports = function(ModelDefinition) {
   /**
    * Creates a model definition.
@@ -17,9 +20,8 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const id = data.id;
-      const connector = ModelDefinition.getConnector();
-      // TODO(Deepak) - add response handling later
-      connector.createModel(options.workspaceId, id, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      ModelHandler.createModel(workspace, id, data, cb);
     };
     ModelDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -27,8 +29,8 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const id = filter.where.id;
-      const connector = ModelDefinition.getConnector();
-      connector.findModel(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      ModelHandler.findModel(workspace, id, cb);
     };
     ModelDefinition.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -36,8 +38,11 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const id = filter.where && filter.where.id;
-      const connector = ModelDefinition.getConnector();
-      connector.findModel(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      if (id)
+        ModelHandler.findModel(workspace, id, cb);
+      else
+        ModelHandler.findAllModels(workspace, cb);
     };
     ModelDefinition.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
@@ -45,7 +50,8 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const connector = ModelDefinition.getConnector();
-      connector.updateModel(options.workspaceId, id, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      ModelHandler.updateModel(workspace, id, data, cb);
     };
   });
 };

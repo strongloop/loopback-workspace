@@ -4,6 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 const clone = require('lodash').clone;
+const RelationsHandler = require('../../connector/relation-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
+
 /**
   * Represents a relation between two LoopBack `Model`s.
   *
@@ -33,13 +36,12 @@ module.exports = function(ModelRelation) {
       const toModelId = facet + '.' + toModelName;
       delete relationDef.modelId;
       delete relationDef.facetName;
-      const connector = ModelRelation.getConnector();
-      connector.createModelRelation(
-        options.workspaceId,
-        modelId,
-        toModelId,
-        relationDef,
-        cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      const relationName = relationDef.id;
+      delete relationDef.id;
+      RelationsHandler.createRelation(
+        workspace, relationName, modelId, toModelId, relationDef, cb);
     };
   });
 };
+

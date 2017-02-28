@@ -4,6 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const datasourceHandler = require('../../connector/data-source-handler');
+const WorkspaceManager = require('../../component/workspace-manager.js');
+
 module.exports = function(DataSourceDefinition) {
   /**
    * Creates a data source definition.
@@ -20,7 +23,8 @@ module.exports = function(DataSourceDefinition) {
       const facetName = data.facetName;
       const id = facetName + '.' + data.name;
       delete data.facetName;
-      connector.createDataSource(options.workspaceId, id, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      datasourceHandler.createDataSource(workspace, id, data, cb);
     };
     DataSourceDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -28,8 +32,8 @@ module.exports = function(DataSourceDefinition) {
         options = {};
       }
       const id = filter.where.id;
-      const connector = DataSourceDefinition.getConnector();
-      connector.findDataSource(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      datasourceHandler.findDataSource(workspace, id, cb);
     };
     DataSourceDefinition.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -37,16 +41,16 @@ module.exports = function(DataSourceDefinition) {
         options = {};
       }
       const id = filter.where && filter.where.id;
-      const connector = DataSourceDefinition.getConnector();
-      connector.findDataSource(options.workspaceId, id, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      datasourceHandler.findDataSource(workspace, id, cb);
     };
     DataSourceDefinition.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
-      const connector = DataSourceDefinition.getConnector();
-      connector.updateDataSource(options.workspaceId, id, data, cb);
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      datasourceHandler.updateDataSource(workspace, id, data, cb);
     };
   });
 };
