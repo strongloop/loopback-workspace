@@ -4,11 +4,11 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const dataSourceHandler = require('../../connector/data-source-handler');
+const dataSourceHandler = require('../../lib/data-source-handler');
 const templateRegistry = require('../../component/template-registry');
 const WorkspaceManager = require('../../component/workspace-manager');
-const WorkspaceHandler = require('../../connector/workspace-handler');
-const TemplateHandler = require('../../connector/template-handler');
+const WorkspaceHandler = require('../../lib/workspace-handler');
+const TemplateHandler = require('../../lib/template-handler');
 
 /**
   * Represents a LoopBack Workspace.

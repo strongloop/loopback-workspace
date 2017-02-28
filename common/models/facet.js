@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const FacetHandler = require('../../connector/facet-handler');
+const FacetHandler = require('../../lib/facet-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**

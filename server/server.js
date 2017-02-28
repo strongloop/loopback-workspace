@@ -19,7 +19,7 @@ boot(app, __dirname, function() {
   app.emit('ready');
 });
 // add workspace operations to connector
-require('../connector');
+require('./connector');
 
 app.start = function() {
   return app.listen(function() {

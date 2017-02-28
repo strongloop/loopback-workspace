@@ -5,7 +5,7 @@
 'use strict';
 
 const clone = require('lodash').clone;
-const middlewareHandler = require('../../connector/middleware-handler');
+const middlewareHandler = require('../../lib/middleware-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**

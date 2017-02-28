@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const modelHandler = require('../../connector/model-handler');
+const modelHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../component/workspace-manager.js');
 
 /**
