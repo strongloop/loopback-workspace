@@ -527,6 +527,12 @@ module.exports = function(Workspace) {
         var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
         var manifestDest = path.resolve(options.destDir, 'manifest.yml');
         Workspace.copyRecursive(manifestSrc, manifestDest);
+        // Create manifest.yml
+        var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
+                                    'datasources.bluemix.js');
+        var datasourceBluemixDest = path.resolve(options.destDir, 'server',
+                                    'datasources.bluemix.js');
+        Workspace.copyRecursive(datasourceBluemixSrc, datasourceBluemixDest);
       }
     };
 
