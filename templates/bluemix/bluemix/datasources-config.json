@@ -1,0 +1,9 @@
+{
+  "datasources": {},
+  "supportedServices": {
+    "mongodb": "compose-for-mongodb",
+    "mysql": "compose-for-mysql",
+    "postgresql": "compose-for-postgresql",
+    "cloudant": "cloudantNoSQLDB"
+  }
+}
