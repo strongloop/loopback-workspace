@@ -32,3 +32,7 @@ Feature: Users should be able to create an empty workspace
   Scenario: Query the created model config
     When I query for the model config 'TestModel' in workspace 'empty-server'
     Then the model config is returned
+
+  Scenario: create a facet
+    When I create a facet 'client' in workspace 'empty-server'
+    Then the facet is created

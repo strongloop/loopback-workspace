@@ -4,7 +4,6 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const FacetHandler = require('../../lib/facet-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
@@ -19,9 +18,12 @@ module.exports = function(Facet) {
         options = {};
       }
       const id = data.name;
-      const connector = Facet.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      FacetHandler.createFacet(workspace, id, data, cb);
+      workspace.facet.create(id, data,
+        function(err) {
+          if (err) return cb(err);
+          cb(null, data);
+        });
     };
   });
 };

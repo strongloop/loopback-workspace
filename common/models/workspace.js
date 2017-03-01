@@ -4,11 +4,14 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const dataSourceHandler = require('../../lib/data-source-handler');
+const async = require('async');
 const templateRegistry = require('../../lib/template-registry');
 const WorkspaceManager = require('../../lib/workspace-manager');
 const WorkspaceHandler = require('../../lib/workspace-handler');
 const TemplateHandler = require('../../lib/template-handler');
+const loopback = require('loopback');
+const boot = require('loopback-boot');
+const path = require('path');
 
 /**
   * Represents a LoopBack Workspace.
@@ -58,7 +61,20 @@ module.exports = function(Workspace) {
     Workspace.migrateDataSource =
     function(workspaceId, dataSourceName, modelName, cb) {
       const workspace = WorkspaceManager.getWorkspace(workspaceId);
-      dataSourceHandler.autoMigrate(workspace, dataSourceName, modelName, cb);
+      let app, ds, result;
+      function callback(err) {
+        ds.discoverSchemas(modelName, {}, cb);
+      };
+      async.series([
+        function bootApp(next) {
+          app = loopback();
+          const dir = path.join(workspace.getDirectory(), 'server');
+          boot(app, dir, next);
+        },
+        function migrate(next) {
+          ds = app.dataSources[dataSourceName];
+          ds.automigrate(modelName, next);
+        }], callback);
     };
 
     Workspace.remoteMethod('migrateDataSource', {

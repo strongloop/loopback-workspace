@@ -4,14 +4,9 @@ module.exports = function() {
   const testName = 'CreateFacet';
   let templateName;
 
-  this.Given(/^that I have loaded the workspace '(.+)'$/,
-  function(workspaceName, next) {
+  this.When(/^I create a facet '(.+)' in workspace '(.+)'$/,
+  function(facetName, workspaceName, next) {
     templateName = workspaceName;
-    next();
-  });
-
-  this.When(/^I create a facet '(.+)'$/,
-  function(facetName, next) {
     const config = {
       name: facetName,
       modelsMetadata: this.getDefaultModelsMeta(),
@@ -21,12 +16,13 @@ module.exports = function() {
   });
 
   this.Then(/^the facet is created$/, function(next) {
+    const testsuite = this;
     const inputs = this.getSavedInputs(testName);
-    const facet = this.getWorkspace(templateName).getFacet(inputs.facetName);
+    const facet = this.getWorkspace(templateName).getFacet(inputs.name);
     this.expect(facet).to.not.to.be.undefined();
     const dir = facet.getPath();
-    this.checkFileExists(function(isExists) {
-      this.expect(isExists).to.be.true();
+    this.checkFileExists(dir, function(isExists) {
+      testsuite.expect(isExists).to.be.true();
       next();
     });
   });

@@ -24,7 +24,7 @@ module.exports = function(DataSourceDefinition) {
       const id = facetName + '.' + data.name;
       delete data.facetName;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      datasourceHandler.createDataSource(workspace, id, data, cb);
+      workspace.DataSource.create(id, data, cb);
     };
     DataSourceDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -42,7 +42,15 @@ module.exports = function(DataSourceDefinition) {
       }
       const id = filter.where && filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      datasourceHandler.findDataSource(workspace, id, cb);
+      workspace.DataSource.find(function(err) {
+        if (err) return cb(err);
+        if (id) {
+          const ds = workspace.getDataSource(id);
+          return cb(null, ds.getDefinition());
+        }
+        const dsList = workspace.getAllDataSourceConfig();
+        cb(null, dsList);
+      });
     };
     DataSourceDefinition.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
