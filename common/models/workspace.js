@@ -5,8 +5,8 @@
 'use strict';
 
 const dataSourceHandler = require('../../lib/data-source-handler');
-const templateRegistry = require('../../component/template-registry');
-const WorkspaceManager = require('../../component/workspace-manager');
+const templateRegistry = require('../../lib/template-registry');
+const WorkspaceManager = require('../../lib/workspace-manager');
 const WorkspaceHandler = require('../../lib/workspace-handler');
 const TemplateHandler = require('../../lib/template-handler');
 

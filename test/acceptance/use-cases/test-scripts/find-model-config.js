@@ -7,7 +7,7 @@ const loopback = require('loopback');
 const path = require('path');
 const testSupport = require('../../../helpers/test-support');
 const util = require('util');
-const workspaceManager = require('../../../../component/workspace-manager');
+const workspaceManager = require('../../../../lib/workspace-manager');
 
 const ModelConfig = app.models.ModelConfig;
 app.on('booted', function() {

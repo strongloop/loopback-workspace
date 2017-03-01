@@ -4,7 +4,7 @@ const expect = require('../helpers/expect');
 const fs = require('fs-extra');
 const path = require('path');
 const testSupport = require('./test-support');
-const workspaceManager = require('../../component/workspace-manager');
+const workspaceManager = require('../../lib/workspace-manager');
 const config = require('./config');
 const util = require('util');
 

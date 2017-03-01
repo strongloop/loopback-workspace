@@ -5,7 +5,7 @@
 'use strict';
 
 const ModelHandler = require('../../lib/model-handler');
-const WorkspaceManager = require('../../component/workspace-manager.js');
+const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 module.exports = function(ModelDefinition) {
   /**

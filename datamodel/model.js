@@ -1,5 +1,5 @@
 'use strict';
-const config = require('../config.json');
+const config = require('../lib/config.json');
 const clone = require('lodash').clone;
 const Entity = require('./entity');
 const lodash = require('lodash');

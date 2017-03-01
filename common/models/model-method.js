@@ -5,7 +5,7 @@
 'use strict';
 
 const methodHandler = require('../../lib/model-handler');
-const WorkspaceManager = require('../../component/workspace-manager.js');
+const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
   * Represents a method of a LoopBack `Model`.

@@ -5,7 +5,7 @@
 'use strict';
 const clone = require('lodash').clone;
 const RelationsHandler = require('../../lib/relation-handler');
-const WorkspaceManager = require('../../component/workspace-manager.js');
+const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
   * Represents a relation between two LoopBack `Model`s.

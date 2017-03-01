@@ -12,7 +12,7 @@ const loopback = require('loopback');
 const Facet = app.models.Facet;
 const Middleware = app.models.Middleware;
 const MiddlewarePhase = app.models.MiddlewarePhase;
-const WorkspaceManager = require('../../component/workspace-manager');
+const WorkspaceManager = require('../../lib/workspace-manager');
 
 describe('Middleware', function() {
   before(function(done) {
