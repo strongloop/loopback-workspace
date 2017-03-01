@@ -1,43 +1,57 @@
 'use strict';
-var _ = require('lodash');
-// Check attached CloudFoundry services
-var services = process.env.VCAP_SERVICES;
-if (typeof services === 'string') {
-  services = JSON.parse(services);
-} else {
-  services = {};
-}
+
+var path = require('path');
+var vcapServices = process.env.VCAP_SERVICES;
+if (typeof vcapServices === 'string') {
+  vcapServices = JSON.parse(vcapServices);
+} else { vcapServices = {}; }
+
+var datasourcesConfig = require(path.join(__dirname, '..', '.bluemix', 'datasources-config.json'));
+var configuredDatasources = datasourcesConfig.datasources;
+var supportedVcapServices = datasourcesConfig.supportedServices;
+var supportedVcapServiceNames = [];
+Object.keys(supportedVcapServices).forEach(function(key) {
+  var value = supportedVcapServices[key];
+  supportedVcapServiceNames.push(value);
+});
+
 var dataSources = {};
-for (var s in services) {
-  var serviceList = services[s];
-  // Each key has an array of configuration objects
-  for (var i = 0, n = serviceList.length; i < n; i++) {
-    var service = serviceList[i];
-    // We need a better way to filter services of interest
-    if (s === 'compose-for-mongodb') {
-      dataSources[s] = _.cloneDeep(service.credentials);
-      // We need a better way to map service configuration to data source
-      dataSources[s].url = dataSources[s].uri;
-      dataSources[s].connector = 'mongodb';
-    }
-    if (s === 'compose-for-mysql') {
-      dataSources[s] = _.cloneDeep(service.credentials);
-      // We need a better way to map service configuration to data source
-      dataSources[s].url = dataSources[s].uri;
-      dataSources[s].connector = 'mysql';
-    }
-    if (s === 'compose-for-postgresql') {
-      dataSources[s] = _.cloneDeep(service.credentials);
-      // We need a better way to map service configuration to data source
-      dataSources[s].url = dataSources[s].uri;
-      dataSources[s].connector = 'postgresql';
-    }
-    if (s === 'cloudantNoSQLDB') {
-      dataSources[s] = _.cloneDeep(service.credentials);
-      dataSources[s].database = 'loopback';
-      dataSources[s].connector = 'cloudant';
-    }
+
+Object.keys(vcapServices).forEach(function(serviceType) {
+  if (supportedVcapServiceNames.indexOf(serviceType) >= 0) {
+    var serviceCredentials = vcapServices[serviceType];
+    serviceCredentials.forEach(function(service) {
+      if (service.name in configuredDatasources) {
+        var configuredDatasource = configuredDatasources[service.name];
+        var credentials = service.credentials;
+        dataSources[service.name] = {
+          name: service.name,
+          connector: configuredDatasource.connector,
+          url: credentials.uri || credentials.url,
+          host: credentials.host,
+          port: credentials.port,
+          username: credentials.username,
+          password: credentials.password,
+        };
+        var dataSource = dataSources[service.name];
+
+        if ('database' in configuredDatasource) {
+          dataSource.database = configuredDatasource.database;
+        }
+        if ('db' in configuredDatasource) {
+          dataSource.db = configuredDatasource.db;
+        }
+
+        if (credentials.db_type === 'redis') {
+          dataSource.url += '/' + configuredDatasource.database;
+        } else if (credentials.db_type === 'mysql'  ||
+                  credentials.db_type === 'postgresql') {
+          dataSource.url = dataSource.url.replace('compose',
+                           configuredDatasource.database);
+        }
+      }
+    });
   }
-}
+});
 
 module.exports = dataSources;

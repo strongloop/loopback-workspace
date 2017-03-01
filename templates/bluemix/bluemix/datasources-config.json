@@ -1,9 +1,12 @@
 {
-  "datasources": {},
+  "datasources": {
+    "db": {
+      "name": "db",
+      "connector": "memory"
+    }
+  },
   "supportedServices": {
-    "mongodb": "compose-for-mongodb",
-    "mysql": "compose-for-mysql",
-    "postgresql": "compose-for-postgresql",
-    "cloudant": "cloudantNoSQLDB"
+    "cloudant": "cloudantNoSQLDB",
+    "mongodb": "compose-for-mongodb"
   }
 }
