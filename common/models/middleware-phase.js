@@ -22,7 +22,10 @@ module.exports = function(MiddlewarePhase) {
       const name = data.name;
       delete data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      middlewareHandler.addPhase(workspace, name, data, cb);
+      workspace.events.phase.create(name, data.index, data.before,
+        function(err) {
+          cb(err, data);
+        });
     };
     MiddlewarePhase.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -31,7 +34,13 @@ module.exports = function(MiddlewarePhase) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      middlewareHandler.findPhase(workspace, id, cb);
+      workspace.events.phase.refresh(workspace, id, function(err, results) {
+        if (err) return cb(err);
+        const phase = workspace.getMiddlewarePhase(id);
+        const middleware = phase.getMiddlewareList();
+        if (middleware) return cb(null, middleware);
+        cb(new Error('middleware not found'));
+      });
     };
     MiddlewarePhase.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -40,7 +49,13 @@ module.exports = function(MiddlewarePhase) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      middlewareHandler.findPhase(workspace, id, cb);
+      workspace.events.phase.refresh(workspace, id, function(err, results) {
+        if (err) return cb(err);
+        const phase = workspace.getMiddlewarePhase(id);
+        const middleware = phase.getMiddlewareList();
+        if (middleware) return cb(null, middleware);
+        cb(new Error('middleware not found'));
+      });
     };
   });
 };
