@@ -21,7 +21,9 @@ module.exports = function(ModelDefinition) {
       }
       const id = data.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      ModelHandler.createModel(workspace, id, data, cb);
+      workspace.events.model.create(id, data, function(err) {
+        cb(err, id);
+      });
     };
     ModelDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -30,7 +32,11 @@ module.exports = function(ModelDefinition) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      ModelHandler.findModel(workspace, id, cb);
+      workspace.events.model.refresh(id, function(err) {
+        if (err) return cb(err);
+        const model = workspace.getModel(id);
+        cb(null, [model.getContents()]);
+      });
     };
     ModelDefinition.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -39,10 +45,15 @@ module.exports = function(ModelDefinition) {
       }
       const id = filter.where && filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      if (id)
-        ModelHandler.findModel(workspace, id, cb);
-      else
-        ModelHandler.findAllModels(workspace, cb);
+      if (id) {
+        workspace.events.model.refresh(id, function(err) {
+          if (err) return cb(err);
+          const model = workspace.getModel(id);
+          return cb(null, [model.getContents()]);
+        });
+      } else {
+        return ModelHandler.findAllModels(workspace, cb);
+      }
     };
     ModelDefinition.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
@@ -51,7 +62,12 @@ module.exports = function(ModelDefinition) {
       }
       const connector = ModelDefinition.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      ModelHandler.updateModel(workspace, id, data, cb);
+      workspace.events.model.update(id, data, function(err, results) {
+        if (err) return cb(err);
+        const model = workspace.getModel(id);
+        cb(null, model.getDefinition());
+      });
     };
   });
 };
+

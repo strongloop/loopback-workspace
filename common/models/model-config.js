@@ -15,6 +15,10 @@ const WorkspaceManager = require('../../lib/workspace-manager.js');
   */
 module.exports = function(ModelConfig) {
   ModelConfig.on('dataSourceAttached', function(eventData) {
+    function getFacetName(id) {
+      const parts = id.split('.');
+      return parts[0];
+    }
     ModelConfig.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
@@ -27,17 +31,25 @@ module.exports = function(ModelConfig) {
       delete modelConfig.facetName;
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      ModelHandler.createModelConfig(workspace, id, facetName, modelConfig, cb);
+      workspace.events.modelconfig.create(id, facetName, modelConfig,
+        function(err) {
+          cb(err, id);
+        });
     };
-    ModelConfig.find = function(filter, options, cb) {
+    ModelConfig.all = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
       const id = filter.where.id;
-      const connector = ModelConfig.getConnector();
+      const facetName = getFacetName(id);
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      ModelHandler.findModelConfig(workspace, id, cb);
+      workspace.events.modelconfig.refresh(facetName, function(err) {
+        if (err) return cb(err);
+        const facet = workspace.getFacet(facetName);
+        const config = facet.getModelConfig(id);
+        cb(null, config);
+      });
     };
     ModelConfig.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
@@ -46,7 +58,13 @@ module.exports = function(ModelConfig) {
       }
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      ModelHandler.updateModelConfig(workspace, id, data.facetName, data, cb);
+      workspace.events.modelconfig.update(data.facetName, id, data,
+        function(err) {
+          if (err) return cb(err);
+          const facet = workspace.getFacet(data.facetName);
+          const config = facet.getModelConfig(id);
+          cb(null, config);
+        });
     };
   });
 };
