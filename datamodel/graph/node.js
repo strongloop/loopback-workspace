@@ -15,6 +15,12 @@ class Node {
     this._inboundLinks = {};
     this._contains = {};
   }
+  getOutboundLink(name) {
+    return this._outboundLinks[name];
+  }
+  getInboundLink(name) {
+    return this._inboundLinks[name];
+  }
   addContainsRelation(node) {
     if (!this._contains[node._domain]) {
       this._contains[node._domain] = {};
