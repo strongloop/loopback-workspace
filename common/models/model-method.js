@@ -23,16 +23,24 @@ module.exports = function(ModelMethod) {
       const name = data.name;
       delete data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      methodHandler.createModelMethod(workspace, data.modelId, name, data, cb);
+      workspace.events.modelmethod.create(data.modelId, name, data,
+        function(err) {
+          cb(err, name);
+        });
     };
     ModelMethod.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
+      const modelId = filter.where.modelId;
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      methodHandler.findModelMethod(workspace, id, cb);
+      workspace.events.model.refresh(modelId, function(err) {
+        if (err) return cb(err);
+        const model = workspace.getModel(modelId);
+        cb(null, model.getMethodDefinitions());
+      });
     };
     ModelMethod.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -41,7 +49,11 @@ module.exports = function(ModelMethod) {
       }
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      methodHandler.findModelMethod(workspace, id, cb);
+      workspace.events.model.refresh(id, function(err) {
+        if (err) return cb(err);
+        const model = workspace.getModel(id);
+        cb(null, model.getMethodDefinitions());
+      });
     };
   });
 };

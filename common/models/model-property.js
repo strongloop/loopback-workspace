@@ -50,7 +50,7 @@ module.exports = function(ModelProperty) {
       const propertyName = data.name;
       const modelId = data.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      modelHandler.createModelProperty(workspace,
+      workspace.events.modelproperty.create(
         modelId,
         propertyName,
         data,
@@ -61,9 +61,14 @@ module.exports = function(ModelProperty) {
         cb = options;
         options = {};
       }
+      const modelId = filter.where.modelId;
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      modelHandler.findModelProperty(workspace, id, cb);
+      workspace.events.model.refresh(id, function(err) {
+        if (err) return cb(err);
+        const model = workspace.getModel(id);
+        cb(null, model.getPropertyDefinitions());
+      });
     };
     ModelProperty.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -73,7 +78,11 @@ module.exports = function(ModelProperty) {
       const connector = ModelProperty.getConnector();
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      modelHandler.allProperties(workspace, id, cb);
+      workspace.events.model.refresh(id, function(err) {
+        if (err) return cb(err);
+        const model = workspace.getModel(id);
+        cb(null, model.getPropertyDefinitions());
+      });
     };
   });
 };

@@ -20,7 +20,7 @@ module.exports = function() {
   this.When(/^I query for the model config '(.+)' in workspace '(.+)'$/,
   function(modelName, workspaceName, next) {
     testsuite.modelName = modelName;
-    const modelId = 'common.models.' + testsuite.modelName;
+    const modelId = 'server.' + testsuite.modelName;
     const filter = {
       where: {id: modelId},
     };
