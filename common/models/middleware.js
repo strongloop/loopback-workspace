@@ -44,7 +44,7 @@ module.exports = function(Middleware) {
       const middlewarePath = middlewareDef.function;
       delete middlewareDef.phase;
       delete middlewareDef.subPhase;
-      workspace.Middleware.create(
+      workspace.events.middleware.create(
         phase,
         middlewarePath,
         middlewareDef,
@@ -60,18 +60,8 @@ module.exports = function(Middleware) {
       const phaseName = Middleware.getPhaseFromId(filter.where.id);
       const middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.Middleware.refresh(
-      function findCallBack(err) {
-        if (err) return cb(err);
-        if (phaseName) {
-          const phase = workspace.getMiddlewarePhase(phaseName);
-          const middleware = phase.getMiddleware(middlewarePath);
-          if (middleware) return cb(null, middleware.getConfig());
-          return cb(new Error('middleware not found'));
-        }
-        const list = findMiddleware(workspace);
-        cb(null, list);
-      });
+      workspace.events.middleware.refresh(
+        findCallBack(workspace, phaseName, middlewarePath, cb));
     };
     Middleware.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -87,23 +77,27 @@ module.exports = function(Middleware) {
         phaseName = Middleware.getPhaseFromId(filter.where.id);
         middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
       }
-      workspace.Middleware.refresh(
-      function findCallBack(err) {
-        if (err) return cb(err);
-        if (phaseName) {
-          const phase = workspace.getMiddlewarePhase(phaseName);
-          const middleware = phase.getMiddleware(middlewarePath);
-          if (middleware) return cb(null, middleware.getConfig());
-          return cb(new Error('middleware not found'));
-        }
-        const phases = workspace.getMiddlewareConfig();
-        if (!phases) return cb(new Error('invalid configuration'));
-        const list = findMiddleware(phases);
-        cb(null, list);
-      });
+      workspace.events.middleware.refresh(
+        findCallBack(workspace, phaseName, middlewarePath, cb));
     };
   });
 };
+
+function findCallBack(workspace, phaseName, middlewarePath, cb) {
+  return function(err) {
+    if (err) return cb(err);
+    if (phaseName) {
+      const phase = workspace.getMiddlewarePhase(phaseName);
+      const middleware = phase.getMiddleware(middlewarePath);
+      if (middleware) return cb(null, middleware.getConfig());
+      return cb(new Error('middleware not found'));
+    }
+    const phases = workspace.getMiddlewareConfig();
+    if (!phases) return cb(new Error('invalid configuration'));
+    const list = findMiddleware(phases);
+    cb(null, list);
+  };
+}
 
 function findMiddleware(phases) {
   const list = [];

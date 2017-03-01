@@ -19,11 +19,10 @@ module.exports = function(Facet) {
       }
       const id = data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.facet.create(id, data,
-        function(err) {
-          if (err) return cb(err);
-          cb(null, data);
-        });
+      workspace.events.facet.create(id, data, function(err) {
+        if (err) return cb(err);
+        cb(null, data);
+      });
     };
   });
 };

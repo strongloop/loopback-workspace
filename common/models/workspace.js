@@ -62,9 +62,7 @@ module.exports = function(Workspace) {
     function(workspaceId, dataSourceName, modelName, cb) {
       const workspace = WorkspaceManager.getWorkspace(workspaceId);
       let app, ds, result;
-      function callback(err) {
-        ds.discoverSchemas(modelName, {}, cb);
-      };
+
       async.series([
         function bootApp(next) {
           app = loopback();
@@ -74,7 +72,10 @@ module.exports = function(Workspace) {
         function migrate(next) {
           ds = app.dataSources[dataSourceName];
           ds.automigrate(modelName, next);
-        }], callback);
+        }],
+      function(err) {
+        ds.discoverSchemas(modelName, {}, cb);
+      });
     };
 
     Workspace.remoteMethod('migrateDataSource', {
