@@ -60,7 +60,6 @@ module.exports = function(ModelDefinition) {
         cb = options;
         options = {};
       }
-      const connector = ModelDefinition.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       workspace.events.model.update(id, data, function(err, results) {
         if (err) return cb(err);
@@ -68,6 +67,13 @@ module.exports = function(ModelDefinition) {
         cb(null, model.getDefinition());
       });
     };
+    ModelDefinition.removeModel = function(filter, options, cb) {
+      const id = filter.where.id;
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      workspace.events.model.delete(id, function(err) {
+        if (err) return cb(err);
+        cb(null, id);
+      });
+    };
   });
 };
-

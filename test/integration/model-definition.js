@@ -8,17 +8,20 @@ const app = require('../../');
 const expect = require('../helpers/expect');
 const testSupport = require('../helpers/test-support');
 const ModelDefinition = app.models.ModelDefinition;
+const fs = require('fs-extra');
 
 describe('ModelDefinition', function() {
   describe('CRUD', function() {
-    const test = this;
+    let model, modelDef, file, workspace;
 
     before(function(done) {
       testSupport.givenBasicWorkspace('empty-server', done);
+      const WorkspaceManager = require('../../lib/workspace-manager');
+      workspace = WorkspaceManager.getWorkspace();
     });
 
     it('model.create()', function(done) {
-      test.model = {
+      model = {
         id: 'common.models.TestModel',
         facetName: 'common',
         name: 'TestModel',
@@ -27,22 +30,27 @@ describe('ModelDefinition', function() {
         public: true,
         idInjection: true,
       };
-      ModelDefinition.create(test.model, function(err, modelDef) {
+      ModelDefinition.create(model, function(err, modelDef) {
         if (err) return done(err);
-        done();
+        const modelNode = workspace.getModel(model.id);
+        file = modelNode.getFilePath();
+        fs.exists(file, function(isExists) {
+          expect(isExists).to.be.true();
+          done();
+        });
       });
     });
 
     it('model.find()', function(done) {
       ModelDefinition.find(function(err, models) {
         if (err) return done(err);
-        models = models.filter(function(model) {
-          return model.id && (model.id === test.model.id);
+        models = models.filter(function(m) {
+          return m.id && (model.id === m.id);
         });
-        test.modelDef = models && models.length && models[0];
-        expect(test.modelDef).not.to.be.undefined();
-        test.data = test.modelDef.toObject();
-        expect(Object.keys(test.data)).to.include.members([
+        modelDef = models && models.length && models[0];
+        expect(modelDef).not.to.be.undefined();
+        const data = modelDef.toObject();
+        expect(Object.keys(data)).to.include.members([
           'id',
           'facetName',
           'name',
@@ -60,11 +68,11 @@ describe('ModelDefinition', function() {
 
     it('model.properties.create()', function(done) {
       const propertyDef = {
-        modelId: test.model.id,
+        modelId: model.id,
         name: 'property1',
         type: 'string',
       };
-      test.modelDef.properties.create(propertyDef, {}, function(err, data) {
+      modelDef.properties.create(propertyDef, {}, function(err, data) {
         if (err) return done(err);
         expect(Object.keys(data.toObject())).to.include.members([
           'modelId',
@@ -72,6 +80,17 @@ describe('ModelDefinition', function() {
           'name',
         ]);
         done();
+      });
+    });
+
+    it('model.destroy()', function(done) {
+      const filter = {where: {id: model.id}};
+      ModelDefinition.destroyAll(filter, function(err) {
+        if (err) return done(err);
+        fs.exists(file, function(isExists) {
+          expect(isExists).to.be.false();
+          done();
+        });
       });
     });
   });
