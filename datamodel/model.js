@@ -141,6 +141,10 @@ class Model extends Entity {
     this.setRelation(relation);
     return relation;
   }
+  remove() {
+    const name = this._name;
+    return this._graph.deleteNode(this._domain, name);
+  }
 };
 
 module.exports = Model;
