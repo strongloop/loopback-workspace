@@ -21,3 +21,8 @@ connector.save = function(modelName, data, options, cb) {
   const model = app.models[modelName];
   model.create(data, options, cb);
 };
+
+connector.destroyAll = function(modelName, filter, options, cb) {
+  const model = app.models[modelName];
+  model.removeModel(data, options, cb);
+};
