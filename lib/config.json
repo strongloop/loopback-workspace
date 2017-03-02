@@ -38,5 +38,32 @@
       "../common/mixins",
       "./mixins"
     ]
-  }
+  },
+  "defaultModelConfig": [
+    {
+      "name": "User",
+      "dataSource": "db",
+      "public": false
+    },
+    {
+      "name": "AccessToken",
+      "dataSource": "db",
+      "public": false
+    },
+    {
+        "name": "ACL",
+        "dataSource": "db",
+        "public": false
+    },
+    {
+        "name": "RoleMapping",
+        "dataSource": "db",
+        "public": false
+    },
+    {
+        "name": "Role",
+        "dataSource": "db",
+        "public": false
+    }
+  ]
 }
