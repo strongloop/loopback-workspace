@@ -11,14 +11,14 @@ const ModelDefinition = app.models.ModelDefinition;
 
 describe('ModelDefinition', function() {
   describe('CRUD', function() {
-    const test = this;
+    let model, modelDef, file;
 
     before(function(done) {
       testSupport.givenBasicWorkspace('empty-server', done);
     });
 
     it('model.create()', function(done) {
-      test.model = {
+      model = {
         id: 'common.models.TestModel',
         facetName: 'common',
         name: 'TestModel',
@@ -27,7 +27,7 @@ describe('ModelDefinition', function() {
         public: true,
         idInjection: true,
       };
-      ModelDefinition.create(test.model, function(err, modelDef) {
+      ModelDefinition.create(model, function(err, modelDef) {
         if (err) return done(err);
         done();
       });
@@ -36,13 +36,13 @@ describe('ModelDefinition', function() {
     it('model.find()', function(done) {
       ModelDefinition.find(function(err, models) {
         if (err) return done(err);
-        models = models.filter(function(model) {
-          return model.id && (model.id === test.model.id);
+        models = models.filter(function(m) {
+          return m.id && (model.id === m.id);
         });
-        test.modelDef = models && models.length && models[0];
-        expect(test.modelDef).not.to.be.undefined();
-        test.data = test.modelDef.toObject();
-        expect(Object.keys(test.data)).to.include.members([
+        modelDef = models && models.length && models[0];
+        expect(modelDef).not.to.be.undefined();
+        const data = modelDef.toObject();
+        expect(Object.keys(data)).to.include.members([
           'id',
           'facetName',
           'name',
@@ -60,11 +60,11 @@ describe('ModelDefinition', function() {
 
     it('model.properties.create()', function(done) {
       const propertyDef = {
-        modelId: test.model.id,
+        modelId: model.id,
         name: 'property1',
         type: 'string',
       };
-      test.modelDef.properties.create(propertyDef, {}, function(err, data) {
+      modelDef.properties.create(propertyDef, {}, function(err, data) {
         if (err) return done(err);
         expect(Object.keys(data.toObject())).to.include.members([
           'modelId',
