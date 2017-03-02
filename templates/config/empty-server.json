@@ -43,27 +43,27 @@
       {
         "name": "User",
         "dataSource": "db",
-        "public": false
+        "public": true
       },
       {
         "name": "AccessToken",
         "dataSource": "db",
-        "public": false
+        "public": true
       },
       {
          "name": "ACL",
          "dataSource": "db",
-         "public": false
+         "public": true
       },
       {
          "name": "RoleMapping",
          "dataSource": "db",
-         "public": false
+         "public": true
       },
       {
          "name": "Role",
          "dataSource": "db",
-         "public": false
+         "public": true
       }
     ],
     "datasources": [
