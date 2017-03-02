@@ -67,11 +67,11 @@ module.exports = function(ModelDefinition) {
         cb(null, model.getDefinition());
       });
     };
-    ModelDefinition.removeModel = function (filter, options, cb) {
+    ModelDefinition.removeModel = function(filter, options, cb) {
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       workspace.events.model.delete(id, function(err) {
-        if(err) return cb(err);
+        if (err) return cb(err);
         cb(null, id);
       });
     };

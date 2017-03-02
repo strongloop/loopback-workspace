@@ -8,13 +8,16 @@ const app = require('../../');
 const expect = require('../helpers/expect');
 const testSupport = require('../helpers/test-support');
 const ModelDefinition = app.models.ModelDefinition;
+const fs = require('fs-extra');
 
 describe('ModelDefinition', function() {
   describe('CRUD', function() {
-    let model, modelDef, file;
+    let model, modelDef, file, workspace;
 
     before(function(done) {
       testSupport.givenBasicWorkspace('empty-server', done);
+      const WorkspaceManager = require('../../lib/workspace-manager');
+      workspace = WorkspaceManager.getWorkspace();
     });
 
     it('model.create()', function(done) {
@@ -29,7 +32,12 @@ describe('ModelDefinition', function() {
       };
       ModelDefinition.create(model, function(err, modelDef) {
         if (err) return done(err);
-        done();
+        const modelNode = workspace.getModel(model.id);
+        file = modelNode.getFilePath();
+        fs.exists(file, function(isExists) {
+          expect(isExists).to.be.true();
+          done();
+        });
       });
     });
 
@@ -72,6 +80,17 @@ describe('ModelDefinition', function() {
           'name',
         ]);
         done();
+      });
+    });
+
+    it('model.destroy()', function(done) {
+      const filter = {where: {id: model.id}};
+      ModelDefinition.destroyAll(filter, function(err) {
+        if (err) return done(err);
+        fs.exists(file, function(isExists) {
+          expect(isExists).to.be.false();
+          done();
+        });
       });
     });
   });

@@ -22,11 +22,11 @@ class Graph {
   }
   deleteNode(domain, name) {
     const node = this._cache[domain][name];
-    if(node._inboundLinks && Object.keys(node._inboundLinks).length > 0) {
+    if (node._inboundLinks && Object.keys(node._inboundLinks).length > 0) {
       return new Error('Integrity Constraint, cannot delete');
     }
     delete this._cache[domain][name];
-  }  
+  }
 };
 module.exports = Graph;
 module.exports.Node = require('./node');

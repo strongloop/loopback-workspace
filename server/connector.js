@@ -24,5 +24,5 @@ connector.save = function(modelName, data, options, cb) {
 
 connector.destroyAll = function(modelName, filter, options, cb) {
   const model = app.models[modelName];
-  model.removeModel(data, options, cb);
+  model.removeModel(filter, options, cb);
 };
