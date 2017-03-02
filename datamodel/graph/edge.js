@@ -13,6 +13,12 @@ class Edge {
     fromNode._outboundLinks[toNode._name] = this;
     toNode._inboundLinks[fromNode._name] = this;
   }
+  getOriginatingNode() {
+    return this._from;
+  }
+  getEndingNode() {
+    return this._to;
+  }
 };
 
 module.exports = Edge;
