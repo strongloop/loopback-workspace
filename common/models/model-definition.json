@@ -42,6 +42,11 @@
       "type": "hasMany",
       "model": "ModelMethod",
       "foreignKey": "modelId"
+    },
+    "relations": {
+      "type": "hasMany",
+      "model": "ModelRelation",
+      "foreignKey": "modelId"
     }
   },
   "http": {"path": "/Workspace/:workspaceId/ModelDefinition"}

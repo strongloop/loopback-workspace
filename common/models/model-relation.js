@@ -29,19 +29,15 @@ module.exports = function(ModelRelation) {
         options = {};
       }
       const relationDef = clone(data);
-      const fromModelName = relationDef.modelId;
-      const toModelName = relationDef.model;
-      const facet = relationDef.facetName;
-      const modelId = facet + '.' + fromModelName;
-      const toModelId = facet + '.' + toModelName;
+      const modelId = data.modelId;
+      const toModelId = data.model;
+      const relationName = data.name;
       delete relationDef.modelId;
       delete relationDef.facetName;
-      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const relationName = relationDef.id;
       delete relationDef.id;
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       RelationsHandler.createRelation(
         workspace, relationName, modelId, toModelId, relationDef, cb);
     };
   });
 };
-
