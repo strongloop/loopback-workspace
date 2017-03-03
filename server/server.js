@@ -9,6 +9,7 @@ const templateRegistry = require('../lib/template-registry');
 
 const app = loopback();
 module.exports = app;
+module.exports.WorkspaceManager = require('../lib/workspace-manager');
 
 templateRegistry.loadTemplates(function(err, status) {
   if (err) throw err;

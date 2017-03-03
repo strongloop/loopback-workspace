@@ -5,9 +5,11 @@ const config = require('./config.json');
 const debug = require('debug')('test:util');
 const exec = require('child_process').exec;
 const fs = require('fs-extra');
+const rimraf = require('rimraf');
 const path = require('path');
 const sandboxDir = path.resolve(__dirname, '../sandbox/');
 const Workspace = app.models.Workspace;
+const WorkspaceManager = app.WorkspaceManager;
 
 exports.configureMySQLDataSource = configureMySQLDataSource;
 exports.givenEmptySandbox = givenEmptySandbox;
@@ -15,6 +17,7 @@ exports.givenSandboxDir = givenSandboxDir;
 exports.initializePackage = initializePackage;
 exports.installSandboxPackages = installSandboxPackages;
 exports.givenBasicWorkspace = givenBasicWorkspace;
+exports.clearWorkspaces = clearWorkspaces;
 
 function createSandboxDir(dir, cb) {
   fs.mkdirp(dir, function(err) {
@@ -29,15 +32,19 @@ function givenBasicWorkspace(templateName, next) {
   givenEmptySandbox(destinationPath, function(err) {
     if (err) return next(err);
     const data = {
-      templateName: 'empty-server',
+      templateName: templateName,
       destinationPath: destinationPath,
     };
     Workspace.create(data, {}, next);
   });
 }
 
+function clearWorkspaces() {
+  WorkspaceManager.clearAllWorkspaces();
+}
+
 function givenEmptySandbox(sandboxDir, cb) {
-  fs.remove(sandboxDir, function(err) {
+  rimraf(sandboxDir, function(err) {
     if (err) return cb(err);
     createSandboxDir(sandboxDir, cb);
   });
