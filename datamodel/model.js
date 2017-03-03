@@ -131,12 +131,15 @@ class Model extends Entity {
   }
   getName() {
     const modelDef = this._content;
-    return modelDef.name;
+    const name = modelDef.name;
+    const parts = name.split('.');
+    return parts[parts.length - 1];
   }
   addRelation(relationName, toModelId, data) {
     const workspace = this._graph;
     const id = this._name + '.' + relationName;
     const toModel = workspace.getModel(toModelId);
+    data.model = toModel.getName();
     const relation = new ModelRelation(workspace, id, data, this, toModel);
     this.setRelation(relation);
     return relation;

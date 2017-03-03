@@ -33,9 +33,9 @@ module.exports = function() {
         id: testsuite.relationName,
         type: relationType,
         foreignKey: foreignKey,
-        modelId: testsuite.fromModelName,
-        model: testsuite.toModelName,
-        facetName: 'common.models',
+        name: testsuite.relationName,
+        modelId: 'common.models.' + testsuite.fromModelName,
+        model: 'common.models.' + testsuite.toModelName,
       };
       const options = {workspaceId: testsuite.workspaceId};
       testsuite.expectedRelation = relationDef;
@@ -47,19 +47,17 @@ module.exports = function() {
 
   this.Then(/^the model relation is created$/, function(next) {
     const relationDef = testsuite.expectedRelation;
-    const facetName = relationDef.facetName;
-    const fromModelName = relationDef.modelId;
+    const fromModel = relationDef.modelId;
     delete relationDef.id;
-    delete relationDef.facetName;
     delete relationDef.modelId;
-    const model =
-      testsuite.workspace.getModel(facetName + '.' + fromModelName);
+    const model = testsuite.workspace.getModel(fromModel);
     const file = model.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
       const relation = data &&
         data.relations &&
         data.relations[testsuite.relationName];
+      testsuite.expectedRelation.model = testsuite.toModelName;
       expect(relation).to.not.to.be.undefined();
       expect(testsuite.expectedRelation).to.eql(relation);
       next();
