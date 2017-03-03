@@ -25,7 +25,4 @@ stages:
       application: ${CF_APP}
     script: |-
       #!/bin/bash
-      cf create-service cloudantNoSQLDB Lite Cloudant
-      cf push "${CF_APP}"
-      # View logs
-      # cf logs "${CF_APP}" --recent
+      # If you need to run any commands, add them here
