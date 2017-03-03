@@ -37,7 +37,24 @@
     "config": {
       "restApiRoot": "/api" ,
       "host": "0.0.0.0",
-      "port": 3000
+      "port": 3000,
+      "remoting": {
+        "context": false,
+        "rest": {
+          "handleErrors": false,
+          "normalizeHttpPath": false,
+          "xml": false
+        },
+        "json": {
+          "strict": false,
+          "limit": "100kb"
+        },
+        "urlencoded": {
+          "extended": true,
+          "limit": "100kb"
+        },
+        "cors": false
+      }
     },
     "modelConfigs": [
       {
@@ -90,8 +107,40 @@
           "credentials": true,
           "maxAge": 86400
         }
+      },
+      {
+        "phase": "initial",
+        "function": "helmet#xssFilter"
+      },
+      {
+        "phase": "initial",
+        "function": "helmet#frameguard",
+        "params": [
+          "deny"
+        ]
+      },
+      {
+        "phase": "initial",
+        "function": "helmet#hsts",
+        "params": {
+          "maxAge": 0,
+          "includeSubdomains": true
+        }
+      },
+      {
+        "phase": "initial",
+        "function": "helmet#hidePoweredBy"
+      },
+      {
+        "phase": "initial",
+        "function": "helmet#noSniff"
+      },
+      {
+        "phase": "initial",
+        "function": "helmet#noCache",
+        "enabled": false
       }
-    ] 
+    ]
   },
   "files": {
     "path": "/empty-server"
