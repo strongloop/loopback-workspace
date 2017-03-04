@@ -32,7 +32,8 @@
     "loopback-boot": "^2.23.0",
     "loopback-component-explorer": "^3.0.0",
     "mkdirp": "^0.5.1",
-    "ncp": "^2.0.0"
+    "ncp": "^2.0.0",
+    "rimraf": "^2.6.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
