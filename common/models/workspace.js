@@ -496,6 +496,8 @@ module.exports = function(Workspace) {
      * @param {object} options Bluemix options
      */
     Workspace.generateBluemixFiles = function(options) {
+      console.log(this.options)
+      console.log(options)
       if (options.bluemix) {
         var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
                                   'templates', 'bluemix');
@@ -515,19 +517,15 @@ module.exports = function(Workspace) {
         var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
         var readmeDest = path.resolve(options.destDir, 'README.md');
         Workspace.copyRecursive(readmeSrc, readmeDest);
-        // Create Dockerfile-run
-        var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile-run');
-        var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile-run');
+        // Create Dockerfile
+        var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
+        var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile');
         Workspace.copyRecursive(dockerfileRunSrc, dockerfileRunDest);
-        // Create Dockerfile-tools
-        var dockerfileToolsSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile-tools');
-        var dockerfileToolsDest = path.resolve(options.destDir, 'Dockerfile-tools');
-        Workspace.copyRecursive(dockerfileToolsSrc, dockerfileToolsDest);
         // Create manifest.yml
         var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
         var manifestDest = path.resolve(options.destDir, 'manifest.yml');
         Workspace.copyRecursive(manifestSrc, manifestDest);
-        // Create manifest.yml
+        // Create datasources.bluemix.js
         var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
                                     'datasources.bluemix.js');
         var datasourceBluemixDest = path.resolve(options.destDir, 'server',
@@ -572,7 +570,7 @@ module.exports = function(Workspace) {
                             inclusionString);
         fs.writeFileSync(serverFilePath, serverFileContent);
         var packageFile = path.join(options.destDir, 'package.json');
-        jsonfileUpdater(packageFile).update('dependencies', newDependencies,
+        jsonfileUpdater(packageFile).append('dependencies', newDependencies,
         function(err) {
           if (err) console.log(err);
         });
