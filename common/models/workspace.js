@@ -495,42 +495,42 @@ module.exports = function(Workspace) {
      * Create the Bluemix files and directory.
      * @param {object} options Bluemix options
      */
-    Workspace.generateBluemixFiles = function(options) {
-      console.log(this.options)
-      console.log(options)
+    Workspace.generateBluemixFiles = function(options, copyFileFunction, copyDirFunction) {
       if (options.bluemix) {
+        var copyFile = copyFileFunction || Workspace.copyRecursive;
+        var copyDir = copyDirFunction || Workspace.copyRecursive;
         var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
                                   'templates', 'bluemix');
         // Create .bluemix dir
         var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
         var bluemixDirDest = path.resolve(options.destDir, '.bluemix');
-        Workspace.copyRecursive(bluemixDirSrc, bluemixDirDest);
+        copyDir(bluemixDirSrc, bluemixDirDest);
         // Create .cfignore
         var cfignoreSrc = path.resolve(bluemixTemplatesDir, 'cfignore');
         var cfignoreDest = path.resolve(options.destDir, '.cfignore');
-        Workspace.copyRecursive(cfignoreSrc, cfignoreDest);
+        copyFile(cfignoreSrc, cfignoreDest);
         // Create .dockerignore
         var dockerignoreSrc = path.resolve(bluemixTemplatesDir, 'dockerignore');
         var dockerignoreDest = path.resolve(options.destDir, '.dockerignore');
-        Workspace.copyRecursive(dockerignoreSrc, dockerignoreDest);
+        copyFile(dockerignoreSrc, dockerignoreDest);
         // Create README.md
         var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
         var readmeDest = path.resolve(options.destDir, 'README.md');
-        Workspace.copyRecursive(readmeSrc, readmeDest);
+        copyFile(readmeSrc, readmeDest);
         // Create Dockerfile
         var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
         var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile');
-        Workspace.copyRecursive(dockerfileRunSrc, dockerfileRunDest);
+        copyFile(dockerfileRunSrc, dockerfileRunDest);
         // Create manifest.yml
         var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
         var manifestDest = path.resolve(options.destDir, 'manifest.yml');
-        Workspace.copyRecursive(manifestSrc, manifestDest);
+        copyFile(manifestSrc, manifestDest);
         // Create datasources.bluemix.js
         var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
                                     'datasources.bluemix.js');
         var datasourceBluemixDest = path.resolve(options.destDir, 'server',
                                     'datasources.bluemix.js');
-        Workspace.copyRecursive(datasourceBluemixSrc, datasourceBluemixDest);
+        copyFile(datasourceBluemixSrc, datasourceBluemixDest);
       }
     };
 
