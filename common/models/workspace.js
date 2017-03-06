@@ -578,6 +578,18 @@ module.exports = function(Workspace) {
     };
 
     /**
+     * Remove default services template from server.js file
+     * @param {string} destDir Project path
+     */
+    Workspace.removeDefaultServices = function(destDir) {
+      var serverFilePath = path.join(destDir, 'server', 'server.js');
+      var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
+      serverFileContent = serverFileContent.replace('\n#INCLUSION-CODE#', '');
+      serverFileContent = serverFileContent.replace('\n#APPMETRICS-CODE#', '');
+      fs.writeFileSync(serverFilePath, serverFileContent);
+    };
+
+    /**
      * Start the project (app) in the workspace.
      * @param {function(Error=,Object=)} cb callback
      */
