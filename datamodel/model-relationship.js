@@ -12,7 +12,11 @@ class ModelRelation extends Entity {
     super(Workspace, 'ModelRelation', id, data);
     // ModelRelation adds itself to the workspace
     Workspace.addNode(this);
-    new Edge(fromModel, toModel, options);
+    this.edge = new Edge(fromModel, toModel, options);
+  }
+  remove() {
+    this.edge.remove();
+    this._graph.deleteNode('ModelRelation', this._name);
   }
 };
 
