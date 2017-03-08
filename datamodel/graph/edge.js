@@ -19,6 +19,10 @@ class Edge {
   getEndingNode() {
     return this._to;
   }
+  remove() {
+    delete this._from._outboundLinks[this._to._name];
+    delete this._to._inboundLinks[this._from._name];
+  }
 };
 
 module.exports = Edge;
