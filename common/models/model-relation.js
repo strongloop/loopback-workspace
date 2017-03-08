@@ -39,5 +39,25 @@ module.exports = function(ModelRelation) {
       RelationsHandler.createRelation(
         workspace, relationName, modelId, toModelId, relationDef, cb);
     };
+    ModelRelation.removeModel = function(query, options, cb) {
+      if (typeof options === 'function') {
+        cb = options;
+        options = {};
+      }
+      let filter = query;
+      if (query.and && query.and.length) {
+        filter = {};
+        query.and.forEach(function(valueObj) {
+          Object.keys(valueObj).forEach(function(key) {
+            filter[key] = valueObj[key];
+          });
+        });
+      }
+      const modelId = filter.where.modelId;
+      const relationName = filter.where.id;
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      RelationsHandler.deleteRelation(
+        workspace, modelId, relationName, cb);
+    };
   });
 };
