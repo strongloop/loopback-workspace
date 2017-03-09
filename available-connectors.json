@@ -202,7 +202,7 @@
   },
   {
     "name": "kv-extreme-scale",
-    "description": "WebSphere Extreme Scale key-value connector",
+    "description": "IBM WebSphere eXtreme Scale key-value connector",
     "baseModel": "KeyValueModel",
     "features": {
       "discovery": false,
