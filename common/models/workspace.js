@@ -495,42 +495,56 @@ module.exports = function(Workspace) {
      * Create the Bluemix files and directory.
      * @param {object} options Bluemix options
      */
-    Workspace.generateBluemixFiles = function(options, copyFileFunction, copyDirFunction) {
-      if (options.bluemix) {
-        var copyFile = copyFileFunction || Workspace.copyRecursive;
-        var copyDir = copyDirFunction || Workspace.copyRecursive;
-        var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
-                                  'templates', 'bluemix');
-        // Create .bluemix dir
-        var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
-        var bluemixDirDest = path.resolve(options.destDir, '.bluemix');
-        copyDir(bluemixDirSrc, bluemixDirDest);
+    Workspace.generateBluemixFiles = function(options, copyFileFunction,
+                                                       copyDirFunction) {
+      var bluemixCommand = options.bluemixCommand;
+      var destDir = options.destDir;
+
+      var copyFile = copyFileFunction || Workspace.copyRecursive;
+      var copyDir = copyDirFunction || Workspace.copyRecursive;
+      var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
+                                'templates', 'bluemix');
+
+      if (this.bluemixCommand == 'bluemix') {
         // Create .cfignore
         var cfignoreSrc = path.resolve(bluemixTemplatesDir, 'cfignore');
         var cfignoreDest = path.resolve(options.destDir, '.cfignore');
         copyFile(cfignoreSrc, cfignoreDest);
-        // Create .dockerignore
-        var dockerignoreSrc = path.resolve(bluemixTemplatesDir, 'dockerignore');
-        var dockerignoreDest = path.resolve(options.destDir, '.dockerignore');
-        copyFile(dockerignoreSrc, dockerignoreDest);
         // Create README.md
         var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
         var readmeDest = path.resolve(options.destDir, 'README.md');
         copyFile(readmeSrc, readmeDest);
-        // Create Dockerfile
-        var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
-        var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile');
-        copyFile(dockerfileRunSrc, dockerfileRunDest);
-        // Create manifest.yml
-        var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
-        var manifestDest = path.resolve(options.destDir, 'manifest.yml');
-        copyFile(manifestSrc, manifestDest);
         // Create datasources.bluemix.js
         var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
                                     'datasources.bluemix.js');
         var datasourceBluemixDest = path.resolve(options.destDir, 'server',
                                     'datasources.bluemix.js');
         copyFile(datasourceBluemixSrc, datasourceBluemixDest);
+      }
+
+      if (options.toolchain || (options.enableToolchain && bluemixCommand == 'bluemix')) {
+        // Create .bluemix dir
+        var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
+        var bluemixDirDest = path.resolve(options.destDir, '.bluemix');
+        copyDir(bluemixDirSrc, bluemixDirDest);
+      }
+
+      if (options.docker || (options.enableDocker && bluemixCommand == 'bluemix')) {
+        // Create .dockerignore
+        var dockerignoreSrc = path.resolve(bluemixTemplatesDir, 'dockerignore');
+        var dockerignoreDest = path.resolve(options.destDir, '.dockerignore');
+        copyFile(dockerignoreSrc, dockerignoreDest);
+        // Create Dockerfile
+        var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
+        var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile');
+        copyFile(dockerfileRunSrc, dockerfileRunDest);
+      }
+
+      if (options.manifest || bluemixCommand == 'bluemix') {
+        // Create manifest.yml
+        var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
+        var manifestDest = path.resolve(options.destDir, 'manifest.yml');
+        copyFile(manifestSrc, manifestDest);
       }
     };
 
@@ -539,42 +553,40 @@ module.exports = function(Workspace) {
      * @param {object} options Bluemix options
      */
     Workspace.addDefaultServices = function(options) {
-      if (options.bluemix) {
-        var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
-                                  'templates', 'bluemix');
-        var serverFilePath = path.join(options.destDir, 'server', 'server.js');
-        var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
-        var inclusionString = '';
-        var newDependencies = {};
-        if (options.enableAutoScaling === 'yes') {
-          newDependencies['bluemix-autoscaling-agent'] = '^1.0.7';
-          var autoScalingModuleTemplate = fs.readFileSync(path.resolve(
-            bluemixTemplatesDir, 'services', 'autoscaling-module.tpl'));
-          inclusionString += autoScalingModuleTemplate;
-        }
-        if (options.enableAppMetrics === 'yes') {
-          newDependencies['appmetrics-dash'] = '^1.0.0';
-          fileContent = fs.readFileSync(serverFilePath, 'utf8');
-          var appmetricsModuleTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
-                                    'services', 'appmetrics-module.tpl'));
-          var appmetricsStartTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
-                                    'services', 'appmetrics-start.tpl'));
-          inclusionString += appmetricsModuleTemplate;
-          serverFileContent = serverFileContent.replace('#APPMETRICS-CODE#',
-                              appmetricsStartTemplate);
-        } else {
-          serverFileContent = serverFileContent.replace('\n#APPMETRICS-CODE#', '');
-        }
-
-        serverFileContent = serverFileContent.replace('\n#INCLUSION-CODE#',
-                            inclusionString);
-        fs.writeFileSync(serverFilePath, serverFileContent);
-        var packageFile = path.join(options.destDir, 'package.json');
-        jsonfileUpdater(packageFile).append('dependencies', newDependencies,
-        function(err) {
-          if (err) console.log(err);
-        });
+      var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
+                                'templates', 'bluemix');
+      var serverFilePath = path.join(options.destDir, 'server', 'server.js');
+      var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
+      var inclusionString = '';
+      var newDependencies = {};
+      if (options.enableAutoScaling === 'yes') {
+        newDependencies['bluemix-autoscaling-agent'] = '^1.0.7';
+        var autoScalingModuleTemplate = fs.readFileSync(path.resolve(
+          bluemixTemplatesDir, 'services', 'autoscaling-module.tpl'));
+        inclusionString += autoScalingModuleTemplate;
       }
+      if (options.enableAppMetrics === 'yes') {
+        newDependencies['appmetrics-dash'] = '^1.0.0';
+        fileContent = fs.readFileSync(serverFilePath, 'utf8');
+        var appmetricsModuleTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
+                                  'services', 'appmetrics-module.tpl'));
+        var appmetricsStartTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
+                                  'services', 'appmetrics-start.tpl'));
+        inclusionString += appmetricsModuleTemplate;
+        serverFileContent = serverFileContent.replace('#APPMETRICS-CODE#',
+                            appmetricsStartTemplate);
+      } else {
+        serverFileContent = serverFileContent.replace('\n#APPMETRICS-CODE#', '');
+      }
+
+      serverFileContent = serverFileContent.replace('\n#INCLUSION-CODE#',
+                          inclusionString);
+      fs.writeFileSync(serverFilePath, serverFileContent);
+      var packageFile = path.join(options.destDir, 'package.json');
+      jsonfileUpdater(packageFile).append('dependencies', newDependencies,
+      function(err) {
+        if (err) console.log(err);
+      });
     };
 
     /**
