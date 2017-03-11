@@ -23,6 +23,7 @@ module.exports = function(Workspace) {
     var async = require('async');
     var spawn = require('child_process').spawn;
     var waitTillListening = require('strong-wait-till-listening');
+    var insertLine = require('insert-line');
 
     var PackageDefinition = app.models.PackageDefinition;
     var ConfigFile = app.models.ConfigFile;
@@ -573,32 +574,14 @@ module.exports = function(Workspace) {
         var appmetricsStartTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
                                   'services', 'appmetrics-start.tpl'));
         inclusionString += appmetricsModuleTemplate;
-        serverFileContent = serverFileContent.replace('#APPMETRICS-CODE#',
-                            appmetricsStartTemplate);
-      } else {
-        serverFileContent = serverFileContent.replace('\n#APPMETRICS-CODE#', '');
+        insertLine(serverFilePath).contentSync(appmetricsStartTemplate, { padding: 4 })
+        .at(28);
       }
-
-      serverFileContent = serverFileContent.replace('\n#INCLUSION-CODE#',
-                          inclusionString);
-      fs.writeFileSync(serverFilePath, serverFileContent);
+      insertLine(serverFilePath).contentSync(inclusionString).at(3);
       var packageFile = path.join(options.destDir, 'package.json');
-      jsonfileUpdater(packageFile).append('dependencies', newDependencies,
-      function(err) {
+      jsonfileUpdater(packageFile).append('dependencies', newDependencies, function(err) {
         if (err) console.log(err);
       });
-    };
-
-    /**
-     * Remove default services template from server.js file
-     * @param {string} destDir Project path
-     */
-    Workspace.removeDefaultServices = function(destDir) {
-      var serverFilePath = path.join(destDir, 'server', 'server.js');
-      var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
-      serverFileContent = serverFileContent.replace('\n#INCLUSION-CODE#', '');
-      serverFileContent = serverFileContent.replace('\n#APPMETRICS-CODE#', '');
-      fs.writeFileSync(serverFilePath, serverFileContent);
     };
 
     /**

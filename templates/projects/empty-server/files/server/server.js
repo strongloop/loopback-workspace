@@ -1,9 +1,7 @@
 'use strict';
 
-#INCLUSION-CODE#
 var loopback = require('loopback');
 var boot = require('loopback-boot');
-
 var app = module.exports = loopback();
 
 app.start = function() {
@@ -27,6 +25,5 @@ boot(app, __dirname, function(err) {
   // start the server if `$ node server.js`
   if (require.main === module) {
     var server = app.start();
-#APPMETRICS-CODE#
   }
 });
