@@ -505,6 +505,8 @@ module.exports = function(Workspace) {
       var copyDir = copyDirFunction || Workspace.copyRecursive;
       var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
                                 'templates', 'bluemix');
+      var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
+      var bluemixDirDest = path.resolve(bluemixOptions.destDir, '.bluemix');
 
       if (bluemixCommand === 'bluemix') {
         // Create .cfignore
@@ -521,14 +523,23 @@ module.exports = function(Workspace) {
         var datasourceBluemixDest = path.resolve(bluemixOptions.destDir, 'server',
                                     'datasources.bluemix.js');
         copyFile(datasourceBluemixSrc, datasourceBluemixDest);
+        // Copy datasource-config.json
+        var datasourceConfigSrc = path.join(bluemixDirSrc, 'datasources-config.json');
+        var datasourceConfigDest = path.join(bluemixDirDest, 'datasources-config.json');
+        copyFile(datasourceConfigSrc, datasourceConfigDest);
       }
 
       if (bluemixCommand === 'toolchain' || (bluemixOptions.enableToolchain &&
          bluemixCommand === 'bluemix')) {
-        // Create .bluemix dir
-        var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
-        var bluemixDirDest = path.resolve(bluemixOptions.destDir, '.bluemix');
-        copyDir(bluemixDirSrc, bluemixDirDest);
+        // Copy toolchain files
+        var toolChainFiles = fs.readdirSync(bluemixDirSrc);
+        toolChainFiles.forEach(function(fileName) {
+          if (fileName !== 'datasource-config.json') {
+            var toolChainFileSrc = path.join(bluemixDirSrc, fileName);
+            var toolChainFileDest = path.join(bluemixDirDest, fileName);
+            copyFile(toolChainFileSrc, toolChainFileDest);
+          }
+        });
       }
 
       if (bluemixCommand === 'docker' || (bluemixOptions.enableDocker &&
