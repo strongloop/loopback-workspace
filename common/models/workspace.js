@@ -494,57 +494,59 @@ module.exports = function(Workspace) {
 
     /**
      * Create the Bluemix files and directory.
-     * @param {object} options Bluemix options
+     * @param {object} bluemixOptions Bluemix options
      */
-    Workspace.generateBluemixFiles = function(options, copyFileFunction,
+    Workspace.generateBluemixFiles = function(bluemixOptions, copyFileFunction,
                                                        copyDirFunction) {
-      var bluemixCommand = options.bluemixCommand;
-      var destDir = options.destDir;
+      var bluemixCommand = bluemixOptions.bluemixCommand;
+      var destDir = bluemixOptions.destDir;
 
       var copyFile = copyFileFunction || Workspace.copyRecursive;
       var copyDir = copyDirFunction || Workspace.copyRecursive;
       var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
                                 'templates', 'bluemix');
 
-      if (this.bluemixCommand == 'bluemix') {
+      if (bluemixCommand === 'bluemix') {
         // Create .cfignore
         var cfignoreSrc = path.resolve(bluemixTemplatesDir, 'cfignore');
-        var cfignoreDest = path.resolve(options.destDir, '.cfignore');
+        var cfignoreDest = path.resolve(bluemixOptions.destDir, '.cfignore');
         copyFile(cfignoreSrc, cfignoreDest);
         // Create README.md
         var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
-        var readmeDest = path.resolve(options.destDir, 'README.md');
+        var readmeDest = path.resolve(bluemixOptions.destDir, 'README.md');
         copyFile(readmeSrc, readmeDest);
         // Create datasources.bluemix.js
         var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
                                     'datasources.bluemix.js');
-        var datasourceBluemixDest = path.resolve(options.destDir, 'server',
+        var datasourceBluemixDest = path.resolve(bluemixOptions.destDir, 'server',
                                     'datasources.bluemix.js');
         copyFile(datasourceBluemixSrc, datasourceBluemixDest);
       }
 
-      if (options.toolchain || (options.enableToolchain && bluemixCommand == 'bluemix')) {
+      if (bluemixCommand === 'toolchain' || (bluemixOptions.enableToolchain &&
+         bluemixCommand === 'bluemix')) {
         // Create .bluemix dir
         var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
-        var bluemixDirDest = path.resolve(options.destDir, '.bluemix');
+        var bluemixDirDest = path.resolve(bluemixOptions.destDir, '.bluemix');
         copyDir(bluemixDirSrc, bluemixDirDest);
       }
 
-      if (options.docker || (options.enableDocker && bluemixCommand == 'bluemix')) {
+      if (bluemixCommand === 'docker' || (bluemixOptions.enableDocker &&
+         bluemixCommand === 'bluemix')) {
         // Create .dockerignore
         var dockerignoreSrc = path.resolve(bluemixTemplatesDir, 'dockerignore');
-        var dockerignoreDest = path.resolve(options.destDir, '.dockerignore');
+        var dockerignoreDest = path.resolve(bluemixOptions.destDir, '.dockerignore');
         copyFile(dockerignoreSrc, dockerignoreDest);
         // Create Dockerfile
         var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
-        var dockerfileRunDest = path.resolve(options.destDir, 'Dockerfile');
+        var dockerfileRunDest = path.resolve(bluemixOptions.destDir, 'Dockerfile');
         copyFile(dockerfileRunSrc, dockerfileRunDest);
       }
 
-      if (options.manifest || bluemixCommand == 'bluemix') {
+      if (bluemixCommand === 'manifest' || bluemixCommand === 'bluemix') {
         // Create manifest.yml
         var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
-        var manifestDest = path.resolve(options.destDir, 'manifest.yml');
+        var manifestDest = path.resolve(bluemixOptions.destDir, 'manifest.yml');
         copyFile(manifestSrc, manifestDest);
       }
     };
