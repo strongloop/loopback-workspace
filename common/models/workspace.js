@@ -499,6 +499,7 @@ module.exports = function(Workspace) {
     Workspace.generateBluemixFiles = function(bluemixOptions, copyFileFunction,
                                                        copyDirFunction) {
       var bluemixCommand = bluemixOptions.bluemixCommand;
+      var cmdOptions = bluemixOptions.cmdOptions;
       var destDir = bluemixOptions.destDir;
 
       var copyFile = copyFileFunction || Workspace.copyRecursive;
@@ -529,7 +530,7 @@ module.exports = function(Workspace) {
         copyFile(datasourceConfigSrc, datasourceConfigDest);
       }
 
-      if (bluemixCommand === 'toolchain' || (bluemixOptions.enableToolchain &&
+      if (cmdOptions.toolchain || (bluemixOptions.enableToolchain &&
          bluemixCommand === 'bluemix')) {
         // Copy toolchain files
         var toolChainFiles = fs.readdirSync(bluemixDirSrc);
@@ -542,7 +543,7 @@ module.exports = function(Workspace) {
         });
       }
 
-      if (bluemixCommand === 'docker' || (bluemixOptions.enableDocker &&
+      if (cmdOptions.docker || (bluemixOptions.enableDocker &&
          bluemixCommand === 'bluemix')) {
         // Create .dockerignore
         var dockerignoreSrc = path.resolve(bluemixTemplatesDir, 'dockerignore');
@@ -554,7 +555,7 @@ module.exports = function(Workspace) {
         copyFile(dockerfileRunSrc, dockerfileRunDest);
       }
 
-      if (bluemixCommand === 'manifest' || bluemixCommand === 'bluemix') {
+      if (cmdOptions.manifest || bluemixCommand === 'bluemix') {
         // Create manifest.yml
         var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
         var manifestDest = path.resolve(bluemixOptions.destDir, 'manifest.yml');
