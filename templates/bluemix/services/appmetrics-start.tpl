@@ -1,4 +1,4 @@
-    var config = {
-      server: server
-    };
-    appmetrics.start(config);
+  var config = {
+    server: server
+  };
+  appmetrics.start(config);
