@@ -574,8 +574,7 @@ module.exports = function(Workspace) {
         var appmetricsStartTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
                                   'services', 'appmetrics-start.tpl'));
         inclusionString += appmetricsModuleTemplate;
-        insertLine(serverFilePath).contentSync(appmetricsStartTemplate, { padding: 4 })
-        .at(28);
+        insertLine(serverFilePath).contentSync(appmetricsStartTemplate).at(28);
       }
       insertLine(serverFilePath).contentSync(inclusionString).at(3);
       var packageFile = path.join(options.destDir, 'package.json');
