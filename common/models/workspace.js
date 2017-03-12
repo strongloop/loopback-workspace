@@ -534,7 +534,7 @@ module.exports = function(Workspace) {
         // Copy toolchain files
         var toolChainFiles = fs.readdirSync(bluemixDirSrc);
         toolChainFiles.forEach(function(fileName) {
-          if (fileName !== 'datasource-config.json') {
+          if (fileName !== 'datasources-config.json') {
             var toolChainFileSrc = path.join(bluemixDirSrc, fileName);
             var toolChainFileDest = path.join(bluemixDirDest, fileName);
             copyFile(toolChainFileSrc, toolChainFileDest);
