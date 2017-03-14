@@ -514,10 +514,11 @@ module.exports = function(Workspace) {
         var cfignoreSrc = path.resolve(bluemixTemplatesDir, 'cfignore');
         var cfignoreDest = path.resolve(bluemixOptions.destDir, '.cfignore');
         copyFile(cfignoreSrc, cfignoreDest);
-        // Create README.md
-        var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
+        // Update README.md
+        var toolChainButton = '[![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/)';
         var readmeDest = path.resolve(bluemixOptions.destDir, 'README.md');
-        copyFile(readmeSrc, readmeDest);
+
+        insertLine(readmeDest).contentSync(toolChainButton).at(2);
         // Create datasources.bluemix.js
         var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
                                     'datasources.bluemix.js');
