@@ -516,9 +516,14 @@ module.exports = function(Workspace) {
         copyFile(cfignoreSrc, cfignoreDest);
         // Update README.md
         var toolChainButton = '[![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/)';
+        var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
         var readmeDest = path.resolve(bluemixOptions.destDir, 'README.md');
+        if (fs.existsSync(readmeDest)) {
+          insertLine(readmeDest).contentSync(toolChainButton).at(2);
+        } else {
+          copyFile(readmeSrc, readmeDest);
+        }
 
-        insertLine(readmeDest).contentSync(toolChainButton).at(2);
         // Create datasources.bluemix.js
         var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
                                     'datasources.bluemix.js');
