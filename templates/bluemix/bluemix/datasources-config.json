@@ -5,6 +5,7 @@
       "connector": "memory"
     }
   },
+  "provisionedServices": {},
   "supportedServices": {
     "cloudant": "cloudantNoSQLDB",
     "mongodb": "compose-for-mongodb"
