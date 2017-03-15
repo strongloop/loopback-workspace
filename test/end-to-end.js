@@ -29,6 +29,8 @@ var MYSQL_DATABASE = 'loopback_workspace_test';
 var MYSQL_USER = 'lbws';
 var MYSQL_PASSWORD = 'hbx42rec';
 
+var IS_LEGACY_NODE = /^v0\./.test(process.version);
+
 it.skipIf = function(condition, desc, fn) {
   if (condition) {
     it.skip(desc, fn);
@@ -134,8 +136,7 @@ describe('end-to-end', function() {
       }
     });
 
-    var isLegacyNode = /^0\./.test(process.version);
-    it.skipIf(isLegacyNode, 'passes scaffolded tests', function(done) {
+    it.skipIf(IS_LEGACY_NODE, 'passes scaffolded tests', function(done) {
       execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
         done(err);
       });
@@ -405,7 +406,7 @@ describe('end-to-end', function() {
       }
     });
 
-    it('passes scaffolded tests', function(done) {
+    it.skipIf(IS_LEGACY_NODE, 'passes scaffolded tests', function(done) {
       execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
         done(err);
       });
