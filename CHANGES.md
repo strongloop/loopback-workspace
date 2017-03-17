@@ -1,3 +1,23 @@
+2017-03-17, Version 3.39.0
+==========================
+
+ * add remote registration for createFromTemplate (Anthony Ettinger)
+
+ * revert test for loopbackVersion (Anthony Ettinger)
+
+ * revert unused POST api (Anthony Ettinger)
+
+ * add refactored createFromTemplate function (Anthony Ettinger)
+
+ * Revert "add refactored createFromTemplate function" (Anthony Ettinger)
+
+ * Remote method to get versions (deepakrkris)
+
+ * createFromTemplate version query param (deepakrkris)
+
+ * Fix CI Errors in windows (deepakrkris)
+
+
 2017-02-22, Version 3.38.0
 ==========================
 
