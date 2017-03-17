@@ -734,5 +734,32 @@
       "version": "^1.0.7"
     },
     "supportedByStrongLoop": false
+  },
+  {
+    "name": "zosconnectee",
+    "description": "z/OS Connect Enterprise Edition",
+    "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "baseURL": {
+        "type": "string",
+        "description": "Base URL of the z/OS Connect Enterprise Edition server"
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-zosconnectee",
+      "version": "^1.0"
+    },
+    "supportedByStrongLoop": true
   }
 ]
