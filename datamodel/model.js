@@ -144,6 +144,15 @@ class Model extends Entity {
     this.setRelation(relation);
     return relation;
   }
+  removeRelation(relationName) {
+    const model = this;
+    const id = this._name + '.' + relationName;
+    const relation = model.getContainedNode('ModelRelation', id);
+    model.removeContainsRelation(relation);
+    if (relation) {
+      relation.remove();
+    }
+  }
   remove() {
     const name = this._name;
     return this._graph.deleteNode(this._domain, name);

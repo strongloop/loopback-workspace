@@ -13,22 +13,22 @@ const ModelDefinition = app.models.ModelDefinition;
 const WorkspaceManager = require('../../lib/workspace-manager');
 
 describe('ModelRelation', function() {
-  let user, manager;
+  let userModel, managerModel;
   before(createWorkspace);
   before(createUser);
   before(createManager);
 
   describe('model.create()', function() {
     it('creates relation via the scope on ModelDefinition', function(done) {
-      user.relations.create({
+      userModel.relations.create({
         name: 'boss',
         type: 'belongsTo',
-        model: manager.id,
+        model: managerModel.id,
         foreignKey: 'reportsTo',
       }, function(err) {
         if (err) return done(err);
         const workspace = WorkspaceManager.getWorkspace();
-        const model = workspace.getModel(user.id);
+        const model = workspace.getModel(userModel.id);
         const file = model.getFilePath();
         fs.readJson(file, function(err, data) {
           if (err) return done(err);
@@ -41,6 +41,24 @@ describe('ModelRelation', function() {
             model: 'manager',
             foreignKey: 'reportsTo',
           });
+          done();
+        });
+      });
+    });
+    it('removes relation via the scope on ModelDefinition', function(done) {
+      const filter = {where: {id: 'boss'}};
+      filter.where.modelId = userModel.id;
+      userModel.relations.destroyAll(filter, function(err) {
+        if (err) return done(err);
+        const workspace = WorkspaceManager.getWorkspace();
+        const model = workspace.getModel(userModel.id);
+        const file = model.getFilePath();
+        fs.readJson(file, function(err, data) {
+          if (err) return done(err);
+          const relation = data &&
+            data.relations &&
+            data.relations['boss'];
+          expect(relation).to.be.undefined();
           done();
         });
       });
@@ -60,7 +78,7 @@ describe('ModelRelation', function() {
       },
       function(err, modelDef) {
         if (err) return done(err);
-        user = modelDef;
+        userModel = modelDef;
         done();
       });
   }
@@ -74,7 +92,7 @@ describe('ModelRelation', function() {
       },
       function(err, modelDef) {
         if (err) return done(err);
-        manager = modelDef;
+        managerModel = modelDef;
         done();
       });
   }

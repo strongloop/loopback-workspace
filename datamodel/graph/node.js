@@ -27,6 +27,11 @@ class Node {
     }
     this._contains[node._domain][node._name] = new Pointer(node);
   }
+  removeContainsRelation(node) {
+    if (this._contains[node._domain]) {
+      delete this._contains[node._domain][node._name];
+    }
+  }
   getContainedNode(domain, name) {
     const pointer = this._contains[domain][name];
     return pointer.getNode();
