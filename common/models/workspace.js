@@ -580,15 +580,15 @@ module.exports = function(Workspace) {
       var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
       var inclusionString = '';
       var newDependencies = {};
-      if (options.enableAutoScaling === 'yes') {
+      if (options.enableAutoScaling) {
         newDependencies['bluemix-autoscaling-agent'] = '^1.0.7';
         var autoScalingModuleTemplate = fs.readFileSync(path.resolve(
           bluemixTemplatesDir, 'services', 'autoscaling-module.tpl'));
         inclusionString += autoScalingModuleTemplate;
       }
-      if (options.enableAppMetrics === 'yes') {
+      if (options.enableAppMetrics) {
         newDependencies['appmetrics-dash'] = '^1.0.0';
-        fileContent = fs.readFileSync(serverFilePath, 'utf8');
+        var fileContent = fs.readFileSync(serverFilePath, 'utf8');
         var appmetricsModuleTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
                                   'services', 'appmetrics-module.tpl'));
         var appmetricsStartTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
