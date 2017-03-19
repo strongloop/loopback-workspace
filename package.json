@@ -22,8 +22,6 @@
     "debug": "^2.2.0",
     "fs-extra": "^0.30.0",
     "glob": "^7.0.0",
-    "insert-line": "^1.1.0",
-    "jsonfile-updater": "^2.1.0",
     "lodash": "^4.5.1",
     "loopback": "^2.0.0",
     "loopback-boot": "^2.6.5",

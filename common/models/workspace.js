@@ -23,8 +23,6 @@ module.exports = function(Workspace) {
     var async = require('async');
     var spawn = require('child_process').spawn;
     var waitTillListening = require('strong-wait-till-listening');
-    var insertLine = require('insert-line');
-
     var PackageDefinition = app.models.PackageDefinition;
     var ConfigFile = app.models.ConfigFile;
     var ComponentConfig = app.models.ComponentConfig;
@@ -489,117 +487,6 @@ module.exports = function(Workspace) {
           // TODO(bajtos) Add more sophisticated validation based on facet types
           cb();
         }
-      });
-    };
-
-    /**
-     * Create the Bluemix files and directory.
-     * @param {object} bluemixOptions Bluemix options
-     */
-    Workspace.generateBluemixFiles = function(bluemixOptions, copyFileFunction,
-                                                       copyDirFunction) {
-      var bluemixCommand = bluemixOptions.bluemixCommand;
-      var cmdOptions = bluemixOptions.cmdOptions;
-      var destDir = bluemixOptions.destDir;
-
-      var copyFile = copyFileFunction || Workspace.copyRecursive;
-      var copyDir = copyDirFunction || Workspace.copyRecursive;
-      var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
-                                'templates', 'bluemix');
-      var bluemixDirSrc = path.resolve(bluemixTemplatesDir, 'bluemix');
-      var bluemixDirDest = path.resolve(bluemixOptions.destDir, '.bluemix');
-
-      if (bluemixCommand === 'bluemix') {
-        // Create .cfignore
-        var cfignoreSrc = path.resolve(bluemixTemplatesDir, 'cfignore');
-        var cfignoreDest = path.resolve(bluemixOptions.destDir, '.cfignore');
-        copyFile(cfignoreSrc, cfignoreDest);
-        // Update README.md
-        var toolChainButton = '[![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/)';
-        var readmeSrc = path.resolve(bluemixTemplatesDir, 'README.md');
-        var readmeDest = path.resolve(bluemixOptions.destDir, 'README.md');
-        if (fs.existsSync(readmeDest)) {
-          insertLine(readmeDest).contentSync(toolChainButton).at(2);
-        } else {
-          copyFile(readmeSrc, readmeDest);
-        }
-
-        // Create datasources.bluemix.js
-        var datasourceBluemixSrc = path.resolve(bluemixTemplatesDir,
-                                    'datasources.bluemix.js');
-        var datasourceBluemixDest = path.resolve(bluemixOptions.destDir, 'server',
-                                    'datasources.bluemix.js');
-        copyFile(datasourceBluemixSrc, datasourceBluemixDest);
-        // Copy datasource-config.json
-        var datasourceConfigSrc = path.join(bluemixDirSrc, 'datasources-config.json');
-        var datasourceConfigDest = path.join(bluemixDirDest, 'datasources-config.json');
-        copyFile(datasourceConfigSrc, datasourceConfigDest);
-      }
-
-      if (cmdOptions.toolchain || (bluemixOptions.enableToolchain &&
-         bluemixCommand === 'bluemix')) {
-        // Copy toolchain files
-        var toolChainFiles = fs.readdirSync(bluemixDirSrc);
-        toolChainFiles.forEach(function(fileName) {
-          if (fileName !== 'datasources-config.json') {
-            var toolChainFileSrc = path.join(bluemixDirSrc, fileName);
-            var toolChainFileDest = path.join(bluemixDirDest, fileName);
-            copyFile(toolChainFileSrc, toolChainFileDest);
-          }
-        });
-      }
-
-      if (cmdOptions.docker || (bluemixOptions.enableDocker &&
-         bluemixCommand === 'bluemix')) {
-        // Create .dockerignore
-        var dockerignoreSrc = path.resolve(bluemixTemplatesDir, 'dockerignore');
-        var dockerignoreDest = path.resolve(bluemixOptions.destDir, '.dockerignore');
-        copyFile(dockerignoreSrc, dockerignoreDest);
-        // Create Dockerfile
-        var dockerfileRunSrc = path.resolve(bluemixTemplatesDir, 'Dockerfile');
-        var dockerfileRunDest = path.resolve(bluemixOptions.destDir, 'Dockerfile');
-        copyFile(dockerfileRunSrc, dockerfileRunDest);
-      }
-
-      if (cmdOptions.manifest || bluemixCommand === 'bluemix') {
-        // Create manifest.yml
-        var manifestSrc = path.resolve(bluemixTemplatesDir, 'manifest.yml');
-        var manifestDest = path.resolve(bluemixOptions.destDir, 'manifest.yml');
-        copyFile(manifestSrc, manifestDest);
-      }
-    };
-
-    /**
-     * Add optional default services to the app
-     * @param {object} options Bluemix options
-     */
-    Workspace.addDefaultServices = function(options) {
-      var bluemixTemplatesDir = path.resolve(__dirname, '..', '..',
-                                'templates', 'bluemix');
-      var serverFilePath = path.join(options.destDir, 'server', 'server.js');
-      var serverFileContent = fs.readFileSync(serverFilePath, 'utf8');
-      var inclusionString = '';
-      var newDependencies = {};
-      if (options.enableAutoScaling) {
-        newDependencies['bluemix-autoscaling-agent'] = '^1.0.7';
-        var autoScalingModuleTemplate = fs.readFileSync(path.resolve(
-          bluemixTemplatesDir, 'services', 'autoscaling-module.tpl'));
-        inclusionString += autoScalingModuleTemplate;
-      }
-      if (options.enableAppMetrics) {
-        newDependencies['appmetrics-dash'] = '^1.0.0';
-        var fileContent = fs.readFileSync(serverFilePath, 'utf8');
-        var appmetricsModuleTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
-                                  'services', 'appmetrics-module.tpl'));
-        var appmetricsStartTemplate = fs.readFileSync(path.resolve(bluemixTemplatesDir,
-                                  'services', 'appmetrics-start.tpl'));
-        inclusionString += appmetricsModuleTemplate;
-        insertLine(serverFilePath).contentSync(appmetricsStartTemplate).at(28);
-      }
-      insertLine(serverFilePath).contentSync(inclusionString).at(3);
-      var packageFile = path.join(options.destDir, 'package.json');
-      jsonfileUpdater(packageFile).append('dependencies', newDependencies, function(err) {
-        if (err) console.log(err);
       });
     };
 
