@@ -3,7 +3,6 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var jsonfileUpdater = require('jsonfile-updater');
 var g = require('strong-globalize')();
 var _ = require('lodash');
 var helper = require('../../lib/helper');
