@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const Model = require('../../../datamodel/model');
+const Model = require('../../../lib/datamodel/model');
 const expect = require('../../helpers/expect');
 const Workspace = require('../../../lib/workspace');
 

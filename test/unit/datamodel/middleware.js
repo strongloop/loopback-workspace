@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const Middleware = require('../../../datamodel/middleware');
+const Middleware = require('../../../lib/datamodel/middleware');
 const expect = require('../../helpers/expect');
 const Workspace = require('../../../lib/workspace');
 
