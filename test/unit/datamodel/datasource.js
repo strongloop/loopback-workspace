@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const DataSource = require('../../../datamodel/datasource');
+const DataSource = require('../../../lib/datamodel/datasource');
 const expect = require('../../helpers/expect');
 const Workspace = require('../../../lib/workspace');
 
