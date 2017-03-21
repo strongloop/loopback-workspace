@@ -1,0 +1,72 @@
+'use strict';
+
+const workspaceHandler = require('./workspace-handler');
+const Model = require('./datamodel/model');
+const mixin = require('./util/mixin');
+const fsUtility = require('./util/file-utility');
+module.exports = ModelHandler;
+
+function ModelHandler(workspace) {
+  workspace.registerEvent('model.refresh', workspace.refreshModel);
+  workspace.registerEvent('model.update', workspace.updateModel);
+  workspace.registerEvent('model.delete', workspace.removeModel);
+  workspace.registerEvent('modelconfig.create', workspace.addModelConfig);
+  workspace.registerEvent('modelconfig.update', workspace.updateModelConfig);
+  workspace.registerEvent('modelconfig.refresh', workspace.refreshModelConfig);
+  workspace.registerEvent('modelproperty.create', workspace.addModelProperty);
+  workspace.registerEvent('modelmethod.create', workspace.addModelMethod);
+};
+
+ModelHandler.findAllModels = function(workspace, cb) {
+  workspaceHandler.getFileList(workspace, function(err, files) {
+    if (err) return cb(err);
+    const modelFilePaths = files.Models || [];
+    const taskList = [];
+    const erroredFiles = [];
+    modelFilePaths.forEach(function(filePath) {
+      taskList.push(function(next) {
+        workspaceHandler.loadModelDefinition(workspace, filePath,
+        function(err) {
+          if (err)
+            erroredFiles.push({file: filePath, error: err});
+          next();
+        });
+      });
+    });
+    function callback(err) {
+      if (err) return cb(err);
+      let results = [];
+      const models = workspace.getAllModels();
+      if (models) {
+        Object.keys(models).forEach(function(key) {
+          let model = models[key];
+          results.push(model.getDefinition());
+        });
+      }
+      results = results.concat(erroredFiles);
+      cb(null, results);
+    }
+    workspace.execute(taskList, callback);
+  });
+};
+
+class ModelActions {
+  create(cb) {
+    const workspace = this.getWorkspace();
+    const self = this;
+    const tasks = [];
+    tasks.push(function(next) {
+      fsUtility.writeModel(self, next);
+    });
+<<<<<<< 538c9a386b8997bffaab0a685afccd30af2f45f5
+    workspace.execute(tasks, cb);
+=======
+    workspace.execute(tasks, function(err) {
+      if (err) return cb(err);
+      cb();
+    });
+>>>>>>> Add create action to model
+  }
+}
+
+mixin(Model.prototype, ModelActions.prototype);
