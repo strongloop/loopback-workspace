@@ -53,9 +53,9 @@ module.exports = function(ModelProperty) {
       const modelId = data.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const property = new Property(workspace, propertyName, data);
-      property.create(
-        modelId,
-        cb);
+      property.execute(
+      property.create.bind(property, modelId),
+      cb);
     };
     ModelProperty.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -66,7 +66,9 @@ module.exports = function(ModelProperty) {
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = new Model(workspace, modelId, {});
-      model.refresh(function(err) {
+      model.execute(
+      model.refresh.bind(model),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getPropertyDefinitions());
@@ -81,7 +83,9 @@ module.exports = function(ModelProperty) {
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(id);
-      model.refresh(function(err) {
+      model.execute(
+      model.refresh.bind(model),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getPropertyDefinitions());

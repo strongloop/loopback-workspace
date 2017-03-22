@@ -63,13 +63,14 @@ module.exports = function(ModelConfig) {
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const facet = workspace.getFacet(data.facetName);
       const modelConfig = facet.getContainedNode('ModelConfig', id);
-      modelConfig.update(facet, id, data,
-        function(err) {
-          if (err) return cb(err);
-          const facet = workspace.getFacet(data.facetName);
-          const config = facet.getModelConfig(id);
-          cb(null, config);
-        });
+      modelConfig.execute(
+      modelConfig.update.bind(modelConfig, facet, id, data),
+      function(err) {
+        if (err) return cb(err);
+        const facet = workspace.getFacet(data.facetName);
+        const config = facet.getModelConfig(id);
+        cb(null, config);
+      });
     };
   });
 };

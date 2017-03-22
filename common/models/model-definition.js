@@ -20,11 +20,13 @@ module.exports = function(ModelDefinition) {
         cb = options;
         options = {};
       }
-      const id = data.id;
+      const modelId = data.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const model = new Model(workspace, id, data);
-      model.create(function(err) {
-        cb(err, id);
+      const model = new Model(workspace, modelId, data);
+      model.execute(
+      model.create.bind(model),
+      function(err) {
+        cb(err, modelId);
       });
     };
     ModelDefinition.findById = function(filter, options, cb) {
@@ -35,7 +37,9 @@ module.exports = function(ModelDefinition) {
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(id);
-      model.refresh(function(err) {
+      model.execute(
+      model.refresh.bind(model),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, [model.getContents()]);
@@ -50,7 +54,9 @@ module.exports = function(ModelDefinition) {
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       if (id) {
         const model = workspace.getModel(id);
-        model.refresh(function(err) {
+        model.execute(
+        model.refresh.bind(model),
+        function(err) {
           if (err) return cb(err);
           const model = workspace.getModel(id);
           cb(null, [model.getContents()]);
@@ -66,7 +72,9 @@ module.exports = function(ModelDefinition) {
       }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(id);
-      model.update(data, function(err) {
+      model.execute(
+      model.update.bind(model, data),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getDefinition());
@@ -77,7 +85,9 @@ module.exports = function(ModelDefinition) {
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(id);
       if (!model) return cb(new Error('model does not exist'));
-      model.delete(function(err) {
+      model.execute(
+      model.delete.bind(model),
+      function(err) {
         if (err) return cb(err);
         cb(null, id);
       });

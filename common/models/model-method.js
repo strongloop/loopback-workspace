@@ -28,10 +28,11 @@ module.exports = function(ModelMethod) {
       delete data.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const method = new Method(workspace, name, data);
-      method.create(modelId,
-        function(err) {
-          cb(err, name);
-        });
+      method.execute(
+      method.create.bind(method, modelId),
+      function(err) {
+        cb(err, name);
+      });
     };
     ModelMethod.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -42,7 +43,9 @@ module.exports = function(ModelMethod) {
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(modelId);
-      model.refresh(function(err) {
+      model.execute(
+      model.refresh.bind(model),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getMethodDefinitions());
@@ -56,7 +59,9 @@ module.exports = function(ModelMethod) {
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(id);
-      model.refresh(function(err) {
+      model.execute(
+      model.refresh.bind(model),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getMethodDefinitions());
