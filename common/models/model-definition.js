@@ -65,7 +65,8 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.update(id, data, function(err, results) {
+      const model = workspace.getModel(id);
+      model.update(data, function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getDefinition());
