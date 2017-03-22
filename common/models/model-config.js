@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const ModelConfiguration = require('../../lib/datamodel/model-config');
 const ModelHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -24,17 +25,17 @@ module.exports = function(ModelConfig) {
         cb = options;
         options = {};
       }
-      const modelConfig = Object.assign({}, data);
-      const id = modelConfig.id;
-      const facetName = modelConfig.facetName;
-      delete modelConfig.id;
-      delete modelConfig.facetName;
+      const config = Object.assign({}, data);
+      const id = config.id;
+      const facetName = config.facetName;
+      delete config.id;
+      delete config.facetName;
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.modelconfig.create(id, facetName, modelConfig,
-        function(err) {
-          cb(err, id);
-        });
+      const modelConfig = new ModelConfiguration(workspace, id, config);
+      modelConfig.create(id, facetName, function(err) {
+        cb(err, id);
+      });
     };
     ModelConfig.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -44,9 +45,9 @@ module.exports = function(ModelConfig) {
       const id = filter.where.id;
       const facetName = getFacetName(id);
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.modelconfig.refresh(facetName, function(err) {
+      const facet = workspace.getFacet(facetName);
+      facet.refresh(function(err) {
         if (err) return cb(err);
-        const facet = workspace.getFacet(facetName);
         const config = facet.getModelConfig(id);
         cb(null, config);
       });
@@ -58,7 +59,9 @@ module.exports = function(ModelConfig) {
       }
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.modelconfig.update(data.facetName, id, data,
+      const facet = workspace.getFacet(data.facetName);
+      const modelConfig = facet.getContainedNode('ModelConfig', id);
+      modelConfig.update(facet, id, data,
         function(err) {
           if (err) return cb(err);
           const facet = workspace.getFacet(data.facetName);
