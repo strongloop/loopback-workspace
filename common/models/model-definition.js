@@ -34,7 +34,8 @@ module.exports = function(ModelDefinition) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.refresh(id, function(err) {
+      const model = workspace.getModel(id);
+      model.refresh(function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, [model.getContents()]);
@@ -48,10 +49,11 @@ module.exports = function(ModelDefinition) {
       const id = filter.where && filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       if (id) {
-        workspace.events.model.refresh(id, function(err) {
+        const model = workspace.getModel(id);
+        model.refresh(function(err) {
           if (err) return cb(err);
           const model = workspace.getModel(id);
-          return cb(null, [model.getContents()]);
+          cb(null, [model.getContents()]);
         });
       } else {
         return ModelHandler.findAllModels(workspace, cb);
