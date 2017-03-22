@@ -5,6 +5,7 @@
 'use strict';
 
 const Model = require('../../lib/datamodel/model');
+const Property = require('../../lib/datamodel/model-property');
 const modelHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -51,10 +52,9 @@ module.exports = function(ModelProperty) {
       const propertyName = data.name;
       const modelId = data.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.modelproperty.create(
+      const property = new Property(workspace, propertyName, data);
+      property.create(
         modelId,
-        propertyName,
-        data,
         cb);
     };
     ModelProperty.findById = function(filter, options, cb) {

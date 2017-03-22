@@ -12,12 +12,11 @@ const WorkspaceManager = require('../../../lib/workspace-manager');
 const testSupport = require('../../helpers/test-support');
 
 describe('Graph : Models', function() {
-  let workspace;
   before(createWorkspace);
 
   describe('constructor', function() {
     it('adds a new Model node to the graph', function() {
-      workspace = new Workspace('/');
+      const workspace = new Workspace('/');
       workspace.addDomain('ModelDefinition');
       const model = new Model(workspace, 'test', {}, {});
       expect(workspace.getNode('ModelDefinition', 'test')).to.eql(model);
@@ -25,8 +24,8 @@ describe('Graph : Models', function() {
   });
 
   describe('create()', function() {
-    it('write model definition file in workspace', function(done) {
-      workspace = WorkspaceManager.getWorkspace();
+    it('creates the model definition file in the workspace', function(done) {
+      const workspace = WorkspaceManager.getWorkspace();
       const data = {name: 'test', facetName: 'common'};
       const model =
         new Model(workspace, 'common.models.test', data);

@@ -5,6 +5,7 @@
 'use strict';
 
 const Model = require('../../lib/datamodel/model');
+const Method = require('../../lib/datamodel/model-method');
 const methodHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -22,9 +23,12 @@ module.exports = function(ModelMethod) {
       }
       const connector = ModelMethod.getConnector();
       const name = data.name;
+      const modelId = data.modelId;
       delete data.name;
+      delete data.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.modelmethod.create(data.modelId, name, data,
+      const method = new Method(workspace, name, data);
+      method.create(modelId,
         function(err) {
           cb(err, name);
         });
