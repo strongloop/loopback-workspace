@@ -5,6 +5,7 @@
 'use strict';
 
 const Model = require('../../lib/datamodel/model');
+const Method = require('../../lib/datamodel/model-method');
 const methodHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -22,12 +23,16 @@ module.exports = function(ModelMethod) {
       }
       const connector = ModelMethod.getConnector();
       const name = data.name;
+      const modelId = data.modelId;
       delete data.name;
+      delete data.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.modelmethod.create(data.modelId, name, data,
-        function(err) {
-          cb(err, name);
-        });
+      const method = new Method(workspace, name, data);
+      method.execute(
+      method.create.bind(method, modelId),
+      function(err) {
+        cb(err, name);
+      });
     };
     ModelMethod.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -38,7 +43,9 @@ module.exports = function(ModelMethod) {
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(modelId);
-      model.refresh(function(err) {
+      model.execute(
+      model.refresh.bind(model),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getMethodDefinitions());
@@ -52,7 +59,9 @@ module.exports = function(ModelMethod) {
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const model = workspace.getModel(id);
-      model.refresh(function(err) {
+      model.execute(
+      model.refresh.bind(model),
+      function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getMethodDefinitions());

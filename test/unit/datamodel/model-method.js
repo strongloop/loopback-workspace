@@ -7,15 +7,22 @@
 const Model = require('../../../lib/datamodel/model');
 const Method = require('../../../lib/datamodel/model-method');
 const expect = require('../../helpers/expect');
+const fs = require('fs-extra');
 const Workspace = require('../../../lib/workspace');
+const WorkspaceManager = require('../../../lib/workspace-manager');
+const testSupport = require('../../helpers/test-support');
 
 describe('Graph : ModelMethod', function() {
-  let workspace, model, method;
   before(createWorkspace);
   before(createModel);
 
   describe('constructor', function() {
+    let model, method;
     it('adds a new Method node to the graph', function() {
+      const workspace = new Workspace('/');
+      workspace.addDomain('ModelDefinition');
+      workspace.addDomain('ModelMethod');
+      model = new Model(workspace, 'test', {}, {});
       method = new Method(workspace, 'testmethod', {}, {});
       expect(workspace.getNode('ModelMethod', 'testmethod')).to.eql(method);
     });
@@ -27,13 +34,37 @@ describe('Graph : ModelMethod', function() {
     });
   });
 
-  function createWorkspace() {
-    workspace = new Workspace('/');
-    workspace.addDomain('ModelDefinition');
-    workspace.addDomain('ModelMethod');
+  describe('create()', function() {
+    it('creates a method config in the model definition file', function(done) {
+      const workspace = WorkspaceManager.getWorkspace();
+      const data = {accepts: [], returns: []};
+      const modelId = 'common.models.test';
+      const method =
+        new Method(workspace, 'testmethod', data);
+      method.create(modelId, function(err) {
+        if (err) return done(err);
+        const model = workspace.getModel(modelId);
+        const file = model.getFilePath();
+        fs.readJson(file, function(err, data) {
+          if (err) return done(err);
+          const expectedMethods = data.methods;
+          expect(Object.keys(expectedMethods))
+            .to.include.members(['testmethod']);
+          done();
+        });
+      });
+    });
+  });
+
+  function createWorkspace(done) {
+    testSupport.givenBasicWorkspace('empty-server', done);
   }
 
-  function createModel() {
-    model = new Model(workspace, 'test', {}, {});
+  function createModel(done) {
+    const workspace = WorkspaceManager.getWorkspace();
+    const data = {name: 'test', facetName: 'common'};
+    const model =
+      new Model(workspace, 'common.models.test', data);
+    model.create(done);
   }
 });

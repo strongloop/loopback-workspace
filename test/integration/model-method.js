@@ -62,7 +62,7 @@ describe('ModelMethod', function() {
         if (err) return done(err);
         expect(list).to.have.length(1);
         expect(list[0]).to.
-          have.property('id', 'server.models.user.testMethod');
+          have.property('id', 'testMethod');
         expect(list[0]).to.have.property('isStatic', true);
         done();
       });
