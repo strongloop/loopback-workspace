@@ -58,7 +58,14 @@ class ModelActions {
     tasks.push(function(next) {
       fsUtility.writeModel(self, next);
     });
+<<<<<<< 538c9a386b8997bffaab0a685afccd30af2f45f5
     workspace.execute(tasks, cb);
+=======
+    workspace.execute(tasks, function(err) {
+      if (err) return cb(err);
+      cb();
+    });
+>>>>>>> Add create action to model
   }
 }
 

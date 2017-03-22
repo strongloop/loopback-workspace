@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const Model = require('../../lib/datamodel/model');
 const ModelHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -21,7 +22,8 @@ module.exports = function(ModelDefinition) {
       }
       const id = data.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.create(id, data, function(err) {
+      const model = new Model(workspace, id, data);
+      model.create(function(err) {
         cb(err, id);
       });
     };
