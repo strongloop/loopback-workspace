@@ -65,9 +65,6 @@ describe('Graph : ModelMethod', function() {
     const data = {name: 'test', facetName: 'common'};
     const model =
       new Model(workspace, 'common.models.test', data);
-    model.create(function(err) {
-      if (err) return done(err);
-      done();
-    });
+    model.create(done);
   }
 });
