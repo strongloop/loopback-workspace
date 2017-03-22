@@ -33,7 +33,9 @@ module.exports = function(ModelConfig) {
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const modelConfig = new ModelConfiguration(workspace, id, config);
-      modelConfig.create(id, facetName, function(err) {
+      modelConfig.execute(
+      modelConfig.create.bind(modelConfig, id, facetName),
+      function(err) {
         cb(err, id);
       });
     };
