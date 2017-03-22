@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const Model = require('../../lib/datamodel/model');
 const ModelHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -21,7 +22,8 @@ module.exports = function(ModelDefinition) {
       }
       const id = data.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.create(id, data, function(err) {
+      const model = new Model(workspace, id, data);
+      model.create(function(err) {
         cb(err, id);
       });
     };
@@ -32,7 +34,8 @@ module.exports = function(ModelDefinition) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.refresh(id, function(err) {
+      const model = workspace.getModel(id);
+      model.refresh(function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, [model.getContents()]);
@@ -46,10 +49,11 @@ module.exports = function(ModelDefinition) {
       const id = filter.where && filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       if (id) {
-        workspace.events.model.refresh(id, function(err) {
+        const model = workspace.getModel(id);
+        model.refresh(function(err) {
           if (err) return cb(err);
           const model = workspace.getModel(id);
-          return cb(null, [model.getContents()]);
+          cb(null, [model.getContents()]);
         });
       } else {
         return ModelHandler.findAllModels(workspace, cb);
@@ -61,7 +65,8 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.update(id, data, function(err, results) {
+      const model = workspace.getModel(id);
+      model.update(data, function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getDefinition());
@@ -70,7 +75,9 @@ module.exports = function(ModelDefinition) {
     ModelDefinition.removeModel = function(filter, options, cb) {
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.delete(id, function(err) {
+      const model = workspace.getModel(id);
+      if (!model) return cb(new Error('model does not exist'));
+      model.delete(function(err) {
         if (err) return cb(err);
         cb(null, id);
       });

@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const Model = require('../../lib/datamodel/model');
 const modelHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -64,7 +65,8 @@ module.exports = function(ModelProperty) {
       const modelId = filter.where.modelId;
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.refresh(id, function(err) {
+      const model = new Model(workspace, modelId, {});
+      model.refresh(function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getPropertyDefinitions());
@@ -78,7 +80,8 @@ module.exports = function(ModelProperty) {
       const connector = ModelProperty.getConnector();
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.model.refresh(id, function(err) {
+      const model = workspace.getModel(id);
+      model.refresh(function(err) {
         if (err) return cb(err);
         const model = workspace.getModel(id);
         cb(null, model.getPropertyDefinitions());
