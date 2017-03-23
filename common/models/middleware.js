@@ -5,6 +5,7 @@
 'use strict';
 
 const clone = require('lodash').clone;
+const MiddlewareClass = require('../../lib/datamodel/middleware');
 const middlewareHandler = require('../../lib/middleware-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -37,31 +38,44 @@ module.exports = function(Middleware) {
         cb = options;
         options = {};
       }
-      const phase = this.getPhase(data);
+      const phaseName = this.getPhase(data);
       const connector = Middleware.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const middlewareDef = clone(data);
       const middlewarePath = middlewareDef.function;
       delete middlewareDef.phase;
       delete middlewareDef.subPhase;
-      workspace.events.middleware.create(
-        phase,
-        middlewarePath,
-        middlewareDef,
-        function(err) {
-          cb(err, data);
-        });
+      const middleware =
+        new MiddlewareClass(workspace, middlewarePath, middlewareDef);
+      middleware.execute(
+      middleware.create.bind(middleware, phaseName),
+      function(err) {
+        cb(err, data);
+      });
     };
     Middleware.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
+      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const phaseName = Middleware.getPhaseFromId(filter.where.id);
       const middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
-      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.middleware.refresh(
-        findCallBack(workspace, phaseName, middlewarePath, cb));
+      const middleware =
+        new MiddlewareClass(workspace, middlewarePath, {});
+      middleware.execute(
+      middleware.refresh.bind(middleware), function(err) {
+        const phase = workspace.getMiddlewarePhase(phaseName);
+        if (phase) {
+          const middleware = phase.getMiddleware(middlewarePath);
+          if (middleware) {
+            return cb(null, middleware.getConfig());
+          }
+        } else {
+          return cb(new Error('phase not found'));
+        }
+        return cb(new Error('middleware not found'));
+      });
     };
     Middleware.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -72,32 +86,17 @@ module.exports = function(Middleware) {
         return this.findById(filter, options, cb);
       }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      let phaseName, middlewarePath;
-      if (filter.where) {
-        phaseName = Middleware.getPhaseFromId(filter.where.id);
-        middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
-      }
-      workspace.events.middleware.refresh(
-        findCallBack(workspace, phaseName, middlewarePath, cb));
+      const middleware =
+        new MiddlewareClass(workspace, 'all', {});
+      middleware.refresh(function(err) {
+        if (err) return cb(err);
+        const phases = workspace.getMiddlewareConfig();
+        const list = findMiddleware(phases);
+        cb(null, list);
+      });
     };
   });
 };
-
-function findCallBack(workspace, phaseName, middlewarePath, cb) {
-  return function(err) {
-    if (err) return cb(err);
-    if (phaseName) {
-      const phase = workspace.getMiddlewarePhase(phaseName);
-      const middleware = phase.getMiddleware(middlewarePath);
-      if (middleware) return cb(null, middleware.getConfig());
-      return cb(new Error('middleware not found'));
-    }
-    const phases = workspace.getMiddlewareConfig();
-    if (!phases) return cb(new Error('invalid configuration'));
-    const list = findMiddleware(phases);
-    cb(null, list);
-  };
-}
 
 function findMiddleware(phases) {
   const list = [];

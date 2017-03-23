@@ -25,7 +25,6 @@ describe('Facet', function() {
         if (err) return done(err);
         expect(err).to.not.exist();
         expect(def).to.not.have.ownProperty('id');
-        expect(def.name).to.equal('foo');
         done();
       });
     });

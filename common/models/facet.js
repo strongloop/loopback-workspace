@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const FacetClass = require('../../lib/datamodel/facet');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
@@ -18,11 +19,10 @@ module.exports = function(Facet) {
         options = {};
       }
       const id = data.name;
+      delete data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.facet.create(id, data, function(err) {
-        if (err) return cb(err);
-        cb(null, data);
-      });
+      const facet = new FacetClass(workspace, id, data);
+      facet.execute(facet.create.bind(facet, data), cb);
     };
   });
 };

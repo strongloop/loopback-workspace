@@ -43,7 +43,7 @@ describe('DataSourceDefinition', function() {
     it('model.find()', function(done) {
       DataSourceDefinition.find(function(err, defs) {
         if (err) return done(err);
-        expect(defs).to.have.length(3);
+        expect(defs).to.have.length(4);
         done();
       });
     });
