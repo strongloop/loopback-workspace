@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const DataSource = require('../../lib/datamodel/datasource');
 const datasourceHandler = require('../../lib/data-source-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -24,7 +25,8 @@ module.exports = function(DataSourceDefinition) {
       const id = facetName + '.' + data.name;
       delete data.facetName;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.datasource.create(id, data, cb);
+      const datasource = new DataSource(workspace, id, data);
+      datasource.execute(datasource.create.bind(datasource), cb);
     };
     DataSourceDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
