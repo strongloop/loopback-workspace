@@ -35,7 +35,7 @@ module.exports = function(Workspace) {
     };
     Workspace.loadWorkspace = function(workspaceDir, cb) {
       const workspace = WorkspaceManager.createWorkspace(workspaceDir);
-      WorkspaceHandler.loadWorkspace(workspace, cb);
+      workspace.loadAll(cb);
     };
     Workspace.remoteMethod('loadWorkspace', {
       accepts: [{

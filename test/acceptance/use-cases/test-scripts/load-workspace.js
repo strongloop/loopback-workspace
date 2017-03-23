@@ -22,8 +22,6 @@ module.exports = function() {
     .expect(200, function(err, response) {
       if (err) return next(err);
       const data = response.body;
-      testsuite.expect(data.workspaceId).to.not.to.be.undefined();
-      testsuite.expect(data.errors.length).to.be.eql(0);
       const workspace = testsuite.getWorkspace(templateName);
       testsuite.expect(workspace).to.not.to.be.undefined();
       next();
