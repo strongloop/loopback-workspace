@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
+const Phase = require('../../lib/datamodel/middleware-phase');
 const middlewareHandler = require('../../lib/middleware-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
@@ -22,10 +23,9 @@ module.exports = function(MiddlewarePhase) {
       const name = data.name;
       delete data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.phase.create(name, data.index, data.before,
-        function(err) {
-          cb(err, data);
-        });
+      const phase = new Phase(workspace, name);
+      phase.execute(
+      phase.create.bind(phase, name, data.index, data.before), cb);
     };
     MiddlewarePhase.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -34,7 +34,8 @@ module.exports = function(MiddlewarePhase) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.phase.refresh(workspace, id, function(err, results) {
+      const phase = new Phase(workspace, id);
+      phase.execute(phase.refresh.bind(phase), function(err, results) {
         if (err) return cb(err);
         const phase = workspace.getMiddlewarePhase(id);
         const middleware = phase.getMiddlewareList();
@@ -49,7 +50,8 @@ module.exports = function(MiddlewarePhase) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.phase.refresh(workspace, id, function(err, results) {
+      const phase = new Phase(workspace, id);
+      phase.execute(phase.refresh.bind(phase), function(err, results) {
         if (err) return cb(err);
         const phase = workspace.getMiddlewarePhase(id);
         const middleware = phase.getMiddlewareList();

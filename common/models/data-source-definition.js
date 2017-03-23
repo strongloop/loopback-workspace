@@ -35,7 +35,8 @@ module.exports = function(DataSourceDefinition) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      datasourceHandler.findDataSource(workspace, id, cb);
+      const datasource = new DataSource(workspace, id, {});
+      datasource.execute(datasource.find.bind(datasource, id), cb);
     };
     DataSourceDefinition.all = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -44,7 +45,11 @@ module.exports = function(DataSourceDefinition) {
       }
       const id = filter.where && filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      workspace.events.datasource.find(function(err) {
+      let datasource = workspace.getDataSource(id);
+      datasource = datasource || new DataSource(workspace, id, {});
+      datasource.execute(
+      datasource.refresh.bind(datasource),
+      function(err) {
         if (err) return cb(err);
         if (id) {
           const ds = workspace.getDataSource(id);
@@ -60,7 +65,13 @@ module.exports = function(DataSourceDefinition) {
         options = {};
       }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      datasourceHandler.updateDataSource(workspace, id, data, cb);
+      const ds = workspace.getDataSource(id);
+      ds.execute(
+      ds.update.bind(ds, data),
+      function callback(err) {
+        if (err) return cb(err);
+        cb(null, ds.getDefinition());
+      });
     };
   });
 };
