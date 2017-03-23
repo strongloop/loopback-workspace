@@ -31,7 +31,7 @@ module.exports = function(Workspace) {
       }
       const destinationPath = data.destinationPath;
       const workspace = WorkspaceManager.createWorkspace(destinationPath);
-      TemplateHandler.createFromTemplate(workspace, template, cb);
+      workspace.createFromTemplate(template, cb);
     };
     Workspace.loadWorkspace = function(workspaceDir, cb) {
       const workspace = WorkspaceManager.createWorkspace(workspaceDir);
