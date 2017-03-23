@@ -2,10 +2,11 @@
 
 module.exports = function() {
   const testName = 'CreateFacet';
-  let templateName;
+  let templateName, facetName;
 
   this.When(/^I create a facet '(.+)' in workspace '(.+)'$/,
-  function(facetName, workspaceName, next) {
+  function(facet, workspaceName, next) {
+    facetName = facet;
     templateName = workspaceName;
     const config = {
       name: facetName,
@@ -18,7 +19,7 @@ module.exports = function() {
   this.Then(/^the facet is created$/, function(next) {
     const testsuite = this;
     const inputs = this.getSavedInputs(testName);
-    const facet = this.getWorkspace(templateName).getFacet(inputs.name);
+    const facet = this.getWorkspace(templateName).getFacet(facetName);
     this.expect(facet).to.not.to.be.undefined();
     const dir = facet.getPath();
     this.checkFileExists(dir, function(isExists) {
