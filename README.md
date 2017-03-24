@@ -40,13 +40,13 @@ var workspace = require('loopback-workspace');
 
 **Custom Workspace Directory**
 
-To start the workspace in a specific directory, you must specify the
-`WORKSPACE_DIR` env variable.
+To start the workspace in a specific directory, specify the `WORKSPACE_DIR` env
+variable.
 
 **REST**
 
-In order to use the REST api, you must mount the app on an existing express app
-or call `workspace.listen(PORT)`.
+In order to use the REST api, mount the app on an existing express app or call
+`workspace.listen(PORT)`.
 
 ## Test
 
