@@ -134,7 +134,8 @@ describe('end-to-end', function() {
       }
     });
 
-    it('passes scaffolded tests', function(done) {
+    var isLegacyNode = /^0\./.test(process.version);
+    it.skipIf(isLegacyNode, 'passes scaffolded tests', function(done) {
       execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
         done(err);
       });
