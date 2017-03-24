@@ -106,7 +106,7 @@ module.exports = {
     fs.readdir(serverDir, cb);
   },
   getModelConfig: function(templateName, cb) {
-    const facet = this.getWorkspace(templateName).getFacet('server');
+    const facet = this.getWorkspace(templateName).facet('server');
     const modelConfigPath = facet.getModelConfigPath();
     fs.readJson(modelConfigPath, cb);
   },

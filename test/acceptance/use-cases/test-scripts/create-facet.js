@@ -19,7 +19,7 @@ module.exports = function() {
   this.Then(/^the facet is created$/, function(next) {
     const testsuite = this;
     const inputs = this.getSavedInputs(testName);
-    const facet = this.getWorkspace(templateName).getFacet(facetName);
+    const facet = this.getWorkspace(templateName).facet(facetName);
     this.expect(facet).to.not.to.be.undefined();
     const dir = facet.getPath();
     this.checkFileExists(dir, function(isExists) {
