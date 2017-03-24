@@ -24,7 +24,7 @@ var Workspace = workspace.models.Workspace;
 
 var PKG_CACHE = path.resolve(__dirname, '.pkgcache');
 
-// settings from bin/setup-mysql.js
+// settings from test/helpers/setup-mysql.js
 var MYSQL_DATABASE = 'loopback_workspace_test';
 var MYSQL_USER = 'lbws';
 var MYSQL_PASSWORD = 'hbx42rec';
@@ -1226,7 +1226,7 @@ function configureMySQLDataSource(done) {
     function(err, ds) {
       if (err) return done(err);
       ds.connector = 'mysql';
-      // settings prepared by bin/setup-mysql.js
+      // settings prepared by test/helpers/setup-mysql.js
       ds.database = MYSQL_DATABASE;
       ds.user = MYSQL_USER;
       ds.password = MYSQL_PASSWORD;
