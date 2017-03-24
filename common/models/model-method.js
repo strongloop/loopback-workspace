@@ -41,12 +41,12 @@ module.exports = function(ModelMethod) {
       const modelId = filter.where.modelId;
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const model = workspace.getModel(modelId);
+      const model = workspace.model(modelId);
       model.execute(
       model.refresh.bind(model),
       function(err) {
         if (err) return cb(err);
-        const model = workspace.getModel(id);
+        const model = workspace.model(id);
         cb(null, model.getMethodDefinitions());
       });
     };
@@ -57,12 +57,12 @@ module.exports = function(ModelMethod) {
       }
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const model = workspace.getModel(id);
+      const model = workspace.model(id);
       model.execute(
       model.refresh.bind(model),
       function(err) {
         if (err) return cb(err);
-        const model = workspace.getModel(id);
+        const model = workspace.model(id);
         cb(null, model.getMethodDefinitions());
       });
     };

@@ -30,7 +30,7 @@ module.exports = function() {
 
   this.Then(/^the model property is created$/, function(next) {
     const testsuite = this;
-    const model = this.getWorkspace(templateName).getModel(modelId);
+    const model = this.getWorkspace(templateName).model(modelId);
     const file = model.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);

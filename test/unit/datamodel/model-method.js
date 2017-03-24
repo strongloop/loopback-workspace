@@ -20,7 +20,6 @@ describe('Graph : ModelMethod', function() {
     let model, method;
     it('adds a new Method node to the graph', function() {
       const workspace = new Workspace('/');
-      workspace.addDomain('ModelDefinition');
       workspace.addDomain('ModelMethod');
       model = new Model(workspace, 'test', {}, {});
       method = new Method(workspace, 'testmethod', {}, {});
@@ -43,7 +42,7 @@ describe('Graph : ModelMethod', function() {
         new Method(workspace, 'testmethod', data);
       method.create(modelId, function(err) {
         if (err) return done(err);
-        const model = workspace.getModel(modelId);
+        const model = workspace.model(modelId);
         const file = model.getFilePath();
         fs.readJson(file, function(err, data) {
           if (err) return done(err);

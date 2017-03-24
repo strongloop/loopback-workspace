@@ -36,12 +36,12 @@ module.exports = function(ModelDefinition) {
       }
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const model = workspace.getModel(id);
+      const model = workspace.model(id);
       model.execute(
       model.refresh.bind(model),
       function(err) {
         if (err) return cb(err);
-        const model = workspace.getModel(id);
+        const model = workspace.model(id);
         cb(null, [model.getContents()]);
       });
     };
@@ -53,12 +53,12 @@ module.exports = function(ModelDefinition) {
       const id = filter.where && filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       if (id) {
-        const model = workspace.getModel(id);
+        const model = workspace.model(id);
         model.execute(
         model.refresh.bind(model),
         function(err) {
           if (err) return cb(err);
-          const model = workspace.getModel(id);
+          const model = workspace.model(id);
           cb(null, [model.getContents()]);
         });
       } else {
@@ -71,19 +71,19 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const model = workspace.getModel(id);
+      const model = workspace.model(id);
       model.execute(
       model.update.bind(model, data),
       function(err) {
         if (err) return cb(err);
-        const model = workspace.getModel(id);
+        const model = workspace.model(id);
         cb(null, model.getDefinition());
       });
     };
     ModelDefinition.removeModel = function(filter, options, cb) {
       const id = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const model = workspace.getModel(id);
+      const model = workspace.model(id);
       if (!model) return cb(new Error('model does not exist'));
       model.execute(
       model.delete.bind(model),

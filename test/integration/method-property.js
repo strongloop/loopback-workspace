@@ -78,7 +78,7 @@ describe('ModelProperty', function() {
       property.save(function(err) {
         const dir = testSupport.givenSandboxDir('empty-server');
         const model =
-          WorkspaceManager.getWorkspaceByFolder(dir).getModel(userModel.id);
+          WorkspaceManager.getWorkspaceByFolder(dir).model(userModel.id);
         const file = model.getFilePath();
         fs.readJson(file, function(err, data) {
           if (err) return done(err);

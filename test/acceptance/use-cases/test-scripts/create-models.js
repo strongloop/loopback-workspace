@@ -54,7 +54,7 @@ module.exports = function() {
   });
 
   this.Then(/^the model definition is created$/, function(next) {
-    const storedModel = testsuite.workspace.getModel(testsuite.modelId);
+    const storedModel = testsuite.workspace.model(testsuite.modelId);
     const file = storedModel.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
@@ -69,7 +69,7 @@ module.exports = function() {
     const dir = testSupport.givenSandboxDir(workspaceName);
     testsuite.workspace = workspaceManager.getWorkspaceByFolder(dir);
     testsuite.workspaceId = testsuite.workspace.getId();
-    const storedModel = testsuite.workspace.getModel(testsuite.modelId);
+    const storedModel = testsuite.workspace.model(testsuite.modelId);
     expect(storedModel).to.not.to.be.undefined();
     expect(storedModel).to.be.an.instanceOf(ModelClass);
     next();

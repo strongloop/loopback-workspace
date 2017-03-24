@@ -9,7 +9,7 @@ module.exports = function() {
     templateName = workspaceName;
     ModelName = modelName;
     modelId = 'common.models.' + modelName;
-    const model = this.getWorkspace(templateName).getModel(modelId);
+    const model = this.getWorkspace(templateName).model(modelId);
     this.expect(model).to.not.to.be.undefined();
     next();
   });
