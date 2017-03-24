@@ -5,7 +5,7 @@
 'use strict';
 
 const Model = require('../../lib/datamodel/model');
-const ModelHandler = require('../../lib/model-handler');
+const ModelHandler = require('../../lib/actions/model');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 module.exports = function(ModelDefinition) {

@@ -5,7 +5,6 @@
 'use strict';
 
 const Phase = require('../../lib/datamodel/middleware-phase');
-const middlewareHandler = require('../../lib/middleware-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**

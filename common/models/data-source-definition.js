@@ -5,7 +5,6 @@
 'use strict';
 
 const DataSource = require('../../lib/datamodel/datasource');
-const datasourceHandler = require('../../lib/data-source-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 module.exports = function(DataSourceDefinition) {
