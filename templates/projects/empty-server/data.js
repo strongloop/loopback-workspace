@@ -29,8 +29,8 @@ template.package = {
     'strong-error-handler': '^1.0.1',
   },
   'devDependencies': {
-    'eslint': '^2.13.1',
-    'eslint-config-loopback': '^4.0.0',
+    'eslint': '^3.17.1',
+    'eslint-config-loopback': '^8.0.0',
     'nsp': '^2.1.0',
   },
   // Avoid NPM warning
