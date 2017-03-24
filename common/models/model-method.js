@@ -6,7 +6,6 @@
 
 const Model = require('../../lib/datamodel/model');
 const Method = require('../../lib/datamodel/model-method');
-const methodHandler = require('../../lib/model-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**

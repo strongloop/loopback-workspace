@@ -6,7 +6,6 @@
 
 const clone = require('lodash').clone;
 const MiddlewareClass = require('../../lib/datamodel/middleware');
-const middlewareHandler = require('../../lib/middleware-handler');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
