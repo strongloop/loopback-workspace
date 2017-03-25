@@ -61,7 +61,7 @@ module.exports = function(ModelConfig) {
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const facet = workspace.facet(data.facetName);
-      const modelConfig = facet.getContainedNode('ModelConfig', id);
+      const modelConfig = facet.modelconfig(id);
       modelConfig.execute(
       modelConfig.update.bind(modelConfig, facet, id, data),
       function(err) {
