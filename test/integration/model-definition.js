@@ -32,7 +32,7 @@ describe('ModelDefinition', function() {
       };
       ModelDefinition.create(model, function(err, modelDef) {
         if (err) return done(err);
-        const modelNode = workspace.getModel(model.id);
+        const modelNode = workspace.model(model.id);
         file = modelNode.getFilePath();
         fs.exists(file, function(isExists) {
           expect(isExists).to.be.true();

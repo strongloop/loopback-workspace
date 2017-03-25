@@ -34,7 +34,7 @@ module.exports = function() {
   });
 
   this.Then(/^The model definition json is updated$/, function(next) {
-    const storedModel = testsuite.workspace.getModel(testsuite.modelId);
+    const storedModel = testsuite.workspace.model(testsuite.modelId);
     const file = storedModel.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);

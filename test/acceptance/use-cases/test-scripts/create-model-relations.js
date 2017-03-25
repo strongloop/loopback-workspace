@@ -50,7 +50,7 @@ module.exports = function() {
     const fromModel = relationDef.modelId;
     delete relationDef.id;
     delete relationDef.modelId;
-    const model = testsuite.workspace.getModel(fromModel);
+    const model = testsuite.workspace.model(fromModel);
     const file = model.getFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);

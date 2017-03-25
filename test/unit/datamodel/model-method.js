@@ -20,15 +20,15 @@ describe('Graph : ModelMethod', function() {
     let model, method;
     it('adds a new Method node to the graph', function() {
       const workspace = new Workspace('/');
-      workspace.addDomain('ModelDefinition');
       workspace.addDomain('ModelMethod');
       model = new Model(workspace, 'test', {}, {});
       method = new Method(workspace, 'testmethod', {}, {});
-      expect(workspace.getNode('ModelMethod', 'testmethod')).to.eql(method);
+      model.add(method);
+      expect(model.modelmethod('testmethod')).to.eql(method);
     });
 
     it('is able to set the method in the model', function() {
-      model.setMethod(method);
+      model.add(method);
       const methodArray = model.getMethodDefinitions();
       expect(methodArray).to.have.lengthOf(1);
     });
@@ -43,7 +43,7 @@ describe('Graph : ModelMethod', function() {
         new Method(workspace, 'testmethod', data);
       method.create(modelId, function(err) {
         if (err) return done(err);
-        const model = workspace.getModel(modelId);
+        const model = workspace.model(modelId);
         const file = model.getFilePath();
         fs.readJson(file, function(err, data) {
           if (err) return done(err);

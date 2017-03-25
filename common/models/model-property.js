@@ -69,7 +69,7 @@ module.exports = function(ModelProperty) {
       model.refresh.bind(model),
       function(err) {
         if (err) return cb(err);
-        const model = workspace.getModel(id);
+        const model = workspace.model(id);
         cb(null, model.getPropertyDefinitions());
       });
     };
@@ -81,12 +81,12 @@ module.exports = function(ModelProperty) {
       const connector = ModelProperty.getConnector();
       const id = filter.where.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const model = workspace.getModel(id);
+      const model = workspace.model(id);
       model.execute(
       model.refresh.bind(model),
       function(err) {
         if (err) return cb(err);
-        const model = workspace.getModel(id);
+        const model = workspace.model(id);
         cb(null, model.getPropertyDefinitions());
       });
     };

@@ -46,7 +46,7 @@ module.exports = function(ModelConfig) {
       const id = filter.where.id;
       const facetName = getFacetName(id);
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const facet = workspace.getFacet(facetName);
+      const facet = workspace.facet(facetName);
       facet.refresh(function(err) {
         if (err) return cb(err);
         const config = facet.getModelConfig(id);
@@ -60,13 +60,13 @@ module.exports = function(ModelConfig) {
       }
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const facet = workspace.getFacet(data.facetName);
-      const modelConfig = facet.getContainedNode('ModelConfig', id);
+      const facet = workspace.facet(data.facetName);
+      const modelConfig = facet.modelconfig(id);
       modelConfig.execute(
       modelConfig.update.bind(modelConfig, facet, id, data),
       function(err) {
         if (err) return cb(err);
-        const facet = workspace.getFacet(data.facetName);
+        const facet = workspace.facet(data.facetName);
         const config = facet.getModelConfig(id);
         cb(null, config);
       });

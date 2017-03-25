@@ -17,9 +17,8 @@ describe('Graph : Models', function() {
   describe('constructor', function() {
     it('adds a new Model node to the graph', function() {
       const workspace = new Workspace('/');
-      workspace.addDomain('ModelDefinition');
       const model = new Model(workspace, 'test', {}, {});
-      expect(workspace.getNode('ModelDefinition', 'test')).to.eql(model);
+      expect(workspace.getNode('Model', 'test')).to.eql(model);
     });
   });
 

@@ -66,7 +66,7 @@ module.exports = function(Middleware) {
       middleware.refresh.bind(middleware), function(err) {
         const phase = workspace.getMiddlewarePhase(phaseName);
         if (phase) {
-          const middleware = phase.getMiddleware(middlewarePath);
+          const middleware = phase.middleware(middlewarePath);
           if (middleware) {
             return cb(null, middleware.getConfig());
           }

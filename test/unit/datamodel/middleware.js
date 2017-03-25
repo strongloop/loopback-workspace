@@ -13,14 +13,13 @@ describe('Graph : Middleware', function() {
   before(createWorkspace);
 
   describe('constructor', function() {
-    it('adds a new middleware node to the graph', function() {
+    it('creates a new middleware node', function() {
       const middleware = new Middleware(workspace, 'test', {}, {});
-      expect(workspace.getNode('Middleware', 'test')).to.be.eql(middleware);
+      expect(middleware._name).to.be.eql('test');
     });
   });
 
   function createWorkspace() {
     workspace = new Workspace('/');
-    workspace.addDomain('Middleware');
   }
 });
