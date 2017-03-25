@@ -23,7 +23,8 @@ describe('Graph : ModelMethod', function() {
       workspace.addDomain('ModelMethod');
       model = new Model(workspace, 'test', {}, {});
       method = new Method(workspace, 'testmethod', {}, {});
-      expect(workspace.getNode('ModelMethod', 'testmethod')).to.eql(method);
+      model.add(method);
+      expect(model.modelmethod('testmethod')).to.eql(method);
     });
 
     it('is able to set the method in the model', function() {
