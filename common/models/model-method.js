@@ -47,7 +47,8 @@ module.exports = function(ModelMethod) {
       function(err) {
         if (err) return cb(err);
         const model = workspace.model(id);
-        cb(null, model.getMethodDefinitions());
+        const methods = model.methods().map({filter: 'id'});
+        cb(null, methods);
       });
     };
     ModelMethod.all = function(filter, options, cb) {
@@ -63,7 +64,8 @@ module.exports = function(ModelMethod) {
       function(err) {
         if (err) return cb(err);
         const model = workspace.model(id);
-        cb(null, model.getMethodDefinitions());
+        const methods = model.methods().map();
+        cb(null, methods);
       });
     };
   });

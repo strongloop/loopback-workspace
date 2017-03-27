@@ -70,7 +70,7 @@ module.exports = function(ModelProperty) {
       function(err) {
         if (err) return cb(err);
         const model = workspace.model(id);
-        cb(null, model.getPropertyDefinitions());
+        cb(null, model.properties().values);
       });
     };
     ModelProperty.all = function(filter, options, cb) {
@@ -87,7 +87,7 @@ module.exports = function(ModelProperty) {
       function(err) {
         if (err) return cb(err);
         const model = workspace.model(id);
-        cb(null, model.getPropertyDefinitions());
+        cb(null, model.properties().values);
       });
     };
   });

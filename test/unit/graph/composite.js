@@ -14,13 +14,13 @@ describe('Graph : Composite', function() {
     before(defineClasses);
 
     it('adds a placeholder for child nodes', function() {
-      expect(phase.children).to.have.property('Middleware');
+      expect(phase.components).to.have.property('Middleware');
     });
 
     describe('add()', function() {
       it('adds a child node to the parent', function() {
         phase.add(middleware);
-        expect(phase.children.Middleware).to.have.property('foo');
+        expect(phase.components.Middleware.nodes).to.have.property('foo');
       });
 
       it('parent.child(childName) gets child', function() {
