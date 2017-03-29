@@ -211,7 +211,8 @@ module.exports = function(ConfigFile) {
     });
 
     function find(pattern, cb) {
-      glob(pattern, { cwd: workspaceDir }, cb);
+      // set strict to false to avoid perm issues
+      glob(pattern, { cwd: workspaceDir, strict: false }, cb);
     }
   };
 
