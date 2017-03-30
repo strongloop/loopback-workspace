@@ -72,7 +72,9 @@ module.exports = function(Model) {
       function(err) {
         if (err) return cb(err);
         const facet = workspace.facet(data.facetName);
-        const config = facet.getModelConfig(id);
+        const config = facet.modelconfig(id);
+        if (!config)
+          return cb(new Error('model config not found'));
         cb(null, config);
       });
     };

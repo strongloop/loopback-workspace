@@ -59,7 +59,7 @@ module.exports = function(DataSourceDefinition) {
         if (err) return cb(err);
         if (id && id !== 'temp') {
           let ds = facet.datasources(id);
-          if(ds) return cb(null, ds.getContents());
+          if (ds) return cb(null, ds.getContents());
           cb(new Error('datasource is not found'));
         }
         const dsList = facet.datasources().map();
@@ -71,13 +71,16 @@ module.exports = function(DataSourceDefinition) {
         cb = options;
         options = {};
       }
+      const facetName = options.facetName;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const ds = workspace.getDataSource(id);
+      const ds = workspace.facets(facetName).datasources(id);
+      if (!ds)
+        return cb(new Error('datasource not found'));
       ds.execute(
-      ds.update.bind(ds, data),
+      ds.update.bind(ds, facetName, data),
       function callback(err) {
         if (err) return cb(err);
-        cb(null, ds.getDefinition());
+        cb(null, ds.getContents());
       });
     };
   });
