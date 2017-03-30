@@ -1,3 +1,23 @@
+2017-03-30, Version 3.40.0
+==========================
+
+ * fix windows permission issue (Anthony Ettinger)
+
+ * Upgrade strong-error-handler in template (Miroslav Bajtoš)
+
+ * templates: upgrade eslint & config to latest (Miroslav Bajtoš)
+
+ * use the test folder for test files (Eddie Monge)
+
+ * Add engines node>=4 to scaffolded projects (Miroslav Bajtoš)
+
+ * Replicate new issue_template from loopback (Siddhi Pai)
+
+ * Replicate issue_template from loopback repo (Siddhi Pai)
+
+ * update grammar to remove `you` references (Eddie Monge)
+
+
 2017-03-17, Version 3.39.0
 ==========================
 
