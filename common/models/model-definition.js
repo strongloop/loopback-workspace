@@ -51,7 +51,8 @@ module.exports = function(ModelDefinition) {
         options = {};
       }
       const id = filter.where && filter.where.id;
-      const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      const workspaceId = options.workspaceId;
+      const workspace = WorkspaceManager.getWorkspace(workspaceId);
       if (id) {
         const model = workspace.model(id);
         model.execute(
@@ -62,7 +63,20 @@ module.exports = function(ModelDefinition) {
           cb(null, [model.getContents()]);
         });
       } else {
-        return ModelHandler.findAllModels(workspace, cb);
+        const taskList = [];
+        taskList.push(workspace.refreshModels.bind(workspace));
+        workspace.execute(taskList,
+        function(err) {
+          if (err) return cb(err);
+          const models = workspace.models();
+          if (!models)
+            return cb(new Error('No model definitions found'));
+          let results = [];
+          models.forEach(function(model) {
+            results.push(model.getDefinition());
+          });
+          cb(null, results);
+        });
       }
     };
     ModelDefinition.updateAttributes = function(id, data, options, cb) {
