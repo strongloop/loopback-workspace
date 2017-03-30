@@ -27,12 +27,11 @@ module.exports = function(Model) {
       const id = data.id;
       const facetName = data.facetName;
       const modelId = data.modelId;
-      const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const modelConfig =
         new ModelConfig(workspace, id, data, facetName, modelId);
       modelConfig.execute(
-      modelConfig.create.bind(modelConfig),
+      modelConfig.create.bind(modelConfig, facetName, modelId),
       function(err) {
         cb(err, id);
       });
@@ -43,13 +42,21 @@ module.exports = function(Model) {
         options = {};
       }
       const id = filter.where.id;
-      const facetName = getFacetName(id);
+      let facetName = options.facetName;
+      if (!facetName) {
+        facetName = 'server';
+      }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const facet = workspace.facet(facetName);
       facet.refresh(function(err) {
         if (err) return cb(err);
-        const config = facet.getModelConfig(id);
-        cb(null, config);
+        if (id) {
+          let modelConfig = facet.modelconfig(id);
+          if (modelConfig)
+            return cb(null, modelConfig.getContents({filter: ['id']}));
+          return cb(new Error('model config not found'));
+        }
+        cb(null, facet.modelconfig().map());
       });
     };
     Model.updateAttributes = function(id, data, options, cb) {
@@ -57,7 +64,6 @@ module.exports = function(Model) {
         cb = options;
         options = {};
       }
-      const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const facet = workspace.facet(data.facetName);
       const modelConfig = facet.modelconfig(id);

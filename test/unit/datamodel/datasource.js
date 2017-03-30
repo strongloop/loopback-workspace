@@ -6,22 +6,21 @@
 
 const DataSource = require('../../../lib/datamodel/datasource');
 const expect = require('../../helpers/expect');
-const Workspace = require('../../../lib/workspace');
+const Facet = require('../../../lib/datamodel/facet');
 
 describe('Graph: DataSource', function() {
-  let workspace;
-  before(createWorkspace);
+  let facet;
+  before(createFacet);
 
-  describe('constructor', function() {
-    it('adds a datasource node to the graph', function() {
-      const ds = new DataSource(workspace, 'test', {}, {});
-      workspace.add(ds);
-      expect(workspace.datasource('test')).to.be.eql(ds);
+  describe('facet.add()', function() {
+    it('adds a datasource node to the facet', function() {
+      const ds = new DataSource({}, 'test', {}, {});
+      facet.add(ds);
+      expect(facet.datasources('test')).to.be.eql(ds);
     });
   });
 
-  function createWorkspace() {
-    workspace = new Workspace('/');
-    workspace.addDomain('DataSource');
+  function createFacet() {
+    facet = new Facet({}, 'temp', {});
   }
 });

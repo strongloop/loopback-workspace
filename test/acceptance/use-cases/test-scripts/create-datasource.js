@@ -22,10 +22,10 @@ module.exports = function() {
   });
 
   this.Then(/^the datasource definition is created$/, function(next) {
-    const storedDs =
-      this.getWorkspace(templateName).getDataSource('server.' + datasourceName);
+    const facet = this.getWorkspace(templateName).facets('server');
+    const storedDs = facet.datasources(datasourceName).getContents();
     const expectedDs = this.getInputsToCompare(testName);
-    this.expect(expectedDs).to.eql(storedDs._content);
+    this.expect(expectedDs.datasource).to.eql(storedDs.datasource);
     next();
   });
 };

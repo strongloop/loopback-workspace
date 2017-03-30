@@ -14,7 +14,7 @@ const DataSourceDefinition = app.models.DataSourceDefinition;
 
 describe('DataSourceDefinition', function() {
   describe('CRUD', function() {
-    beforeEach(function(done) {
+    before(function(done) {
       testSupport.givenBasicWorkspace('empty-server', done);
     });
 

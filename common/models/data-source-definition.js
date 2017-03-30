@@ -21,11 +21,11 @@ module.exports = function(DataSourceDefinition) {
       }
       const connector = DataSourceDefinition.getConnector();
       const facetName = data.facetName;
-      const id = facetName + '.' + data.name;
+      const id = data.name;
       delete data.facetName;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const datasource = new DataSource(workspace, id, data);
-      datasource.execute(datasource.create.bind(datasource), cb);
+      datasource.execute(datasource.create.bind(datasource, facetName), cb);
     };
     DataSourceDefinition.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -42,19 +42,27 @@ module.exports = function(DataSourceDefinition) {
         cb = options;
         options = {};
       }
-      const id = filter.where && filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      let datasource = workspace.getDataSource(id);
-      datasource = datasource || new DataSource(workspace, id, {});
+      let facetName = filter.where && filter.where.facetName;
+      let id = filter.where && filter.where.id;
+      if (!id) {
+        id = 'temp';
+      }
+      if (!facetName) {
+        facetName = 'server';
+      }
+      const facet = workspace.facets(facetName);
+      let datasource = new DataSource(workspace, id, {});
       datasource.execute(
-      datasource.refresh.bind(datasource),
+      datasource.refresh.bind(datasource, facetName),
       function(err) {
         if (err) return cb(err);
-        if (id) {
-          const ds = workspace.getDataSource(id);
-          return cb(null, ds.getDefinition());
+        if (id && id !== 'temp') {
+          let ds = facet.datasources(id);
+          if(ds) return cb(null, ds.getContents());
+          cb(new Error('datasource is not found'));
         }
-        const dsList = workspace.getAllDataSourceConfig();
+        const dsList = facet.datasources().map();
         cb(null, dsList);
       });
     };

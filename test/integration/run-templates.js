@@ -12,6 +12,7 @@ const loopback = require('loopback');
 const path = require('path');
 const request = require('supertest');
 const testSupport = require('../helpers/test-support');
+const WorkspaceManager = app.WorkspaceManager;
 
 describe('check-template', function() {
   this.timeout(50000);
@@ -95,6 +96,7 @@ describe('check-template', function() {
   }
   function installPackages(done) {
     sandbox = testSupport.givenSandboxDir('api-server');
+    const workspace = WorkspaceManager.getWorkspace();
     testSupport.installSandboxPackages(sandbox, function(err) {
       if (err) return done(err);
       app = require(sandbox);
