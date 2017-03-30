@@ -59,26 +59,31 @@
     "modelConfigs": [
       {
         "name": "User",
+        "modelId": "loopback.models.User",
         "dataSource": "db",
         "public": true
       },
       {
         "name": "AccessToken",
+        "modelId": "loopback.models.AccessToken",
         "dataSource": "db",
         "public": true
       },
       {
          "name": "ACL",
+         "modelId": "loopback.models.ACL",
          "dataSource": "db",
          "public": true
       },
       {
          "name": "RoleMapping",
+         "modelId": "loopback.models.RoleMapping",
          "dataSource": "db",
          "public": true
       },
       {
          "name": "Role",
+         "modelId": "loopback.models.Role",
          "dataSource": "db",
          "public": true
       }

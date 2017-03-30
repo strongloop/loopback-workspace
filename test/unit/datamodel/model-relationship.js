@@ -9,24 +9,24 @@ const ModelRelation = require('../../../lib/datamodel/model-relationship');
 const expect = require('../../helpers/expect');
 const Workspace = require('../../../lib/workspace');
 
-describe('Graph : ModelRelations', function() {
-  let workspace, parent, child;
+describe('Graph : ModelRelation', function() {
+  let workspace, parent, child, relation;
   before(createWorkspace);
   before(createModels);
 
   describe('constructor', function() {
-    it('adds a ModelRelation node in the graph', function() {
-      const relation = new ModelRelation(workspace,
-        'testRelation', {}, parent, child, {});
-      expect(workspace.getNode('ModelRelation', 'testRelation'))
-        .to.eql(relation);
+    it('creates a ModelRelation node', function() {
+      relation = new ModelRelation(workspace, 'testRelation', {});
+      expect('testRelation').to.eql(relation._name);
     });
-
-    it('adds an Edge between two Nodes', function() {
-      const outgoingEdge = parent.getOutboundLink('Child');
-      const incomingEdge = child.getInboundLink('Parent');
-      expect(outgoingEdge).to.eql(incomingEdge);
-      expect(incomingEdge.getOriginatingNode()).to.eql(parent);
+    describe('connect()', function() {
+      it('adds an Edge between two Nodes', function() {
+        relation.connect(parent, child);
+        const outgoingEdge = parent.getOutboundLink('Child');
+        const incomingEdge = child.getInboundLink('Parent');
+        expect(outgoingEdge).to.eql(incomingEdge);
+        expect(incomingEdge.getOriginatingNode()).to.eql(parent);
+      });
     });
   });
 

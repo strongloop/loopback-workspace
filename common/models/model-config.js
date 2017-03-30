@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const ModelConfiguration = require('../../lib/datamodel/model-config');
+const ModelConfig = require('../../lib/datamodel/model-config');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
@@ -13,32 +13,31 @@ const WorkspaceManager = require('../../lib/workspace-manager.js');
   *
   * @class ModelConfig
   */
-module.exports = function(ModelConfig) {
-  ModelConfig.on('dataSourceAttached', function(eventData) {
+module.exports = function(Model) {
+  Model.on('dataSourceAttached', function(eventData) {
     function getFacetName(id) {
       const parts = id.split('.');
       return parts[0];
     }
-    ModelConfig.create = function(data, options, cb) {
+    Model.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
-      const config = Object.assign({}, data);
-      const id = config.id;
-      const facetName = config.facetName;
-      delete config.id;
-      delete config.facetName;
+      const id = data.id;
+      const facetName = data.facetName;
+      const modelId = data.modelId;
       const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const modelConfig = new ModelConfiguration(workspace, id, config);
+      const modelConfig =
+        new ModelConfig(workspace, id, data, facetName, modelId);
       modelConfig.execute(
-      modelConfig.create.bind(modelConfig, id, facetName),
+      modelConfig.create.bind(modelConfig),
       function(err) {
         cb(err, id);
       });
     };
-    ModelConfig.all = function(filter, options, cb) {
+    Model.all = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
@@ -53,7 +52,7 @@ module.exports = function(ModelConfig) {
         cb(null, config);
       });
     };
-    ModelConfig.updateAttributes = function(id, data, options, cb) {
+    Model.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};

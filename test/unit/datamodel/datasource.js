@@ -8,14 +8,15 @@ const DataSource = require('../../../lib/datamodel/datasource');
 const expect = require('../../helpers/expect');
 const Workspace = require('../../../lib/workspace');
 
-describe('Graph : DataSource', function() {
+describe('Graph: DataSource', function() {
   let workspace;
   before(createWorkspace);
 
   describe('constructor', function() {
     it('adds a datasource node to the graph', function() {
       const ds = new DataSource(workspace, 'test', {}, {});
-      expect(workspace.getNode('DataSource', 'test')).to.be.eql(ds);
+      workspace.add(ds);
+      expect(workspace.datasource('test')).to.be.eql(ds);
     });
   });
 
