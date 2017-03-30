@@ -13,7 +13,8 @@
   "server": {
     "modelConfigs": [
       {
-         "name": "common.models.Message",
+         "name": "Message",
+         "modelId": "common.models.Message",
          "dataSource": "db",
          "public": true
       }

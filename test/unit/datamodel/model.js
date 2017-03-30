@@ -11,14 +11,15 @@ const Workspace = require('../../../lib/workspace');
 const WorkspaceManager = require('../../../lib/workspace-manager');
 const testSupport = require('../../helpers/test-support');
 
-describe('Graph : Models', function() {
+describe('Graph : Model', function() {
   before(createWorkspace);
 
-  describe('constructor', function() {
+  describe('workspace.add()', function() {
     it('adds a new Model node to the graph', function() {
       const workspace = new Workspace('/');
-      const model = new Model(workspace, 'test', {}, {});
-      expect(workspace.getNode('Model', 'test')).to.eql(model);
+      const model = new Model(workspace, 'test', {});
+      workspace.add(model);
+      expect(workspace.models('test')).to.eql(model);
     });
   });
 

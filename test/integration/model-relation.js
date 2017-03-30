@@ -28,7 +28,7 @@ describe('ModelRelation', function() {
       }, function(err) {
         if (err) return done(err);
         const workspace = WorkspaceManager.getWorkspace();
-        const model = workspace.model(userModel.id);
+        const model = workspace.models(userModel.id);
         const file = model.getFilePath();
         fs.readJson(file, function(err, data) {
           if (err) return done(err);
@@ -51,7 +51,7 @@ describe('ModelRelation', function() {
       userModel.relations.destroyAll(filter, function(err) {
         if (err) return done(err);
         const workspace = WorkspaceManager.getWorkspace();
-        const model = workspace.model(userModel.id);
+        const model = workspace.models(userModel.id);
         const file = model.getFilePath();
         fs.readJson(file, function(err, data) {
           if (err) return done(err);

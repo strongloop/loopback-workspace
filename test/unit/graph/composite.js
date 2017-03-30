@@ -14,17 +14,17 @@ describe('Graph : Composite', function() {
     before(defineClasses);
 
     it('adds a placeholder for child nodes', function() {
-      expect(phase.children).to.have.property('Middleware');
+      expect(phase.components).to.have.property('Middleware');
     });
 
     describe('add()', function() {
       it('adds a child node to the parent', function() {
         phase.add(middleware);
-        expect(phase.children.Middleware).to.have.property('foo');
+        expect(phase.middlewares().nodes).to.have.property('foo');
       });
 
       it('parent.child(childName) gets child', function() {
-        expect(phase.middleware('foo')).to.eql(middleware);
+        expect(phase.middlewares('foo')).to.eql(middleware);
       });
     });
     function defineClasses() {
@@ -36,11 +36,11 @@ describe('Graph : Composite', function() {
       class Phase extends Composite {
         constructor(graph, domain, id) {
           super(graph, domain, id);
-          this.contains(Middleware);
+          this.contains(Middleware, 'middlewares');
         }
       }
-      middleware = new Middleware({}, 'model1', 'foo');
-      phase = new Phase({}, 'model2', 'bar');
+      middleware = new Middleware('model1', 'foo');
+      phase = new Phase('model2', 'bar');
     }
   });
 });

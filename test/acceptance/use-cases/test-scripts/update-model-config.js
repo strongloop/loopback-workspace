@@ -2,7 +2,7 @@
 
 module.exports = function() {
   const testName = 'LoadWorkspace';
-  let templateName, modelId, modelConfig, ModelName;
+  let templateName, modelConfig, ModelName;
 
   this.When(new RegExp(['^I change \'(.+)\' ',
     'facet Model Config property \'(.+)\' to \'(.+)\' ',
@@ -10,14 +10,13 @@ module.exports = function() {
   function(facetName, fieldName, value, workspaceName, modelName, next) {
     templateName = workspaceName;
     ModelName = modelName;
-    modelId = 'common.models.' + modelName;
     modelConfig = {
       facetName: facetName,
     };
     modelConfig[fieldName] = value;
     const ModelConfig = this.getApp().models.ModelConfig;
     this.updateAttributes(ModelConfig,
-    modelId,
+    modelName,
     modelConfig,
     templateName,
     testName,

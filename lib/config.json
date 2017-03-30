@@ -65,5 +65,6 @@
         "dataSource": "db",
         "public": false
     }
-  ]
+  ],
+  "middlewarePhases": ["initial", "session", "auth", "parse", "routes", "files", "final"]
 }

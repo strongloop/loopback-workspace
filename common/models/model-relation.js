@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 const clone = require('lodash').clone;
-const RelationsHandler = require('../../lib/relation-handler');
+const ModelRelation = require('../../lib/datamodel/model-relationship');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
@@ -12,8 +12,8 @@ const WorkspaceManager = require('../../lib/workspace-manager.js');
   *
   * @class ModelRelation
   */
-module.exports = function(ModelRelation) {
-  ModelRelation.getValidTypes = function(cb) {
+module.exports = function(Model) {
+  Model.getValidTypes = function(cb) {
     cb(null, [
       {name: 'has many', value: 'hasMany'},
       {name: 'belongs to', value: 'belongsTo'},
@@ -22,24 +22,20 @@ module.exports = function(ModelRelation) {
     ]);
   };
 
-  ModelRelation.on('dataSourceAttached', function(eventData) {
-    ModelRelation.create = function(data, options, cb) {
+  Model.on('dataSourceAttached', function(eventData) {
+    Model.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
-      const relationDef = clone(data);
-      const modelId = data.modelId;
-      const toModelId = data.model;
-      const relationName = data.name;
-      delete relationDef.modelId;
-      delete relationDef.facetName;
-      delete relationDef.id;
+      const id = data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      RelationsHandler.createRelation(
-        workspace, relationName, modelId, toModelId, relationDef, cb);
+      const relation =
+        new ModelRelation(workspace, id, data);
+      relation.execute(
+      relation.create.bind(relation, data.modelId, data.model), cb);
     };
-    ModelRelation.removeModel = function(query, options, cb) {
+    Model.removeModel = function(query, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
@@ -56,8 +52,10 @@ module.exports = function(ModelRelation) {
       const modelId = filter.where.modelId;
       const relationName = filter.where.id;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      RelationsHandler.deleteRelation(
-        workspace, modelId, relationName, cb);
+      const model = workspace.models(modelId);
+      const relation = model.relations(relationName);
+      relation.execute(
+      relation.delete.bind(relation, modelId, relationName), cb);
     };
   });
 };

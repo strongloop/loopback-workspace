@@ -14,7 +14,7 @@ const DataSourceDefinition = app.models.DataSourceDefinition;
 
 describe('DataSourceDefinition', function() {
   describe('CRUD', function() {
-    beforeEach(function(done) {
+    before(function(done) {
       testSupport.givenBasicWorkspace('empty-server', done);
     });
 
@@ -43,7 +43,7 @@ describe('DataSourceDefinition', function() {
     it('model.find()', function(done) {
       DataSourceDefinition.find(function(err, defs) {
         if (err) return done(err);
-        expect(defs).to.have.length(4);
+        expect(defs).to.have.length(3);
         done();
       });
     });

@@ -81,7 +81,7 @@ describe('Middleware', function() {
         config.name = 'phase1';
         config.before = 'routes';
         MiddlewarePhase.create(config, function(err) {
-          if (err && err.toString().includes('phase exists')) return done();
+          if (err && err.toString().includes('invalid')) return done();
           done('did not catch error');
         });
       });

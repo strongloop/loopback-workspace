@@ -111,8 +111,8 @@ module.exports = {
     fs.readJson(modelConfigPath, cb);
   },
   getDataSourceConfig: function(templateName, cb) {
-    const configFile =
-      this.getWorkspace(templateName).getDataSourceConfigFilePath();
+    const configFile = this.getWorkspace(templateName)
+      .facets('server').getDataSourceConfigFilePath();
     fs.readJson(configFile, cb);
   },
   getMiddlewareConfig: function(templateName, cb) {

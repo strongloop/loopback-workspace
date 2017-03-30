@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const ModelConfiguration = require('../../lib/datamodel/model-config');
+const ModelConfig = require('../../lib/datamodel/model-config');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
@@ -13,52 +13,57 @@ const WorkspaceManager = require('../../lib/workspace-manager.js');
   *
   * @class ModelConfig
   */
-module.exports = function(ModelConfig) {
-  ModelConfig.on('dataSourceAttached', function(eventData) {
+module.exports = function(Model) {
+  Model.on('dataSourceAttached', function(eventData) {
     function getFacetName(id) {
       const parts = id.split('.');
       return parts[0];
     }
-    ModelConfig.create = function(data, options, cb) {
+    Model.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
-      const config = Object.assign({}, data);
-      const id = config.id;
-      const facetName = config.facetName;
-      delete config.id;
-      delete config.facetName;
-      const connector = ModelConfig.getConnector();
+      const id = data.id;
+      const facetName = data.facetName;
+      const modelId = data.modelId;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const modelConfig = new ModelConfiguration(workspace, id, config);
+      const modelConfig =
+        new ModelConfig(workspace, id, data, facetName, modelId);
       modelConfig.execute(
-      modelConfig.create.bind(modelConfig, id, facetName),
+      modelConfig.create.bind(modelConfig, facetName, modelId),
       function(err) {
         cb(err, id);
       });
     };
-    ModelConfig.all = function(filter, options, cb) {
+    Model.all = function(filter, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
       const id = filter.where.id;
-      const facetName = getFacetName(id);
+      let facetName = options.facetName;
+      if (!facetName) {
+        facetName = 'server';
+      }
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const facet = workspace.facet(facetName);
       facet.refresh(function(err) {
         if (err) return cb(err);
-        const config = facet.getModelConfig(id);
-        cb(null, config);
+        if (id) {
+          let modelConfig = facet.modelconfig(id);
+          if (modelConfig)
+            return cb(null, modelConfig.getContents({filter: ['id']}));
+          return cb(new Error('model config not found'));
+        }
+        cb(null, facet.modelconfig().map());
       });
     };
-    ModelConfig.updateAttributes = function(id, data, options, cb) {
+    Model.updateAttributes = function(id, data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
       }
-      const connector = ModelConfig.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const facet = workspace.facet(data.facetName);
       const modelConfig = facet.modelconfig(id);
@@ -67,7 +72,9 @@ module.exports = function(ModelConfig) {
       function(err) {
         if (err) return cb(err);
         const facet = workspace.facet(data.facetName);
-        const config = facet.getModelConfig(id);
+        const config = facet.modelconfig(id);
+        if (!config)
+          return cb(new Error('model config not found'));
         cb(null, config);
       });
     };

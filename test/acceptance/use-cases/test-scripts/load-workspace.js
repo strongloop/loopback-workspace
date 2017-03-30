@@ -30,13 +30,10 @@ module.exports = function() {
 
   this.Then(/^the workspace is loaded with datasources$/, function(next) {
     const testsuite = this;
-    const dir = testsuite.getWorkspace(templateName).getDirectory();
-    const dsList = testsuite.getWorkspace(templateName).getAllDataSources();
-    const configData = {};
-    Object.keys(dsList).forEach(function(key) {
-      const ds = dsList[key];
-      configData[key] = ds.getDefinition();
-    });
+    const workspace = testsuite.getWorkspace(templateName);
+    const dir = workspace.getDirectory();
+    const configData =
+      workspace.facet('server').datasources().map({json: true, filter: 'id'});
     testsuite.getDataSourceConfig(templateName, function(err, data) {
       if (err) return next(err);
       testsuite.expect(configData).to.eql(data);

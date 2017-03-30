@@ -20,11 +20,11 @@ module.exports = function() {
   this.When(/^I query for the model config '(.+)' in workspace '(.+)'$/,
   function(modelName, workspaceName, next) {
     testsuite.modelName = modelName;
-    const modelId = 'server.' + testsuite.modelName;
     const filter = {
-      where: {id: modelId},
+      where: {id: testsuite.modelName},
     };
-    const options = {workspaceId: testsuite.workspace.getId()};
+    const options =
+      {workspaceId: testsuite.workspace.getId(), facetName: 'server'};
     ModelConfig.find(filter, options, function(err, data) {
       if (err) return next(err);
       testsuite.modelConfig = data;

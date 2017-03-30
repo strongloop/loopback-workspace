@@ -17,8 +17,9 @@ module.exports = function() {
   this.When(/^I create a model config in facet '(.+)'$/,
   function(facetName, next) {
     const config = {
+      id: ModelName,
       facetName: facetName,
-      id: modelId,
+      modelId: modelId,
       dataSource: 'db',
     };
     const ModelConfig = this.getApp().models.ModelConfig;
@@ -31,8 +32,8 @@ module.exports = function() {
     this.getModelConfig(templateName, function(err, data) {
       if (err) return next(err);
       const storedConfig = data[ModelName];
-      testsuite.expect(storedConfig).to.not.to.be.undefined();
-      testsuite.expect(storedConfig).to.eql(config);
+      testsuite.expect(storedConfig.dataSource).to.not.to.be.undefined();
+      testsuite.expect(storedConfig.dataSource).to.eql(config.dataSource);
       next();
     });
   });

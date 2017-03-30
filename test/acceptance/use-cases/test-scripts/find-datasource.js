@@ -44,7 +44,7 @@ module.exports = function() {
     const datasource = {
       connector: connector,
     };
-    const options = {workspaceId: testsuite.workspaceId};
+    const options = {workspaceId: testsuite.workspaceId, facetName: 'server'};
     testsuite.expectedFields = {};
     DataSourceDefinition.updateAttributes(testsuite.datasourceId, datasource,
     options,
@@ -57,7 +57,7 @@ module.exports = function() {
 
   this.Then(/^the datasource configuration is updated$/, function(next) {
     const workspace = workspaceManager.getWorkspace(testsuite.workspaceId);
-    const file = workspace.getDataSourceConfigFilePath();
+    const file = workspace.facets('server').getDataSourceConfigFilePath();
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
       const config = data[testsuite.datasourceId];

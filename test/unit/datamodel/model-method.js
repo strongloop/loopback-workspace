@@ -29,7 +29,7 @@ describe('Graph : ModelMethod', function() {
 
     it('is able to set the method in the model', function() {
       model.add(method);
-      const methodArray = model.getMethodDefinitions();
+      const methodArray = model.methods().toArray();
       expect(methodArray).to.have.lengthOf(1);
     });
   });

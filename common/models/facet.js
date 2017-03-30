@@ -4,16 +4,16 @@
 // License text available at https://opensource.org/licenses/MIT
 'use strict';
 
-const FacetClass = require('../../lib/datamodel/facet');
+const Facet = require('../../lib/datamodel/facet');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
 
 /**
   * Add remote methods to loopback model: Facet.
   *
   */
-module.exports = function(Facet) {
-  Facet.on('dataSourceAttached', function(eventData) {
-    Facet.create = function(data, options, cb) {
+module.exports = function(Model) {
+  Model.on('dataSourceAttached', function(eventData) {
+    Model.create = function(data, options, cb) {
       if (typeof options === 'function') {
         cb = options;
         options = {};
@@ -21,7 +21,7 @@ module.exports = function(Facet) {
       const id = data.name;
       delete data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const facet = new FacetClass(workspace, id, data);
+      const facet = new Facet(workspace, id, data);
       facet.execute(facet.create.bind(facet, data), cb);
     };
   });
