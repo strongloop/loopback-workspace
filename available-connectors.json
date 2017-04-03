@@ -201,6 +201,30 @@
     "supportedByStrongLoop": true
   },
   {
+    "name": "kv-extreme-scale",
+    "description": "IBM WebSphere eXtreme Scale key-value connector",
+    "baseModel": "KeyValueModel",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: https://user:pass@host:port/wxsdata/v1/grids/$GRID_NAME)"
+      },
+      "strictSSL": {
+        "type": "boolean",
+        "description": "Use SSL for connections to the grid"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-kv-extreme-scale",
+      "version": "^1.0.0"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
     "name": "kv-redis",
     "description": "Redis key-value connector",
     "baseModel": "KeyValueModel",
