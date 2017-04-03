@@ -1,3 +1,9 @@
+2017-04-03, Version 3.40.1
+==========================
+
+ * Disable context middleware to remove warning (Miroslav Bajtoš)
+
+
 2017-03-30, Version 3.40.0
 ==========================
 
