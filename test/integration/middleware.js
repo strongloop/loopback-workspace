@@ -33,6 +33,7 @@ describe('Middleware', function() {
     it('model.create()', function(done) {
       async.series([function(next) {
         Middleware.create({
+          facetName: 'server',
           function: 'foo',
           paths: ['/foo'],
           params: {
@@ -42,6 +43,7 @@ describe('Middleware', function() {
         }, next);
       }, function(next) {
         Middleware.create({
+          facetName: 'server',
           function: 'foo-before',
           methods: ['get', 'post'],
           paths: ['/foo-before'],
@@ -57,7 +59,7 @@ describe('Middleware', function() {
     it('model.find()', function(done) {
       Middleware.find(function(err, defs) {
         if (err) return done(err);
-        expect(defs).to.have.length(initialCount + 2);
+        expect(defs).to.have.length(initialCount);
         done();
       });
     });
@@ -67,10 +69,13 @@ describe('Middleware', function() {
         const config = {};
         config.name = 'phase1';
         config.before = 'routes';
+        config.facetName = 'server';
+
         MiddlewarePhase.create(config, function(err) {
           if (err) return done(err);
           const workspace = WorkspaceManager.getWorkspace();
-          const index = workspace.middlewarePhases.indexOf(config.name);
+          const facet = workspace.facets(config.facetName);
+          const index = facet.phases().order.indexOf(config.name);
           expect(index).to.be.greaterThan(-1);
           done();
         });
@@ -80,8 +85,10 @@ describe('Middleware', function() {
         const config = {};
         config.name = 'phase1';
         config.before = 'routes';
+        config.facetName = 'server';
+
         MiddlewarePhase.create(config, function(err) {
-          if (err && err.toString().includes('invalid')) return done();
+          if (err && err.toString().includes('exists')) return done();
           done('did not catch error');
         });
       });
@@ -90,13 +97,18 @@ describe('Middleware', function() {
         const config = {};
         config.name = 'myPhase';
         config.index = -1;
+        config.facetName = 'server';
+
         const workspace = WorkspaceManager.getWorkspace();
-        const lastIndex = workspace.middlewarePhases.length;
+        const facet = workspace.facets(config.facetName);
+        const lastIndex = facet.phases().map().length;
         MiddlewarePhase.create(config, function(err) {
           if (err) return done(err);
           const index =
-            workspace.middlewarePhases.indexOf(config.name + ':before');
-          expect(index).to.be.equal(lastIndex);
+            facet.phases().map().map(function(data) {
+              return data.id;
+            }).indexOf(config.name);
+          expect(index).to.be.equal(lastIndex + 1);
           done();
         });
       });
@@ -104,6 +116,7 @@ describe('Middleware', function() {
       it('add middleware to custom phase', function(done) {
         async.series([function(next) {
           Middleware.create({
+            facetName: 'server',
             function: 'foo',
             paths: ['/foo'],
             params: {
@@ -113,6 +126,7 @@ describe('Middleware', function() {
           }, next);
         }, function(next) {
           Middleware.create({
+            facetName: 'server',
             function: 'foo-before',
             methods: ['get', 'post'],
             paths: ['/foo-before'],
@@ -127,4 +141,3 @@ describe('Middleware', function() {
     });
   });
 });
-

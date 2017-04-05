@@ -20,11 +20,12 @@ module.exports = function(MiddlewarePhase) {
         options = {};
       }
       const name = data.name;
+      const facetName = data.facetName;
       delete data.name;
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const phase = new Phase(workspace, name);
       phase.execute(
-      phase.create.bind(phase, name, data.index, data.before), cb);
+      phase.create.bind(phase, facetName, name, data.index, data.before), cb);
     };
     MiddlewarePhase.findById = function(filter, options, cb) {
       if (typeof options === 'function') {
@@ -32,9 +33,11 @@ module.exports = function(MiddlewarePhase) {
         options = {};
       }
       const id = filter.where.id;
+      const facetName = filter.where && filter.where.facetName || 'server';
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const phase = new Phase(workspace, id);
-      phase.execute(phase.refresh.bind(phase), function(err, results) {
+      phase.execute(phase.refresh.bind(phase, facetName),
+      function(err, results) {
         if (err) return cb(err);
         const phase = workspace.getMiddlewarePhase(id);
         const middleware = phase.getMiddlewareList();
@@ -47,10 +50,12 @@ module.exports = function(MiddlewarePhase) {
         cb = options;
         options = {};
       }
-      const id = filter.where.id;
+      const id = filter.where && filter.where.id;
+      const facetName = filter.where && filter.where.facetName || 'server';
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const phase = new Phase(workspace, id);
-      phase.execute(phase.refresh.bind(phase), function(err, results) {
+      phase.execute(phase.refresh.bind(phase, facetName),
+      function(err, results) {
         if (err) return cb(err);
         const phase = workspace.getMiddlewarePhase(id);
         const middleware = phase.getMiddlewareList();

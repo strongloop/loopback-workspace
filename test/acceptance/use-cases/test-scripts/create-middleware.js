@@ -26,6 +26,7 @@ module.exports = function() {
       function: functionPath,
       phase: middlewarePhase,
       path: routesArray,
+      facetName: 'server',
     };
     const Middleware = this.getApp().models.Middleware;
     this.createModel(Middleware,

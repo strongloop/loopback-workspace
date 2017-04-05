@@ -37,6 +37,7 @@ module.exports = function(Middleware) {
         cb = options;
         options = {};
       }
+      const facetName = data.facetName;
       const phaseName = this.getPhase(data);
       const connector = Middleware.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
@@ -47,7 +48,7 @@ module.exports = function(Middleware) {
       const middleware =
         new MiddlewareClass(workspace, middlewarePath, middlewareDef);
       middleware.execute(
-      middleware.create.bind(middleware, phaseName),
+      middleware.create.bind(middleware, facetName, phaseName),
       function(err) {
         cb(err, data);
       });
@@ -60,11 +61,12 @@ module.exports = function(Middleware) {
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const phaseName = Middleware.getPhaseFromId(filter.where.id);
       const middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
+      const facetName = filter.where.facetName;
       const middleware =
         new MiddlewareClass(workspace, middlewarePath, {});
       middleware.execute(
-      middleware.refresh.bind(middleware), function(err) {
-        const phase = workspace.getMiddlewarePhase(phaseName);
+      middleware.refresh.bind(middleware, facetName), function(err) {
+        const phase = workspace.facet(facetName).phases(phaseName);
         if (phase) {
           const middleware = phase.middleware(middlewarePath);
           if (middleware) {
@@ -81,33 +83,20 @@ module.exports = function(Middleware) {
         cb = options;
         options = {};
       }
-      if (filter.where) {
+      if (filter.where && filter.where.id) {
         return this.findById(filter, options, cb);
       }
+      const facetName = filter.where && filter.where.facetName || 'server';
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
       const middleware =
         new MiddlewareClass(workspace, 'all', {});
-      middleware.refresh(function(err) {
+      middleware.execute(
+      middleware.refresh.bind(middleware, facetName), function(err) {
         if (err) return cb(err);
-        const phases = workspace.getMiddlewareConfig();
-        const list = findMiddleware(phases);
+        const facet = workspace.facets('server');
+        const list = facet.phases().map({includeComponents: true});
         cb(null, list);
       });
     };
   });
 };
-
-function findMiddleware(phases) {
-  const list = [];
-  Object.keys(phases).forEach(function(key) {
-    let config = {};
-    if (phases[key]) {
-      Object.keys(phases[key]).forEach(function(m) {
-        let middleware = phases[key][m];
-        middleware.phase = key;
-        list.push(middleware);
-      });
-    }
-  });
-  return list;
-}

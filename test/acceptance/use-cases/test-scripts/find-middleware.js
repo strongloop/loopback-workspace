@@ -9,7 +9,7 @@ module.exports = function() {
   function(middlewareId, workspaceName, next) {
     const testsuite = this;
     templateName = workspaceName;
-    const filter = {where: {id: middlewareId}};
+    const filter = {where: {id: middlewareId, facetName: 'server'}};
     const Middleware = this.getApp().models.Middleware;
     testsuite.findModel(Middleware,
     filter,
