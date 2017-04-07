@@ -44,7 +44,10 @@ module.exports = function() {
   this.Then(/^the workspace is loaded with middleware$/, function(next) {
     const testsuite = this;
     const configData =
-      testsuite.getWorkspace(templateName).getMiddlewareConfig();
+      testsuite.getWorkspace(templateName)
+      .facet('server')
+      .middlewares('middleware').phases()
+      .map({json: true, includeComponents: true, filter: 'id'});
     this.getMiddlewareConfig(templateName, function(err, middleware) {
       if (err) return next(err);
       Object.keys(configData).forEach(function(key) {

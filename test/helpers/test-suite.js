@@ -107,17 +107,17 @@ module.exports = {
   },
   getModelConfig: function(templateName, cb) {
     const facet = this.getWorkspace(templateName).facet('server');
-    const modelConfigPath = facet.getModelConfigPath();
+    const modelConfigPath = facet.modelConfigPath;
     fs.readJson(modelConfigPath, cb);
   },
   getDataSourceConfig: function(templateName, cb) {
     const configFile = this.getWorkspace(templateName)
-      .facets('server').getDataSourceConfigFilePath();
+      .facets('server').dataSourceConfigPath;
     fs.readJson(configFile, cb);
   },
   getMiddlewareConfig: function(templateName, cb) {
-    const middlewareFile =
-      this.getWorkspace(templateName).getMiddlewareFilePath();
+    const facet = this.getWorkspace(templateName).facets('server');
+    const middlewareFile = path.join(facet.filePath, 'middleware.json');
     fs.readJson(middlewareFile, cb);
   },
   injectMockDataSource: function(templateName, cb) {

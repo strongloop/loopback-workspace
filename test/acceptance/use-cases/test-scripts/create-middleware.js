@@ -26,6 +26,7 @@ module.exports = function() {
       function: functionPath,
       phase: middlewarePhase,
       path: routesArray,
+      facetName: 'server',
     };
     const Middleware = this.getApp().models.Middleware;
     this.createModel(Middleware,
@@ -42,8 +43,6 @@ module.exports = function() {
     const testsuite = this;
     const expectedMiddleware = testsuite.getSavedInputs(testName);
     delete expectedMiddleware.phase;
-    const middlewareFile =
-      testsuite.getWorkspace(templateName).getMiddlewareFilePath();
     testsuite.getMiddlewareConfig(templateName, function(err, middleware) {
       if (err) return next(err);
       const phase = middleware[middlewarePhase];

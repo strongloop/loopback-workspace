@@ -57,7 +57,7 @@ module.exports = function() {
 
   this.Then(/^the datasource configuration is updated$/, function(next) {
     const workspace = workspaceManager.getWorkspace(testsuite.workspaceId);
-    const file = workspace.facets('server').getDataSourceConfigFilePath();
+    const file = workspace.facets('server').dataSourceConfigPath;
     fs.readJson(file, function(err, data) {
       if (err) return next(err);
       const config = data[testsuite.datasourceId];
