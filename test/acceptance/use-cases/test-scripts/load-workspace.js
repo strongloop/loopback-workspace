@@ -46,7 +46,7 @@ module.exports = function() {
     const configData =
       testsuite.getWorkspace(templateName)
       .facet('server')
-      .phases()
+      .middlewares('middleware').phases()
       .map({json: true, includeComponents: true, filter: 'id'});
     this.getMiddlewareConfig(templateName, function(err, middleware) {
       if (err) return next(err);

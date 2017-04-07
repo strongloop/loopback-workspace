@@ -7,6 +7,7 @@
 const clone = require('lodash').clone;
 const MiddlewareClass = require('../../lib/datamodel/middleware');
 const WorkspaceManager = require('../../lib/workspace-manager.js');
+const MiddlewareConfig = require('../../lib/datamodel/middleware-config');
 
 /**
   * Defines a `Middleware` configuration.
@@ -41,14 +42,18 @@ module.exports = function(Middleware) {
       const phaseName = this.getPhase(data);
       const connector = Middleware.getConnector();
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
+      const facet = workspace.facets(facetName);
+      const middleware = facet.middlewares('middleware');
+      const phase = middleware.phases(phaseName);
       const middlewareDef = clone(data);
       const middlewarePath = middlewareDef.function;
       delete middlewareDef.phase;
       delete middlewareDef.subPhase;
-      const middleware =
-        new MiddlewareClass(workspace, middlewarePath, middlewareDef);
+      const middlewareConfig =
+        new MiddlewareConfig(workspace, middlewarePath, middlewareDef);
+      phase.add(middlewareConfig);
       middleware.execute(
-      middleware.create.bind(middleware, facetName, phaseName),
+      middleware.create.bind(middleware, workspace, facet),
       function(err) {
         cb(err, data);
       });
@@ -62,13 +67,12 @@ module.exports = function(Middleware) {
       const phaseName = Middleware.getPhaseFromId(filter.where.id);
       const middlewarePath = Middleware.getMiddlewarePath(filter.where.id);
       const facetName = filter.where.facetName;
-      const middleware =
-        new MiddlewareClass(workspace, middlewarePath, {});
+      const middleware = workspace.facets(facetName).middlewares('middleware');
       middleware.execute(
       middleware.refresh.bind(middleware, facetName), function(err) {
-        const phase = workspace.facet(facetName).phases(phaseName);
+        const phase = middleware.phases(phaseName);
         if (phase) {
-          const middleware = phase.middleware(middlewarePath);
+          const middleware = phase.config(middlewarePath);
           if (middleware) {
             return cb(null, middleware.getConfig());
           }
@@ -88,13 +92,13 @@ module.exports = function(Middleware) {
       }
       const facetName = filter.where && filter.where.facetName || 'server';
       const workspace = WorkspaceManager.getWorkspace(options.workspaceId);
-      const middleware =
-        new MiddlewareClass(workspace, 'all', {});
+      const middleware = workspace.facets(facetName).middlewares('middleware');
       middleware.execute(
       middleware.refresh.bind(middleware, facetName), function(err) {
         if (err) return cb(err);
         const facet = workspace.facets('server');
-        const list = facet.phases().map({includeComponents: true});
+        const list = facet.middlewares('middleware')
+          .phases().map({includeComponents: true});
         cb(null, list);
       });
     };

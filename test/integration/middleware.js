@@ -75,7 +75,8 @@ describe('Middleware', function() {
           if (err) return done(err);
           const workspace = WorkspaceManager.getWorkspace();
           const facet = workspace.facets(config.facetName);
-          const index = facet.phases().order.indexOf(config.name);
+          const index = facet.middlewares('middleware')
+            .phases().order.indexOf(config.name);
           expect(index).to.be.greaterThan(-1);
           done();
         });
@@ -101,11 +102,11 @@ describe('Middleware', function() {
 
         const workspace = WorkspaceManager.getWorkspace();
         const facet = workspace.facets(config.facetName);
-        const lastIndex = facet.phases().map().length;
+        const lastIndex = facet.middlewares('middleware').phases().map().length;
         MiddlewarePhase.create(config, function(err) {
           if (err) return done(err);
           const index =
-            facet.phases().map().map(function(data) {
+            facet.middlewares('middleware').phases().map().map(function(data) {
               return data.id;
             }).indexOf(config.name);
           expect(index).to.be.equal(lastIndex + 1);

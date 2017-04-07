@@ -116,8 +116,8 @@ module.exports = {
     fs.readJson(configFile, cb);
   },
   getMiddlewareConfig: function(templateName, cb) {
-    const middlewareFile =
-      this.getWorkspace(templateName).getMiddlewareFilePath();
+    const facet = this.getWorkspace(templateName).facets('server');
+    const middlewareFile = path.join(facet.filePath, 'middleware.json');
     fs.readJson(middlewareFile, cb);
   },
   injectMockDataSource: function(templateName, cb) {

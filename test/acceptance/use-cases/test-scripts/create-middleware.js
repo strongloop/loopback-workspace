@@ -43,8 +43,6 @@ module.exports = function() {
     const testsuite = this;
     const expectedMiddleware = testsuite.getSavedInputs(testName);
     delete expectedMiddleware.phase;
-    const middlewareFile =
-      testsuite.getWorkspace(templateName).getMiddlewareFilePath();
     testsuite.getMiddlewareConfig(templateName, function(err, middleware) {
       if (err) return next(err);
       const phase = middleware[middlewarePhase];
