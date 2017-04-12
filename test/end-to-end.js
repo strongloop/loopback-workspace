@@ -87,6 +87,34 @@ describe('end-to-end', function() {
         });
     });
 
+    it('omits sensitive error details in production mode', function(done) {
+      var loopback = require(SANDBOX + '/node_modules/loopback');
+      var boot = require(SANDBOX + '/node_modules/loopback-boot');
+      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+
+      var bootOptions = {
+        appRootDir: SANDBOX + '/server',
+        env: 'production',
+      };
+      boot(app, bootOptions, function(err) {
+        if (err) return done(err);
+        request(app)
+          .get('/url-does-not-exist')
+          .expect(404)
+          .end(function(err, res) {
+            // Assert that the response body does not contain stack trace.
+            // We want the assertion to be robust and keep working even
+            // if the property name storing stack trace changes in the future,
+            // therefore we test full response body.
+            if (err) return done(err);
+            var responseBody = JSON.stringify(res.body);
+            expect(responseBody).to.not.include('stack');
+
+            done();
+          });
+      });
+    });
+
     it('provides status on the root url only', function(done) {
       // See https://github.com/strongloop/generator-loopback/issues/80
       request(app)
@@ -1139,6 +1167,30 @@ describe('end-to-end', function() {
         delete process.env.PORT;
         if (err) return done(err);
         expectAppIsRunning(done);
+      });
+    });
+
+    it('includes sensitive error details in development mode', function(done) {
+      var loopback = require(SANDBOX + '/node_modules/loopback');
+      var boot = require(SANDBOX + '/node_modules/loopback-boot');
+      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+
+      var bootOptions = {
+        appRootDir: SANDBOX + '/server',
+        env: 'development',
+      };
+      boot(app, bootOptions, function(err) {
+        if (err) return done(err);
+        request(app)
+          .get('/model')
+          .expect(404)
+          .end(function(err, res) {
+            if (err) return done (err);
+            var responseBody = JSON.stringify(res.body);
+            expect(responseBody).to.include('stack');
+
+            done();
+          });
       });
     });
 
