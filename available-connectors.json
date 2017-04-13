@@ -225,6 +225,49 @@
     "supportedByStrongLoop": true
   },
   {
+    "name": "cassandra",
+    "description": "Cassandra",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": true
+    },
+    "settings": {
+      "host": {
+        "type": "string"
+      },
+      "port": {
+        "type": "number",
+        "default": 9042
+      },
+      "user": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "database": {
+        "type": "string"
+      },
+      "connectTimeout": {
+        "type": "number",
+        "default": 30000,
+        "description": "connectTimeout(ms)"
+      },
+      "readTimeout": {
+        "type": "number",
+        "default": 30000,
+        "description": "readTimeout(ms)"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-cassandra",
+      "version": "^1.0.0"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
     "name": "kv-redis",
     "description": "Redis key-value connector",
     "baseModel": "KeyValueModel",
