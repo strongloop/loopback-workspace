@@ -22,7 +22,6 @@ module.exports = function(Workspace) {
     var async = require('async');
     var spawn = require('child_process').spawn;
     var waitTillListening = require('strong-wait-till-listening');
-
     var PackageDefinition = app.models.PackageDefinition;
     var ConfigFile = app.models.ConfigFile;
     var ComponentConfig = app.models.ComponentConfig;
