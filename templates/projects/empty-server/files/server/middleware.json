@@ -13,14 +13,15 @@
     },
     "helmet#xssFilter": {},
     "helmet#frameguard": {
-      "params": [
-        "deny"
-       ]
+      "params": {
+        "action": "deny"
+      }
     },
     "helmet#hsts": {
       "params": {
         "maxAge": 0,
-        "includeSubdomains": true
+        "includeSubdomains": true,
+        "preload": true
       }
     },
     "helmet#hidePoweredBy": {},
