@@ -720,6 +720,7 @@ describe('end-to-end', function() {
     });
 
     it('updates a single model in the database', function(done) {
+      this.timeout(20000);
       db.autoupdate('Custom', function(err) {
         if (err) return done(err);
         listTableNames(connection, function(err, tables) {
@@ -893,7 +894,7 @@ describe('end-to-end', function() {
 
     describe('MySQL', function() {
       it('returns true for valid config', function(done) {
-        this.timeout(10000);
+        this.timeout(20000);
         givenDataSource({}, function(err, definition) {
           if (err) return done(err);
           definition.testConnection(done);

@@ -30,6 +30,41 @@
     "supportedByStrongLoop": true
   },
   {
+    "name": "ibm-object-storage",
+    "description": "IBM Object Storage",
+    "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings": {
+      "authUrl": {
+        "type": "string"
+      },
+      "tenantId": {
+        "type": "string"
+      },
+      "domainId": {
+        "type": "string"
+      },
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "region": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-component-storage",
+      "version": "^3.2.0"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
     "name": "db2",
     "description": "IBM DB2",
     "baseModel": "PersistedModel",
