@@ -1,3 +1,13 @@
+2017-06-23, Version 3.41.0
+==========================
+
+ * Support IBM Object Storage (Hage Yaapa)
+
+ * Add cassandra connector entry (Tetsuo Seto)
+
+ * Added Extreme Scale to avail. connectors (#465) (Ritchie Martori)
+
+
 2017-04-03, Version 3.40.1
 ==========================
 
