@@ -1,3 +1,9 @@
+2017-07-13, Version 3.42.0
+==========================
+
+ * Add z/OS Connect EE connector (Andrew Smithson)
+
+
 2017-06-23, Version 3.41.0
 ==========================
 
