@@ -21,7 +21,7 @@ describe('ComponentConfig', function() {
     expect(explorer.configFile).to.equal('server/component-config.json');
     // see templates/projects/api-server/files/server/component-config
     expect(explorer.name).to.equal('loopback-component-explorer');
-    expect(explorer.value).to.eql({ mountPath: '/explorer' });
+    expect(explorer.value).to.eql({ mountPath: '/explorer', generateOperationScopedModels: true });
   });
 
   it('should write data to "component-config.json"', function() {

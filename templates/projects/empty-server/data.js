@@ -97,6 +97,7 @@ template.server = {
       name: 'loopback-component-explorer',
       value: {
         mountPath: '/explorer',
+        generateOperationScopedModels: true,
       },
     },
   ],
