@@ -97,6 +97,9 @@ template.server = {
       name: 'loopback-component-explorer',
       value: {
         mountPath: '/explorer',
+        // Enables 'updateOnly' feature which is to generate operation scoped models in loopback-swagger.
+        // This flag is added to component-config.json of LoopBack application which is passed
+        // in as opts[] in loopback-swagger.createSwaggerObject()
         generateOperationScopedModels: true,
       },
     },
