@@ -1,3 +1,21 @@
+2017-09-06, Version 4.0.0
+=========================
+
+ * code review fixes (rashmihunt)
+
+ * add generateOperationScopedModels flag (rashmihunt)
+
+ * Add stalebot configuration (Kevin Delisle)
+
+ * Update Issue and PR Templates (#495) (Sakib Hasan)
+
+ * Update translated strings Q3 2017 (Allen Boone)
+
+ * update messages.json (Diana Lau)
+
+ * Add CODEOWNER file (Diana Lau)
+
+
 2017-07-13, Version 3.42.0
 ==========================
 

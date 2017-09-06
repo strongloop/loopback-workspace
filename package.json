@@ -1,6 +1,6 @@
 {
   "name": "loopback-workspace",
-  "version": "4.0.0-alpha.1",
+  "version": "4.0.0",
   "main": "server/server.js",
   "publishConfig": {
     "export-tests": true
