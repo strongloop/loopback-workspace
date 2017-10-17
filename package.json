@@ -2,6 +2,9 @@
   "name": "loopback-workspace",
   "version": "4.0.0",
   "main": "server/server.js",
+  "engines": { 
+    "node": ">=4"
+  },
   "publishConfig": {
     "export-tests": true
   },
@@ -23,9 +26,9 @@
     "fs-extra": "^0.30.0",
     "glob": "^7.0.0",
     "lodash": "^4.5.1",
-    "loopback": "^2.0.0",
-    "loopback-boot": "^2.6.5",
-    "loopback-component-explorer": "^2.1.0",
+    "loopback": "^3.15.0",
+    "loopback-boot": "^3.1.0",
+    "loopback-component-explorer": "^5.2.0",
     "loopback-datasource-juggler": "^2.27.0",
     "method-override": "^2.1.1",
     "morgan": "^1.2.0",
@@ -34,8 +37,8 @@
     "semver": "^5.1.0",
     "serve-favicon": "^2.0.1",
     "stable": "^0.1.5",
-    "strong-error-handler": "^1.0.1",
-    "strong-globalize": "^2.6.6",
+    "strong-error-handler": "^2.3.0",
+    "strong-globalize": "^3.1.0",
     "strong-wait-till-listening": "^1.0.0"
   },
   "devDependencies": {
