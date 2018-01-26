@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 var app = require('../../server/server');
+var g = require('strong-globalize')();
 
 module.exports = function(ModelAccessControl) {
   app.once('ready', function() {
@@ -38,10 +39,10 @@ function ready(ModelAccessControl) {
 
   ModelAccessControl.getAccessTypes = function(cb) {
     cb(null, [
-      { name: 'All (match all types)', value: ACL.ALL },
-      { name: 'Read', value: ACL.READ },
-      { name: 'Write', value: ACL.WRITE },
-      { name: 'Execute', value: ACL.EXECUTE },
+      { name: g.f('All (match all types)'), value: ACL.ALL },
+      { name: g.f('Read'), value: ACL.READ },
+      { name: g.f('Write'), value: ACL.WRITE },
+      { name: g.f('Execute'), value: ACL.EXECUTE },
     ]);
   };
 
@@ -61,8 +62,8 @@ function ready(ModelAccessControl) {
 
   ModelAccessControl.getPermissionTypes = function(cb) {
     cb(null, [
-      { name: 'Explicitly grant access', value: ACL.ALLOW },
-      { name: 'Explicitly deny access', value: ACL.DENY },
+      { name: g.f('Explicitly grant access'), value: ACL.ALLOW },
+      { name: g.f('Explicitly deny access'), value: ACL.DENY },
       /* not supported by loopback yet
       { name: 'Generate an alarm of the access', value: ACL.ALARM },
       { name: 'Log the access', value: ACL.AUDIT },
@@ -108,13 +109,13 @@ function ready(ModelAccessControl) {
    */
   ModelAccessControl.getBuiltinRoles = function(cb) {
     cb(null, [
-      { name: 'All users', value: Role.EVERYONE },
-      { name: 'Any unauthenticated user', value: Role.UNAUTHENTICATED },
-      { name: 'Any authenticated user', value: Role.AUTHENTICATED },
+      { name: g.f('All users'), value: Role.EVERYONE },
+      { name: g.f('Any unauthenticated user'), value: Role.UNAUTHENTICATED },
+      { name: g.f('Any authenticated user'), value: Role.AUTHENTICATED },
       /* not supported by loopback yet
       { name: 'Any user related to the object', value: Role.RELATED },
       */
-      { name: 'The user owning the object', value: Role.OWNER },
+      { name: g.f('The user owning the object'), value: Role.OWNER },
     ]);
   };
 
