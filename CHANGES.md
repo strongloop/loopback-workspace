@@ -1,4 +1,18 @@
-2017-09-06, Version 4.0.0
+2018-02-06, Version 4.1.0
+=========================
+
+ * translation acl options (Diana Lau)
+
+ * drop node 0.10 and 0.12 (Diana Lau)
+
+ * update helmet frameguard (Diana Lau)
+
+ * update helmet version in template (Diana Lau)
+
+ * chore: update license (Diana Lau)
+
+
+2017-09-05, Version 4.0.0
 =========================
 
  * code review fixes (rashmihunt)
