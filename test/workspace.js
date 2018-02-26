@@ -162,6 +162,19 @@ describe('Workspace', function() {
     });
   });
 
+  describe('project.getConnectorByName', function() {
+    it('should return false for unknown connector', function() {
+      var badConnector = Workspace.getConnectorByName('unknown-connector');
+      expect(badConnector).to.be.false();
+    });
+
+    it('should return a connector by name', function() {
+      var connector = Workspace.getConnectorByName('memory');
+      expect(connector.name).to.equal('memory');
+      expect(connector.description).to.equal('In-memory db');
+    });
+  });
+
   describe('project.listAvailableConnectors(cb)', function() {
     var connectors;
     before(function(done) {

@@ -1,5 +1,5 @@
-[
-  {
+{
+  "memory": {
     "name": "memory",
     "description": "In-memory db",
     "baseModel": "PersistedModel",
@@ -19,7 +19,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "kv-memory": {
     "name": "kv-memory",
     "description": "In-memory key-value connector",
     "baseModel": "KeyValueModel",
@@ -29,7 +29,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "ibm-object-storage": {
     "name": "ibm-object-storage",
     "description": "IBM Object Storage",
     "baseModel": "Model",
@@ -64,7 +64,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "db2": {
     "name": "db2",
     "description": "IBM DB2",
     "baseModel": "PersistedModel",
@@ -103,7 +103,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "dashdb": {
     "name": "dashdb",
     "description": "IBM DashDB",
     "baseModel": "PersistedModel",
@@ -139,7 +139,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "mqlight": {
     "name": "mqlight",
     "description": "IBM MQ Light",
     "baseModel": "Model",
@@ -166,7 +166,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "cloudant": {
     "name": "cloudant",
     "description": "IBM Cloudant DB",
     "baseModel": "PersistedModel",
@@ -199,7 +199,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "db2z": {
     "name": "db2z",
     "description": "IBM DB2 for z/OS",
     "baseModel": "PersistedModel",
@@ -235,7 +235,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "kv-extreme-scale": {
     "name": "kv-extreme-scale",
     "description": "IBM WebSphere eXtreme Scale key-value connector",
     "baseModel": "KeyValueModel",
@@ -259,7 +259,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "cassandra": {
     "name": "cassandra",
     "description": "Cassandra",
     "baseModel": "PersistedModel",
@@ -302,7 +302,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "kv-redis": {
     "name": "kv-redis",
     "description": "Redis key-value connector",
     "baseModel": "KeyValueModel",
@@ -335,7 +335,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "mongodb": {
     "name": "mongodb",
     "description": "MongoDB",
     "baseModel": "PersistedModel",
@@ -371,7 +371,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "mysql": {
     "name": "mysql",
     "description": "MySQL",
     "baseModel": "PersistedModel",
@@ -407,7 +407,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "postgresql": {
     "name": "postgresql",
     "description": "PostgreSQL",
     "baseModel": "PersistedModel",
@@ -443,7 +443,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "oracle": {
     "name": "oracle",
     "description": "Oracle",
     "baseModel": "PersistedModel",
@@ -479,7 +479,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "mssql": {
     "name": "mssql",
     "description": "Microsoft SQL",
     "baseModel": "PersistedModel",
@@ -515,7 +515,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "rest": {
     "name": "rest",
     "description": "REST services",
     "baseModel": "Model",
@@ -548,7 +548,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "soap": {
     "name": "soap",
     "description": "SOAP webservices",
     "baseModel": "Model",
@@ -580,7 +580,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "couchbase": {
     "name": "couchbase",
     "description": "Couchbase",
     "baseModel": "PersistedModel",
@@ -619,7 +619,7 @@
     },
     "supportedByStrongLoop": false
   },
-  {
+  "neo4j": {
     "name": "neo4j",
     "description": "Neo4j",
     "baseModel": "PersistedModel",
@@ -633,7 +633,7 @@
     },
     "supportedByStrongLoop": false
   },
-  {
+  "kafka": {
     "name": "kafka",
     "description": "Kafka",
     "baseModel": "PersistedModel",
@@ -647,7 +647,7 @@
     },
     "supportedByStrongLoop": false
   },
-  {
+  "saphana": {
     "name": "saphana",
     "description": "SAP HANA",
     "baseModel": "PersistedModel",
@@ -679,7 +679,7 @@
     },
     "supportedByStrongLoop": false
   },
-  {
+  "mail": {
     "name": "mail",
     "description": "Email",
     "baseModel": "Email",
@@ -695,7 +695,7 @@
     },
     "supportedByStrongLoop": true
   },
-  {
+  "elastic-search": {
     "name": "es",
     "description": "ElasticSearch",
     "baseModel": "PersistedModel",
@@ -735,7 +735,7 @@
     },
     "supportedByStrongLoop": false
   },
-  {
+  "zos-connect": {
     "name": "zosconnectee",
     "description": "z/OS Connect Enterprise Edition",
     "baseModel": "Model",
@@ -762,4 +762,4 @@
     },
     "supportedByStrongLoop": true
   }
-]
+}
