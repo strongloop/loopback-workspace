@@ -1,3 +1,11 @@
+2018-03-02, Version 4.1.1
+=========================
+
+ * [WebFM] de/es/fr/it/ja/ko/nl/tr/zh_CN/zh_TW trans (candytangnb)
+
+ * [WebFM] pt_BR translation (candytangnb)
+
+
 2018-02-06, Version 4.1.0
 =========================
 
