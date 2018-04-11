@@ -16,7 +16,7 @@
   "58f80adc7d0cb3b31e07883b93ba66ef": "Tous les utilisateurs authentifiés",
   "5d177c524912c66677c50daa60ce8ad2": "{0} n'est pas pris en charge par embed",
   "5e88c1acbc1fbaea1e238a52e80c25f1": "Explorez l'API REST dans {0}{1}",
-  "67e50229d1ed528e047c446ecfdc5073": "Tous les utilisateurs authentifiés",
+  "67e50229d1ed528e047c446ecfdc5073": "Tous les utilisateurs non authentifiés",
   "764590e7674a68d13d783daf190abd06": "Modèle inconnu {0}",
   "7a1a5f3e79fdc91edf2f5ead9d66abb4": "Lire ",
   "7a24390da4b5e3336537a01924f6017c": "Impossible d'analyser {0}: {1}",
