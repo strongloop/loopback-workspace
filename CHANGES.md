@@ -1,3 +1,9 @@
+2018-04-16, Version 4.1.2
+=========================
+
+ * translation: fix French ACL message (Diana Lau)
+
+
 2018-03-02, Version 4.1.1
 =========================
 
