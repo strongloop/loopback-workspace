@@ -1,3 +1,9 @@
+2018-04-18, Version 4.2.0
+=========================
+
+ * Upgrade scaffolded API Explorer to v6.x (Miroslav Bajtoš)
+
+
 2018-04-16, Version 4.1.2
 =========================
 
