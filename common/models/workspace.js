@@ -36,8 +36,8 @@ module.exports = function(Workspace) {
     var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
     var DEFAULT_TEMPLATE = 'api-server';
     var DEPENDENCIES_3_X = {
-      'loopback': '^3.0.0',
-      'loopback-component-explorer': '^5.0.0',
+      'loopback': '^3.19.0',
+      'loopback-component-explorer': '^6.0.0',
     };
     var DEPENDENCIES_2_X = {
       'loopback': '^2.22.0',
