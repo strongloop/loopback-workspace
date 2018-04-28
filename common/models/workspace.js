@@ -6,6 +6,7 @@
 var g = require('strong-globalize')();
 var _ = require('lodash');
 var helper = require('../../lib/helper');
+var connectorsObj = require('../../available-connectors');
 
 module.exports = function(Workspace) {
   var app = require('../../server/server');
@@ -425,7 +426,7 @@ module.exports = function(Workspace) {
      * @type {Array.<ConnectorMeta>}
      * @internal
      */
-    var staticConnectorList = require('../../available-connectors');
+    var staticConnectorList = _.values(connectorsObj);
 
     function isDependency(connector, pkg, cb) {
       var packageName;
@@ -446,6 +447,20 @@ module.exports = function(Workspace) {
       // default to not installed
       return cb(null, false);
     }
+
+    /**
+     * Map of connectors available on npm.
+     */
+    Workspace.mapOfAvailableConnectors = function() {
+      return connectorsObj;
+    };
+
+    /**
+     * Returns the connector metadata by key, or false if nothing is found.
+     */
+    Workspace.getConnectorByName = function(name) {
+      return connectorsObj[name] || false;
+    };
 
     /**
      * List of connectors available on npm.
