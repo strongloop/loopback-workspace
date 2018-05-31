@@ -70,7 +70,7 @@
     "description": "IBM DB2",
     "baseModel": "PersistedModel",
     "features": {
-      "discovery": false,
+      "discovery": true,
       "migration": false
     },
     "settings": {
@@ -110,7 +110,7 @@
     "description": "IBM DashDB",
     "baseModel": "PersistedModel",
     "features": {
-      "discovery": false,
+      "discovery": true,
       "migration": false
     },
     "settings": {
@@ -208,8 +208,8 @@
     "description": "IBM DB2 for z/OS",
     "baseModel": "PersistedModel",
     "features": {
-      "discovery": false,
-      "migration": false
+      "discovery": true,
+      "migration": true
     },
     "settings": {
       "dsn": {
@@ -270,7 +270,7 @@
     "description": "Cassandra",
     "baseModel": "PersistedModel",
     "features": {
-      "discovery": false,
+      "discovery": true,
       "migration": true
     },
     "settings": {
