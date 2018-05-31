@@ -10,7 +10,8 @@
     "settings": {
       "localStorage": {
         "type": "string",
-        "description": "window.localStorage key to use for persistence (browser only)"
+        "description":
+          "window.localStorage key to use for persistence (browser only)"
       },
       "file": {
         "type": "string",
@@ -75,7 +76,8 @@
     "settings": {
       "dsn": {
         "type": "string",
-        "description": "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
+        "description":
+          "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
       },
       "host": {
         "type": "string"
@@ -114,7 +116,8 @@
     "settings": {
       "dsn": {
         "type": "string",
-        "description": "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
+        "description":
+          "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
       },
       "host": {
         "type": "string"
@@ -177,7 +180,8 @@
     "settings": {
       "url": {
         "type": "string",
-        "description": "Connection String url to override other settings (eg: https://username:password@host)"
+        "description":
+          "Connection String url to override other settings (eg: https://username:password@host)"
       },
       "database": {
         "type": "string"
@@ -210,7 +214,8 @@
     "settings": {
       "dsn": {
         "type": "string",
-        "description": "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
+        "description":
+          "Connection String dsn to override other settings (eg: DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
       },
       "host": {
         "type": "string"
@@ -246,7 +251,8 @@
     "settings": {
       "url": {
         "type": "string",
-        "description": "Connection String url to override other settings (eg: https://user:pass@host:port/wxsdata/v1/grids/$GRID_NAME)"
+        "description":
+          "Connection String url to override other settings (eg: https://user:pass@host:port/wxsdata/v1/grids/$GRID_NAME)"
       },
       "strictSSL": {
         "type": "boolean",
@@ -313,7 +319,8 @@
     "settings": {
       "url": {
         "type": "string",
-        "description": "Connection String url to override other settings (eg: redis://user:pass@host:port/db)"
+        "description":
+          "Connection String url to override other settings (eg: redis://user:pass@host:port/db)"
       },
       "host": {
         "type": "string"
@@ -346,7 +353,8 @@
     "settings": {
       "url": {
         "type": "string",
-        "description": "Connection String url to override other settings (eg: mongodb://username:password@hostname:port/database)"
+        "description":
+          "Connection String url to override other settings (eg: mongodb://username:password@hostname:port/database)"
       },
       "host": {
         "type": "string"
@@ -382,7 +390,8 @@
     "settings": {
       "url": {
         "type": "string",
-        "description": "Connection String url to override other settings (eg: mysql://user:pass@host/db)"
+        "description":
+          "Connection String url to override other settings (eg: mysql://user:pass@host/db)"
       },
       "host": {
         "type": "string"
@@ -418,7 +427,8 @@
     "settings": {
       "url": {
         "type": "string",
-        "description": "Connection String url to override other settings (eg: postgres://username:password@localhost/database)"
+        "description":
+          "Connection String url to override other settings (eg: postgres://username:password@localhost/database)"
       },
       "host": {
         "type": "string"
@@ -454,7 +464,8 @@
     "settings": {
       "tns": {
         "type": "string",
-        "description": "Connection String tns (eg: DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MY_HOST)(PORT=MY_PORT))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=MY_DB)))"
+        "description":
+          "Connection String tns (eg: DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MY_HOST)(PORT=MY_PORT))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=MY_DB)))"
       },
       "host": {
         "type": "string"
@@ -488,9 +499,10 @@
       "migration": true
     },
     "settings": {
-       "url": {
+      "url": {
         "type": "string",
-        "description": "Connection String url to override other settings (eg: mssql://username:password@localhost/database)"
+        "description":
+          "Connection String url to override other settings (eg: mssql://username:password@localhost/database)"
       },
       "host": {
         "type": "string"
