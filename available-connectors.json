@@ -70,7 +70,7 @@
     "baseModel": "PersistedModel",
     "features": {
       "discovery": true,
-      "migration": false
+      "migration": true
     },
     "settings": {
       "dsn": {
@@ -109,7 +109,7 @@
     "baseModel": "PersistedModel",
     "features": {
       "discovery": true,
-      "migration": false
+      "migration": true
     },
     "settings": {
       "dsn": {
@@ -172,7 +172,7 @@
     "baseModel": "PersistedModel",
     "features": {
       "discovery": false,
-      "migration": false
+      "migration": true
     },
     "settings": {
       "url": {
