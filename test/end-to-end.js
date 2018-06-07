@@ -583,8 +583,6 @@ describe('end-to-end', function() {
       expect(semver.gtr('3.0.0', dependencies.loopback)).to.be.true;
       expect(semver.gtr('3.0.0', dependencies['loopback-datasource-juggler']))
         .to.be.true;
-      expect(semver.gtr('3.0.0', dependencies['loopback-component-explorer']))
-        .to.be.true;
       done();
     });
 
