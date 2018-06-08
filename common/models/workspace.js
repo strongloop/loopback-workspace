@@ -41,7 +41,7 @@ module.exports = function(Workspace) {
     };
     var DEPENDENCIES_2_X = {
       'loopback': '^2.22.0',
-      'loopback-component-explorer': '^2.4.0',
+      'loopback-component-explorer': '^5.4.0',
       'loopback-datasource-juggler': '^2.39.0',
     };
     var debug = require('debug')('workspace');
