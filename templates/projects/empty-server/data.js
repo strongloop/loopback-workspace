@@ -26,7 +26,7 @@ template.package = {
     'helmet': '^3.10.0',
     'loopback-boot': '^2.6.5',
     'serve-favicon': '^2.0.1',
-    'strong-error-handler': '^2.0.0',
+    'strong-error-handler': '^3.0.0',
   },
   'devDependencies': {
     'eslint': '^3.17.1',
