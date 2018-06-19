@@ -1,3 +1,23 @@
+2018-06-19, Version 4.3.0
+=========================
+
+ * Update strong-error-handler (shimks)
+
+ * update migration and discovery informationa again (shimks)
+
+ * fix formatting (shimks)
+
+ * update migration and discovery information (shimks)
+
+ * formatting (shimks)
+
+ * Drop support for Node.js 4.x, add Travis CI config (Miroslav Bajtoš)
+
+ * Update API Explorer in LB 2.x projects (Miroslav Bajtoš)
+
+ * Update built-in API explorer to latest (v6.x) (Miroslav Bajtoš)
+
+
 2018-04-18, Version 4.2.0
 =========================
 
