@@ -190,12 +190,47 @@
         "display": "password"
       },
       "modelIndex": {
-        "type": "string"
+        "type": "string",
+        "description": "Specify the model name to document mapping, defaults to `loopback__model__name`"
       }
     },
     "package": {
       "name": "loopback-connector-cloudant",
       "version": "^1.0.4"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "couchdb2",
+    "description": "Couchdb 2.x",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": false,
+      "migration": true
+    },
+    "settings": {
+      "url": {
+        "type": "string",
+        "description": "Connection String url to override other settings (eg: https://username:password@host)"
+      },
+      "database": {
+        "type": "string"
+      },
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string",
+        "display": "password"
+      },
+      "modelIndex": {
+        "type": "string",
+        "description": "Specify the model name to document mapping, defaults to `loopback__model__name`"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-couchdb2",
+      "version": "^1.2.1"
     },
     "supportedByStrongLoop": true
   },
