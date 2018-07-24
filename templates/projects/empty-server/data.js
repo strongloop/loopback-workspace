@@ -1,49 +1,48 @@
 /**
- * The api-server component template.
+ * The empty-server component template.
  */
-
+var g = require('strong-globalize')();
 var template = module.exports;
 
-template.description = 'An empty LoopBack API, without any configured ' +
-  'models or datasources';
+template.description = g.f(
+  'An empty LoopBack API, without any configured models or datasources'
+);
 
 template.supportedLBVersions = ['2.x', '3.x'];
 
 template.package = {
-  'version': '1.0.0',
-  'main': 'server/server.js',
-  'engines': {
-    'node': '>=4',
+  version: '1.0.0',
+  main: 'server/server.js',
+  engines: {
+    node: '>=4',
   },
-  'scripts': {
-    'lint': 'eslint .',
-    'start': 'node .',
-    'posttest': 'npm run lint && nsp check',
+  scripts: {
+    lint: 'eslint .',
+    start: 'node .',
+    posttest: 'npm run lint && nsp check',
   },
-  'dependencies': {
-    'compression': '^1.0.3',
-    'cors': '^2.5.2',
-    'helmet': '^3.10.0',
+  dependencies: {
+    compression: '^1.0.3',
+    cors: '^2.5.2',
+    helmet: '^3.10.0',
     'loopback-boot': '^2.6.5',
     'serve-favicon': '^2.0.1',
     'strong-error-handler': '^3.0.0',
   },
-  'devDependencies': {
-    'eslint': '^3.17.1',
+  devDependencies: {
+    eslint: '^3.17.1',
     'eslint-config-loopback': '^8.0.0',
-    'nsp': '^2.1.0',
+    nsp: '^2.1.0',
   },
   // Avoid NPM warning
-  'repository': {
-    'type': '',
-    'url': '',
+  repository: {
+    type: '',
+    url: '',
   },
-  'license': 'UNLICENSED',
+  license: 'UNLICENSED',
 };
 
-template.common = {
-
-};
+template.common = {};
 
 template.server = {
   facet: {
@@ -67,30 +66,31 @@ template.server = {
     { name: 'restApiRoot', value: '/api' },
     { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
     { name: 'port', value: 3000 },
-    { name: 'remoting', value: {
-      context: false,
-      rest: {
-        handleErrors: false,
-        normalizeHttpPath: false,
-        xml: false,
+    {
+      name: 'remoting',
+      value: {
+        context: false,
+        rest: {
+          handleErrors: false,
+          normalizeHttpPath: false,
+          xml: false,
+        },
+        json: {
+          strict: false,
+          limit: '100kb',
+        },
+        urlencoded: {
+          extended: true,
+          limit: '100kb',
+        },
+        cors: false,
       },
-      json: {
-        strict: false,
-        limit: '100kb',
-      },
-      urlencoded: {
-        extended: true,
-        limit: '100kb',
-      },
-      cors: false,
-    }},
+    },
   ],
 
-  modelConfigs: [
-  ],
+  modelConfigs: [],
 
-  datasources: [
-  ],
+  datasources: [],
 
   componentConfigs: [
     {

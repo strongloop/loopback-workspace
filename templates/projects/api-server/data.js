@@ -1,29 +1,23 @@
 /**
  * The api-server component template.
  */
-
+var g = require('strong-globalize')();
 var template = module.exports;
 
-template.description = 'A LoopBack API server with local User auth';
+template.description = g.f('A LoopBack API server with local User auth');
 
 template.supportedLBVersions = ['2.x', '3.x'];
 
-template.inherits = [
-  'empty-server',
-];
+template.inherits = ['empty-server'];
 
-template.package = {
-};
+template.package = {};
 
-template.common = {
-};
+template.common = {};
 
 template.server = {
-  facet: {
-  },
+  facet: {},
 
-  config: [
-  ],
+  config: [],
 
   modelConfigs: [
     {
