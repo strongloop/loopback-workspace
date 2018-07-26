@@ -1,26 +1,25 @@
+/**
+ * The notes component template.
+ */
+var g = require('strong-globalize')();
 var template = module.exports;
 
-template.description = 'A project containing a basic working example, ' +
-  'including a memory database';
+template.description = g.f(
+  'A project containing a basic working example, including a memory database'
+);
 
 template.supportedLBVersions = ['2.x', '3.x'];
 
-template.inherits = [
-  'empty-server',
-];
+template.inherits = ['empty-server'];
 
-template.package = {
-};
+template.package = {};
 
-template.common = {
-};
+template.common = {};
 
 template.server = {
-  facet: {
-  },
+  facet: {},
 
-  config: [
-  ],
+  config: [],
 
   modelConfigs: [
     {

@@ -1,26 +1,26 @@
+/**
+ * The hello-world component template.
+ */
+var g = require('strong-globalize')();
 var template = module.exports;
 
-template.description = 'A project containing a controller, ' +
-  'including a single vanilla Message and a single remote method';
+template.description = g.f(
+  'A project containing a controller, \
+including a single vanilla Message and a single remote method'
+);
 
 template.supportedLBVersions = ['2.x', '3.x'];
 
-template.inherits = [
-  'empty-server',
-];
+template.inherits = ['empty-server'];
 
-template.package = {
-};
+template.package = {};
 
-template.common = {
-};
+template.common = {};
 
 template.server = {
-  facet: {
-  },
+  facet: {},
 
-  config: [
-  ],
+  config: [],
 
   modelConfigs: [
     {
