@@ -19,7 +19,7 @@ template.package = {
   scripts: {
     lint: 'eslint .',
     start: 'node .',
-    posttest: 'npm run lint && nsp check',
+    posttest: 'npm run lint',
   },
   dependencies: {
     compression: '^1.0.3',
@@ -32,7 +32,6 @@ template.package = {
   devDependencies: {
     eslint: '^3.17.1',
     'eslint-config-loopback': '^8.0.0',
-    nsp: '^2.1.0',
   },
   // Avoid NPM warning
   repository: {
