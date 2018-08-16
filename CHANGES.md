@@ -1,3 +1,17 @@
+2018-08-16, Version 4.3.1
+=========================
+
+ * update nsp version in template (Diana Lau)
+
+ * [WebFM] cs/de/es/fr/it/ja/ko/nl/pl/pt_BR/ru/tr/zh (candytangnb)
+
+ * Extract string for project template desc (Diana Lau)
+
+ * [WebFM] cs/pl/ru translation (candytangnb)
+
+ * add connector couchdb2 (jannyHou)
+
+
 2018-06-19, Version 4.3.0
 =========================
 
