@@ -1,6 +1,6 @@
 {
   "0d603cecbdb2dc918ac89ab159cce59a": "Todos os Usuários",
-  "1129c0e4d43f2d121652a7302712cff6": "Write",
+  "1129c0e4d43f2d121652a7302712cff6": "Escrever",
   "1388b6334a4ba0318da003d55cac2e11": "integração requer \"as\"",
   "18c34b4c4d7d029ad7848c42ab9c591c": "Um servidor de API LoopBack com autenticação do usuário local",
   "19bc0b9f9b8c2aafad3a235c5d90c014": "O usuário que possui o objeto",
@@ -18,7 +18,7 @@
   "5d177c524912c66677c50daa60ce8ad2": "{0} não é suportado por integração",
   "5e88c1acbc1fbaea1e238a52e80c25f1": "Procure a API de REST em {0}{1}",
   "67e50229d1ed528e047c446ecfdc5073": "Qualquer usuário não autenticado",
-  "6db4f1cbdff48733dddf86d9b8b158ca": "Qualquer API vazia do LoopBack, sem modelos ou origens de dados configurados",
+  "6db4f1cbdff48733dddf86d9b8b158ca": "Uma API vazia do LoopBack, sem modelos ou origens de dados configurados",
   "764590e7674a68d13d783daf190abd06": "Modelo desconhecido {0}",
   "7a1a5f3e79fdc91edf2f5ead9d66abb4": "Ler",
   "7a24390da4b5e3336537a01924f6017c": "Não é possível analisar {0}: {1}",
