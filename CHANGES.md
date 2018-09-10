@@ -1,4 +1,12 @@
-2018-08-16, Version 4.3.1
+2018-09-10, Version 4.4.0
+=========================
+
+ * chore: update versions to latest (virkt25)
+
+ * [WebFM] es/fr/it/pl/pt_BR/ru translation (candytangnb)
+
+
+2018-08-15, Version 4.3.1
 =========================
 
  * update nsp version in template (Diana Lau)
