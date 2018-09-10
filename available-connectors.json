@@ -60,7 +60,7 @@
     },
     "package": {
       "name": "loopback-component-storage",
-      "version": "^3.2.0"
+      "version": "^3.5.0"
     },
     "supportedByStrongLoop": true
   },
@@ -99,7 +99,7 @@
     },
     "package": {
       "name": "loopback-connector-db2",
-      "version": "^1.0.0"
+      "version": "^2.1.1"
     },
     "supportedByStrongLoop": true
   },
@@ -135,7 +135,7 @@
     },
     "package": {
       "name": "loopback-connector-dashdb",
-      "version": "^1.0.0"
+      "version": "^2.0.2"
     },
     "supportedByStrongLoop": true
   },
@@ -162,7 +162,7 @@
     },
     "package": {
       "name": "loopback-connector-mqlight",
-      "version": "^1.0.0"
+      "version": "^3.1.0"
     },
     "supportedByStrongLoop": true
   },
@@ -196,7 +196,7 @@
     },
     "package": {
       "name": "loopback-connector-cloudant",
-      "version": "^1.0.4"
+      "version": "^2.2.0"
     },
     "supportedByStrongLoop": true
   },
@@ -230,7 +230,7 @@
     },
     "package": {
       "name": "loopback-connector-couchdb2",
-      "version": "^1.2.1"
+      "version": "^1.3.0"
     },
     "supportedByStrongLoop": true
   },
@@ -266,7 +266,7 @@
     },
     "package": {
       "name": "loopback-connector-db2z",
-      "version": "^1.0.0"
+      "version": "^2.0.0"
     },
     "supportedByStrongLoop": true
   },
@@ -290,7 +290,7 @@
     },
     "package": {
       "name": "loopback-connector-kv-extreme-scale",
-      "version": "^1.0.0"
+      "version": "^1.0.1"
     },
     "supportedByStrongLoop": true
   },
@@ -333,7 +333,7 @@
     },
     "package": {
       "name": "loopback-connector-cassandra",
-      "version": "^1.0.0"
+      "version": "^1.7.0"
     },
     "supportedByStrongLoop": true
   },
@@ -366,7 +366,7 @@
     },
     "package": {
       "name": "loopback-connector-kv-redis",
-      "version": "^1.0.0"
+      "version": "^3.0.0"
     },
     "supportedByStrongLoop": true
   },
@@ -402,7 +402,7 @@
     },
     "package": {
       "name": "loopback-connector-mongodb",
-      "version": "^1.4"
+      "version": "^3.6.0"
     },
     "supportedByStrongLoop": true
   },
@@ -438,7 +438,7 @@
     },
     "package": {
       "name": "loopback-connector-mysql",
-      "version": "^2.2"
+      "version": "^5.3.0"
     },
     "supportedByStrongLoop": true
   },
@@ -474,7 +474,7 @@
     },
     "package": {
       "name": "loopback-connector-postgresql",
-      "version": "^2.4"
+      "version": "^3.4.0"
     },
     "supportedByStrongLoop": true
   },
@@ -510,7 +510,7 @@
     },
     "package": {
       "name": "loopback-connector-oracle",
-      "version": "^3.0"
+      "version": "^4.1.0"
     },
     "supportedByStrongLoop": true
   },
@@ -546,7 +546,7 @@
     },
     "package": {
       "name": "loopback-connector-mssql",
-      "version": "^2.5"
+      "version": "^3.3.0"
     },
     "supportedByStrongLoop": true
   },
@@ -579,7 +579,7 @@
     },
     "package": {
       "name": "loopback-connector-rest",
-      "version": "^2.0"
+      "version": "^3.2.0"
     },
     "supportedByStrongLoop": true
   },
@@ -593,7 +593,7 @@
     },
     "package": {
       "name": "loopback-connector-soap",
-      "version": "^3.0"
+      "version": "^4.3.0"
     },
     "settings": {
       "url": {
@@ -650,7 +650,7 @@
     },
     "package": {
       "name": "loopback-connector-couchbase",
-      "version": "^1.0"
+      "version": "^1.0.6"
     },
     "supportedByStrongLoop": false
   },
@@ -664,7 +664,7 @@
     },
     "package": {
       "name": "loopback-connector-neo4j",
-      "version": "^0.1"
+      "version": "^0.1.3"
     },
     "supportedByStrongLoop": false
   },
@@ -678,7 +678,7 @@
     },
     "package": {
       "name": "loopback-connector-kafka",
-      "version": "^0.2"
+      "version": "^0.2.1"
     },
     "supportedByStrongLoop": false
   },
@@ -710,7 +710,7 @@
     },
     "package": {
       "name": "loopback-connector-saphana",
-      "version": "^0.7"
+      "version": "^0.7.2"
     },
     "supportedByStrongLoop": false
   },
@@ -766,7 +766,7 @@
     },
     "package": {
       "name": "loopback-connector-es",
-      "version": "^1.0.7"
+      "version": "^1.4.1"
     },
     "supportedByStrongLoop": false
   },
@@ -793,7 +793,7 @@
     },
     "package": {
       "name": "loopback-connector-zosconnectee",
-      "version": "^1.0"
+      "version": "^1.0.0"
     },
     "supportedByStrongLoop": true
   }

@@ -36,13 +36,13 @@ module.exports = function(Workspace) {
     var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
     var DEFAULT_TEMPLATE = 'api-server';
     var DEPENDENCIES_3_X = {
-      'loopback': '^3.19.0',
-      'loopback-component-explorer': '^6.0.0',
+      'loopback': '^3.22.0',
+      'loopback-component-explorer': '^6.2.0',
     };
     var DEPENDENCIES_2_X = {
-      'loopback': '^2.22.0',
+      'loopback': '^2.40.0',
       'loopback-component-explorer': '^5.4.0',
-      'loopback-datasource-juggler': '^2.39.0',
+      'loopback-datasource-juggler': '^2.58.0',
     };
     var debug = require('debug')('workspace');
 
