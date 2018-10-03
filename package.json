@@ -3,7 +3,8 @@
   "version": "3.42.0",
   "main": "server/server.js",
   "publishConfig": {
-    "export-tests": true
+    "export-tests": true,
+    "tag": "lts"
   },
   "scripts": {
     "pretest": "node test/helpers/setup-mysql.js --ci-only",
