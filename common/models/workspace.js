@@ -62,8 +62,8 @@ module.exports = function(Workspace) {
 
     Workspace.getAvailableLBVersions = function(cb) {
       var availableLBVersions = {
-        '2.x': { description: g.f('long term support') },
-        '3.x': { description: g.f('current') },
+        '3.x': { description: g.f('Active Long Term Support') },
+        '2.x': { description: g.f('Maintenance Long Term Support') },
       };
       cb(null, availableLBVersions);
     };
