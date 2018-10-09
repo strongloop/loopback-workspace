@@ -1,3 +1,9 @@
+2018-10-09, Version 4.5.0
+=========================
+
+ * Update LTS status of LoopBack 2.x/3.x versions (Miroslav Bajtoš)
+
+
 2018-09-10, Version 4.4.0
 =========================
 
