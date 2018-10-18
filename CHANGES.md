@@ -1,3 +1,19 @@
+2018-10-18, Version 3.43.0
+==========================
+
+ * add engine (jannyHou)
+
+ * Update loopback version (jannyHou)
+
+ * Set publish tag to "lts" in package.json (Miroslav Bajtoš)
+
+ * Update translated strings Q3 2017 (Allen Boone)
+
+ * update messages.json (Diana Lau)
+
+ * Add CODEOWNER file (Diana Lau)
+
+
 2017-07-13, Version 3.42.0
 ==========================
 
