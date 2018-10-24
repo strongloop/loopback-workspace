@@ -367,7 +367,7 @@
     },
     "package": {
       "name": "loopback-connector-mongodb",
-      "version": "^1.4"
+      "version": "^3.9.1"
     },
     "supportedByStrongLoop": true
   },
