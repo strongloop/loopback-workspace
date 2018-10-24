@@ -1,3 +1,11 @@
+2018-10-24, Version 3.44.0
+==========================
+
+ * fix (jannyHou)
+
+ * update mongodb connector (jannyHou)
+
+
 2018-10-18, Version 3.43.0
 ==========================
 
