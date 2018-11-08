@@ -402,7 +402,7 @@
     },
     "package": {
       "name": "loopback-connector-mongodb",
-      "version": "^3.6.0"
+      "version": "^4.0.0"
     },
     "supportedByStrongLoop": true
   },
