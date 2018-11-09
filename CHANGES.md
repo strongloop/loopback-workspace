@@ -1,3 +1,9 @@
+2018-11-09, Version 3.44.1
+==========================
+
+ * Fix issue strongloop/loopback-workspace#535 (Matheus Horstmann)
+
+
 2018-10-24, Version 3.44.0
 ==========================
 
