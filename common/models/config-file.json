@@ -1,4 +1,5 @@
 {
+  "base": "Model",
   "validateUpsert": true,
   "properties": {
     "path": {

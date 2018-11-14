@@ -15,17 +15,6 @@ var boot = require('loopback-boot');
 var cookieParser = require('cookie-parser');
 var errorHandler = require('strong-error-handler');
 
-// required to support base models
-app.dataSource('db', {
-  connector: loopback.Memory,
-  defaultForType: 'db',
-});
-
-// must define base models first
-// see: https://github.com/strongloop/loopback/issues/324
-// require('./models/workspace-entity');
-// require('./models/definition');
-
 /*
  * 1. Configure LoopBack models and datasources
  *

@@ -12,3 +12,4 @@ node_modules/
 /test/sandbox
 /test/.pkgcache/
 dist
+.vscode/
