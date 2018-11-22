@@ -1,5 +1,9 @@
 # LoopBack Workspace 3.0
 
+This module is in Active LTS mode, new features are no longer accepted.
+(See [Module Long Term Support Policy](#module-long-term-support-policy) below.)
+LoopBack 3 users looking for new features are encouraged to upgrade to LoopBack 4. Refer to [loopback-next#1849](https://github.com/strongloop/loopback-next/issues/1849) for more information on how to upgrade.
+
 ## About
 
 The `loopback-workspace` module provides node.js and REST APIs for interacting
@@ -57,3 +61,16 @@ a test user. This is a one-time task to run only once when setting up your
 development environment.
 
 Use the `npm test` command to run the tests.
+
+## Module Long Term Support Policy
+
+This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudNativeJS/ModuleLTS) policy, with the following End Of Life (EOL) dates:
+
+| Version | Status          | Published | EOL      |
+| ------- | --------------- | --------- | -------- |
+| 4.x     | Active LTS      | Sep 2017  | Dec 2019 |
+| 3.x     | Maintenance LTS | Jul 2014  | Apr 2019 |
+| 2.x     | Maintenance LTS | Nov 2013  | Apr 2019 |
+| 1.x     | Maintenance LTS | Sep 2013  | Apr 2019 |
+
+Learn more about our LTS plan in the [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
