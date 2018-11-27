@@ -1,6 +1,6 @@
 {
   "name": "loopback-workspace",
-  "version": "3.44.1",
+  "version": "3.44.2",
   "engines": {
     "node": ">=6 =<8"
   },

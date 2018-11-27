@@ -1,3 +1,9 @@
+2018-11-27, Version 3.44.2
+==========================
+
+ * Update Node.js version and remove nsp dep (Diana Lau)
+
+
 2018-11-09, Version 3.44.1
 ==========================
 
