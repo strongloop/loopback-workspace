@@ -13,7 +13,7 @@ template.package = {
   'version': '1.0.0',
   'main': 'server/server.js',
   'engines': {
-    'node': '>=4',
+    'node': '>=6',
   },
   'scripts': {
     'lint': 'eslint .',
@@ -30,8 +30,7 @@ template.package = {
   },
   'devDependencies': {
     'eslint': '^3.17.1',
-    'eslint-config-loopback': '^8.0.0',
-    'nsp': '^2.1.0',
+    'eslint-config-loopback': '^8.0.0'
   },
   // Avoid NPM warning
   'repository': {
