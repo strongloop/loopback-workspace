@@ -38,7 +38,7 @@
     "serve-favicon": "^2.0.1",
     "stable": "^0.1.5",
     "strong-error-handler": "^3.0.0",
-    "strong-globalize": "^2.6.6",
+    "strong-globalize": "^4.1.2",
     "strong-wait-till-listening": "^1.0.0"
   },
   "devDependencies": {
