@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 var app = require('../');
-var WorkspaceEntity = app.models.WorkspaceEntity;
+var WorkspaceEntity = app.registry.getModel('WorkspaceEntity');
 var Facet = app.models.Facet;
 var TestDataBuilder = require('./helpers/test-data-builder');
 
