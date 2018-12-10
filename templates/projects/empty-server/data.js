@@ -14,7 +14,7 @@ template.package = {
   version: '1.0.0',
   main: 'server/server.js',
   engines: {
-    node: '>=4',
+    node: '>=6',
   },
   scripts: {
     lint: 'eslint .',
