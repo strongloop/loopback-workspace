@@ -1044,7 +1044,10 @@ describe('end-to-end', function() {
             if (err) return done(err);
             request(appUrl).get('/api/products')
               .end(function(err) {
-                expect(err).to.have.property('code', 'ECONNREFUSED');
+                expect(err.message).to.contain('ECONNREFUSED');
+                // NOTE: due to the supertest update, err doesn't currently
+                // have the code property
+                // expect(err).to.have.property('code', 'ECONNREFUSED');
                 done();
               });
           });
