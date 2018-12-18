@@ -60,15 +60,18 @@ describe('REST API', function() {
     });
 
     describe('POST /workspaces/connectors', function() {
+      var responseBody;
       beforeEach(givenEmptyWorkspace);
-      beforeEach(function(done) {
-        this.req = request(app)
+      beforeEach(function() {
+        return request(app)
           .get('/api/workspaces/connectors')
           .set('Accepts', 'application/json')
-          .end(done);
+          .then(function(res) {
+            responseBody = res.body;
+          });
       });
       it('should return a list of connectors', function() {
-        var connectors = toNames(this.req.res.body);
+        var connectors = toNames(responseBody);
         expect(connectors).to.contain('memory');
         expect(connectors).to.contain('mail');
         expect(connectors).to.contain('mysql');
