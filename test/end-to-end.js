@@ -1044,7 +1044,12 @@ describe('end-to-end', function() {
             if (err) return done(err);
             request(appUrl).get('/api/products')
               .end(function(err) {
-                expect(err).to.have.property('code', 'ECONNREFUSED');
+                expect(err.message, 'err.message').to.contain('ECONNREFUSED');
+
+                // Submitted a PR to supertest to get the code property attached
+                // to the error: https://github.com/visionmedia/supertest/pull/530
+                // If accepted, revert test to the commented one below:
+                // expect(err).to.have.property('code', 'ECONNREFUSED');
                 done();
               });
           });
