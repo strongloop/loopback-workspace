@@ -1,3 +1,23 @@
+2019-01-11, Version 4.5.1
+=========================
+
+ * update supertest dependency (Nora)
+
+ * chore: remove Gruntfile and its dependencies (Nora)
+
+ * chore: update dependencies and node version (Nora)
+
+ * update LB version to LB3 (Nora)
+
+ * Upgrade strong-globalize to latest (v4.x) (Miroslav Bajtoš)
+
+ * fix (jannyHou)
+
+ * add lts announcement (jannyHou)
+
+ * update mongodb connector to 4.x (jannyHou)
+
+
 2018-10-09, Version 4.5.0
 =========================
 
