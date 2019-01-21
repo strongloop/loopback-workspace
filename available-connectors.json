@@ -396,6 +396,10 @@
         "type": "string",
         "display": "password"
       },
+      "useNewUrlParser":{
+        "type": "boolean",
+        "display": true
+      },
       "database": {
         "type": "string"
       }
@@ -665,6 +669,28 @@
     "package": {
       "name": "loopback-connector-neo4j",
       "version": "^0.1.3"
+    },
+    "supportedByStrongLoop": false
+  },
+  {
+    "name": "twilio",
+    "description": "Twilio Connector",
+    "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings":{
+      "accountSid": {
+        "type": "string"
+      },
+      "authToken": {
+        "type": "string"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-twilio",
+      "version": "^0.5.1"
     },
     "supportedByStrongLoop": false
   },
