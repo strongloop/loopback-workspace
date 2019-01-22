@@ -673,6 +673,30 @@
     "supportedByStrongLoop": false
   },
   {
+    "name": "twilio",
+    "description": "Twilio Connector",
+    "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "settings":{
+      "accountSid": {
+        "type": "string",
+        "description": "Twilio Account Sid"
+      },
+      "authToken": {
+        "type": "string",
+        "description": "Twilio Account AuthToken"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-twilio",
+      "version": "^1.0.0"
+    },
+    "supportedByStrongLoop": false
+  },
+  {
     "name": "kafka",
     "description": "Kafka",
     "baseModel": "PersistedModel",
