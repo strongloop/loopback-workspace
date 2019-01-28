@@ -16,9 +16,6 @@ module.exports = function(ConfigFile) {
   var groupBy = require('lodash').groupBy;
   var debug = require('debug')('workspace:config-file');
 
-  // workaround to https://github.com/jprichardson/node-jsonfile/issues/26
-  fs.spaces = 2;
-
   /**
    * Various definitions in the workspace are backed by a `ConfigFile`.
    * This class provides a very simple abstraction from the `fs` module,
@@ -110,7 +107,7 @@ module.exports = function(ConfigFile) {
     debug('output [%s] %j', absolutePath, configFile.data);
     fs.mkdirp(path.dirname(absolutePath), function(err) {
       if (err) return cb(err);
-      fs.writeJson(absolutePath, configFile.data, cb);
+      fs.writeJson(absolutePath, configFile.data, { spaces: '  ' }, cb);
     });
   };
 
