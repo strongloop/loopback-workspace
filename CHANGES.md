@@ -1,3 +1,9 @@
+2019-01-28, Version 4.5.2
+=========================
+
+ * make sure json files are formatted upon save (Raymond Feng)
+
+
 2019-01-11, Version 4.5.1
 =========================
 
