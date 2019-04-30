@@ -8,7 +8,7 @@ template.description = g.f(
   'An empty LoopBack API, without any configured models or datasources'
 );
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.package = {
   version: '1.0.0',

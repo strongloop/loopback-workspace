@@ -124,14 +124,6 @@ givenWorkspaceFromTemplate = function(template, options, cb) {
   });
 };
 
-givenLB2Workspace = function(cb) {
-  resetWorkspace(function(err) {
-    if (err) return cb(err);
-    var options = { loopbackVersion: '2.x' };
-    givenWorkspaceFromTemplate('empty-server', options, cb);
-  });
-};
-
 givenLB3Workspace = function(cb) {
   resetWorkspace(function(err) {
     if (err) return cb(err);
