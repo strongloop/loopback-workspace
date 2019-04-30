@@ -1,6 +1,6 @@
 # LoopBack Workspace 3.0
 
-This module is in Active LTS mode, new features are no longer accepted.
+This module is in Maintenance LTS mode, new features are no longer accepted.
 (See [Module Long Term Support Policy](#module-long-term-support-policy) below.)
 LoopBack 3 users looking for new features are encouraged to upgrade to LoopBack 4. Refer to [loopback-next#1849](https://github.com/strongloop/loopback-next/issues/1849) for more information on how to upgrade.
 
@@ -68,7 +68,7 @@ This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudN
 
 | Version | Status          | Published | EOL      |
 | ------- | --------------- | --------- | -------- |
-| 4.x     | Active LTS      | Sep 2017  | Dec 2019 |
-| 3.x     | Maintenance LTS | Jul 2014  | Apr 2019 |
+| 4.x     | Maintenance LTS | Sep 2017  | Dec 2020 |
+| 3.x     | End-of-Life LTS | Jul 2014  | Apr 2019 |
 
 Learn more about our LTS plan in the [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
