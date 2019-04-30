@@ -17,7 +17,7 @@ describe('Workspace', function() {
       request(app).get('/api/workspaces/loopback-versions').expect(200, function(err, res) {
         if (err) return done(err);
         var versions = res.body.versions;
-        expect(versions.length).to.eql(2);
+        expect(versions.length).to.eql(1);
         done();
       });
     });
