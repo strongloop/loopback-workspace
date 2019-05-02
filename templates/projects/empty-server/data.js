@@ -13,7 +13,7 @@ template.package = {
   'version': '1.0.0',
   'main': 'server/server.js',
   'engines': {
-    'node': '>=6',
+    'node': '>=8',
   },
   'scripts': {
     'lint': 'eslint .',
