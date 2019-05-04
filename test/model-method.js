@@ -35,34 +35,6 @@ describe('ModelMethod', function() {
     });
   });
 
-  it('correctly adds new method', function(done) {
-    ModelMethod.create(
-      {
-        modelId: userModel.id,
-        name: 'testMethod',
-        isStatic: true,
-      },
-      function(err) {
-        if (err) return done(err);
-        userModel.methods(function(err, list) {
-          if (err) return done(err);
-          expect(list).to.have.length(1);
-          expect(list[0]).to.have.property('name', 'testMethod');
-          expect(list[0]).to.have.property('isStatic', true);
-
-          var cfg = new ConfigFile({ path: 'server/models/user.json' });
-          cfg.load(function(err) {
-            if (err) return done(err);
-            var methods = cfg.data.methods;
-            expect(methods).to.be.an('object');
-            expect(methods).to.have.property('testMethod');
-            expect(methods.testMethod).to.have.property('isStatic', true);
-            done();
-          });
-        });
-      });
-  });
-
   it('supports multiple http endpoints', function(done) {
     ModelMethod.create(
       {

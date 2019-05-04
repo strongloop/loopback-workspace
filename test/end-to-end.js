@@ -155,11 +155,6 @@ describe('end-to-end', function() {
       // the test will time out if `booted` is not emitted
     });
 
-    it('has legacy explorer disabled in config', function(done) {
-      expect(app.get('legacyExplorer'), 'legacyExplorer option').to.be.false();
-      done();
-    });
-
     it('has legacy explorer route /models disabled', function(done) {
       request(app)
         .get('/api/models')
