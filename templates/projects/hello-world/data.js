@@ -9,7 +9,7 @@ template.description = g.f(
 including a single vanilla Message and a single remote method'
 );
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.inherits = ['empty-server'];
 

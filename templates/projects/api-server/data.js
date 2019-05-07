@@ -6,7 +6,7 @@ var template = module.exports;
 
 template.description = g.f('A LoopBack API server with local User auth');
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.inherits = ['empty-server'];
 

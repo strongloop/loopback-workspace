@@ -8,7 +8,7 @@ template.description = g.f(
   'A project containing a basic working example, including a memory database'
 );
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.inherits = ['empty-server'];
 
