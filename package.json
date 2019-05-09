@@ -2,7 +2,7 @@
   "name": "loopback-workspace",
   "version": "4.5.2",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "main": "server/server.js",
   "publishConfig": {
