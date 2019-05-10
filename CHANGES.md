@@ -1,3 +1,27 @@
+2019-05-10, Version 5.0.0
+=========================
+
+ * adding twilio connector entry (Jamil Spain)
+
+ * Adding useNewUrlParser option for mongodb (Jamil Spain)
+
+ * Add npm audit to empty-server posttest (Harry Adel)
+
+ * update README for EOL status (Diana Lau)
+
+ * Drop Node.js 6 support (Diana Lau)
+
+ * chore: update copyrights years (Agnes Lin)
+
+ * remove test cases no longer applicable (Diana Lau)
+
+ * update README for LTS status (Diana Lau)
+
+ * remove tests for 2.x (Diana Lau)
+
+ * remove 2.x as available LB version (Diana Lau)
+
+
 2019-01-28, Version 4.5.2
 =========================
 
