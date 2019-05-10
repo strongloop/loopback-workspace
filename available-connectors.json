@@ -398,6 +398,10 @@
       },
       "database": {
         "type": "string"
+      },
+      "useNewUrlParser":{
+        "type": "boolean",
+        "description": "Feature supported by MongoDB v3.1.0 and above"
       }
     },
     "package": {
