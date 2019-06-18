@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2016,2019. All Rights Reserved.
+// Node module: loopback-workspace
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 /**
  * The api-server component template.
  */
@@ -6,7 +11,7 @@ var template = module.exports;
 
 template.description = g.f('A LoopBack API server with local User auth');
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.inherits = ['empty-server'];
 

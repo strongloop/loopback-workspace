@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2015,2016. All Rights Reserved.
+// Copyright IBM Corp. 2015,2019. All Rights Reserved.
 // Node module: loopback-workspace
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -39,11 +39,6 @@ module.exports = function(Workspace) {
       'loopback': '^3.22.0',
       'loopback-component-explorer': '^6.2.0',
     };
-    var DEPENDENCIES_2_X = {
-      'loopback': '^2.40.0',
-      'loopback-component-explorer': '^5.4.0',
-      'loopback-datasource-juggler': '^2.58.0',
-    };
     var debug = require('debug')('workspace');
 
     /**
@@ -63,7 +58,6 @@ module.exports = function(Workspace) {
     Workspace.getAvailableLBVersions = function(cb) {
       var availableLBVersions = {
         '3.x': { description: g.f('Active Long Term Support') },
-        '2.x': { description: g.f('Maintenance Long Term Support') },
       };
       cb(null, availableLBVersions);
     };
@@ -215,12 +209,11 @@ module.exports = function(Workspace) {
         return cb(err);
       }
 
-      if (loopbackVersion !== '2.x' && loopbackVersion !== '3.x') {
-        return cb(new Error(g.f('Loopback version should be either 2.x or 3.x')));
+      if (loopbackVersion !== '3.x') {
+        return cb(new Error(g.f('Loopback version should be 3.x')));
       }
       var defaultDependencies = template.package.dependencies;
-      var loopbackDependencies =
-        loopbackVersion === '2.x' ? DEPENDENCIES_2_X : DEPENDENCIES_3_X;
+      var loopbackDependencies = DEPENDENCIES_3_X;
       template.package.dependencies = extend(defaultDependencies, loopbackDependencies);
 
       // TODO(bajtos) come up with a more generic approach

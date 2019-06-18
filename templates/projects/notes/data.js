@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2016,2019. All Rights Reserved.
+// Node module: loopback-workspace
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 /**
  * The notes component template.
  */
@@ -8,7 +13,7 @@ template.description = g.f(
   'A project containing a basic working example, including a memory database'
 );
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.inherits = ['empty-server'];
 

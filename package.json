@@ -1,8 +1,8 @@
 {
   "name": "loopback-workspace",
-  "version": "4.5.1",
+  "version": "5.0.0",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "main": "server/server.js",
   "publishConfig": {
@@ -50,5 +50,6 @@
     "mysql": "^2.16.0",
     "read": "^1.0.7",
     "supertest": "^3.3.0"
-  }
+  },
+  "author": "IBM Corp."
 }

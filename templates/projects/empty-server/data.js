@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2016,2019. All Rights Reserved.
+// Node module: loopback-workspace
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 /**
  * The empty-server component template.
  */
@@ -8,7 +13,7 @@ template.description = g.f(
   'An empty LoopBack API, without any configured models or datasources'
 );
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.package = {
   version: '1.0.0',
@@ -19,7 +24,7 @@ template.package = {
   scripts: {
     lint: 'eslint .',
     start: 'node .',
-    posttest: 'npm run lint',
+    posttest: 'npm run lint && npm audit',
   },
   dependencies: {
     compression: '^1.0.3',

@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Copyright IBM Corp. 2013,2019. All Rights Reserved.
 // Node module: loopback-workspace
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -121,14 +121,6 @@ givenWorkspaceFromTemplate = function(template, options, cb) {
         cb();
       }
     );
-  });
-};
-
-givenLB2Workspace = function(cb) {
-  resetWorkspace(function(err) {
-    if (err) return cb(err);
-    var options = { loopbackVersion: '2.x' };
-    givenWorkspaceFromTemplate('empty-server', options, cb);
   });
 };
 

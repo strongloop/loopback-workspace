@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2016,2019. All Rights Reserved.
+// Node module: loopback-workspace
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 /**
  * The hello-world component template.
  */
@@ -9,7 +14,7 @@ template.description = g.f(
 including a single vanilla Message and a single remote method'
 );
 
-template.supportedLBVersions = ['2.x', '3.x'];
+template.supportedLBVersions = ['3.x'];
 
 template.inherits = ['empty-server'];
 

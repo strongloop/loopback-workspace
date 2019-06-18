@@ -402,6 +402,10 @@
       },
       "database": {
         "type": "string"
+      },
+      "useNewUrlParser":{
+        "type": "boolean",
+        "description": "Feature supported by MongoDB v3.1.0 and above"
       }
     },
     "package": {
@@ -682,10 +686,12 @@
     },
     "settings":{
       "accountSid": {
-        "type": "string"
+        "type": "string",
+        "description": "Twilio Account Sid"
       },
       "authToken": {
-        "type": "string"
+        "type": "string",
+        "description": "Twilio Account AuthToken"
       }
     },
     "package": {

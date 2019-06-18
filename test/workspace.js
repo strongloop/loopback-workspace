@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Copyright IBM Corp. 2014,2019. All Rights Reserved.
 // Node module: loopback-workspace
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
@@ -17,7 +17,7 @@ describe('Workspace', function() {
       request(app).get('/api/workspaces/loopback-versions').expect(200, function(err, res) {
         if (err) return done(err);
         var versions = res.body.versions;
-        expect(versions.length).to.eql(2);
+        expect(versions.length).to.eql(1);
         done();
       });
     });
@@ -45,25 +45,25 @@ describe('Workspace', function() {
           {
             name: 'api-server',
             description: 'A LoopBack API server with local User auth',
-            supportedLBVersions: ['2.x', '3.x'],
+            supportedLBVersions: ['3.x'],
           },
           {
             name: 'empty-server',
             description: 'An empty LoopBack API, without any configured ' +
               'models or datasources',
-            supportedLBVersions: ['2.x', '3.x'],
+            supportedLBVersions: ['3.x'],
           },
           {
             description: 'A project containing a controller, ' +
               'including a single vanilla Message and a single remote method',
             name: 'hello-world',
-            supportedLBVersions: ['2.x', '3.x'],
+            supportedLBVersions: ['3.x'],
           },
           {
             description: 'A project containing a basic working example, ' +
               'including a memory database',
             name: 'notes',
-            supportedLBVersions: ['2.x', '3.x'],
+            supportedLBVersions: ['3.x'],
           },
         ]);
         done();
