@@ -690,7 +690,7 @@
     },
     "package": {
       "name": "loopback-connector-twilio",
-      "version": "^0.5.1"
+      "version": "^2.0.0"
     },
     "supportedByStrongLoop": false
   },
