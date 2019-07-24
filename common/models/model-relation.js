@@ -3,6 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+
 module.exports = function(ModelRelation) {
   /**
    * Represents a relation between two LoopBack `Model`s.
@@ -35,10 +37,10 @@ module.exports = function(ModelRelation) {
 
   ModelRelation.getValidTypes = function(cb) {
     cb(null, [
-      { name: 'has many', value: 'hasMany' },
-      { name: 'belongs to', value: 'belongsTo' },
-      { name: 'has and belongs to many', value: 'hasAndBelongsToMany' },
-      { name: 'has one', value: 'hasOne' },
+      {name: 'has many', value: 'hasMany'},
+      {name: 'belongs to', value: 'belongsTo'},
+      {name: 'has and belongs to many', value: 'hasAndBelongsToMany'},
+      {name: 'has one', value: 'hasOne'},
     ]);
   };
 };

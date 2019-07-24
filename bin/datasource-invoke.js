@@ -6,8 +6,10 @@
 // This script is executed by loopback-workspace in WORKSPACE_DIR
 // to run automigrate/autoupdate
 
-var g = require('strong-globalize')();
-var assert = require('assert');
+'use strict';
+
+const g = require('strong-globalize')();
+const assert = require('assert');
 
 process.once('message', function(msg) {
   invoke(msg, function(err) {
@@ -21,11 +23,11 @@ process.once('message', function(msg) {
 process.on('uncaughtException', done);
 
 function invoke(msg, cb) {
-  var dataSourceName = msg.dataSourceName;
-  var methodName = msg.methodName;
-  var args = msg.args;
-  var cbMsg = {};
-  var app, ds;
+  const dataSourceName = msg.dataSourceName;
+  const methodName = msg.methodName;
+  const args = msg.args;
+  const cbMsg = {};
+  let app, ds;
 
   assert(dataSourceName, g.f('dataSourceName is required'));
   assert(methodName, g.f('methodName is required'));
@@ -74,7 +76,7 @@ function toSerializableError(err) {
     return null;
   }
 
-  var alt = {};
+  const alt = {};
 
   Object.getOwnPropertyNames(err).forEach(function(key) {
     alt[key] = err[key];

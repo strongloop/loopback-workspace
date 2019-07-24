@@ -3,6 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+
 module.exports = function(app, cb) {
   app.asyncBoot = typeof cb === 'function';
   process.nextTick(cb);

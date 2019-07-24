@@ -3,8 +3,16 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var request = require('supertest');
+'use strict';
+
+const app = require('../');
+const request = require('supertest');
+const expect = require('chai').expect;
+const support = require('../test/support');
+const givenEmptyWorkspace = support.givenEmptyWorkspace;
+const givenEmptySandbox = support.givenEmptySandbox;
+const resetWorkspace = support.resetWorkspace;
+const toNames = support.toNames;
 
 describe('REST API', function() {
   beforeEach(givenEmptySandbox);
@@ -30,7 +38,7 @@ describe('REST API', function() {
       it('should add a facet from a template', function(done) {
         app.models.Facet.find(function(err, defs) {
           if (err) return done(err);
-          var names = toNames(defs);
+          const names = toNames(defs);
           expect(names).to.contain('server');
           done();
         });
@@ -60,7 +68,7 @@ describe('REST API', function() {
     });
 
     describe('POST /workspaces/connectors', function() {
-      var responseBody;
+      let responseBody;
       beforeEach(givenEmptyWorkspace);
       beforeEach(function() {
         return request(app)
@@ -71,7 +79,7 @@ describe('REST API', function() {
           });
       });
       it('should return a list of connectors', function() {
-        var connectors = toNames(responseBody);
+        const connectors = toNames(responseBody);
         expect(connectors).to.contain('memory');
         expect(connectors).to.contain('mail');
         expect(connectors).to.contain('mysql');
@@ -107,6 +115,7 @@ describe('REST API', function() {
       });
       it('should create a datasource def', function(done) {
         app.models.DataSourceDefinition.findById('server.test', function(err, def) {
+          // eslint-disable-next-line no-unused-expressions
           expect(def).to.exist;
           done();
         });

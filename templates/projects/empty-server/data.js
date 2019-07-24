@@ -3,11 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+
 /**
  * The empty-server component template.
  */
-var g = require('strong-globalize')();
-var template = module.exports;
+const g = require('strong-globalize')();
+const template = module.exports;
 
 template.description = g.f(
   'An empty LoopBack API, without any configured models or datasources'
@@ -67,9 +69,9 @@ template.server = {
   },
 
   config: [
-    { name: 'restApiRoot', value: '/api' },
-    { name: 'host', value: '0.0.0.0' }, // Listen on all interfaces
-    { name: 'port', value: 3000 },
+    {name: 'restApiRoot', value: '/api'},
+    {name: 'host', value: '0.0.0.0'}, // Listen on all interfaces
+    {name: 'port', value: 3000},
     {
       name: 'remoting',
       value: {

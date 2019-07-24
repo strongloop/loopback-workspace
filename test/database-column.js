@@ -3,9 +3,11 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var DatabaseColumn = app.models.DatabaseColumn;
-var TestDataBuilder = require('./helpers/test-data-builder');
+'use strict';
+
+const app = require('../');
+const DatabaseColumn = app.models.DatabaseColumn;
+const TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('DatabaseColumn', function() {
 

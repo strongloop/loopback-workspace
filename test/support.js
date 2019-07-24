@@ -1,21 +1,24 @@
+/* eslint-disable no-undef */
 // Copyright IBM Corp. 2013,2019. All Rights Reserved.
 // Node module: loopback-workspace
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var assert = require('assert');
-var async = require('async');
-var fs = require('fs-extra');
-var path = require('path');
-expect = require('chai').expect;
-var workspace = require('../server/server');
-var models = workspace.models;
-var ConfigFile = models.ConfigFile;
-var debug = require('debug')('workspace:test:support');
+'use strict';
+
+const assert = require('assert');
+const async = require('async');
+const fs = require('fs-extra');
+const path = require('path');
+const expect = require('chai').expect;
+const workspace = require('../server/server');
+const models = workspace.models;
+const ConfigFile = models.ConfigFile;
+const debug = require('debug')('workspace:test:support');
 
 global.Promise = require('bluebird');
 
-fileExistsSync = function(path) {
+const fileExistsSync = function(path) {
   try {
     fs.statSync(path);
     return true;
@@ -24,48 +27,48 @@ fileExistsSync = function(path) {
   }
 };
 
-expectFileExists = function(file) {
+const expectFileExists = function(file) {
   assert(fileExistsSync(file), file + ' does not exist');
 };
 
-expectFileNotExists = function(file) {
+const expectFileNotExists = function(file) {
   assert(!fileExistsSync(file), file + ' does exist');
 };
 
-getPath = function(relativePath) {
+const getPath = function(relativePath) {
   return ConfigFile.toAbsolutePath(relativePath);
 };
 
-expectValueInJSONFile = function(file, propertyPath, val) {
-  var contents = fs.readFileSync(file, 'utf8');
-  var obj = JSON.parse(contents);
+const expectValueInJSONFile = function(file, propertyPath, val) {
+  const contents = fs.readFileSync(file, 'utf8');
+  const obj = JSON.parse(contents);
   expect(obj).to.have.deep.property(propertyPath, val);
 };
 
-FIXTURES = path.resolve(__dirname, 'fixtures/');
-SANDBOX = path.resolve(__dirname, 'sandbox/');
+const FIXTURES = path.resolve(__dirname, 'fixtures/');
+const SANDBOX = path.resolve(__dirname, 'sandbox/');
 
 // tell the workspace to load files from the sandbox
 process.env.WORKSPACE_DIR = SANDBOX;
 
-createSandboxDir = function(dirName, cb) {
+const createSandboxDir = function(dirName, cb) {
   fs.mkdir(dirName, cb);
 };
 
-givenEmptySandbox = function(cb) {
+const givenEmptySandbox = function(cb) {
   fs.remove(SANDBOX, function(err) {
     if (err) return cb(err);
     createSandboxDir(SANDBOX, cb);
   });
 
   // Remove any cached modules from SANDBOX
-  for (var key in require.cache) {
+  for (const key in require.cache) {
     if (key.slice(0, SANDBOX.length) == SANDBOX)
       delete require.cache[key];
   }
 };
 
-resetWorkspace = function(cb) {
+const resetWorkspace = function(cb) {
   async.each(workspace.models(), function(model, cb) {
     if (model.destroyAll) {
       model.destroyAll(cb);
@@ -75,17 +78,17 @@ resetWorkspace = function(cb) {
   }, cb);
 };
 
-givenFile = function(name, pathToFile) {
+const givenFile = function(name, pathToFile) {
   return function(done) {
-    var configFile = this[name] = new ConfigFile({
+    const configFile = this[name] = new ConfigFile({
       path: pathToFile,
     });
     configFile.load(done);
   };
 };
 
-givenEmptyWorkspace = function(cb) {
-  var test = this;
+const givenEmptyWorkspace = function(cb) {
+  const test = this;
   test.serverFacet = 'server';
   resetWorkspace(function(err) {
     if (err) return cb(err);
@@ -98,14 +101,14 @@ givenEmptyWorkspace = function(cb) {
   });
 };
 
-givenBasicWorkspace = function(cb) {
+const givenBasicWorkspace = function(cb) {
   resetWorkspace(function(err) {
     if (err) return cb(err);
     givenWorkspaceFromTemplate('api-server', cb);
   });
 };
 
-givenWorkspaceFromTemplate = function(template, options, cb) {
+const givenWorkspaceFromTemplate = function(template, options, cb) {
   if (cb === undefined && typeof options === 'function') {
     cb = options;
     options = undefined;
@@ -119,20 +122,19 @@ givenWorkspaceFromTemplate = function(template, options, cb) {
         if (err) return cb(err);
         debug('Created %j in %s', template, SANDBOX);
         cb();
-      }
-    );
+      });
   });
 };
 
-givenLB3Workspace = function(cb) {
+const givenLB3Workspace = function(cb) {
   resetWorkspace(function(err) {
     if (err) return cb(err);
-    var options = { loopbackVersion: '3.x' };
+    const options = {loopbackVersion: '3.x'};
     givenWorkspaceFromTemplate('empty-server', options, cb);
   });
 };
 
-setWorkspaceToSandboxDir = function() {
+const setWorkspaceToSandboxDir = function() {
   // tell the workspace to load files from the sandbox
   process.env.WORKSPACE_DIR = SANDBOX;
 };
@@ -141,7 +143,7 @@ function findOfType(name, type) {
   assert(name);
   assert(type);
   return function(query, cb) {
-    var test = this;
+    const test = this;
     if (typeof query === 'function') {
       cb = query;
       query = {};
@@ -157,24 +159,24 @@ function findOfType(name, type) {
   };
 }
 
-findFacets = findOfType('facets', models.Facet);
-findFacetSettings = findOfType('facetSettings', models.FacetSetting);
-findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
-findMiddlewares = findOfType('middlewares', models.Middleware);
-findComponentConfigs = findOfType('componentConfigs', models.ComponentConfig);
-findModelConfigs = findOfType('modelConfigs', models.ModelConfig);
-findModelDefinitions = findOfType('models', models.ModelDefinition);
-findViewDefinitions = findOfType('views', models.ViewDefinition);
-findModelProperties = findOfType('properties', models.ModelProperty);
-findModelMethods = findOfType('methods', models.ModelMethod);
-findModelRelations = findOfType('relations', models.ModelRelation);
-findModelAccessControls = findOfType('accessControls', models.ModelAccessControl);
-findPropertyValidations = findOfType('validations', models.PropertyValidation);
-findDatabaseColumns = findOfType('columns', models.DatabaseColumn);
+const findFacets = findOfType('facets', models.Facet);
+const findFacetSettings = findOfType('facetSettings', models.FacetSetting);
+const findDataSourceDefinitions = findOfType('dataSources', models.DataSourceDefinition);
+const findMiddlewares = findOfType('middlewares', models.Middleware);
+const findComponentConfigs = findOfType('componentConfigs', models.ComponentConfig);
+const findModelConfigs = findOfType('modelConfigs', models.ModelConfig);
+const findModelDefinitions = findOfType('models', models.ModelDefinition);
+const findViewDefinitions = findOfType('views', models.ViewDefinition);
+const findModelProperties = findOfType('properties', models.ModelProperty);
+const findModelMethods = findOfType('methods', models.ModelMethod);
+const findModelRelations = findOfType('relations', models.ModelRelation);
+const findModelAccessControls = findOfType('accessControls', models.ModelAccessControl);
+const findPropertyValidations = findOfType('validations', models.PropertyValidation);
+const findDatabaseColumns = findOfType('columns', models.DatabaseColumn);
 
-findAllEntities = function(cb) {
-  var test = this;
-  var steps = [
+const findAllEntities = function(cb) {
+  const test = this;
+  let steps = [
     findFacets,
     findDataSourceDefinitions,
     findModelDefinitions,
@@ -195,10 +197,33 @@ findAllEntities = function(cb) {
   async.parallel(steps, cb);
 };
 
-toNames = function(arr) {
+const toNames = function(arr) {
   return arr.map(function(entity) {
     return entity.name;
   });
+};
+
+module.exports = exports = {
+  fileExistsSync,
+  findAllEntities,
+  setWorkspaceToSandboxDir,
+  expectFileExists,
+  expectFileNotExists,
+  givenEmptyWorkspace,
+  givenBasicWorkspace,
+  givenWorkspaceFromTemplate,
+  givenLB3Workspace,
+  givenEmptySandbox,
+  createSandboxDir,
+  SANDBOX,
+  FIXTURES,
+  givenFile,
+  toNames,
+  resetWorkspace,
+  findComponentConfigs,
+  findDataSourceDefinitions,
+  getPath,
+  findMiddlewares,
 };
 
 // Let express know that we are runing from unit-tests

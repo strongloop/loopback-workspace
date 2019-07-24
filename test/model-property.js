@@ -1,15 +1,23 @@
+/* eslint-disable no-undef */
 // Copyright IBM Corp. 2014,2016. All Rights Reserved.
 // Node module: loopback-workspace
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var given = require('./helpers/given');
-var ModelProperty = app.models.ModelProperty;
-var ModelDefinition = app.models.ModelDefinition;
-var ConfigFile = app.models.ConfigFile;
-var TestDataBuilder = require('./helpers/test-data-builder');
-var request = require('supertest');
+'use strict';
+
+const app = require('../');
+const given = require('./helpers/given');
+const ModelProperty = app.models.ModelProperty;
+const ModelDefinition = app.models.ModelDefinition;
+const ConfigFile = app.models.ConfigFile;
+const TestDataBuilder = require('./helpers/test-data-builder');
+const request = require('supertest');
+const expect = require('chai').expect;
+const support = require('./support');
+const givenBasicWorkspace = support.givenBasicWorkspace;
+const givenFile = support.givenFile;
+const toNames = support.toNames;
 
 describe('ModelProperty', function() {
   beforeEach(givenBasicWorkspace);
@@ -21,9 +29,9 @@ describe('ModelProperty', function() {
     }, done);
   });
   beforeEach(function(done) {
-    var test = this;
+    const test = this;
     test.propertyName = 'myProperty';
-    var property = {
+    const property = {
       name: test.propertyName,
       type: 'String',
       isId: false,
@@ -39,11 +47,11 @@ describe('ModelProperty', function() {
   describe('ModelProperty.create(property, cb)', function() {
     beforeEach(givenFile('configFile', 'server/models/user.json'));
     it('should update the correct $modelName.json file', function() {
-      var properties = this.configFile.data.properties;
-      var type = this.property.type;
+      const properties = this.configFile.data.properties;
+      const type = this.property.type;
       expect(this.property.name).to.equal(this.propertyName);
       expect(properties).to.have.property(this.propertyName);
-      expect(properties[this.propertyName]).to.eql({ type: type, id: false });
+      expect(properties[this.propertyName]).to.eql({type: type, id: false});
     });
     it('should have the correct id', function() {
       expect(this.property.id).to.equal('server.user.myProperty');
@@ -53,6 +61,7 @@ describe('ModelProperty', function() {
   describe('ModelProperty.find(filter, cb)', function(done) {
     it('should contain the property', function(done) {
       ModelProperty.find(function(err, properties) {
+        // eslint-disable-next-line no-unused-expressions
         expect(err).to.not.exist;
         expect(toNames(properties)).to.contain(this.propertyName);
         done();
@@ -66,13 +75,13 @@ describe('ModelProperty', function() {
     });
     beforeEach(givenFile('configFile', 'server/models/user.json'));
     it('should remove from $modelName.json file', function() {
-      var properties = this.configFile.data.properties;
+      const properties = this.configFile.data.properties;
       expect(properties).to.not.have.property(this.propertyName);
     });
   });
 
   describe('model.save()', function() {
-    var AN_ORACLE_CONFIG = {
+    const AN_ORACLE_CONFIG = {
       columnName: 'ID',
       dataType: 'VARCHAR2',
       dataLength: 20,
@@ -87,11 +96,11 @@ describe('ModelProperty', function() {
     beforeEach(givenFile('configFile', 'server/models/user.json'));
 
     it('should update the $modelName.json file', function() {
-      var properties = this.configFile.data.properties;
+      const properties = this.configFile.data.properties;
       expect(properties[this.propertyName]).to.eql({
         type: 'Boolean',
         id: true,
-        oracle: AN_ORACLE_CONFIG });
+        oracle: AN_ORACLE_CONFIG});
     });
   });
 
@@ -100,8 +109,8 @@ describe('ModelProperty', function() {
       // every query triggers a reload
       ModelProperty.all(function(err, list) {
         if (err) return done(err);
-        var actual = list[0].toObject();
-        var expected = new ModelProperty({
+        const actual = list[0].toObject();
+        const expected = new ModelProperty({
           name: this.propertyName,
           type: 'String',
           isId: false,
@@ -118,11 +127,11 @@ describe('ModelProperty', function() {
     it('handles shorthand notation', function(done) {
       given.modelDefinition('common', {
         name: 'ShortProp',
-        properties: { name: 'string' },
+        properties: {name: 'string'},
       });
 
       ModelProperty.findOne(
-        { where: { id: 'common.ShortProp.name' }},
+        {where: {id: 'common.ShortProp.name'}},
         function(err, def) {
           if (err) return done(err);
           expect(def.type).to.equal('string');
@@ -134,11 +143,11 @@ describe('ModelProperty', function() {
     it('handles array shorthand notation', function(done) {
       given.modelDefinition('common', {
         name: 'ShortProp',
-        properties: { name: ['string'] },
+        properties: {name: ['string']},
       });
 
       ModelProperty.findOne(
-        { where: { id: 'common.ShortProp.name' }},
+        {where: {id: 'common.ShortProp.name'}},
         function(err, def) {
           if (err) return done(err);
           expect(def.type).to.eql(['string']);
@@ -171,7 +180,7 @@ describe('ModelProperty', function() {
         .expect(422)
         .end(function(err, res) {
           if (err) return done(err);
-          expect(res.body.error.details.codes).to.eql({ name: ['format'] });
+          expect(res.body.error.details.codes).to.eql({name: ['format']});
           done();
         });
     });

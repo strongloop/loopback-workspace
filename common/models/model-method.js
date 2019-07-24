@@ -3,7 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var semver = require('semver');
+'use strict';
+
+const semver = require('semver');
 
 module.exports = function(ModelMethod) {
   /**
@@ -14,7 +16,7 @@ module.exports = function(ModelMethod) {
    */
 
   ModelMethod._shouldEncodeStaticFlagInName = function() {
-    var version = ModelMethod.app.models.Workspace.loopBackVersion;
+    const version = ModelMethod.app.models.Workspace.loopBackVersion;
     return version != null ? !semver.gtr('3.0.0', version) : false;
   };
 
@@ -22,9 +24,9 @@ module.exports = function(ModelMethod) {
     if (!this._shouldEncodeStaticFlagInName()) {
       return data.name;
     }
-    var isStatic = data.isStatic;
+    const isStatic = data.isStatic;
     if (isStatic !== undefined) {
-      var matchName = name.match(/^prototype\.(.*)$/);
+      const matchName = name.match(/^prototype\.(.*)$/);
       if (!isStatic && (matchName === null || !matchName)) {
         data.name = 'prototype.' + name;
       }
@@ -34,7 +36,7 @@ module.exports = function(ModelMethod) {
   };
 
   ModelMethod.getConfigFromData = function(data) {
-    var config = ModelMethod.base.getConfigFromData.call(this, data);
+    const config = ModelMethod.base.getConfigFromData.call(this, data);
 
     if (this._shouldEncodeStaticFlagInName()) {
       delete config.isStatic;
@@ -45,12 +47,12 @@ module.exports = function(ModelMethod) {
   };
 
   ModelMethod.getDataFromConfig = function(config, name) {
-    var data = ModelMethod.base.getDataFromConfig.call(this, config);
+    const data = ModelMethod.base.getDataFromConfig.call(this, config);
     data.name = name;
 
     if (this._shouldEncodeStaticFlagInName()) {
-      var m = name.match(/^prototype\.(.*)$/);
-      var isStatic = !m;
+      const m = name.match(/^prototype\.(.*)$/);
+      const isStatic = !m;
       data.name = isStatic ? name : m[1];
       data.isStatic = isStatic;
     }

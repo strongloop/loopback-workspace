@@ -3,9 +3,11 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var ViewDefinition = app.models.ViewDefinition;
-var TestDataBuilder = require('./helpers/test-data-builder');
+'use strict';
+
+const app = require('../');
+const ViewDefinition = app.models.ViewDefinition;
+const TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('ViewDefinition', function() {
 

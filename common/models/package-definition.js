@@ -3,7 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../../server/server');
+'use strict';
+
+const app = require('../../server/server');
 
 module.exports = function(PackageDefinition) {
   app.once('ready', function() {
@@ -12,10 +14,10 @@ module.exports = function(PackageDefinition) {
 };
 
 function ready(PackageDefinition) {
-  var models = app.models;
-  var ConfigFile = models.ConfigFile;
+  const models = app.models;
+  const ConfigFile = models.ConfigFile;
 
-  PackageDefinition.validatesFormatOf('name', { with: /^[\-_a-zA-Z0-9]+$/ });
+  PackageDefinition.validatesFormatOf('name', {with: /^[\-_a-zA-Z0-9]+$/});
 
   PackageDefinition.prototype.getUniqueId = function() {
     return this.name || null;
@@ -23,10 +25,10 @@ function ready(PackageDefinition) {
 
   PackageDefinition.saveToFs = function(cache, packageDef, cb) {
     // TODO(bajtos) Move this method to WorkspaceEntity
-    var configFile = new ConfigFile({
+    const configFile = new ConfigFile({
       path: PackageDefinition.getPath('.', packageDef),
       data: PackageDefinition.getConfigFromData(packageDef),
     });
     configFile.save(cb);
   };
-};
+}

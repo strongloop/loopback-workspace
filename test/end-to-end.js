@@ -3,33 +3,43 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var async = require('async');
-var exec = require('child_process').exec;
-var extend = require('util')._extend;
-var fs = require('fs-extra');
-var mysql = require('mysql');
-var path = require('path');
-var request = require('supertest');
-var semver = require('semver');
-var debug = require('debug')('test:end-to-end');
-var workspace = require('../');
-var models = workspace.models;
-var TestDataBuilder = require('./helpers/test-data-builder');
-var ref = TestDataBuilder.ref;
-var given = require('./helpers/given');
-var platform = require('./helpers/platform');
-var should = require('chai').should();
+'use strict';
 
-var Workspace = workspace.models.Workspace;
+const async = require('async');
+const exec = require('child_process').exec;
+const expect = require('chai').expect;
+const extend = require('util')._extend;
+const fs = require('fs-extra');
+const mysql = require('mysql');
+const path = require('path');
+const request = require('supertest');
+const semver = require('semver');
+const debug = require('debug')('test:end-to-end');
+const workspace = require('../');
+const models = workspace.models;
+const TestDataBuilder = require('./helpers/test-data-builder');
+const ref = TestDataBuilder.ref;
+const given = require('./helpers/given');
+const platform = require('./helpers/platform');
+const should = require('chai').should();
+const support = require('./support');
+const givenBasicWorkspace = support.givenBasicWorkspace;
+const givenEmptySandbox = support.givenEmptySandbox;
+const resetWorkspace = support.resetWorkspace;
+const givenWorkspaceFromTemplate = support.givenWorkspaceFromTemplate;
+const SANDBOX = support.SANDBOX;
+const FIXTURES = support.FIXTURES;
 
-var PKG_CACHE = path.resolve(__dirname, '.pkgcache');
+const Workspace = workspace.models.Workspace;
+
+const PKG_CACHE = path.resolve(__dirname, '.pkgcache');
 
 // settings from test/helpers/setup-mysql.js
-var MYSQL_DATABASE = 'loopback_workspace_test';
-var MYSQL_USER = 'lbws';
-var MYSQL_PASSWORD = 'hbx42rec';
+const MYSQL_DATABASE = 'loopback_workspace_test';
+const MYSQL_USER = 'lbws';
+const MYSQL_PASSWORD = 'hbx42rec';
 
-var IS_LEGACY_NODE = /^v0\./.test(process.version);
+const IS_LEGACY_NODE = /^v0\./.test(process.version);
 
 it.skipIf = function(condition, desc, fn) {
   if (condition) {
@@ -46,20 +56,21 @@ describe('end-to-end', function() {
     before(resetWorkspace);
     before(givenEmptySandbox);
     it('create template 3.x', function(done) {
-      givenWorkspaceFromTemplate('hello-world', { loopbackVersion: '3.x' },
-      function(err) {
-        if (err) return done(err);
-        var dependencies = readPackageJsonSync().dependencies;
-        var lbVersion = dependencies.loopback;
-        if (lbVersion.charAt(0) === '^') lbVersion = lbVersion.substring(1);
-        expect(semver.satisfies(lbVersion, '>=3.0.0')).to.be.true;
-        done();
-      });
+      givenWorkspaceFromTemplate('hello-world', {loopbackVersion: '3.x'},
+        function(err) {
+          if (err) return done(err);
+          const dependencies = readPackageJsonSync().dependencies;
+          let lbVersion = dependencies.loopback;
+          if (lbVersion.charAt(0) === '^') lbVersion = lbVersion.substring(1);
+          // eslint-disable-next-line no-unused-expressions
+          expect(semver.satisfies(lbVersion, '>=3.0.0')).to.be.true;
+          done();
+        });
     });
   });
 
   describe('empty-server template', function() {
-    var app;
+    let app;
 
     before(resetWorkspace);
     before(givenEmptySandbox);
@@ -104,29 +115,30 @@ describe('end-to-end', function() {
       request(app).get('/')
         .set('X-Requested-By', 'XMLHttpRequest')
         .set('Origin', 'http://example.com')
-        .expect('Access-Control-Allow-Origin',  'http://example.com')
+        .expect('Access-Control-Allow-Origin', 'http://example.com')
         .expect(200, done);
     });
 
     it('provides security headers for all URLs ', function(done) {
       request(app).get('/')
-       .expect('X-frame-options', 'DENY')
-       .expect('x-xss-protection', '1; mode=block')
-       .expect('x-content-type-options', 'nosniff')
-       .expect('x-download-options', 'noopen')
-       .expect(function(res) {
-         var headers = res.headers;
-         headers.should.not.have.property('x-powered-by');
-       })
-       .expect(200, done);
+        .expect('X-frame-options', 'DENY')
+        .expect('x-xss-protection', '1; mode=block')
+        .expect('x-content-type-options', 'nosniff')
+        .expect('x-download-options', 'noopen')
+        .expect(function(res) {
+          const headers = res.headers;
+          headers.should.not.have.property('x-powered-by');
+        })
+        .expect(200, done);
     });
 
     it('includes all built-in phases in `middleware.json`', function(done) {
-      var builtinPhases = readBuiltinPhasesFromSanbox();
+      const builtinPhases = readBuiltinPhasesFromSanbox();
 
-      var middleware = fs.readJsonSync(
-        path.resolve(SANDBOX, 'server/middleware.json'));
-      var phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
+      const middleware = fs.readJsonSync(
+        path.resolve(SANDBOX, 'server/middleware.json')
+      );
+      const phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
 
       expect(phaseNames).to.eql(builtinPhases);
       done();
@@ -137,17 +149,17 @@ describe('end-to-end', function() {
     });
 
     it.skipIf(IS_LEGACY_NODE, 'passes scaffolded tests', function(done) {
-      execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
+      execNpm(['test'], {cwd: SANDBOX}, function(err, stdout, stderr) {
         done(err);
       });
     });
 
     it('emits the `booted` event when booting is complete', function(done) {
-      var src = FIXTURES + '/async.js';
-      var dest = SANDBOX + '/server/boot/async.js';
+      const src = FIXTURES + '/async.js';
+      const dest = SANDBOX + '/server/boot/async.js';
       fs.copySync(src, dest);
       delete require.cache[require.resolve(SANDBOX)];
-      var app = require(SANDBOX);
+      const app = require(SANDBOX);
       app.on('booted', function() {
         expect(app.asyncBoot, 'app.asyncBoot').to.be.true();
         done();
@@ -175,7 +187,7 @@ describe('end-to-end', function() {
     });
 
     it('includes sensitive error details in development mode', function(done) {
-      var bootOptions = {
+      const bootOptions = {
         env: 'development',
       };
       bootSandboxWithOptions(bootOptions, function(err, app) {
@@ -184,8 +196,8 @@ describe('end-to-end', function() {
           .get('/url-does-not-exist')
           .expect(404)
           .end(function(err, res) {
-            if (err) return done (err);
-            var responseBody = JSON.stringify(res.body);
+            if (err) return done(err);
+            const responseBody = JSON.stringify(res.body);
             expect(responseBody).to.include('stack');
             done();
           });
@@ -193,7 +205,7 @@ describe('end-to-end', function() {
     });
 
     it('omits sensitive error details in production mode', function(done) {
-      var bootOptions = {
+      const bootOptions = {
         env: 'production',
       };
       bootSandboxWithOptions(bootOptions, function(err, app) {
@@ -207,7 +219,7 @@ describe('end-to-end', function() {
             // if the property name storing stack trace changes in the future,
             // therefore we test full response body.
             if (err) return done(err);
-            var responseBody = JSON.stringify(res.body);
+            const responseBody = JSON.stringify(res.body);
             expect(responseBody).to.not.include('stack');
 
             done();
@@ -216,7 +228,7 @@ describe('end-to-end', function() {
     });
 
     it('disables built-in REST error handler', function(done) {
-      var bootOptions = {
+      const bootOptions = {
         // In "production", strong-error-handler hides error messages too,
         // while the built-in REST error handler does not
         env: 'production',
@@ -225,11 +237,11 @@ describe('end-to-end', function() {
         if (err) return done(err);
 
         // create a model with a custom remote method returning a 500 error
-        var TestModel = app.registry.createModel('TestModel');
-        app.model(TestModel, { dataSource: null });
+        const TestModel = app.registry.createModel('TestModel');
+        app.model(TestModel, {dataSource: null});
         TestModel.fail = function(cb) { cb(new Error('sensitive message')); };
         TestModel.remoteMethod('fail', {
-          http: { verb: 'get', path: '/fail' },
+          http: {verb: 'get', path: '/fail'},
         });
 
         request(app)
@@ -249,7 +261,7 @@ describe('end-to-end', function() {
   describe('empty-server template without explorer', function() {
     before(resetWorkspace);
     before(function createWorkspace(done) {
-      var options = {
+      const options = {
         'loopback-component-explorer': false,
       };
       givenWorkspaceFromTemplate('empty-server', options, done);
@@ -257,7 +269,7 @@ describe('end-to-end', function() {
 
     before(installSandboxPackages);
 
-    var app;
+    let app;
     before(function loadApp() {
       app = require(SANDBOX);
     });
@@ -268,7 +280,7 @@ describe('end-to-end', function() {
   });
 
   describe('api-server template', function() {
-    var app;
+    let app;
 
     before(resetWorkspace);
     before(givenEmptySandbox);
@@ -329,26 +341,26 @@ describe('end-to-end', function() {
       request(app).get('/')
         .set('X-Requested-By', 'XMLHttpRequest')
         .set('Origin', 'http://example.com')
-        .expect('Access-Control-Allow-Origin',  'http://example.com')
+        .expect('Access-Control-Allow-Origin', 'http://example.com')
         .expect(200, done);
     });
 
     it('provides security headers for all URLs ', function(done) {
       request(app).get('/')
-       .expect('X-frame-options', 'DENY')
-       .expect('x-xss-protection', '1; mode=block')
-       .expect('x-content-type-options', 'nosniff')
-       .expect('x-download-options', 'noopen')
-       .expect(function(res) {
-         var headers = res.headers;
-         headers.should.not.have.property('x-powered-by');
-       })
-       .expect(200, done);
+        .expect('X-frame-options', 'DENY')
+        .expect('x-xss-protection', '1; mode=block')
+        .expect('x-content-type-options', 'nosniff')
+        .expect('x-download-options', 'noopen')
+        .expect(function(res) {
+          const headers = res.headers;
+          headers.should.not.have.property('x-powered-by');
+        })
+        .expect(200, done);
     });
 
     it('can create and login a user', function(done) {
-      var credentials = { email: 'test@example.com', password: 'pass' };
-      var userId, tokenId;
+      const credentials = {email: 'test@example.com', password: 'pass'};
+      let userId, tokenId;
       async.waterfall([
         function createUser(next) {
           request(app)
@@ -387,11 +399,12 @@ describe('end-to-end', function() {
     });
 
     it('includes all built-in phases in `middleware.json`', function(done) {
-      var builtinPhases = readBuiltinPhasesFromSanbox();
+      const builtinPhases = readBuiltinPhasesFromSanbox();
 
-      var middleware = fs.readJsonSync(
-        path.resolve(SANDBOX, 'server/middleware.json'));
-      var phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
+      const middleware = fs.readJsonSync(
+        path.resolve(SANDBOX, 'server/middleware.json')
+      );
+      const phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
 
       expect(phaseNames).to.eql(builtinPhases);
       done();
@@ -402,7 +415,7 @@ describe('end-to-end', function() {
     });
 
     it.skipIf(IS_LEGACY_NODE, 'passes scaffolded tests', function(done) {
-      execNpm(['test'], { cwd: SANDBOX }, function(err, stdout, stderr) {
+      execNpm(['test'], {cwd: SANDBOX}, function(err, stdout, stderr) {
         done(err);
       });
     });
@@ -411,7 +424,7 @@ describe('end-to-end', function() {
       request(app).put('/api/customs')
         // it's important to include "id", otherwise updateOrCreate
         // short-circuits to regular create()
-        .send({ id: 999, name: '' })
+        .send({id: 999, name: ''})
         .expect(422)
         .end(done);
     });
@@ -423,7 +436,7 @@ describe('end-to-end', function() {
   });
 
   describe('notes template', function() {
-    var app, modelInstance;
+    let app, modelInstance;
 
     before(resetWorkspace);
     before(givenEmptySandbox);
@@ -451,42 +464,42 @@ describe('end-to-end', function() {
     });
 
     it('provides create operation', function(done) {
-      var sample = { title: 'myTitle' };
+      const sample = {title: 'myTitle'};
       request(app)
-      .post('/api/Notes')
-      .send(sample)
-      .expect(200, function(err, res) {
-        if (err) return done(err);
-        expect(res.body).to.have.property('title', 'myTitle');
-        done();
-      });
+        .post('/api/Notes')
+        .send(sample)
+        .expect(200, function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('title', 'myTitle');
+          done();
+        });
     });
 
     it('provides update operation', function(done) {
-      var sample = { title: 'myTitle' };
+      const sample = {title: 'myTitle'};
       request(app)
-      .put('/api/Notes')
-      .send(sample)
-      .expect(200, function(err, res) {
-        if (err) return done(err);
-        expect(res.body).to.have.property('title', 'myTitle');
-        done();
-      });
+        .put('/api/Notes')
+        .send(sample)
+        .expect(200, function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('title', 'myTitle');
+          done();
+        });
     });
 
     it('provides delete operation', function(done) {
-      var Note = app.models.Note;
-      Note.create({ title: 'myTitle' }, function(error, note) {
+      const Note = app.models.Note;
+      Note.create({title: 'myTitle'}, function(error, note) {
         if (error) {
           done(error);
         } else {
           request(app)
-          .delete('/api/Notes/' + note.id)
-          .expect(200, function(err, res) {
-            if (err) return done(err);
-            expect(res.body).to.have.property('count', 1);
-            done();
-          });
+            .delete('/api/Notes/' + note.id)
+            .expect(200, function(err, res) {
+              if (err) return done(err);
+              expect(res.body).to.have.property('count', 1);
+              done();
+            });
         }
       });
     });
@@ -498,7 +511,7 @@ describe('end-to-end', function() {
   });
 
   describe('hello-world template', function() {
-    var app, modelInstance;
+    let app, modelInstance;
 
     before(resetWorkspace);
     before(givenEmptySandbox);
@@ -545,20 +558,22 @@ describe('end-to-end', function() {
   describe('scaffold 3.x loopback project with option 3.x', function(done) {
     before(resetWorkspace);
     before(function createWorkspace(done) {
-      var options = { loopbackVersion: '3.x' };
+      const options = {loopbackVersion: '3.x'};
       givenWorkspaceFromTemplate('empty-server', options, done);
     });
 
     it('contains dependencies with 3.x version', function(done) {
-      var dependencies = readPackageJsonSync().dependencies;
+      const dependencies = readPackageJsonSync().dependencies;
+      // eslint-disable-next-line no-unused-expressions
       expect(semver.gtr('3.0.0', dependencies.loopback)).to.be.false;
+      // eslint-disable-next-line no-unused-expressions
       expect(semver.gtr('3.0.0', dependencies['loopback-component-explorer']))
         .to.be.false;
       done();
     });
 
     it('comes without legacyExplorer flag in config.json', function(done) {
-      var config = fs.readJsonSync(path.resolve(SANDBOX, 'server/config.json'));
+      const config = fs.readJsonSync(path.resolve(SANDBOX, 'server/config.json'));
       expect(config).to.not.have.property('legacyExplorer');
       done();
     });
@@ -568,7 +583,7 @@ describe('end-to-end', function() {
     before(resetWorkspace);
 
     it('throws error with invalid version', function(done) {
-      var options = { loopbackVersion: 'invalid-version' };
+      const options = {loopbackVersion: 'invalid-version'};
       givenWorkspaceFromTemplate('empty-server', options, function(err) {
         expect(err).to.match(/Loopback version should be 3\.x/);
         done();
@@ -577,14 +592,14 @@ describe('end-to-end', function() {
   });
 
   function readPackageJsonSync() {
-    var filepath = SANDBOX + '/package.json';
-    var content = fs.readFileSync(filepath, 'utf-8');
+    const filepath = SANDBOX + '/package.json';
+    const content = fs.readFileSync(filepath, 'utf-8');
     return JSON.parse(content);
   }
 
   describe('autoupdate', function() {
     this.timeout(10000);
-    var connection;
+    let connection;
     before(function(done) {
       connection = setupConnection(done);
     });
@@ -606,7 +621,7 @@ describe('end-to-end', function() {
         facetName: 'common',
         name: 'Custom',
         options: {
-          mysql: { table: 'CUSTOM' },
+          mysql: {table: 'CUSTOM'},
         },
       }, done);
     });
@@ -623,15 +638,16 @@ describe('end-to-end', function() {
     });
 
     /* eslint-disable one-var */
-    var db;
+    let db;
     /* eslint-enable one-var */
     beforeEach(function findDb(done) {
       models.DataSourceDefinition.findOne(
-        { where: { name: 'db' }},
+        {where: {name: 'db'}},
         function(err, ds) {
           db = ds;
           done(err);
-        });
+        }
+      );
     });
 
     it('updates a single model in the database', function(done) {
@@ -647,24 +663,24 @@ describe('end-to-end', function() {
     });
 
     it.skipIf(platform.isWindows, 'updates all models in the database',
-    function(done) {
-      db.autoupdate(undefined, function(err) {
-        if (err) return done(err);
-        listTableNames(connection, function(err, tables) {
+      function(done) {
+        db.autoupdate(undefined, function(err) {
           if (err) return done(err);
-          expect(tables).to.match(/CUSTOM/i);
-          expect(tables).to.match(/User/i);
-          expect(tables).to.match(/AccessToken/i);
-          done();
+          listTableNames(connection, function(err, tables) {
+            if (err) return done(err);
+            expect(tables).to.match(/CUSTOM/i);
+            expect(tables).to.match(/User/i);
+            expect(tables).to.match(/AccessToken/i);
+            done();
+          });
         });
       });
-    });
   });
 
   describe('discovery', function() {
     this.timeout(15000);
 
-    var connection;
+    let connection;
     before(function(done) {
       connection = setupConnection(done);
     });
@@ -682,7 +698,7 @@ describe('end-to-end', function() {
     before(installSandboxPackages);
 
     before(function createTable(done) {
-      var sql = fs.readFileSync(
+      const sql = fs.readFileSync(
         path.join(
           __dirname, 'sql', 'create-simple-table.sql'
         ),
@@ -693,22 +709,23 @@ describe('end-to-end', function() {
     });
 
     /* eslint-disable one-var */
-    var db;
+    let db;
     /* eslint-enable one-var */
     beforeEach(function findDb(done) {
       models.DataSourceDefinition.findOne(
-        { where: { name: 'db' }},
+        {where: {name: 'db'}},
         function(err, ds) {
           db = ds;
           done(err);
-        });
+        }
+      );
     });
 
     describe('getSchema', function() {
       it('should include the simple table', function(done) {
         db.getSchema(function(err, schema) {
           if (err) return done(err);
-          var tableNames = schema.map(function(item) { return item.name; });
+          const tableNames = schema.map(function(item) { return item.name; });
           expect(tableNames).to.contain('simple');
           listTableNames(connection, function(err, tables) {
             if (err) return done(err);
@@ -725,7 +742,7 @@ describe('end-to-end', function() {
           if (err) return done(err);
           expect(modelDefinition.name).to.equal('Simple');
           expect(modelDefinition.options.mysql.table).to.equal('simple');
-          var props = Object.keys(modelDefinition.properties);
+          const props = Object.keys(modelDefinition.properties);
           expect(props.sort()).to.eql(['id', 'name', 'created'].sort());
           done();
         });
@@ -743,7 +760,7 @@ describe('end-to-end', function() {
   });
 
   describe('testConnection', function() {
-    var DataSourceDefinition = models.DataSourceDefinition;
+    const DataSourceDefinition = models.DataSourceDefinition;
 
     before(givenBasicWorkspace);
 
@@ -755,7 +772,7 @@ describe('end-to-end', function() {
       // delete all non-default datasources to isolate individual tests
       // use `nlike` instead of `neq` as the latter is not implemented yet
       // https://github.com/strongloop/loopback-datasource-juggler/issues/265
-      DataSourceDefinition.destroyAll({ name: { nlike: 'db' }}, done);
+      DataSourceDefinition.destroyAll({name: {nlike: 'db'}}, done);
     });
 
     it('returns true for memory connector', function(done) {
@@ -769,6 +786,7 @@ describe('end-to-end', function() {
           if (err) return done(err);
           definition.testConnection(function(err, connectionAvailable) {
             if (err) return done(err);
+            // eslint-disable-next-line no-unused-expressions
             expect(connectionAvailable).to.be.true;
             done();
           });
@@ -786,19 +804,22 @@ describe('end-to-end', function() {
         function(err, definition) {
           if (err) return done(err);
           definition.testConnection(function(err) {
+            // eslint-disable-next-line no-unused-expressions
             expect(err, 'err').to.be.defined;
             expect(err.code, 'err.code').to.equal('ER_INVALID_CONNECTOR');
             expect(err.message, 'err.message')
               .to.contain('connector-that-does-not-exist');
             done();
           });
-        });
+        }
+      );
     });
 
     it('returns error when the test crashes', function(done) {
       // db is a valid dataSource, the method is invalid causing a crash
-      var ds = new DataSourceDefinition({ name: 'db' });
+      const ds = new DataSourceDefinition({name: 'db'});
       ds.invokeMethodInWorkspace('nonExistingMethod', function(err) {
+        // eslint-disable-next-line no-unused-expressions
         expect(err).to.exist;
         // Node compat: v0.10.x (call method) or v0.11.x (read property)
         expect(err.message)
@@ -825,12 +846,15 @@ describe('end-to-end', function() {
             if (err) return done(err);
             definition.testConnection(function(err, status, pingError) {
               if (err) return done(err);
+              // eslint-disable-next-line no-unused-expressions
               expect(status, 'status').to.be.false;
+              // eslint-disable-next-line no-unused-expressions
               expect(pingError, 'pingError').to.exist;
               expect(pingError.code).to.equal('ECONNREFUSED');
               done();
             });
-          });
+          }
+        );
       });
 
       it('returns descriptive error for invalid credentials', function(done) {
@@ -842,15 +866,18 @@ describe('end-to-end', function() {
             if (err) return done(err);
             definition.testConnection(function(err, status, pingError) {
               if (err) return done(err);
+              // eslint-disable-next-line no-unused-expressions
               expect(status, 'status').to.be.false;
+              // eslint-disable-next-line no-unused-expressions
               expect(pingError, 'pingError').to.exist;
               expect(pingError.code).to.equal('ER_ACCESS_DENIED_ERROR');
               done();
             });
-          });
+          }
+        );
       });
 
-      var dsid;
+      let dsid;
       function givenDataSource(config, cb) {
         config = extend({
           id: dsid,
@@ -874,7 +901,7 @@ describe('end-to-end', function() {
 
   describe('start/stop/restart', function() {
     // See api-server template used by `givenBasicWorkspace`
-    var appUrl;
+    let appUrl;
 
     // The tests are forking new processes and setting up HTTP servers,
     // they requires more than 2 seconds to finish
@@ -938,18 +965,19 @@ describe('end-to-end', function() {
       models.FacetSetting.deleteAll(
         {
           facetName: 'server',
-          name: { inq: ['host', 'port'] },
+          name: {inq: ['host', 'port']},
         }, function(err) {
-        if (err) return done(err);
+          if (err) return done(err);
 
-        request(workspace).post('/api/workspaces/start')
+          request(workspace).post('/api/workspaces/start')
             .expect(200)
             .end(function(err) {
               if (err) return done(err);
               // localhost:3000 is the default value provided by loopback
               expectAppIsRunning('http://localhost:3000', done);
             });
-      });
+        }
+      );
     });
 
     it('stops the app started by the workspace', function(done) {
@@ -976,7 +1004,7 @@ describe('end-to-end', function() {
     it('does not start more than one process', function(done) {
       models.Workspace.start(function(err, res) {
         if (err) return done(err);
-        var pid = res.pid;
+        const pid = res.pid;
         models.Workspace.start(function(err, res) {
           if (err) return done(err);
           expect(res.pid).to.equal(pid);
@@ -1002,7 +1030,7 @@ describe('end-to-end', function() {
     it('restarts the app', function(done) {
       models.Workspace.start(function(err, res) {
         if (err) return done(err);
-        var pid = res.pid;
+        const pid = res.pid;
 
         request(workspace).post('/api/workspaces/restart')
           .expect(200)
@@ -1030,7 +1058,7 @@ describe('end-to-end', function() {
     it('returns status for a running app', function(done) {
       models.Workspace.start(function(err, res) {
         if (err) return done(err);
-        var pid = res.pid;
+        const pid = res.pid;
 
         request(workspace).get('/api/workspaces/is-running')
           .expect(200)
@@ -1077,7 +1105,7 @@ describe('end-to-end', function() {
 });
 
 function setupConnection(done) {
-  var connection = mysql.createConnection({
+  const connection = mysql.createConnection({
     database: MYSQL_DATABASE,
     user: MYSQL_USER,
     password: MYSQL_PASSWORD,
@@ -1087,8 +1115,9 @@ function setupConnection(done) {
     if (!err) return done(err);
     if (err.code === 'ECONNREFUSED') {
       err = new Error(
-          'Cannot connect to local MySQL database, ' +
-          'make sure you have `mysqld` running on your machine');
+        'Cannot connect to local MySQL database, ' +
+          'make sure you have `mysqld` running on your machine'
+      );
     } else {
       console.error();
       console.error('**************************************');
@@ -1105,7 +1134,7 @@ function setupConnection(done) {
 }
 
 function execNpm(args, options, cb) {
-  var debug = require('debug')('test:exec-npm');
+  const debug = require('debug')('test:exec-npm');
   options = options || {};
   options.env = extend(
     {
@@ -1116,7 +1145,7 @@ function execNpm(args, options, cb) {
     options.env
   );
 
-  var command = 'npm ' + args.join(' ');
+  const command = 'npm ' + args.join(' ');
   debug(command);
   return exec(command, options, function(err, stdout, stderr) {
     debug('--npm stdout--\n%s\n--npm stderr--\n%s\n--end--',
@@ -1134,7 +1163,7 @@ function installSandboxPackages(cb) {
 function listTableNames(connection, cb) {
   connection.query('SHOW TABLES', function(err, list, fields) {
     if (err) return cb(err);
-    var tables = list.map(function(row) {
+    const tables = list.map(function(row) {
       // column name is e.g. 'Tables_in_loopback_workspace_test'
       return row[fields[0].name];
     });
@@ -1144,7 +1173,7 @@ function listTableNames(connection, cb) {
 
 function configureMySQLDataSource(done) {
   models.DataSourceDefinition.findOne(
-    { where: { name: 'db' }},
+    {where: {name: 'db'}},
     function(err, ds) {
       if (err) return done(err);
       ds.connector = 'mysql';
@@ -1153,7 +1182,8 @@ function configureMySQLDataSource(done) {
       ds.user = MYSQL_USER;
       ds.password = MYSQL_PASSWORD;
       ds.save(done);
-    });
+    }
+  );
 }
 
 function addMySQLConnector(done) {
@@ -1173,17 +1203,17 @@ function configureCustomModel(done) {
 }
 
 function readBuiltinPhasesFromSanbox() {
-  var loopback = require(SANDBOX + '/node_modules/loopback');
-  var app = loopback();
+  const loopback = require(SANDBOX + '/node_modules/loopback');
+  const app = loopback();
   app.lazyrouter(); // initialize request handling phases
   return app._requestHandlingPhases;
 }
 
 function bootSandboxWithOptions(options, done) {
-  var loopback = require(SANDBOX + '/node_modules/loopback');
-  var boot = require(SANDBOX + '/node_modules/loopback-boot');
-  var app = loopback({ localRegistry: true, loadBuiltinModels: true });
-  var bootOptions = extend({
+  const loopback = require(SANDBOX + '/node_modules/loopback');
+  const boot = require(SANDBOX + '/node_modules/loopback-boot');
+  const app = loopback({localRegistry: true, loadBuiltinModels: true});
+  const bootOptions = extend({
     appRootDir: SANDBOX + '/server',
   }, options);
 
@@ -1193,10 +1223,10 @@ function bootSandboxWithOptions(options, done) {
 }
 
 function localInstall(cwd, cb) {
-  var options = {
+  const options = {
     cwd: cwd,
   };
-  var script = 'npm install';
+  const script = 'npm install';
   debug('Running `%s` in %s', script, cwd);
   return exec(script, options, function(err, stdout, stderr) {
     debug('--npm stdout--\n%s\n--npm stderr--\n%s\n--end--',
@@ -1206,7 +1236,7 @@ function localInstall(cwd, cb) {
 }
 
 function initializePackage() {
-  //npm install works for windows consistently only
-  //when node_modules folder is available in the working dir
+  // npm install works for windows consistently only
+  // when node_modules folder is available in the working dir
   fs.mkdirSync(path.join(SANDBOX, 'node_modules'));
-};
+}

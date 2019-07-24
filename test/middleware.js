@@ -3,20 +3,27 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var util = require('util');
-var async = require('async');
-var app = require('../');
-var loopback = require('loopback');
-var ConfigFile = app.models.ConfigFile;
-var Middleware = app.models.Middleware;
-var Facet = app.models.Facet;
-var TestDataBuilder = require('./helpers/test-data-builder');
+'use strict';
+
+const util = require('util');
+const async = require('async');
+const app = require('../');
+const loopback = require('loopback');
+const ConfigFile = app.models.ConfigFile;
+const Middleware = app.models.Middleware;
+const Facet = app.models.Facet;
+const TestDataBuilder = require('./helpers/test-data-builder');
+const expect = require('chai').expect;
+const support = require('./support');
+const givenBasicWorkspace = support.givenBasicWorkspace;
+const givenEmptyWorkspace = support.givenEmptyWorkspace;
+const findMiddlewares = support.findMiddlewares;
 
 describe('Middleware', function() {
   describe('Middleware.create(def, cb)', function() {
     beforeEach(givenEmptyWorkspace);
     beforeEach(function(done) {
-      var serverFacet = this.serverFacet;
+      const serverFacet = this.serverFacet;
       this.configFile = new ConfigFile({
         path: serverFacet + '/middleware.json',
       });
@@ -108,15 +115,15 @@ describe('Middleware', function() {
     it('should be able to create multiple entries', function(done) {
       Middleware.find(function(err, defs) {
         expect(defs).to.have.length(11);
-        var middleware = defs.filter(function(m) {
+        const middleware = defs.filter(function(m) {
           return !m.isPhasePlaceHolder;
         });
         expect(middleware).to.have.length(7);
         // Convert to json for eql comparison, otherwise List != []
-        var m = middleware[6].toJSON();
+        const m = middleware[6].toJSON();
         expect(m.paths).to.eql(['/foo-before']);
         expect(m.methods).to.eql(['get', 'post']);
-        expect(m.params).to.eql({ barParam: 'foo-before' });
+        expect(m.params).to.eql({barParam: 'foo-before'});
         done();
       });
     });
@@ -124,6 +131,7 @@ describe('Middleware', function() {
     describe('config file', function() {
       it('should be created', function(done) {
         this.configFile.exists(function(err, exists) {
+          // eslint-disable-next-line no-unused-expressions
           expect(err).to.not.exist;
           expect(exists).to.equal(true);
           done();
@@ -131,53 +139,59 @@ describe('Middleware', function() {
       });
 
       it('should not contain id properties', function() {
-        var configData = this.configFile.data;
-        var dsConfig = configData.routes.foo;
+        const configData = this.configFile.data;
+        const dsConfig = configData.routes.foo;
         expect(dsConfig).to.not.have.property('id');
         expect(dsConfig).to.not.have.property('facetName');
       });
 
       it('should contain phase place holder', function() {
-        var configData = this.configFile.data;
+        const configData = this.configFile.data;
+        // eslint-disable-next-line no-unused-expressions
         expect(configData.myPhase).exist;
         expect(Object.keys(configData.myPhase)).to.eql([]);
       });
 
       it('should allow array value', function() {
-        var configData = this.configFile.data;
+        const configData = this.configFile.data;
+        // eslint-disable-next-line no-unused-expressions
         expect(configData.files).exist;
+        // eslint-disable-next-line no-unused-expressions
         expect(configData.files.xyz).to.be.array;
         expect(configData.files.xyz.length).to.eql(2);
       });
 
       it('should allow empty array value', function() {
-        var configData = this.configFile.data;
+        const configData = this.configFile.data;
+        // eslint-disable-next-line no-unused-expressions
         expect(configData.files).exist;
+        // eslint-disable-next-line no-unused-expressions
         expect(configData.files.dummy).to.be.array;
         expect(configData.files.dummy.length).to.eql(0);
       });
     });
 
     it('should keep the order of entries', function(done) {
-      var defs = this.configFile.data;
+      const defs = this.configFile.data;
       expect(Object.keys(defs)).to.eql(
-        ['auth', 'routes:before', 'routes', 'files', 'myPhase']);
-      var routes = defs.routes;
+        ['auth', 'routes:before', 'routes', 'files', 'myPhase']
+      );
+      const routes = defs.routes;
       expect(Object.keys(routes)).to.eql(['foo', 'bar']);
       done();
     });
 
     it('should not contain workspace-private properties', function(done) {
-      var configFile = this.configFile;
+      const configFile = this.configFile;
       Middleware.create({
         name: 'another-middleware',
-        params: { x: 'rest' },
+        params: {x: 'rest'},
         facetName: this.serverFacet,
       }, function(err) {
         if (err) return done(err);
         configFile.load(function(err) {
           if (err) done(err);
-          var middlewares = configFile.data;
+          const middlewares = configFile.data;
           expect(Object.keys(middlewares.routes.foo)).to.not.contain('configFile');
           done();
         });
@@ -185,42 +199,45 @@ describe('Middleware', function() {
     });
 
     it('should add phase after a given phase', function(done) {
-      var configFile = this.configFile;
+      const configFile = this.configFile;
       Middleware.addPhase(this.serverFacet, 'phase1', 'routes', function(err) {
         if (err) return done(err);
         configFile.load(function(err) {
           if (err) done(err);
-          var middlewares = configFile.data;
+          const middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'phase1', 'routes:before', 'routes', 'files', 'myPhase']);
+            ['auth', 'phase1', 'routes:before', 'routes', 'files', 'myPhase']
+          );
           done();
         });
       });
     });
 
     it('should not add a phase if it exists', function(done) {
-      var configFile = this.configFile;
+      const configFile = this.configFile;
       Middleware.addPhase(this.serverFacet, 'myPhase', 'routes', function(err) {
         if (err) return done(err);
         configFile.load(function(err) {
           if (err) done(err);
-          var middlewares = configFile.data;
+          const middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'routes:before', 'routes', 'files', 'myPhase']);
+            ['auth', 'routes:before', 'routes', 'files', 'myPhase']
+          );
           done();
         });
       });
     });
 
     it('should add phase after the last phase', function(done) {
-      var configFile = this.configFile;
+      const configFile = this.configFile;
       Middleware.addPhase(this.serverFacet, 'phase1', null, function(err) {
         if (err) return done(err);
         configFile.load(function(err) {
           if (err) done(err);
-          var middlewares = configFile.data;
+          const middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'routes:before', 'routes', 'files', 'myPhase', 'phase1']);
+            ['auth', 'routes:before', 'routes', 'files', 'myPhase', 'phase1']
+          );
           done();
         });
       });
@@ -228,7 +245,7 @@ describe('Middleware', function() {
   });
 
   it('validates `name` uniqueness within the facet only', function(done) {
-    var ref = TestDataBuilder.ref;
+    const ref = TestDataBuilder.ref;
     new TestDataBuilder()
       .define('facet1', Facet, {
         name: 'facet1',

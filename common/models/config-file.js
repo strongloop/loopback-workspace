@@ -3,18 +3,20 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var g = require('strong-globalize')();
+'use strict';
+
+const g = require('strong-globalize')();
 
 module.exports = function(ConfigFile) {
-  var assert = require('assert');
-  var app = require('../../server/server');
-  var path = require('path');
-  var async = require('async');
-  var fs = require('fs-extra');
-  var glob = require('glob');
-  var ROOT_COMPONENT = '.';
-  var groupBy = require('lodash').groupBy;
-  var debug = require('debug')('workspace:config-file');
+  const assert = require('assert');
+  const app = require('../../server/server');
+  const path = require('path');
+  const async = require('async');
+  const fs = require('fs-extra');
+  const glob = require('glob');
+  const ROOT_COMPONENT = '.';
+  const groupBy = require('lodash').groupBy;
+  const debug = require('debug')('workspace:config-file');
 
   /**
    * Various definitions in the workspace are backed by a `ConfigFile`.
@@ -33,7 +35,7 @@ module.exports = function(ConfigFile) {
    */
 
   ConfigFile.create = function(obj, cb) {
-    var configFile = new ConfigFile(obj);
+    const configFile = new ConfigFile(obj);
     configFile.save(cb);
   };
 
@@ -47,7 +49,7 @@ module.exports = function(ConfigFile) {
    */
 
   ConfigFile.loadFromPath = function(path, cb) {
-    var configFile = new ConfigFile({
+    const configFile = new ConfigFile({
       path: path,
     });
     configFile.load(function(err) {
@@ -62,9 +64,9 @@ module.exports = function(ConfigFile) {
    */
 
   ConfigFile.prototype.load = function(cb) {
-    var configFile = this;
+    const configFile = this;
     if (!this.path) return cb(new Error(g.f('no path specified')));
-    var absolutePath = configFile.constructor.toAbsolutePath(this.path);
+    const absolutePath = configFile.constructor.toAbsolutePath(this.path);
     async.waterfall([
       configFile.exists.bind(configFile),
       load,
@@ -99,15 +101,15 @@ module.exports = function(ConfigFile) {
    */
 
   ConfigFile.prototype.save = function(cb) {
-    var configFile = this;
+    const configFile = this;
     if (!this.path) return cb(new Error(g.f('no path specified')));
-    var absolutePath = configFile.getAbsolutePath();
+    const absolutePath = configFile.getAbsolutePath();
     configFile.data = configFile.data || {};
 
     debug('output [%s] %j', absolutePath, configFile.data);
     fs.mkdirp(path.dirname(absolutePath), function(err) {
       if (err) return cb(err);
-      fs.writeJson(absolutePath, configFile.data, { spaces: '  ' }, cb);
+      fs.writeJson(absolutePath, configFile.data, {spaces: '  '}, cb);
     });
   };
 
@@ -119,9 +121,9 @@ module.exports = function(ConfigFile) {
    */
 
   ConfigFile.prototype.remove = function(cb) {
-    var configFile = this;
+    const configFile = this;
     if (!this.path) return cb(new Error(g.f('no path specified')));
-    var absolutePath = configFile.getAbsolutePath();
+    const absolutePath = configFile.getAbsolutePath();
 
     fs.unlink(absolutePath, cb);
   };
@@ -172,19 +174,19 @@ module.exports = function(ConfigFile) {
   };
 
   ConfigFile.find = function(entityFilter, cb) {
-    var Ctor = this;
-    var models = app.models();
+    const Ctor = this;
+    const models = app.models();
 
     if (!cb) {
       cb = entityFilter;
       entityFilter = function() { return true; };
     }
 
-    var patterns = [];
-    var workspaceDir = this.getWorkspaceDir();
+    let patterns = [];
+    const workspaceDir = this.getWorkspaceDir();
     models.forEach(function(Model) {
       if (!entityFilter(Model.modelName, Model.definition)) return;
-      var options = Model.settings || {};
+      const options = Model.settings || {};
       if (options.configFiles) {
         patterns = patterns.concat(options.configFiles);
       }
@@ -198,18 +200,18 @@ module.exports = function(ConfigFile) {
       if (err) return cb(err);
 
       // flatten paths into single list
-      var merged = [];
+      let merged = [];
       merged = merged.concat.apply(merged, paths);
 
-      var configFiles = merged.map(function(filePath) {
-        return new Ctor({ path: filePath });
+      const configFiles = merged.map(function(filePath) {
+        return new Ctor({path: filePath});
       });
       cb(null, configFiles);
     });
 
     function find(pattern, cb) {
       // set strict to false to avoid perm issues
-      glob(pattern, { cwd: workspaceDir, strict: false }, cb);
+      glob(pattern, {cwd: workspaceDir, strict: false}, cb);
     }
   };
 
@@ -222,16 +224,16 @@ module.exports = function(ConfigFile) {
   };
 
   ConfigFile.prototype.getFacetName = function() {
-    var dir = this.getDirName();
+    const dir = this.getDirName();
     // NOTE: glob always returns the path using forward-slash even on Windows
     // See: https://github.com/strongloop/generator-loopback/issues/12
-    var baseDir = this.path.split('/')[0];
+    const baseDir = this.path.split('/')[0];
 
-    var isRootComponent = dir === ROOT_COMPONENT ||
+    const isRootComponent = dir === ROOT_COMPONENT ||
       baseDir === this.path ||
       baseDir === 'models';
 
-    var facetName = isRootComponent ? ROOT_COMPONENT : baseDir;
+    const facetName = isRootComponent ? ROOT_COMPONENT : baseDir;
 
     return facetName;
   };
@@ -240,7 +242,7 @@ module.exports = function(ConfigFile) {
     this.find(entityBelongsToFacet, function(err, configFiles) {
       if (err) return cb(err);
 
-      var result =
+      const result =
         groupBy(configFiles, function(configFile) {
           return configFile.getFacetName();
         });
@@ -256,8 +258,9 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.findPackageDefinitions = function(cb) {
     this.find(
-      function(name/*, definition*/) { return name === 'PackageDefinition'; },
-      cb);
+      function(name/* , definition */) { return name === 'PackageDefinition'; },
+      cb
+    );
   };
 
   /**
@@ -283,8 +286,8 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.getFileByBase = function(configFiles, base) {
     assert(Array.isArray(configFiles));
-    var configFile;
-    for (var i = 0; i < configFiles.length; i++) {
+    let configFile;
+    for (let i = 0; i < configFiles.length; i++) {
       configFile = configFiles[i];
       if (configFile && configFile.getBase() === base) {
         return configFile;
@@ -302,9 +305,9 @@ module.exports = function(ConfigFile) {
 
   ConfigFile.getModelDefFiles = function(configFiles, facetName) {
     assert(Array.isArray(configFiles));
-    var configFile;
-    var results = [];
-    for (var i = 0; i < configFiles.length; i++) {
+    let configFile;
+    const results = [];
+    for (let i = 0; i < configFiles.length; i++) {
       configFile = configFiles[i];
       // TODO(ritch) support other directories
       if (configFile && configFile.getFacetName() === facetName &&

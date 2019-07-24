@@ -8,12 +8,12 @@ module.exports = function(ComponentConfig) {
   ComponentConfig.validatesPresenceOf('facetName');
 
   ComponentConfig.validatesPresenceOf('name');
-  ComponentConfig.validatesUniquenessOf('name', { scopedTo: ['app'] });
+  ComponentConfig.validatesUniquenessOf('name', {scopedTo: ['app']});
 
   ComponentConfig.deserialize = function(cache, facetName, configFile) {
-    var data = configFile.data;
+    const data = configFile.data;
     Object.keys(data).forEach(function(name) {
-      var value = {
+      const value = {
         configFile: configFile.path,
         facetName: facetName,
         name: name,
@@ -24,7 +24,7 @@ module.exports = function(ComponentConfig) {
   };
 
   ComponentConfig.serialize = function(cache, facetName) {
-    var data = {};
+    const data = {};
 
     ComponentConfig.allFromCache(cache).forEach(function(item) {
       if (item.facetName !== facetName) return;
@@ -32,7 +32,7 @@ module.exports = function(ComponentConfig) {
     });
 
     if (!Object.keys(data).length) return null; // nothing to save
-    var configFile = ComponentConfig.getConfigFile(facetName);
+    const configFile = ComponentConfig.getConfigFile(facetName);
     configFile.data = data;
     return configFile;
   };
