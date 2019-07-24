@@ -4,28 +4,29 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var app = require('../');
-var path = require('path');
-var fs = require('fs-extra');
-var expect = require('chai').expect;
+const app = require('../');
+const path = require('path');
+const fs = require('fs-extra');
+const expect = require('chai').expect;
+const support = require('../test/support');
 
-var ComponentConfig = app.models.ComponentConfig;
+const ComponentConfig = app.models.ComponentConfig;
 
 describe('ComponentConfig', function() {
-  beforeEach(givenBasicWorkspace);
-  beforeEach(findComponentConfigs);
+  beforeEach(support.givenBasicWorkspace);
+  beforeEach(support.findComponentConfigs);
 
   it('should read data from "component-config.json"', function() {
     expect(this.componentConfigs).to.have.length(1);
-    var explorer = this.componentConfigs[0];
+    const explorer = this.componentConfigs[0];
     expect(explorer.configFile).to.equal('server/component-config.json');
     // see templates/projects/api-server/files/server/component-config
     expect(explorer.name).to.equal('loopback-component-explorer');
-    expect(explorer.value).to.eql({ mountPath: '/explorer', generateOperationScopedModels: true });
+    expect(explorer.value).to.eql({mountPath: '/explorer', generateOperationScopedModels: true});
   });
 
   it('should write data to "component-config.json"', function() {
-    var component = new ComponentConfig({
+    const component = new ComponentConfig({
       facetName: 'server',
       name: 'loopback-component-foobar',
       value: {
@@ -33,8 +34,8 @@ describe('ComponentConfig', function() {
       },
     });
     return component.save().then(function() {
-      var cfgFile = path.resolve(SANDBOX, 'server', 'component-config.json');
-      var data = fs.readJsonSync(cfgFile);
+      const cfgFile = path.resolve(support.SANDBOX, 'server', 'component-config.json');
+      const data = fs.readJsonSync(cfgFile);
       expect(data).to.have.property('loopback-component-foobar');
       expect(data['loopback-component-foobar']).to.eql({
         configKey: 'configValue',

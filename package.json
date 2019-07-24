@@ -11,6 +11,7 @@
   "scripts": {
     "pretest": "node test/helpers/setup-mysql.js --ci-only",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "mocha",
     "posttest": "npm run lint"
   },
@@ -37,16 +38,16 @@
     "serve-favicon": "^2.5.0",
     "stable": "^0.1.8",
     "strong-error-handler": "^3.2.0",
-    "strong-globalize": "^4.1.2",
+    "strong-globalize": "^5.0.0",
     "strong-wait-till-listening": "^1.0.3"
   },
   "devDependencies": {
     "better-stack-traces": "^1.1.0",
     "bluebird": "^3.5.3",
     "chai": "^1.10.0",
-    "eslint": "^2.13.1",
-    "eslint-config-loopback": "^2.0.0",
-    "mocha": "^5.2.0",
+    "eslint": "^6.1.0",
+    "eslint-config-loopback": "^13.1.0",
+    "mocha": "^6.2.0",
     "mysql": "^2.16.0",
     "read": "^1.0.7",
     "supertest": "^3.3.0"

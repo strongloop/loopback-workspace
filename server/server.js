@@ -3,17 +3,19 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var path = require('path');
-var SG = require('strong-globalize');
-SG.SetRootDir(path.join(__dirname, '..'));
-var g = SG();
+'use strict';
 
-var loopback = require('loopback');
-var methodOverride = require('method-override');
-var app = module.exports = loopback();
-var boot = require('loopback-boot');
-var cookieParser = require('cookie-parser');
-var errorHandler = require('strong-error-handler');
+const path = require('path');
+const SG = require('strong-globalize');
+SG.SetRootDir(path.join(__dirname, '..'));
+const g = SG();
+
+const loopback = require('loopback');
+const methodOverride = require('method-override');
+const app = module.exports = loopback();
+const boot = require('loopback-boot');
+const cookieParser = require('cookie-parser');
+const errorHandler = require('strong-error-handler');
 
 /*
  * 1. Configure LoopBack models and datasources
@@ -110,7 +112,7 @@ app.get('/', loopback.status());
  * 6. Enable access control and token based authentication.
  */
 
-var swaggerRemote = app.remotes().exports.swagger;
+const swaggerRemote = app.remotes().exports.swagger;
 if (swaggerRemote) {
   swaggerRemote.requireToken = false;
 }
@@ -123,7 +125,7 @@ if (swaggerRemote) {
 
 app.start = function() {
   return app.listen(function() {
-    var baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
+    const baseUrl = 'http://' + app.get('host') + ':' + app.get('port');
     app.emit('started', baseUrl);
     g.log('LoopBack server listening @ %s%s', baseUrl, '/');
   });

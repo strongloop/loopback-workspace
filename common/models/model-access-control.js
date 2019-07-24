@@ -3,8 +3,10 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../../server/server');
-var g = require('strong-globalize')();
+'use strict';
+
+const app = require('../../server/server');
+const g = require('strong-globalize')();
 
 module.exports = function(ModelAccessControl) {
   app.once('ready', function() {
@@ -13,8 +15,8 @@ module.exports = function(ModelAccessControl) {
 };
 
 function ready(ModelAccessControl) {
-  var ACL = require('loopback').ACL;
-  var Role = require('loopback').Role;
+  const ACL = require('loopback').ACL;
+  const Role = require('loopback').Role;
 
   /**
    * Represents an Access Control configuration.
@@ -39,10 +41,10 @@ function ready(ModelAccessControl) {
 
   ModelAccessControl.getAccessTypes = function(cb) {
     cb(null, [
-      { name: g.f('All (match all types)'), value: ACL.ALL },
-      { name: g.f('Read'), value: ACL.READ },
-      { name: g.f('Write'), value: ACL.WRITE },
-      { name: g.f('Execute'), value: ACL.EXECUTE },
+      {name: g.f('All (match all types)'), value: ACL.ALL},
+      {name: g.f('Read'), value: ACL.READ},
+      {name: g.f('Write'), value: ACL.WRITE},
+      {name: g.f('Execute'), value: ACL.EXECUTE},
     ]);
   };
 
@@ -62,8 +64,8 @@ function ready(ModelAccessControl) {
 
   ModelAccessControl.getPermissionTypes = function(cb) {
     cb(null, [
-      { name: g.f('Explicitly grant access'), value: ACL.ALLOW },
-      { name: g.f('Explicitly deny access'), value: ACL.DENY },
+      {name: g.f('Explicitly grant access'), value: ACL.ALLOW},
+      {name: g.f('Explicitly deny access'), value: ACL.DENY},
       /* not supported by loopback yet
       { name: 'Generate an alarm of the access', value: ACL.ALARM },
       { name: 'Log the access', value: ACL.AUDIT },
@@ -87,10 +89,10 @@ function ready(ModelAccessControl) {
 
   ModelAccessControl.getPrincipalTypes = function(cb) {
     cb(null, [
-      { name: 'User', value: ACL.USER },
-      { name: 'App', value: ACL.APP },
-      { name: 'Role', value: ACL.ROLE },
-      { name: 'Scope', value: ACL.SCOPE },
+      {name: 'User', value: ACL.USER},
+      {name: 'App', value: ACL.APP},
+      {name: 'Role', value: ACL.ROLE},
+      {name: 'Scope', value: ACL.SCOPE},
     ]);
   };
 
@@ -109,30 +111,30 @@ function ready(ModelAccessControl) {
    */
   ModelAccessControl.getBuiltinRoles = function(cb) {
     cb(null, [
-      { name: g.f('All users'), value: Role.EVERYONE },
-      { name: g.f('Any unauthenticated user'), value: Role.UNAUTHENTICATED },
-      { name: g.f('Any authenticated user'), value: Role.AUTHENTICATED },
+      {name: g.f('All users'), value: Role.EVERYONE},
+      {name: g.f('Any unauthenticated user'), value: Role.UNAUTHENTICATED},
+      {name: g.f('Any authenticated user'), value: Role.AUTHENTICATED},
       /* not supported by loopback yet
       { name: 'Any user related to the object', value: Role.RELATED },
       */
-      { name: g.f('The user owning the object'), value: Role.OWNER },
+      {name: g.f('The user owning the object'), value: Role.OWNER},
     ]);
   };
 
-  var baseCreate = ModelAccessControl.create;
+  const baseCreate = ModelAccessControl.create;
   ModelAccessControl.create = function(data, options, cb) {
     if (typeof options === 'function' && cb === undefined) {
       cb = options;
       options = {};
     }
 
-    var self = this;
+    const self = this;
     this.findOne({
-      where: { modelId: this.modelId },
+      where: {modelId: this.modelId},
       order: 'index DESC',
     }, function(err, accessControl) {
       if (err) return cb(err);
-      var index = 0;
+      let index = 0;
 
       if (accessControl) {
         index = accessControl.index + 1;
@@ -144,7 +146,7 @@ function ready(ModelAccessControl) {
   };
 
   ModelAccessControl.getUniqueId = function(data) {
-    var sep = this.settings.idSeparator || '.';
+    const sep = this.settings.idSeparator || '.';
     return data.modelId + sep + data.index;
   };
-};
+}

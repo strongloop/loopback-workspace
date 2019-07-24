@@ -3,9 +3,11 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var PropertyValidation = app.models.PropertyValidation;
-var TestDataBuilder = require('./helpers/test-data-builder');
+'use strict';
+
+const app = require('../');
+const PropertyValidation = app.models.PropertyValidation;
+const TestDataBuilder = require('./helpers/test-data-builder');
 
 describe('PropertyValidation', function() {
 

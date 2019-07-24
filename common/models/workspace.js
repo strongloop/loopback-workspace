@@ -3,43 +3,45 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var g = require('strong-globalize')();
-var _ = require('lodash');
-var helper = require('../../lib/helper');
+'use strict';
+
+const g = require('strong-globalize')();
+const _ = require('lodash');
+const helper = require('../../lib/helper');
 
 module.exports = function(Workspace) {
-  var app = require('../../server/server');
+  const app = require('../../server/server');
   app.once('ready', function() {
     ready(Workspace);
   });
 
   function ready(Workspace) {
-    var loopback = require('loopback');
-    var extend = require('util')._extend;
-    var fs = require('fs');
-    var ncp = require('ncp');
-    var path = require('path');
-    var async = require('async');
-    var spawn = require('child_process').spawn;
-    var waitTillListening = require('strong-wait-till-listening');
+    const loopback = require('loopback');
+    const extend = require('util')._extend;
+    const fs = require('fs');
+    const ncp = require('ncp');
+    const path = require('path');
+    const async = require('async');
+    const spawn = require('child_process').spawn;
+    const waitTillListening = require('strong-wait-till-listening');
 
-    var PackageDefinition = app.models.PackageDefinition;
-    var ConfigFile = app.models.ConfigFile;
-    var ComponentConfig = app.models.ComponentConfig;
-    var Facet = app.models.Facet;
-    var FacetSetting = app.models.FacetSetting;
-    var ModelConfig = app.models.ModelConfig;
-    var DataSourceDefinition = app.models.DataSourceDefinition;
-    var ModelDefinition = app.models.ModelDefinition;
-    var ModelRelation = app.models.ModelRelation;
-    var ViewDefinition = app.models.ViewDefinition;
-    var TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
-    var DEFAULT_TEMPLATE = 'api-server';
-    var DEPENDENCIES_3_X = {
+    const PackageDefinition = app.models.PackageDefinition;
+    const ConfigFile = app.models.ConfigFile;
+    const ComponentConfig = app.models.ComponentConfig;
+    const Facet = app.models.Facet;
+    const FacetSetting = app.models.FacetSetting;
+    const ModelConfig = app.models.ModelConfig;
+    const DataSourceDefinition = app.models.DataSourceDefinition;
+    const ModelDefinition = app.models.ModelDefinition;
+    const ModelRelation = app.models.ModelRelation;
+    const ViewDefinition = app.models.ViewDefinition;
+    const TEMPLATE_DIR = path.join(__dirname, '..', '..', 'templates', 'projects');
+    const DEFAULT_TEMPLATE = 'api-server';
+    const DEPENDENCIES_3_X = {
       'loopback': '^3.22.0',
       'loopback-component-explorer': '^6.2.0',
     };
-    var debug = require('debug')('workspace');
+    const debug = require('debug')('workspace');
 
     /**
      * Groups related LoopBack applications.
@@ -56,26 +58,26 @@ module.exports = function(Workspace) {
      */
 
     Workspace.getAvailableLBVersions = function(cb) {
-      var availableLBVersions = {
-        '3.x': { description: g.f('Active Long Term Support') },
+      const availableLBVersions = {
+        '3.x': {description: g.f('Active Long Term Support')},
       };
       cb(null, availableLBVersions);
     };
 
     Workspace.availableLBVersions = function(cb) {
       Workspace.getAvailableLBVersions(function(err, data) {
-        var lbVersions = [];
+        const lbVersions = [];
         Object.keys(data).forEach(function(key) {
-          var version = data[key];
-          lbVersions.push({ value: key, description: version.description });
+          const version = data[key];
+          lbVersions.push({value: key, description: version.description});
         });
         cb(null, lbVersions);
       });
     };
 
     loopback.remoteMethod(Workspace.availableLBVersions, {
-      http: { verb: 'get', path: '/loopback-versions' },
-      returns: { arg: 'versions', type: 'array' },
+      http: {verb: 'get', path: '/loopback-versions'},
+      returns: {arg: 'versions', type: 'array'},
     });
 
     /**
@@ -97,8 +99,8 @@ module.exports = function(Workspace) {
     }
 
     loopback.remoteMethod(Workspace.getAvailableTemplates, {
-      http: { verb: 'get', path: '/component-templates' },
-      returns: { arg: 'templates', type: 'array' },
+      http: {verb: 'get', path: '/component-templates'},
+      returns: {arg: 'templates', type: 'array'},
     });
 
     /**
@@ -113,8 +115,8 @@ module.exports = function(Workspace) {
     Workspace.describeAvailableTemplates = function(cb) {
       Workspace.getAvailableTemplates(function(err, names) {
         if (err) return cb(err);
-        var templates = names.map(function(name) {
-          var data = Workspace._loadProjectTemplate(name);
+        const templates = names.map(function(name) {
+          const data = Workspace._loadProjectTemplate(name);
           if (!data) return data;
           return {
             name: name,
@@ -139,13 +141,14 @@ module.exports = function(Workspace) {
     };
 
     Workspace._loadProjectTemplate = function(templateName) {
-      var template;
+      let template;
       try {
         template = require(
-          '../../templates/projects/' + templateName + '/data');
+          '../../templates/projects/' + templateName + '/data'
+        );
       } catch (e) {
         g.error('Cannot load project template %j: %s',
-                      templateName, e.stack);
+          templateName, e.stack);
         return null;
       }
       // TODO(bajtos) build a full list of files here, so that
@@ -153,11 +156,11 @@ module.exports = function(Workspace) {
       // we resolve the conflict here, before any files are copied
       template.files = [path.join(TEMPLATE_DIR, templateName, 'files')];
 
-      var sources = [template];
+      const sources = [template];
       /* eslint-disable one-var */
-      if (template.inherits) for (var ix in template.inherits) {
-        var t = template.inherits[ix];
-        var data = this._loadProjectTemplate(t);
+      if (template.inherits) for (const ix in template.inherits) {
+        const t = template.inherits[ix];
+        const data = this._loadProjectTemplate(t);
         if (!data) return null; // the error was already reported
         delete data.supportedLBVersions;
         sources.unshift(data);
@@ -191,19 +194,19 @@ module.exports = function(Workspace) {
       if (!options.root) {
         throw new Error(g.f('Non-root components are not supported yet.'));
       }
-      var loopbackVersion = options.loopbackVersion || helper.DEFAULT_LB_VERSION;
-      var templateName = options.template || DEFAULT_TEMPLATE;
-      var name = options.name || templateName;
-      var packageName = options.packageName || name;
-      var description = options.description || packageName;
+      const loopbackVersion = options.loopbackVersion || helper.DEFAULT_LB_VERSION;
+      const templateName = options.template || DEFAULT_TEMPLATE;
+      let name = options.name || templateName;
+      const packageName = options.packageName || name;
+      const description = options.description || packageName;
       if (options.root) name = ConfigFile.ROOT_COMPONENT;
 
       debug('create from template [%s]', templateName);
 
-      var template = this._loadProjectTemplate(templateName);
+      const template = this._loadProjectTemplate(templateName);
 
       if (!template) {
-        var err = new Error(g.f('Unknown template %s' + templateName));
+        const err = new Error(g.f('Unknown template %s' + templateName));
         err.templateName = templateName;
         err.statusCode = 400;
         return cb(err);
@@ -212,12 +215,12 @@ module.exports = function(Workspace) {
       if (loopbackVersion !== '3.x') {
         return cb(new Error(g.f('Loopback version should be 3.x')));
       }
-      var defaultDependencies = template.package.dependencies;
-      var loopbackDependencies = DEPENDENCIES_3_X;
+      const defaultDependencies = template.package.dependencies;
+      const loopbackDependencies = DEPENDENCIES_3_X;
       template.package.dependencies = extend(defaultDependencies, loopbackDependencies);
 
       // TODO(bajtos) come up with a more generic approach
-      var explorer = 'loopback-component-explorer';
+      const explorer = 'loopback-component-explorer';
       if (options[explorer] === false) {
         if (template.package)
           delete template.package.dependencies[explorer];
@@ -230,7 +233,7 @@ module.exports = function(Workspace) {
       if (loopbackVersion === '2.x' &&
         template.server && template.server.config) {
         // Disable legacy routes describing remote methods
-        template.server.config.push({ name: 'legacyExplorer', value: false });
+        template.server.config.push({name: 'legacyExplorer', value: false});
         // Enable AccessToken invalidation on email/password change
         template.server.config.push({
           name: 'logoutSessionsOnSensitiveChanges',
@@ -238,8 +241,8 @@ module.exports = function(Workspace) {
         });
       }
 
-      var dest = path.join(ConfigFile.getWorkspaceDir(), name);
-      var steps = [];
+      const dest = path.join(ConfigFile.getWorkspaceDir(), name);
+      const steps = [];
 
       if (template.package) {
         template.package.name = packageName;
@@ -250,7 +253,7 @@ module.exports = function(Workspace) {
       }
 
       ['common', 'server', 'client'].forEach(function(facetName) {
-        var facet = template[facetName];
+        const facet = template[facetName];
 
         if (!facet) return;
         steps.push(function(next) {
@@ -291,21 +294,21 @@ module.exports = function(Workspace) {
         cb = arguments[3];
       }
 
-      var gitignore = require.resolve('../../templates/gitignore');
-      var dotGitignore = path.resolve(dest, '.gitignore');
+      const gitignore = require.resolve('../../templates/gitignore');
+      const dotGitignore = path.resolve(dest, '.gitignore');
       Workspace.copyRecursive(gitignore, dotGitignore, cb);
     };
 
     loopback.remoteMethod(Workspace.addComponent, {
-      http: { verb: 'post', path: '/component' },
-      accepts: { arg: 'options', type: 'object', http: { source: 'body' }},
+      http: {verb: 'post', path: '/component'},
+      accepts: {arg: 'options', type: 'object', http: {source: 'body'}},
     });
 
     function createFacet(name, template, cb) {
-      var steps = [];
+      const steps = [];
 
       steps.push(function(cb) {
-        var facet = template.facet || {};
+        const facet = template.facet || {};
         facet.name = name;
         Facet.create(facet, cb);
       });
@@ -316,7 +319,8 @@ module.exports = function(Workspace) {
           async.each(
             template.config,
             FacetSetting.create.bind(FacetSetting),
-            next);
+            next
+          );
         });
       }
 
@@ -356,7 +360,7 @@ module.exports = function(Workspace) {
         setFacetName(template.componentConfigs);
         steps.push(function(cb) {
           async.each(template.componentConfigs,
-                     ComponentConfig.create.bind(ComponentConfig), cb);
+            ComponentConfig.create.bind(ComponentConfig), cb);
         });
       }
 
@@ -403,10 +407,10 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.createFromTemplate, {
-      http: { verb: 'post', path: '/' },
+      http: {verb: 'post', path: '/'},
       accepts: [
-        { arg: 'templateName', type: 'string' },
-        { arg: 'name', type: 'string' },
+        {arg: 'templateName', type: 'string'},
+        {arg: 'name', type: 'string'},
       ],
     });
 
@@ -418,11 +422,11 @@ module.exports = function(Workspace) {
      * @type {Array.<ConnectorMeta>}
      * @internal
      */
-    var staticConnectorList = require('../../available-connectors');
+    const staticConnectorList = require('../../available-connectors');
 
     function isDependency(connector, pkg, cb) {
-      var packageName;
-      var deps = pkg && pkg.dependencies;
+      let packageName;
+      const deps = pkg && pkg.dependencies;
 
       if (connector.package && deps) {
         packageName = connector.package.name;
@@ -459,8 +463,8 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.listAvailableConnectors, {
-      http: { verb: 'get', path: '/connectors' },
-      returns: { arg: 'connectors', type: 'array', root: true },
+      http: {verb: 'get', path: '/connectors'},
+      returns: {arg: 'connectors', type: 'array', root: true},
     });
 
     /**
@@ -491,7 +495,7 @@ module.exports = function(Workspace) {
       if (Workspace._child) {
         debug('child already running as %s', Workspace._child.pid);
         process.nextTick(function() {
-          cb(null, { pid: Workspace._child.pid });
+          cb(null, {pid: Workspace._child.pid});
         });
         return;
       }
@@ -510,7 +514,7 @@ module.exports = function(Workspace) {
           // Forward env variables like PATH, but remove HOST and PORT
           // to prevent the target app from listening on the same host:port
           // as the workspace is listening
-          var env = extend({}, process.env);
+          const env = extend({}, process.env);
           delete env.PORT;
           delete env.HOST;
 
@@ -521,13 +525,14 @@ module.exports = function(Workspace) {
               cwd: process.env.WORKSPACE_DIR,
               stdio: 'inherit',
               env: env,
-            });
+            }
+          );
         } catch (err) {
           debug('spawn failed %s', err);
           return done(err);
         }
 
-        var child = Workspace._child;
+        const child = Workspace._child;
 
         child.on('error', function(err) {
           debug('child %s errored %s', child.pid, err);
@@ -541,10 +546,10 @@ module.exports = function(Workspace) {
         });
 
         // Wait until the child process starts listening
-        var waitOpts = {
+        const waitOpts = {
           host: host,
           port: port || 3000, // 3000 is the default port provided by loopback
-          timeoutInMs: 30000,  // 30 seconds
+          timeoutInMs: 30000, // 30 seconds
         };
 
         // Windows will fail to connect if the host is 0.0.0.0, so redirect to
@@ -562,13 +567,13 @@ module.exports = function(Workspace) {
             return done(err);
           }
           debug('Child started with pid', child.pid);
-          done(null, { pid: child.pid, host: waitOpts.host, port: waitOpts.port });
+          done(null, {pid: child.pid, host: waitOpts.host, port: waitOpts.port});
         });
       });
 
       function done() {
         // prevent double-callback
-        var callback = cb;
+        const callback = cb;
         cb = function() {
         };
 
@@ -578,23 +583,24 @@ module.exports = function(Workspace) {
 
     function fetchServerHostPort(cb) {
       FacetSetting.find(
-        { where: { facetName: 'server' }},
+        {where: {facetName: 'server'}},
         function extractHostPortFromFacetSettings(err, list) {
           if (err) return cb(err);
-          var config = {};
+          const config = {};
           list.forEach(function(it) {
             config[it.name] = it.value;
           });
 
           cb(null, config.host, config.port);
-        });
+        }
+      );
     }
 
     loopback.remoteMethod(Workspace.start, {
-      http: { verb: 'post', path: '/start' },
+      http: {verb: 'post', path: '/start'},
       returns: {
         arg: 'data',
-        type: { pid: Number, host: String, port: Number },
+        type: {pid: Number, host: String, port: Number},
         root: true,
       },
     });
@@ -612,7 +618,7 @@ module.exports = function(Workspace) {
       if (!Workspace._child) {
         debug('skipping Workspace.stop - child not running');
         process.nextTick(function() {
-          cb(null, { exitCode: null });
+          cb(null, {exitCode: null});
         });
         return;
       }
@@ -620,14 +626,14 @@ module.exports = function(Workspace) {
       debug('stopping the child process %s', this._child.pid);
       Workspace._child.once('exit', function(code) {
         debug('child was stopped');
-        cb(null, { exitCode: code });
+        cb(null, {exitCode: code});
       });
       Workspace._child.kill();
     };
 
     loopback.remoteMethod(Workspace.stop, {
-      http: { verb: 'post', path: '/stop' },
-      returns: { arg: 'data', type: 'Object', root: true },
+      http: {verb: 'post', path: '/stop'},
+      returns: {arg: 'data', type: 'Object', root: true},
     });
 
     /**
@@ -642,8 +648,8 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.restart, {
-      http: { verb: 'post', path: '/restart' },
-      returns: { arg: 'data', type: 'Object', root: true },
+      http: {verb: 'post', path: '/restart'},
+      returns: {arg: 'data', type: 'Object', root: true},
     });
 
     /**
@@ -651,9 +657,9 @@ module.exports = function(Workspace) {
      * @param {function(Error=,Object=)} cb callback
      */
     Workspace.isRunning = function(cb) {
-      var result = Workspace._child ?
-      { running: true, pid: Workspace._child.pid } :
-      { running: false };
+      const result = Workspace._child ?
+        {running: true, pid: Workspace._child.pid} :
+        {running: false};
 
       process.nextTick(function() {
         cb(null, result);
@@ -661,8 +667,8 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.isRunning, {
-      http: { verb: 'get', path: '/is-running' },
-      returns: { arg: 'data', type: 'Object', root: true },
+      http: {verb: 'get', path: '/is-running'},
+      returns: {arg: 'data', type: 'Object', root: true},
     });
 
     Workspace.getWorkspace = function(cb) {
@@ -670,8 +676,8 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.getWorkspace, {
-      http: { verb: 'get', path: '/get-workspace' },
-      returns: { arg: 'path', type: 'string' },
+      http: {verb: 'get', path: '/get-workspace'},
+      returns: {arg: 'path', type: 'string'},
     });
 
     Workspace.loadWorkspace = function(path, cb) {
@@ -683,9 +689,9 @@ module.exports = function(Workspace) {
     };
 
     loopback.remoteMethod(Workspace.loadWorkspace, {
-      http: { verb: 'post', path: '/load-workspace' },
-      accepts: { arg: 'path', type: 'string' },
-      returns: { arg: 'data', type: 'Object', root: true },
+      http: {verb: 'post', path: '/load-workspace'},
+      accepts: {arg: 'path', type: 'string'},
+      returns: {arg: 'data', type: 'Object', root: true},
     });
   }
 };

@@ -3,9 +3,11 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var g = require('strong-globalize')();
-var app = require('../../server/server');
-var debug = require('debug')('workspace:model-definition');
+'use strict';
+
+const g = require('strong-globalize')();
+const app = require('../../server/server');
+const debug = require('debug')('workspace:model-definition');
 
 module.exports = function(ModelDefinition) {
   app.once('ready', function() {
@@ -14,13 +16,13 @@ module.exports = function(ModelDefinition) {
 };
 
 function ready(ModelDefinition) {
-  var path = require('path');
-  var fs = require('fs');
-  var assert = require('assert');
-  var extend = require('util')._extend;
-  var async = require('async');
-  var ConfigFile = app.models.ConfigFile;
-  var _ = require('lodash');
+  const path = require('path');
+  const fs = require('fs');
+  const assert = require('assert');
+  const extend = require('util')._extend;
+  const async = require('async');
+  const ConfigFile = app.models.ConfigFile;
+  const _ = require('lodash');
 
   /**
    * Defines a LoopBack `Model`.
@@ -35,15 +37,15 @@ function ready(ModelDefinition) {
    * @header Property Validation
    */
 
-  ModelDefinition.validatesUniquenessOf('name', { scopedTo: ['app'] });
+  ModelDefinition.validatesUniquenessOf('name', {scopedTo: ['app']});
   ModelDefinition.validatesPresenceOf('name');
-  ModelDefinition.validatesFormatOf('name', { with: /^[\-_a-zA-Z0-9]+$/ });
+  ModelDefinition.validatesFormatOf('name', {with: /^[\-_a-zA-Z0-9]+$/});
 
   ModelDefinition.getConfigFromCache = function(cache, modelDef) {
-    var configData = this.getConfigFromData(modelDef);
-    var relations = this.getEmbededRelations();
+    const configData = this.getConfigFromData(modelDef);
+    const relations = this.getEmbededRelations();
     relations.forEach(function(relation) {
-      var relatedData = getRelated(cache, modelDef.id, relation);
+      let relatedData = getRelated(cache, modelDef.id, relation);
       if (relation.model === 'ModelAccessControl') {
         relatedData = relatedData.sort(function(a, b) {
           if (a.index < b.index) {
@@ -62,8 +64,8 @@ function ready(ModelDefinition) {
   };
 
   function getRelated(cache, id, relation) {
-    var Definition = app.models[relation.model];
-    var cachedData = Definition.allFromCache(cache);
+    const Definition = app.models[relation.model];
+    const cachedData = Definition.allFromCache(cache);
     assert(relation.type === 'hasMany', g.f('embed only supports hasMany'));
     assert(relation.foreignKey, g.f('embed requires foreignKey'));
     return cachedData.filter(function(cached) {
@@ -72,7 +74,7 @@ function ready(ModelDefinition) {
   }
 
   function formatRelatedData(relation, relatedData) {
-    var result;
+    let result;
     assert(relation.embed && relation.embed.as, g.f('embed requires "as"'));
     switch (relation.embed.as) {
       case 'object':
@@ -80,12 +82,12 @@ function ready(ModelDefinition) {
           g.f('embed as object requires "key" or "keyGetter"'));
         result = {};
         relatedData.forEach(function(related) {
-          var Definition = app.models[relation.model];
-          var key;
+          const Definition = app.models[relation.model];
+          let key;
           if (relation.embed.key) {
             key = related[relation.embed.key];
           }
-          var keyGetter = relation.embed.keyGetter;
+          const keyGetter = relation.embed.keyGetter;
           if (keyGetter && typeof Definition[keyGetter] === 'function') {
             key = Definition[keyGetter](related.name, related);
           }
@@ -113,14 +115,14 @@ function ready(ModelDefinition) {
   ModelDefinition.toFilename = function(name) {
     if (name === name.toUpperCase()) return name.toLowerCase();
     if (~name.indexOf('-')) return name.toLowerCase();
-    var dashed = _.kebabCase(name);
-    var split = dashed.split('');
+    const dashed = _.kebabCase(name);
+    const split = dashed.split('');
     if (split[0] === '-') split.shift();
 
     return split.join('');
   };
 
-  var removeById = ModelDefinition.removeById.bind(ModelDefinition);
+  const removeById = ModelDefinition.removeById.bind(ModelDefinition);
 
   ModelDefinition.removeById = function(id, cb) {
     debug('removing model: %s', id);
@@ -141,8 +143,8 @@ function ready(ModelDefinition) {
         if (err) return cb(err);
 
         function removeModelDef(cb) {
-          var p = ModelDefinition.getPath(modelDef.facetName, modelDef);
-          var file = new ConfigFile({ path: p });
+          const p = ModelDefinition.getPath(modelDef.facetName, modelDef);
+          const file = new ConfigFile({path: p});
           file.remove(cb);
         }
         function removeModelDefJs(cb) {
@@ -154,7 +156,7 @@ function ready(ModelDefinition) {
         ], function(err, results) {
           if (err) return cb(err);
 
-          cb(null, { result: results });
+          cb(null, {result: results});
         });
       });
     });
@@ -179,9 +181,9 @@ function ready(ModelDefinition) {
   function cleanRelatedData(relatedData, relation) {
     assert(relation.foreignKey, g.f('embeded relation must have foreignKey'));
 
-    var Entity = require('loopback').getModel(relation.model);
-    for (var ix in relatedData) {
-      var data = Entity.getConfigFromData(relatedData[ix]);
+    const Entity = require('loopback').getModel(relation.model);
+    for (const ix in relatedData) {
+      let data = Entity.getConfigFromData(relatedData[ix]);
       delete data[relation.foreignKey];
       delete data[relation.embed.key];
 
@@ -196,8 +198,8 @@ function ready(ModelDefinition) {
   ModelDefinition.observe('after save', function(ctx, next) {
     if (!ctx.isNewInstance) return next();
 
-    var def = ctx.instance;
-    var scriptPath = def.getScriptPath();
+    const def = ctx.instance;
+    const scriptPath = def.getScriptPath();
 
     fs.exists(scriptPath, function(exists) {
       if (exists) {
@@ -214,8 +216,8 @@ function ready(ModelDefinition) {
   };
 
   ModelDefinition.prototype.getScriptPath = function() {
-    var configFilePath = ModelDefinition.getPath(this.facetName, this);
-    var scriptFilePath = configFilePath.replace(/\.json$/, '.js');
+    const configFilePath = ModelDefinition.getPath(this.facetName, this);
+    const scriptFilePath = configFilePath.replace(/\.json$/, '.js');
 
     return path.join(
       ConfigFile.getWorkspaceDir(),
@@ -223,12 +225,12 @@ function ready(ModelDefinition) {
     );
   };
 
-  var templatePath = path.join(__dirname, '..', '..', 'templates', 'scripts',
-      'model.js.tmpl');
-  var MODEL_SCRIPT_TEMPLATE = fs.readFileSync(templatePath, 'utf8');
+  const templatePath = path.join(__dirname, '..', '..', 'templates', 'scripts',
+    'model.js.tmpl');
+  const MODEL_SCRIPT_TEMPLATE = fs.readFileSync(templatePath, 'utf8');
 
   function createScript(def, out, cb) {
-    var script;
+    let script;
     try {
       script = _.template(MODEL_SCRIPT_TEMPLATE)({
         modelDef: def,
@@ -239,4 +241,4 @@ function ready(ModelDefinition) {
     }
     fs.writeFile(out, script, cb);
   }
-};
+}

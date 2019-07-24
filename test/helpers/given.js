@@ -3,11 +3,14 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var fs = require('fs-extra');
-var path = require('path');
-var models = require('../../').models;
+'use strict';
 
-var given = module.exports;
+const fs = require('fs-extra');
+const path = require('path');
+const models = require('../../').models;
+const support = require('../support');
+const SANDBOX = support.SANDBOX;
+const given = module.exports;
 
 /**
  * Configure the server facet to listen on a port that has a different
@@ -17,16 +20,16 @@ var given = module.exports;
 given.uniqueServerPort = function(done) {
   // Use PID to generate a port number in the range 10k-50k
   // that is unique for each test process
-  var port = 10000 + (process.pid % 40000);
+  const port = 10000 + (process.pid % 40000);
 
   given.facetSetting('server', 'port', port, done);
 };
 
 given.facetSetting = function(facetName, settingName, settingValue, done) {
-  var FacetSetting = models.FacetSetting;
+  const FacetSetting = models.FacetSetting;
 
-  var props =  { facetName: facetName, name: settingName };
-  FacetSetting.findOne({ where: props }, function(err, entry) {
+  const props = {facetName: facetName, name: settingName};
+  FacetSetting.findOne({where: props}, function(err, entry) {
     if (err) return done(err);
     if (!entry)
       entry = new FacetSetting(props);
@@ -37,14 +40,14 @@ given.facetSetting = function(facetName, settingName, settingValue, done) {
 };
 
 given.loopBackInSandboxModules = function() {
-  var src = path.resolve(__dirname, '../../node_modules/loopback');
-  var dest = path.resolve(SANDBOX, 'node_modules', 'loopback');
+  const src = path.resolve(__dirname, '../../node_modules/loopback');
+  const dest = path.resolve(SANDBOX, 'node_modules', 'loopback');
   fs.copySync(src, dest);
 };
 
 given.modelDefinition = function(facetName, modelDefinition) {
-  var dir = path.resolve(SANDBOX, facetName, 'models');
+  const dir = path.resolve(SANDBOX, facetName, 'models');
   fs.mkdirpSync(dir);
-  var file = path.resolve(dir, modelDefinition.name + '.json');
+  const file = path.resolve(dir, modelDefinition.name + '.json');
   fs.writeJsonSync(file, modelDefinition);
 };

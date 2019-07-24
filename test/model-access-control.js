@@ -3,10 +3,15 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var ModelDefinition = app.models.ModelDefinition;
-var ModelAccessControl = app.models.ModelAccessControl;
-var TestDataBuilder = require('./helpers/test-data-builder');
+'use strict';
+
+const app = require('../');
+const ModelDefinition = app.models.ModelDefinition;
+const ModelAccessControl = app.models.ModelAccessControl;
+const TestDataBuilder = require('./helpers/test-data-builder');
+const expect = require('chai').expect;
+const support = require('../test/support');
+const givenBasicWorkspace = support.givenBasicWorkspace;
 
 describe('ModelAccessControl', function() {
   describe('ModelAccessControl.create()', function() {
@@ -26,7 +31,7 @@ describe('ModelAccessControl', function() {
         }, function(err) {
           if (err) return done(err);
 
-          var configFile = model.getConfigFile();
+          const configFile = model.getConfigFile();
           configFile.load(function() {
             expect(configFile.data.acls).to.eql([{
               accessType: '*',
@@ -43,6 +48,7 @@ describe('ModelAccessControl', function() {
               if (err) return done(err);
               configFile.load(function(err) {
                 if (err) return done(err);
+                // eslint-disable-next-line no-unused-expressions
                 expect(configFile.data.acls).to.exist;
                 expect(configFile.data.acls).to.have.length(2);
                 expectCorrectOrder(configFile.data.acls);
@@ -58,7 +64,7 @@ describe('ModelAccessControl', function() {
               });
 
               function expectCorrectOrder(acl) {
-                var principalIds = acl.map(function(item) {
+                const principalIds = acl.map(function(item) {
                   return item.principalId;
                 });
                 expect(principalIds).to.eql(['$everyone', '$custom']);

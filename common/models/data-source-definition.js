@@ -3,8 +3,10 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var g = require('strong-globalize')();
-var app = require('../../server/server');
+'use strict';
+
+const g = require('strong-globalize')();
+const app = require('../../server/server');
 
 module.exports = function(DataSourceDefinition) {
   app.once('ready', function() {
@@ -13,14 +15,14 @@ module.exports = function(DataSourceDefinition) {
 };
 
 function ready(DataSourceDefinition) {
-  var async = require('async');
-  var ModelDefinition = app.models.ModelDefinition;
-  var ModelConfig = app.models.ModelConfig;
-  var ModelProperty = app.models.ModelProperty;
-  var fork = require('child_process').fork;
-  var loopback = require('loopback');
-  var debug = require('debug')('workspace:data-source-definition');
-  var ConfigFile = app.models.ConfigFile;
+  const async = require('async');
+  const ModelDefinition = app.models.ModelDefinition;
+  const ModelConfig = app.models.ModelConfig;
+  const ModelProperty = app.models.ModelProperty;
+  const fork = require('child_process').fork;
+  const loopback = require('loopback');
+  const debug = require('debug')('workspace:data-source-definition');
+  const ConfigFile = app.models.ConfigFile;
 
   /*
    TODOs
@@ -43,7 +45,7 @@ function ready(DataSourceDefinition) {
    * @header Property Validation
    */
 
-  DataSourceDefinition.validatesUniquenessOf('name', { scopedTo: ['facetName'] });
+  DataSourceDefinition.validatesUniquenessOf('name', {scopedTo: ['facetName']});
   DataSourceDefinition.validatesPresenceOf('name', 'connector');
   DataSourceDefinition.validatesPresenceOf('facetName');
 
@@ -77,8 +79,8 @@ function ready(DataSourceDefinition) {
 
   loopback.remoteMethod(DataSourceDefinition.prototype.testConnection, {
     returns: [
-      { arg: 'status', type: 'boolean' },
-      { arg: 'error', type: 'object' },
+      {arg: 'status', type: 'boolean'},
+      {arg: 'error', type: 'object'},
     ],
   });
 
@@ -95,7 +97,7 @@ function ready(DataSourceDefinition) {
   DataSourceDefinition.testConnection = function(data, cb) {
     // A legacy implementation that runs the test in loopback-workspace process
     try {
-      var dataSource = new DataSourceDefinition(data).toDataSource();
+      const dataSource = new DataSourceDefinition(data).toDataSource();
       dataSource.ping(function(err) {
         cb(err, !err);
       });
@@ -108,18 +110,19 @@ function ready(DataSourceDefinition) {
 
       return cb(
         new Error(g.f('Cannot connect to the data source.' +
-          ' Ensure the configuration is valid and the connector is installed.')));
+          ' Ensure the configuration is valid and the connector is installed.'))
+      );
     }
   };
 
   DataSourceDefinition.remoteMethod('testConnection', {
     accepts: {
-      arg: 'data', type: 'DataSourceDefinition', http: { source: 'body' },
+      arg: 'data', type: 'DataSourceDefinition', http: {source: 'body'},
     },
     returns: {
       arg: 'status', type: 'boolean',
     },
-    http: { verb: 'POST' },
+    http: {verb: 'POST'},
   });
 
   /**
@@ -135,8 +138,8 @@ function ready(DataSourceDefinition) {
    */
 
   DataSourceDefinition.prototype.discoverModelDefinition = function(name, options, cb) {
-    var self = this;
-    var cb = arguments[arguments.length - 1];
+    const self = this;
+    cb = arguments[arguments.length - 1];
 
     if (typeof options === 'function') {
       cb = options;
@@ -173,19 +176,20 @@ function ready(DataSourceDefinition) {
     }, {
       arg: 'options', type: 'object',
     }],
-    returns: { arg: 'status', type: 'boolean' },
+    returns: {arg: 'status', type: 'boolean'},
   });
 
   DataSourceDefinition.prototype.getDefaultBaseModel = function(cb) {
-    var connectorName = this.connector;
+    const connectorName = this.connector;
     DataSourceDefinition.app.models.Workspace.listAvailableConnectors(
       function(err, list) {
         if (err) return cb(err);
-        var meta = list.filter(function(c) {
+        const meta = list.filter(function(c) {
           return c.name === connectorName;
         })[0];
         return cb(null, meta && meta.baseModel);
-      });
+      }
+    );
   };
 
   /**
@@ -205,7 +209,7 @@ function ready(DataSourceDefinition) {
    */
 
   DataSourceDefinition.prototype.getSchema = function(options, cb) {
-    var cb = arguments[arguments.length - 1];
+    cb = arguments[arguments.length - 1];
 
     if (typeof options === 'function') {
       cb = options;
@@ -226,8 +230,8 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.getSchema, {
-    accepts: { arg: 'options', type: 'object' },
-    returns: { arg: 'models', type: 'array' },
+    accepts: {arg: 'options', type: 'object'},
+    returns: {arg: 'models', type: 'array'},
   });
 
   DataSourceDefinition.prototype._setDefaultSchema = function(options) {
@@ -269,9 +273,9 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.automigrate, {
-    accepts: { arg: 'modelName', type: 'string' },
-    returns: { arg: 'success', type: 'boolean' },
-    http: { verb: 'POST' },
+    accepts: {arg: 'modelName', type: 'string'},
+    returns: {arg: 'success', type: 'boolean'},
+    http: {verb: 'POST'},
   });
 
   /**
@@ -288,20 +292,20 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.autoupdate, {
-    accepts: { arg: 'modelName', type: 'string' },
-    returns: { arg: 'success', type: 'boolean' },
-    http: { verb: 'POST' },
+    accepts: {arg: 'modelName', type: 'string'},
+    returns: {arg: 'success', type: 'boolean'},
+    http: {verb: 'POST'},
   });
 
   DataSourceDefinition.prototype.invokeMethodInWorkspace = function(methodName) {
     // TODO(bajtos) We should ensure there is never more than one instance
     // of this code running at any given time.
-    var isDone = false;
-    var self = this;
-    var args = Array.prototype.slice.call(arguments, 0);
-    var child, cb;
-    var stdErrs = [];
-    var invokePath = require.resolve('../../bin/datasource-invoke');
+    let isDone = false;
+    const self = this;
+    const args = Array.prototype.slice.call(arguments, 0);
+    let cb;
+    const stdErrs = [];
+    const invokePath = require.resolve('../../bin/datasource-invoke');
 
     // remove method name
     args.shift();
@@ -314,12 +318,12 @@ function ready(DataSourceDefinition) {
       };
     }
 
-    child = fork(invokePath, [], { silent: true });
+    const child = fork(invokePath, [], {silent: true});
     child.stdout.pipe(process.stdout);
 
     // handle the callback message
     child.once('message', function(msg) {
-      var err = msg.error;
+      const err = msg.error;
       if (err) {
         return done(missingConnector(err) || err);
       }
@@ -365,11 +369,11 @@ function ready(DataSourceDefinition) {
       if (err == null || typeof err.message !== 'string') {
         return undefined;
       }
-      var match = err.message.match(
+      const match = err.message.match(
         /LoopBack connector "(.*)" is not installed/
       );
       if (match && match[1] === self.connector) {
-        var msg = g.f('Connector "%s" is not installed.', self.connector);
+        const msg = g.f('Connector "%s" is not installed.', self.connector);
         err = new Error(msg);
         err.name = 'InvocationError';
         err.code = 'ER_INVALID_CONNECTOR';
@@ -400,12 +404,12 @@ function ready(DataSourceDefinition) {
    */
 
   DataSourceDefinition.prototype.createModel = function(discoveredDef, cb) {
-    var dataSourceDef = this;
-    var properties = [];
-    var propertyNames = Object.keys(discoveredDef.properties);
-    var options = discoveredDef.options;
-    var modelDefinition = {};
-    var modelDefinitionId;
+    const dataSourceDef = this;
+    const properties = [];
+    const propertyNames = Object.keys(discoveredDef.properties);
+    const options = discoveredDef.options;
+    let modelDefinition = {};
+    let modelDefinitionId;
 
     // use common facet by default
     modelDefinition.facetName = 'common';
@@ -418,7 +422,7 @@ function ready(DataSourceDefinition) {
 
     // convert properties object to array
     propertyNames.forEach(function(propertyName) {
-      var property = discoveredDef.properties[propertyName];
+      const property = discoveredDef.properties[propertyName];
       property.name = propertyName;
       properties.push(property);
     });
@@ -442,7 +446,7 @@ function ready(DataSourceDefinition) {
 
     function createProperties(cb) {
       async.each(properties, function(property, cb) {
-        var data = ModelProperty.getDataFromConfig(property);
+        const data = ModelProperty.getDataFromConfig(property);
         modelDefinition.properties.create(data, cb);
       }, cb);
     }
@@ -462,9 +466,9 @@ function ready(DataSourceDefinition) {
   };
 
   loopback.remoteMethod(DataSourceDefinition.prototype.createModel, {
-    accepts: { arg: 'discoveredDef', type: 'object',
-      description: 'usually the result of discoverModelDefinition' },
-    returns: { arg: 'modelDefinitionId', type: 'string' },
-    http: { verb: 'POST' },
+    accepts: {arg: 'discoveredDef', type: 'object',
+      description: 'usually the result of discoverModelDefinition'},
+    returns: {arg: 'modelDefinitionId', type: 'string'},
+    http: {verb: 'POST'},
   });
-};
+}

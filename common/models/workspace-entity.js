@@ -3,16 +3,18 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var g = require('strong-globalize')();
+'use strict';
+
+const g = require('strong-globalize')();
 
 module.exports = function(WorkspaceEntity) {
-  var path = require('path');
-  var cloneDeep = require('lodash').cloneDeep;
-  var app = require('../../server/server');
+  const path = require('path');
+  const cloneDeep = require('lodash').cloneDeep;
+  const app = require('../../server/server');
 
   WorkspaceEntity.getUniqueId = function(data) {
-    var sep = this.settings.idSeparator || '.';
-    var parts = this.getUniqueIdParts(data);
+    const sep = this.settings.idSeparator || '.';
+    const parts = this.getUniqueIdParts(data);
     if (parts.length >= 1) {
       return parts.join(sep);
     }
@@ -24,13 +26,13 @@ module.exports = function(WorkspaceEntity) {
   };
 
   WorkspaceEntity.getUniqueIdParts = function(data) {
-    var settings = this.settings;
-    var parentPropertyName = this.getParentPropertyName();
-    var parts = [];
-    var parentId = parentPropertyName && data[parentPropertyName];
-    var splitParentId = parentId && parentId.split('.');
-    var parentIdIsNotRoot = parentId !== '.';
-    var name = data.name;
+    const settings = this.settings;
+    const parentPropertyName = this.getParentPropertyName();
+    const parts = [];
+    const parentId = parentPropertyName && data[parentPropertyName];
+    const splitParentId = parentId && parentId.split('.');
+    const parentIdIsNotRoot = parentId !== '.';
+    const name = data.name;
 
     if (parentPropertyName) {
       if (parentId) {
@@ -49,13 +51,13 @@ module.exports = function(WorkspaceEntity) {
   };
 
   WorkspaceEntity.getParentPropertyName = function() {
-    var relations = this.relations;
+    const relations = this.relations;
     if (!relations) return;
 
-    var relationNames = Object.keys(relations);
-    var relation;
+    const relationNames = Object.keys(relations);
+    let relation;
 
-    for (var i = 0; i < relationNames.length; i++) {
+    for (let i = 0; i < relationNames.length; i++) {
       relation = relations[relationNames[i]];
       if (relation.type === 'belongsTo') {
         return relation.keyFrom;
@@ -83,8 +85,8 @@ module.exports = function(WorkspaceEntity) {
   };
 
   WorkspaceEntity.addToCache = function(cache, val) {
-    var Entity = this;
-    var id = Entity.getUniqueId(val);
+    const Entity = this;
+    const id = Entity.getUniqueId(val);
     val[this.dataSource.idName(Entity.modelName)] = id;
     this.updateInCache(cache, id, val);
     return id;
@@ -105,7 +107,7 @@ module.exports = function(WorkspaceEntity) {
   };
 
   WorkspaceEntity.allFromCache = function(cache) {
-    var data = cache[this.getCollection()];
+    const data = cache[this.getCollection()];
     if (!data) {
       return [];
     }
@@ -124,8 +126,8 @@ module.exports = function(WorkspaceEntity) {
 
   WorkspaceEntity.getConfigFile = function(facetName, obj) {
     // TODO(ritch) the bootstrapping of models requires this...
-    var ConfigFile = app.models.ConfigFile;
-    return new ConfigFile({ path: this.getPath(facetName, obj) });
+    const ConfigFile = app.models.ConfigFile;
+    return new ConfigFile({path: this.getPath(facetName, obj)});
   };
 
   WorkspaceEntity.prototype.getConfigFile = function() {
@@ -133,9 +135,9 @@ module.exports = function(WorkspaceEntity) {
   };
 
   WorkspaceEntity.getConfigFromData = function(data) {
-    var properties = this.definition.properties;
-    var result = {};
-    var prop;
+    const properties = this.definition.properties;
+    const result = {};
+    let prop;
 
     // add pre-defined properties in the order defined by LDL
     // apply `json` config from LDL along the way
@@ -154,11 +156,11 @@ module.exports = function(WorkspaceEntity) {
   };
 
   WorkspaceEntity.getDataFromConfig = function(config) {
-    var properties = this.definition.properties;
+    const properties = this.definition.properties;
     config = cloneDeep(config);
 
     Object.keys(properties).forEach(function(p) {
-      var json = properties[p].json;
+      const json = properties[p].json;
       if (json) {
         config[p] = config[json];
         delete config[json];
@@ -172,9 +174,9 @@ module.exports = function(WorkspaceEntity) {
   // We have to perform this task before the validations are executed, since
   // the `facetName` is a required property
   WorkspaceEntity.observe('before save', function injectFacetName(ctx, next) {
-    var Entity = ctx.Model;
-    var properties = Entity.definition.properties;
-    var data = ctx.instance ? ctx.instance.toObject() : ctx.data;
+    const Entity = ctx.Model;
+    const properties = Entity.definition.properties;
+    const data = ctx.instance ? ctx.instance.toObject() : ctx.data;
 
     if (!('facetName' in properties &&
       'modelId' in properties &&
@@ -191,7 +193,8 @@ module.exports = function(WorkspaceEntity) {
             Entity.modelName,
             data.id,
             data.facetName,
-            model.facetName);
+            model.facetName
+          );
         }
         (ctx.instance || ctx.data).facetName = model.facetName;
       }

@@ -3,21 +3,28 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var util = require('util');
-var async = require('async');
-var app = require('../');
-var loopback = require('loopback');
-var DataSource = loopback.DataSource;
-var ConfigFile = app.models.ConfigFile;
-var DataSourceDefinition = app.models.DataSourceDefinition;
-var Facet = app.models.Facet;
-var TestDataBuilder = require('./helpers/test-data-builder');
+'use strict';
+
+const util = require('util');
+const async = require('async');
+const app = require('../');
+const loopback = require('loopback');
+const DataSource = loopback.DataSource;
+const ConfigFile = app.models.ConfigFile;
+const DataSourceDefinition = app.models.DataSourceDefinition;
+const Facet = app.models.Facet;
+const TestDataBuilder = require('./helpers/test-data-builder');
+const expect = require('chai').expect;
+const support = require('./support');
+const givenEmptyWorkspace = support.givenEmptyWorkspace;
+const givenBasicWorkspace = support.givenBasicWorkspace;
+const findDataSourceDefinitions = support.findDataSourceDefinitions;
 
 describe('DataSourceDefinition', function() {
   describe('DataSourceDefinition.create(def, cb)', function() {
     beforeEach(givenEmptyWorkspace);
     beforeEach(function(done) {
-      var serverFacet = this.serverFacet;
+      const serverFacet = this.serverFacet;
       this.configFile = new ConfigFile({
         path: serverFacet + '/datasources.json',
       });
@@ -47,27 +54,28 @@ describe('DataSourceDefinition', function() {
     describe('config file', function() {
       it('should be created', function(done) {
         this.configFile.exists(function(err, exists) {
+          // eslint-disable-next-line no-unused-expressions
           expect(err).to.not.exist;
           expect(exists).to.equal(true);
           done();
         });
       });
       it('should not contain id properties', function() {
-        var configData = this.configFile.data;
-        var dsConfig = configData.foo;
+        const configData = this.configFile.data;
+        const dsConfig = configData.foo;
         expect(dsConfig).to.not.have.property('id');
         expect(dsConfig).to.not.have.property('facetName');
       });
     });
     it('should be persist multiple to the config file', function(done) {
-      var defs = Object.keys(this.configFile.data).sort();
+      const defs = Object.keys(this.configFile.data).sort();
       expect(defs).to.eql(['bar', 'foo'].sort());
       done();
     });
 
     it('should not contain workspace-private properties', function(done) {
       // This test is reproducing an issue discovered in generator-loopback
-      var configFile = this.configFile;
+      const configFile = this.configFile;
       DataSourceDefinition.create({
         name: 'another-ds',
         connector: 'rest',
@@ -76,7 +84,7 @@ describe('DataSourceDefinition', function() {
         if (err) return done(err);
         configFile.load(function(err) {
           if (err) done(err);
-          var datasources = configFile.data;
+          const datasources = configFile.data;
           expect(Object.keys(datasources.foo)).to.not.contain('configFile');
           done();
         });
@@ -84,7 +92,7 @@ describe('DataSourceDefinition', function() {
     });
   });
   it('validates `name` uniqueness within the facet only', function(done) {
-    var ref = TestDataBuilder.ref;
+    const ref = TestDataBuilder.ref;
     new TestDataBuilder()
       .define('facet1', Facet, {
         name: 'facet1',
@@ -125,7 +133,7 @@ describe('DataSourceDefinition', function() {
 
   describe('dataSourceDefinition.toDataSource()', function() {
     it('should get an actual dataSource object', function() {
-      var dataSourceDef = new DataSourceDefinition({
+      const dataSourceDef = new DataSourceDefinition({
         connector: 'memory',
         name: 'db',
       });
@@ -142,6 +150,7 @@ describe('DataSourceDefinition', function() {
         },
         function(err, connectionAvailable) {
           if (err) return done(err);
+          // eslint-disable-next-line no-unused-expressions
           expect(connectionAvailable).to.be.true;
           done();
         }
@@ -155,6 +164,7 @@ describe('DataSourceDefinition', function() {
           name: 'test-unknown-ds',
         },
         function(err, connectionAvailable) {
+          // eslint-disable-next-line no-unused-expressions
           expect(err, 'err').to.be.defined;
           done();
         }
@@ -165,7 +175,7 @@ describe('DataSourceDefinition', function() {
   describe('dataSourceDefinition.createModel(modelDefinition, cb)', function() {
     beforeEach(givenBasicWorkspace);
     beforeEach(function(done) {
-      var test = this;
+      const test = this;
       DataSourceDefinition.create({
         name: 'basic',
         connector: 'memory',
@@ -186,7 +196,7 @@ describe('DataSourceDefinition', function() {
             // but the workspace API uses `isId` as the property name instead
             id: true,
           },
-          name: { type: 'string' },
+          name: {type: 'string'},
         },
         options: {
           foo: 'bar',
@@ -204,24 +214,26 @@ describe('DataSourceDefinition', function() {
         expect(modelDefinition.name).to.equal('BasicModel');
         expect(modelDefinition.facetName).to.equal('common');
         modelDefinition.properties(
-          { where: { name: 'id' }},
+          {where: {name: 'id'}},
           function(err, list) {
             if (err) return done(err);
             expect(list).to.have.length(1);
-            var idProp = list[0];
+            const idProp = list[0];
             expect(idProp.isId).to.be.true();
             done();
-          });
+          }
+        );
       });
     });
 
     it('should create a model config', function(done) {
-      var test = this;
+      const test = this;
       app.models.ModelConfig.findOne({
         where: {
           name: 'BasicModel',
         },
       }, function(err, config) {
+        // eslint-disable-next-line no-unused-expressions
         expect(err).to.not.exist;
         expect(config.toObject().dataSource).to.equal(test.basic.name);
         done();
@@ -231,14 +243,14 @@ describe('DataSourceDefinition', function() {
 });
 
 function getMockDataSourceDef() {
-  var def = new DataSourceDefinition({
+  const def = new DataSourceDefinition({
     connector: 'memory',
     name: 'db',
   });
 
-  var dataSource = def.toDataSource();
+  const dataSource = def.toDataSource();
 
-  var mockDataSource = {
+  const mockDataSource = {
     connector: {
       connect: function(cb) {
         process.nextTick(cb);
@@ -247,13 +259,12 @@ function getMockDataSourceDef() {
     discoverModelDefinitions: function(options, cb) {
       cb(null,
         [
-          { type: 'table', name: 'customer', schema: 'strongloop' },
-          { type: 'table', name: 'inventory', owner: 'strongloop' },
-          { type: 'table', name: 'location', schema: 'strongloop' },
-          { type: 'table', name: 'session', owner: 'strongloop' },
-          { type: 'view', name: 'INVENTORY_VIEW', owner: 'STRONGLOOP' },
-        ]
-      );
+          {type: 'table', name: 'customer', schema: 'strongloop'},
+          {type: 'table', name: 'inventory', owner: 'strongloop'},
+          {type: 'table', name: 'location', schema: 'strongloop'},
+          {type: 'table', name: 'session', owner: 'strongloop'},
+          {type: 'view', name: 'INVENTORY_VIEW', owner: 'STRONGLOOP'},
+        ]);
     },
     discoverSchemas: function(modelName, options, cb) {
       cb(null, {

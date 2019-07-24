@@ -3,14 +3,20 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var ConfigFile = app.models.ConfigFile;
-var ModelDefinition = app.models.ModelDefinition;
-var ModelMethod = app.models.ModelMethod;
-var TestDataBuilder = require('./helpers/test-data-builder');
+'use strict';
+
+const app = require('../');
+const ConfigFile = app.models.ConfigFile;
+const ModelDefinition = app.models.ModelDefinition;
+const ModelMethod = app.models.ModelMethod;
+const TestDataBuilder = require('./helpers/test-data-builder');
+const expect = require('chai').expect;
+const support = require('./support');
+const givenBasicWorkspace = support.givenBasicWorkspace;
+const givenLB3Workspace = support.givenLB3Workspace;
 
 describe('ModelMethod', function() {
-  var userModel;
+  let userModel;
 
   beforeEach(givenBasicWorkspace);
   beforeEach(function(done) {
@@ -23,13 +29,15 @@ describe('ModelMethod', function() {
         if (err) return done(err);
         userModel = result;
         done();
-      });
+      }
+    );
   });
 
   it('is represented as a key-value map in model definition', function(done) {
-    var cfg = new ConfigFile({ path: 'server/models/user.json' });
+    const cfg = new ConfigFile({path: 'server/models/user.json'});
     cfg.load(function(err) {
       if (err) return done(err);
+      // eslint-disable-next-line no-undef
       expect(cfg.data.methods).to.be.an('object');
       done();
     });
@@ -42,8 +50,8 @@ describe('ModelMethod', function() {
         name: 'multiMethod',
         isStatic: true,
         http: [
-          { verb: 'get', path: '/get' },
-          { verb: 'head', path: '/head' },
+          {verb: 'get', path: '/get'},
+          {verb: 'head', path: '/head'},
         ],
       },
       function(err) {
@@ -52,30 +60,31 @@ describe('ModelMethod', function() {
         userModel.methods(function(err, list) {
           if (err) return done(err);
           expect(list).to.have.length(1);
-          var method = list[0];
+          const method = list[0];
           expect(method).to.have.property('name', 'multiMethod');
           expect(method).to.have.property('http').to.have.length(2);
-          expect(method.http[0]).to.eql({ verb: 'get', path: '/get' });
-          expect(method.http[1]).to.eql({ verb: 'head', path: '/head' });
+          expect(method.http[0]).to.eql({verb: 'get', path: '/get'});
+          expect(method.http[1]).to.eql({verb: 'head', path: '/head'});
 
-          var cfg = new ConfigFile({ path: 'server/models/user.json' });
+          const cfg = new ConfigFile({path: 'server/models/user.json'});
           cfg.load(function(err) {
             if (err) return done(err);
-            var methods = cfg.data.methods;
+            const methods = cfg.data.methods;
             expect(methods).to.have.property('multiMethod');
             expect(methods.multiMethod).to.have.property('http').eql([
-              { verb: 'get', path: '/get' },
-              { verb: 'head', path: '/head' },
+              {verb: 'get', path: '/get'},
+              {verb: 'head', path: '/head'},
             ]);
             done();
           });
         });
-      });
+      }
+    );
   });
 });
 
 describe('ModelMethod - Loopback 3.0', function() {
-  var userModel;
+  let userModel;
 
   beforeEach(givenLB3Workspace);
 
@@ -89,7 +98,8 @@ describe('ModelMethod - Loopback 3.0', function() {
         if (err) return done(err);
         userModel = result;
         done();
-      });
+      }
+    );
   });
 
   it('add static method without isStatic flag to method definition', function(done) {
@@ -107,10 +117,10 @@ describe('ModelMethod - Loopback 3.0', function() {
           expect(list[0]).to.have.property('name', 'testMethod');
           expect(list[0]).to.have.property('isStatic', true);
 
-          var cfg = new ConfigFile({ path: 'server/models/user.json' });
+          const cfg = new ConfigFile({path: 'server/models/user.json'});
           cfg.load(function(err) {
             if (err) return done(err);
-            var methods = cfg.data.methods;
+            const methods = cfg.data.methods;
             expect(methods).to.be.an('object');
             expect(methods).to.have.property('testMethod');
             expect(methods).to.not.have.property('prototype.testMethod');
@@ -121,7 +131,8 @@ describe('ModelMethod - Loopback 3.0', function() {
             done();
           });
         });
-      });
+      }
+    );
   });
 
   it('add `prototype.` to method name if isStatic flag is false', function(done) {
@@ -139,10 +150,10 @@ describe('ModelMethod - Loopback 3.0', function() {
           expect(list[0]).to.have.property('name', 'testMethod');
           expect(list[0]).to.have.property('isStatic', false);
 
-          var cfg = new ConfigFile({ path: 'server/models/user.json' });
+          const cfg = new ConfigFile({path: 'server/models/user.json'});
           cfg.load(function(err) {
             if (err) return done(err);
-            var methods = cfg.data.methods;
+            const methods = cfg.data.methods;
             expect(methods).to.be.an('object');
             expect(methods).to.have.property('prototype.testMethod');
             expect(methods).to.not.have.property('testMethod');
@@ -153,7 +164,8 @@ describe('ModelMethod - Loopback 3.0', function() {
             done();
           });
         });
-      });
+      }
+    );
   });
 
   it('loading JSON should have correct method name and isStatic flag', function(done) {
@@ -163,8 +175,8 @@ describe('ModelMethod - Loopback 3.0', function() {
         name: 'testMethod',
         isStatic: false,
         http: [
-          { verb: 'get', path: '/get' },
-          { verb: 'head', path: '/head' },
+          {verb: 'get', path: '/get'},
+          {verb: 'head', path: '/head'},
         ],
       },
       function(err) {
@@ -183,6 +195,7 @@ describe('ModelMethod - Loopback 3.0', function() {
             done();
           });
         });
-      });
+      }
+    );
   });
 });

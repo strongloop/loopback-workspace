@@ -3,20 +3,35 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var async = require('async');
-var fs = require('fs-extra');
-var app = require('../');
-var request = require('supertest');
-var TestDataBuilder = require('./helpers/test-data-builder');
-var Workspace = app.models.Workspace;
-var ConfigFile = app.models.ConfigFile;
+'use strict';
+
+const async = require('async');
+const fs = require('fs-extra');
+const app = require('../');
+const request = require('supertest');
+const TestDataBuilder = require('./helpers/test-data-builder');
+const Workspace = app.models.Workspace;
+const ConfigFile = app.models.ConfigFile;
+const expect = require('chai').expect;
+const support = require('../test/support');
+const givenBasicWorkspace = support.givenBasicWorkspace;
+const givenEmptySandbox = support.givenEmptySandbox;
+const resetWorkspace = support.resetWorkspace;
+const SANDBOX = support.SANDBOX;
+const findAllEntities = support.findAllEntities;
+const expectFileExists = support.expectFileExists;
+const getPath = support.getPath;
+const toNames = support.toNames;
+const setWorkspaceToSandboxDir = support.setWorkspaceToSandboxDir;
+const createSandboxDir = support.createSandboxDir;
+const expectFileNotExists = support.expectFileNotExists;
 
 describe('Workspace', function() {
   describe('Workspace.availableLBVersions()', function() {
     it('Get an array of supported loopback versions', function(done) {
       request(app).get('/api/workspaces/loopback-versions').expect(200, function(err, res) {
         if (err) return done(err);
-        var versions = res.body.versions;
+        const versions = res.body.versions;
         expect(versions.length).to.eql(1);
         done();
       });
@@ -88,8 +103,8 @@ describe('Workspace', function() {
     });
 
     it('should provide a hook for custom of `cp -r`', function(done) {
-      var calls = [];
-      var ncp = Workspace.copyRecursive;
+      const calls = [];
+      const ncp = Workspace.copyRecursive;
       Workspace.copyRecursive = function(src, dest, cb) {
         calls.push([src, dest]);
         process.nextTick(cb);
@@ -103,9 +118,11 @@ describe('Workspace', function() {
         function(err) {
           Workspace.copyRecursive = ncp;
           if (err) return done(err);
+          // eslint-disable-next-line no-unused-expressions
           expect(calls).to.be.not.empty;
           done();
-        });
+        }
+      );
     });
   });
 
@@ -115,7 +132,7 @@ describe('Workspace', function() {
     beforeEach(function(done) {
       // TODO(ritch) this should not be required...
       // there is most likely an issue with loading into cache in parallel
-      var test = this;
+      const test = this;
       app.models.DataSourceDefinition.find(function(err, defs) {
         if (err) return done(err);
         test.dataSources = defs;
@@ -124,7 +141,7 @@ describe('Workspace', function() {
     });
 
     it('should create a set of facets', function() {
-      var facetNames = toNames(this.facets);
+      const facetNames = toNames(this.facets);
       expect(facetNames).to.have.members([
         'common',
         'server',
@@ -132,16 +149,17 @@ describe('Workspace', function() {
     });
 
     it('should not create a set of model definitions', function() {
+      // eslint-disable-next-line no-unused-expressions
       expect(this.models).to.be.empty;
     });
 
     it('should create a set of data source definitions', function() {
-      var dataSourceNames = toNames(this.dataSources);
+      const dataSourceNames = toNames(this.dataSources);
       expect(dataSourceNames).to.contain('db');
     });
 
     describe('generated package.json', function() {
-      var pkg;
+      let pkg;
 
       before(function() {
         pkg = fs.readJsonSync(SANDBOX + '/package.json');
@@ -163,7 +181,7 @@ describe('Workspace', function() {
   });
 
   describe('project.listAvailableConnectors(cb)', function() {
-    var connectors;
+    let connectors;
     before(function(done) {
       Workspace.listAvailableConnectors(function(err, list) {
         connectors = list;
@@ -172,23 +190,23 @@ describe('Workspace', function() {
     });
 
     it('should include Memory connector', function() {
-      var names = connectors.map(function(it) { return it.name; });
+      const names = connectors.map(function(it) { return it.name; });
       expect(names).to.contain('memory');
     });
 
     it('should have installed flag', function() {
-      var installed = connectors.filter(function(it) {
+      const installed = connectors.filter(function(it) {
         return it.installed === true;
       }).map(function(it) {
         return it.name;
       });
-      var expectedInstalled = ['memory', 'mail'];
+      const expectedInstalled = ['memory', 'mail'];
 
       expect(installed).to.contain.members(expectedInstalled);
     });
 
     it('should include base model in metadata', function() {
-      var meta = findByName('memory');
+      const meta = findByName('memory');
       expect(meta).to.have.property('baseModel', 'PersistedModel');
     });
 
@@ -236,6 +254,7 @@ describe('Workspace', function() {
 
     it('generates `.gitignore` properly', function(done) {
       fs.exists(SANDBOX + '/.gitignore', function(exists) {
+        // eslint-disable-next-line no-unused-expressions
         expect(exists).to.be.ok;
         done();
       });
@@ -243,7 +262,7 @@ describe('Workspace', function() {
   });
 
   describe('Workspace.loadWorkspace(dir, cb)', function() {
-    var TEST_PATH = '/some/test/dir';
+    const TEST_PATH = '/some/test/dir';
 
     it('sets WORKSPACE_DIR env variable', function(done) {
       Workspace.loadWorkspace(TEST_PATH, function() {
@@ -287,8 +306,7 @@ describe('Workspace', function() {
                 expectFileExists(getPath('common/models/note.js'));
                 expectFileExists(getPath('common/models/note.json'));
                 next();
-              }
-            );
+              });
           },
           function(next) {
             createSandboxDir(SANDBOX + '/helloworldapp', next);
@@ -310,8 +328,7 @@ describe('Workspace', function() {
                 expectFileNotExists(getPath('common/models/note.js'));
                 expectFileNotExists(getPath('common/models/note.json'));
                 next();
-              }
-            );
+              });
           },
         ], done);
       });

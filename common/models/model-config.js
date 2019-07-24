@@ -3,6 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+
 module.exports = function(ModelConfig) {
   /**
    * Defines a model configuration which attaches a model to a facet and a
@@ -19,7 +21,7 @@ module.exports = function(ModelConfig) {
    * @header Property Validation
    */
 
-  ModelConfig.validatesUniquenessOf('name', { scopedTo: ['facetName'] });
+  ModelConfig.validatesUniquenessOf('name', {scopedTo: ['facetName']});
   ModelConfig.validatesPresenceOf('name');
   ModelConfig.validatesPresenceOf('facetName');
 };

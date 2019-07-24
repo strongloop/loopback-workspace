@@ -3,12 +3,14 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var g = require('strong-globalize')();
+'use strict';
+
+const g = require('strong-globalize')();
 
 module.exports = function(Definition) {
-  var loopback = require('loopback');
-  var clone = require('lodash').clone;
-  var debug = require('debug')('workspace:definition');
+  const loopback = require('loopback');
+  const clone = require('lodash').clone;
+  const debug = require('debug')('workspace:definition');
 
   /**
    * Base class for LoopBack definitions.
@@ -70,14 +72,14 @@ module.exports = function(Definition) {
    */
 
   Definition.getEmbededRelations = function() {
-    var relations = this.settings.relations;
-    var results = [];
+    const relations = this.settings.relations;
+    const results = [];
 
     if (relations) {
       Object
         .keys(relations)
         .forEach(function(name) {
-          var relation = relations[name];
+          const relation = relations[name];
           if (relation.embed) {
             results.push({
               embed: relation.embed,
@@ -94,11 +96,11 @@ module.exports = function(Definition) {
   };
 
   Definition.addRelatedToCache = function(cache, fileData, facetName, fk) {
-    var Definition = this;
+    const Definition = this;
     this.getEmbededRelations().forEach(function(relation) {
-      var relatedData = fileData[relation.as];
-      var Entity = loopback.getModel(relation.model);
-      var properties = Entity.definition.properties;
+      const relatedData = fileData[relation.as];
+      const Entity = loopback.getModel(relation.model);
+      const properties = Entity.definition.properties;
 
       if (Array.isArray(relatedData)) {
         relatedData.forEach(function(config, index) {
@@ -112,7 +114,7 @@ module.exports = function(Definition) {
         });
       } else if (relatedData) {
         Object.keys(relatedData).forEach(function(embedId) {
-          var config = relatedData[embedId];
+          let config = relatedData[embedId];
 
           if (relation.model === 'ModelProperty' && !(config && config.type)) {
             if (!config) {
@@ -124,7 +126,7 @@ module.exports = function(Definition) {
               };
             } else {
               // expand shorthand notation
-              config = { type: config };
+              config = {type: config};
             }
             debug('expanded model property %s.%s defined as %j',
               fileData.name, embedId, config);
@@ -147,7 +149,7 @@ module.exports = function(Definition) {
   Definition.addToCache = function(cache, val) {
     // Remove data of embedded relations
     // see https://github.com/strongloop/loopback-datasource-juggler/issues/242
-    var data = clone(val);
+    const data = clone(val);
     this.getEmbededRelations().forEach(function(relation) {
       delete data[relation.as];
     });

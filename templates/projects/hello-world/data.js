@@ -3,11 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+
 /**
  * The hello-world component template.
  */
-var g = require('strong-globalize')();
-var template = module.exports;
+const g = require('strong-globalize')();
+const template = module.exports;
 
 template.description = g.f(
   'A project containing a controller, \

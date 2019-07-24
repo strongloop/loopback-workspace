@@ -3,7 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../../server/server');
+'use strict';
+
+const app = require('../../server/server');
 
 module.exports = function(Facet) {
   app.once('ready', function() {
@@ -12,14 +14,14 @@ module.exports = function(Facet) {
 };
 
 function ready(Facet) {
-  var async = require('async');
-  var assert = require('assert');
-  var path = require('path');
+  const async = require('async');
+  const assert = require('assert');
+  const path = require('path');
 
-  var ModelDefinition = app.models.ModelDefinition;
-  var Middleware = app.models.Middleware;
-  var ComponentConfig = app.models.ComponentConfig;
-  var ModelConfig = app.models.ModelConfig;
+  const ModelDefinition = app.models.ModelDefinition;
+  const Middleware = app.models.Middleware;
+  const ComponentConfig = app.models.ComponentConfig;
+  const ModelConfig = app.models.ModelConfig;
 
   /**
    * Defines a `LoopBackApp` configuration.
@@ -56,34 +58,34 @@ function ready(Facet) {
    */
 
   Facet.loadIntoCache = function(cache, facetName, allConfigFiles, cb) {
-    var FacetSetting = app.models.FacetSetting;
-    var DataSourceDefinition = app.models.DataSourceDefinition;
-    var ConfigFile = app.models.ConfigFile;
+    const FacetSetting = app.models.FacetSetting;
+    const DataSourceDefinition = app.models.DataSourceDefinition;
+    const ConfigFile = app.models.ConfigFile;
 
-    var debug = require('debug')('workspace:facet:load:' + facetName);
-    var configFiles = allConfigFiles[facetName];
-    var facetConfig = ConfigFile.getFileByBase(configFiles, 'config');
-    var modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
-    var dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
-    var middlewares = ConfigFile.getFileByBase(configFiles, 'middleware');
-    var componentConfigs = ConfigFile.getFileByBase(configFiles, 'component-config');
-    var modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
+    const debug = require('debug')('workspace:facet:load:' + facetName);
+    const configFiles = allConfigFiles[facetName];
+    const facetConfig = ConfigFile.getFileByBase(configFiles, 'config');
+    const modelConfigs = ConfigFile.getFileByBase(configFiles, 'model-config');
+    const dataSources = ConfigFile.getFileByBase(configFiles, 'datasources');
+    const middlewares = ConfigFile.getFileByBase(configFiles, 'middleware');
+    const componentConfigs = ConfigFile.getFileByBase(configFiles, 'component-config');
+    const modelDefinitionFiles = ConfigFile.getModelDefFiles(configFiles, facetName);
 
-    var artifacts = {};
-    for (var at in Facet.artifactTypes) {
-      var file = ConfigFile.getFileByBase(configFiles, at);
+    const artifacts = {};
+    for (const at in Facet.artifactTypes) {
+      const file = ConfigFile.getFileByBase(configFiles, at);
       debug('Loading %s from %s', at, file);
       if (file) {
         artifacts[at] = file;
       }
     }
-    var steps = [];
+    const steps = [];
 
-    var facetData = {
+    const facetData = {
       name: facetName,
     };
     debug('adding to cache facet [%s]');
-    var facetId = Facet.addToCache(cache, facetData);
+    const facetId = Facet.addToCache(cache, facetData);
 
     if (facetConfig) {
       steps.push(function(cb) {
@@ -91,7 +93,7 @@ function ready(Facet) {
       }, function(cb) {
         debug('adding to cache facet file [%s]', facetConfig.path);
         Object.keys(facetConfig.data).forEach(function(name) {
-          var value = {
+          const value = {
             name: name,
             value: facetConfig.data[name],
             configFile: facetConfig.path,
@@ -107,21 +109,21 @@ function ready(Facet) {
       steps.push(function(cb) {
         modelConfigs.load(cb);
       }, function(cb) {
-        var modelConfigJson = modelConfigs.data || {};
-        var modelNames = Object.keys(modelConfigJson).filter(function(modelName) {
+        const modelConfigJson = modelConfigs.data || {};
+        const modelNames = Object.keys(modelConfigJson).filter(function(modelName) {
           // exclude _meta / other private properties
           return modelName.charAt(0) !== '_';
         });
 
         modelNames.forEach(function(modelName) {
-          var modelConfig = modelConfigJson[modelName];
+          const modelConfig = modelConfigJson[modelName];
           modelConfig.facetName = facetName;
           modelConfig.name = modelName;
           ModelConfig.addToCache(cache, modelConfig);
         });
 
         if (modelConfigJson._meta) {
-          var facetEntity = Facet.getFromCache(cache, facetId);
+          const facetEntity = Facet.getFromCache(cache, facetId);
           facetEntity.modelsMetadata = modelConfigJson._meta;
           Facet.updateInCache(cache, facetId, facetEntity);
         }
@@ -137,14 +139,14 @@ function ready(Facet) {
     if (modelDefinitionFiles.length) {
       steps.push(function(cb) {
         modelDefinitionFiles.forEach(function(configFile) {
-          var def = configFile.data || {};
+          const def = configFile.data || {};
           def.facetName = facetName;
           def.configFile = configFile.path;
           def.readonly = !!configFile.isReadOnly;
 
           debug('loading [%s] model definition into cache', def.name);
 
-          var uniqueId = ModelDefinition.getUniqueId(def);
+          const uniqueId = ModelDefinition.getUniqueId(def);
 
           ModelDefinition.addToCache(cache, def);
           ModelDefinition.addRelatedToCache(cache, def, facetName, uniqueId);
@@ -157,11 +159,11 @@ function ready(Facet) {
       steps.push(function(cb) {
         dataSources.load(cb);
       }, function(cb) {
-        var dataSourceDefs = dataSources.data || {};
-        var dataSourceNames = Object.keys(dataSourceDefs);
+        const dataSourceDefs = dataSources.data || {};
+        const dataSourceNames = Object.keys(dataSourceDefs);
 
         dataSourceNames.forEach(function(dataSourceName) {
-          var def = dataSourceDefs[dataSourceName];
+          const def = dataSourceDefs[dataSourceName];
           def.configFile = dataSources.path;
           def.name = dataSourceName;
           def.facetName = facetName;
@@ -198,7 +200,7 @@ function ready(Facet) {
     }
 
     /* eslint-disable one-var */
-    for (var a in artifacts) {
+    for (const a in artifacts) {
       steps.push(createLoader(a));
     }
     /* eslint-enable one-var */
@@ -213,18 +215,18 @@ function ready(Facet) {
   };
 
   Facet.saveToFs = function(cache, facetData, cb) {
-    var FacetSetting = app.models.FacetSetting;
-    var DataSourceDefinition = app.models.DataSourceDefinition;
-    var ConfigFile = app.models.ConfigFile;
-    var Middleware = app.models.Middleware;
-    var ModelConfig = app.models.ModelConfig;
-    var ModelDefinition = app.models.ModelDefinition;
+    const FacetSetting = app.models.FacetSetting;
+    const DataSourceDefinition = app.models.DataSourceDefinition;
+    const ConfigFile = app.models.ConfigFile;
+    const Middleware = app.models.Middleware;
+    const ModelConfig = app.models.ModelConfig;
+    const ModelDefinition = app.models.ModelDefinition;
 
-    var filesToSave = [];
+    const filesToSave = [];
 
     // Add a file to be saved with dedupe
     function addFileToSave(file) {
-      for (var i = 0, n = filesToSave.length; i < n; i++) {
+      for (let i = 0, n = filesToSave.length; i < n; i++) {
         if (filesToSave[i].path === file.path) {
           filesToSave[i] = file; // Replace the queued save
           return;
@@ -234,15 +236,15 @@ function ready(Facet) {
       filesToSave.push(file);
     }
 
-    var facetName = facetData.name;
+    const facetName = facetData.name;
     assert(facetName);
 
-    var debug = require('debug')('workspace:facet:save:' + facetName);
+    const debug = require('debug')('workspace:facet:save:' + facetName);
 
-    var hasApp = Facet.hasApp(facetData);
+    const hasApp = Facet.hasApp(facetData);
 
     if (hasApp) {
-      var facetConfigFile = FacetSetting.getConfigFile(facetName, {});
+      const facetConfigFile = FacetSetting.getConfigFile(facetName, {});
       facetConfigFile.data = {};
 
       FacetSetting.allFromCache(cache).forEach(function(setting) {
@@ -254,9 +256,9 @@ function ready(Facet) {
     }
 
     if (hasApp) {
-      var dataSourceConfig = {};
-      var dataSourcePath = path.join(facetName, 'datasources.json');
-      var cachedDataSources = DataSourceDefinition.allFromCache(cache);
+      const dataSourceConfig = {};
+      let dataSourcePath = path.join(facetName, 'datasources.json');
+      const cachedDataSources = DataSourceDefinition.allFromCache(cache);
 
       cachedDataSources.forEach(function(dataSourceDef) {
         if (dataSourceDef.facetName === facetName) {
@@ -271,20 +273,22 @@ function ready(Facet) {
         data: dataSourceConfig,
       }));
 
-      var middlewareFile = Middleware.serialize(cache, facetName);
+      const middlewareFile = Middleware.serialize(cache, facetName);
       if (middlewareFile) {
         addFileToSave(middlewareFile);
       }
 
-      var componentConfigFile = ComponentConfig.serialize(cache, facetName);
+      const componentConfigFile = ComponentConfig.serialize(cache, facetName);
       if (componentConfigFile) {
         addFileToSave(componentConfigFile);
       }
 
-      var cachedModelConfigs = ModelConfig.allFromCache(cache);
-      var modelConfigPath = path.join(facetName, ModelConfig.settings.defaultConfigFile);
-      var modelConfigFile = new ConfigFile({ path: modelConfigPath }); // model-config.json
-      var modelConfigJson = modelConfigFile.data = {};
+      const cachedModelConfigs = ModelConfig.allFromCache(cache);
+      const modelConfigPath = path.join(
+        facetName, ModelConfig.settings.defaultConfigFile
+      );
+      const modelConfigFile = new ConfigFile({path: modelConfigPath}); // model-config.json
+      const modelConfigJson = modelConfigFile.data = {};
 
       modelConfigJson._meta = facetData.modelsMetadata;
 
@@ -298,21 +302,21 @@ function ready(Facet) {
       addFileToSave(modelConfigFile);
     }
 
-    var cachedModels = ModelDefinition.allFromCache(cache);
+    const cachedModels = ModelDefinition.allFromCache(cache);
 
     cachedModels.forEach(function(modelDef) {
       debug('model definition ~ %j', modelDef);
       if (modelDef.readonly) return;
       if (modelDef.facetName === facetName) {
-        var modelConfigFile = ModelDefinition.getConfigFile(facetName, modelDef);
+        const modelConfigFile = ModelDefinition.getConfigFile(facetName, modelDef);
         modelConfigFile.data = ModelDefinition.getConfigFromCache(cache, modelDef);
         addFileToSave(modelConfigFile);
       }
     });
 
-    for (var a in Facet.artifactTypes) {
+    for (const a in Facet.artifactTypes) {
       if (typeof Facet.artifactTypes[a].save === 'function') {
-        var artifact = Facet.artifactTypes[a].save(cache, facetName);
+        const artifact = Facet.artifactTypes[a].save(cache, facetName);
         if (artifact) {
           addFileToSave(artifact);
         }
@@ -343,4 +347,4 @@ function ready(Facet) {
   Facet.getUniqueId = function(data) {
     return data.name || null;
   };
-};
+}

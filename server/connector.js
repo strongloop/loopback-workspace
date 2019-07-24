@@ -3,20 +3,22 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('./server');
-var loopback = require('loopback');
-var path = require('path');
-var connector = app.dataSources.db.connector;
-var Facet = app.models.Facet;
-var ConfigFile = app.models.ConfigFile;
-var PackageDefinition = app.models.PackageDefinition;
-var async = require('async');
-var debug = require('debug')('workspace:connector');
-var EventEmitter = require('events').EventEmitter;
-var helper = require('../lib/helper');
+'use strict';
+
+const app = require('./server');
+const loopback = require('loopback');
+const path = require('path');
+const connector = app.dataSources.db.connector;
+const Facet = app.models.Facet;
+const ConfigFile = app.models.ConfigFile;
+const PackageDefinition = app.models.PackageDefinition;
+const async = require('async');
+const debug = require('debug')('workspace:connector');
+const EventEmitter = require('events').EventEmitter;
+const helper = require('../lib/helper');
 
 connector.writeCallbacks = [];
-var debugSync = require('debug')('workspace:connector:save-sync');
+const debugSync = require('debug')('workspace:connector:save-sync');
 
 connector.saveToFile = function(result, callback) {
   connector.writeCallbacks.push(function(err) {
@@ -33,7 +35,7 @@ connector.saveToFile = function(result, callback) {
   }
 
   function saveDone(err) {
-    var cb = connector.writeCallbacks.shift();
+    const cb = connector.writeCallbacks.shift();
     debugSync('write finished, %s calls in queue', connector.writeCallbacks.length);
     mergeAndRunPendingWrites();
     cb(err, result);
@@ -47,10 +49,10 @@ connector.saveToFile = function(result, callback) {
     }
 
     // merge all pending writes into a single one.
-    var callbacks = connector.writeCallbacks;
+    const callbacks = connector.writeCallbacks;
     connector.writeCallbacks = [];
 
-    var cb = function(err) {
+    const cb = function(err) {
       callbacks.forEach(function(fn, ix) {
         debugSync('write finished for #%s', ix + 1);
         fn(err);
@@ -63,9 +65,9 @@ connector.saveToFile = function(result, callback) {
 };
 
 connector._saveToFile = function(cb) {
-  var cache = connector.cache;
+  const cache = connector.cache;
 
-  var steps = []
+  const steps = []
     .concat(saveAll(Facet))
     .concat(saveAll(PackageDefinition));
 
@@ -81,7 +83,7 @@ connector._saveToFile = function(cb) {
 };
 
 connector.loadFromFile = function() {
-  var cb = arguments[arguments.length - 1];
+  const cb = arguments[arguments.length - 1];
 
   if (connector.writeCallbacks.length) {
     // There is no point in trying to load the files
@@ -89,20 +91,20 @@ connector.loadFromFile = function() {
     return cb();
   }
 
-  var recursiveCall = !!connector.loader;
+  const recursiveCall = !!connector.loader;
 
   if (!recursiveCall) {
     connector.loader = new EventEmitter();
     connector.loader.setMaxListeners(100);
   }
 
-  var loader = connector.loader;
+  const loader = connector.loader;
   loader.once('complete', cb);
   loader.once('error', cb);
 
   if (recursiveCall) return;
 
-  var done = function(err) {
+  const done = function(err) {
     if (err)
       loader.emit('error', err);
     else
@@ -114,11 +116,11 @@ connector.loadFromFile = function() {
 };
 
 connector._loadFromFile = function(cb) {
-  var tasks = [];
+  const tasks = [];
 
   // reset the cache
-  var cacheKeys = Object.keys(connector.cache);
-  var cache = cacheKeys.reduce(function(prev, cur) {
+  const cacheKeys = Object.keys(connector.cache);
+  const cache = cacheKeys.reduce(function(prev, cur) {
     prev[cur] = {};
     return prev;
   }, {});
@@ -135,7 +137,7 @@ connector._loadFromFile = function(cb) {
         facetFiles.common = [];
       }
 
-      var facetNames = Object.keys(facetFiles);
+      const facetNames = Object.keys(facetFiles);
 
       async.each(facetNames, function(facet, next) {
         Facet.loadIntoCache(cache, facet, facetFiles, function(err) {
@@ -153,7 +155,7 @@ connector._loadFromFile = function(cb) {
     // NOTE(bajtos) a short-term solution for loading loopback models
     // It should be replaced by a full-fledged component-loader soon,
     // see https://github.com/strongloop/loopback-workspace/issues/159
-    var LoopBackConfigFile = getOrCreateLoopBackConfigModel();
+    const LoopBackConfigFile = getOrCreateLoopBackConfigModel();
     LoopBackConfigFile.findFacetFiles(function(err, loopbackFiles) {
       if (err) return done(err);
       if (!loopbackFiles.common) return done();
@@ -166,14 +168,14 @@ connector._loadFromFile = function(cb) {
     });
 
     function getOrCreateLoopBackConfigModel() {
-      var LoopBackConfigFile = loopback.findModel('LoopBackConfigFile');
+      let LoopBackConfigFile = loopback.findModel('LoopBackConfigFile');
       if (LoopBackConfigFile) return LoopBackConfigFile;
 
       LoopBackConfigFile = ConfigFile.extend('LoopBackConfigFile');
 
       // Override `getWorkspaceDir` to return node_modules/loopback
       LoopBackConfigFile.getWorkspaceDir = function() {
-        var workspaceDir = LoopBackConfigFile.base.getWorkspaceDir();
+        const workspaceDir = LoopBackConfigFile.base.getWorkspaceDir();
         return path.join(workspaceDir, 'node_modules', 'loopback');
       };
 
@@ -190,7 +192,7 @@ connector._loadFromFile = function(cb) {
     ConfigFile.findPackageDefinitions(function(err, files) {
       if (err) return done(err);
       async.each(files, function(f, next) {
-        var dir = f.getDirName();
+        const dir = f.getDirName();
         if (dir !== '.') {
           debug('Skipping package.json in %j', dir);
           return next();
@@ -201,8 +203,8 @@ connector._loadFromFile = function(cb) {
           if (err) return next(err);
           PackageDefinition.addToCache(cache, f.data);
           if (dir === '.') {
-            var loopBackVersion = undefined;
-            var lbVersionSources = [
+            let loopBackVersion = undefined;
+            const lbVersionSources = [
               'dependencies',
               'devDependencies',
               'optionalDependencies',
@@ -244,13 +246,13 @@ connector._loadFromFile = function(cb) {
   }
 };
 
-var originalFind = connector.find;
-var originalAll = connector.all;
+const originalFind = connector.find;
+const originalAll = connector.all;
 
 // Map the model to a collection
 connector.getCollection = function(model) {
-  var Entity = connector._models[model];
-  var meta = Entity.settings[connector.name];
+  const Entity = connector._models[model];
+  const meta = Entity.settings[connector.name];
   if (meta) {
     return meta.collection || meta.table || meta.tableName || model;
   }
@@ -258,11 +260,11 @@ connector.getCollection = function(model) {
 };
 
 connector.find = function(model, id, options, cb) {
-  var args = arguments;
+  const args = arguments;
   connector.loadFromFile(function(err) {
     if (err) return cb(err);
     if (debug.enabled) {
-      var collection = connector.getCollection(model);
+      const collection = connector.getCollection(model);
       debug('reading from cache %s => %j', collection,
         Object.keys(connector.cache[collection]));
     }
@@ -271,11 +273,11 @@ connector.find = function(model, id, options, cb) {
 };
 
 connector.all = function(model, filter, options, cb) {
-  var args = arguments;
+  const args = arguments;
   connector.loadFromFile(function(err) {
     if (err) return cb(err);
     if (debug.enabled) {
-      var collection = connector.getCollection(model);
+      const collection = connector.getCollection(model);
       debug('reading from cache %s => %j', collection,
         Object.keys(connector.cache[collection]));
     }
@@ -284,19 +286,19 @@ connector.all = function(model, filter, options, cb) {
 };
 
 connector.getIdValue = function(model, data) {
-  var Entity = loopback.getModel(model);
-  var entity = new Entity(data);
+  const Entity = loopback.getModel(model);
+  const entity = new Entity(data);
   return entity.getUniqueId();
 };
 
 connector.create = function create(model, data, options, callback) {
-  var Entity = loopback.getModel(model);
-  var entity = new Entity(data);
-  var id = entity.getUniqueId();
+  const Entity = loopback.getModel(model);
+  const entity = new Entity(data);
+  const id = entity.getUniqueId();
 
   this.setIdValue(model, data, id);
 
-  var collection = connector.getCollection(model);
+  const collection = connector.getCollection(model);
   if (!this.cache[collection]) {
     this.cache[collection] = {};
   }

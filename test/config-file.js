@@ -3,17 +3,22 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var async = require('async');
-var FACET_CONFIG_JSON = 'server/config.json';
-var ConfigFile = require('../').models.ConfigFile;
-var assert = require('assert');
-var testData;
+'use strict';
+
+const async = require('async');
+const FACET_CONFIG_JSON = 'server/config.json';
+const ConfigFile = require('../').models.ConfigFile;
+const assert = require('assert');
+const expect = require('chai').expect;
+const support = require('../test/support');
+
+let testData;
 
 describe('ConfigFile', function() {
-  beforeEach(resetWorkspace);
-  beforeEach(givenEmptySandbox);
+  beforeEach(support.resetWorkspace);
+  beforeEach(support.givenEmptySandbox);
   beforeEach(function createConfigFile(done) {
-    testData = { hello: 'world' };
+    testData = {hello: 'world'};
     ConfigFile.create({
       path: FACET_CONFIG_JSON,
       data: testData,
@@ -31,7 +36,7 @@ describe('ConfigFile', function() {
 
   describe('configFile.load(cb)', function() {
     it('should load the configFile data', function(done) {
-      var configFile = new ConfigFile({
+      const configFile = new ConfigFile({
         path: FACET_CONFIG_JSON,
       });
 
@@ -44,7 +49,7 @@ describe('ConfigFile', function() {
 
   describe('configFile.exists(cb)', function() {
     it('should return true if the file exists', function(done) {
-      var configFile = new ConfigFile({
+      const configFile = new ConfigFile({
         path: FACET_CONFIG_JSON,
       });
 
@@ -57,9 +62,9 @@ describe('ConfigFile', function() {
 
   describe('configFile.save(cb)', function() {
     it('should save the configFile data', function(done) {
-      var configFile = new ConfigFile({
+      const configFile = new ConfigFile({
         path: FACET_CONFIG_JSON,
-        data: { foo: 'bar' },
+        data: {foo: 'bar'},
       });
 
       configFile.save(function(err) {
@@ -75,9 +80,9 @@ describe('ConfigFile', function() {
 
   describe('configFile.remove(cb)', function() {
     it('should remove the configFile', function(done) {
-      var configFile = new ConfigFile({
+      const configFile = new ConfigFile({
         path: FACET_CONFIG_JSON,
-        data: { foo: 'bar' },
+        data: {foo: 'bar'},
       });
 
       configFile.remove(function(err) {
@@ -93,7 +98,7 @@ describe('ConfigFile', function() {
 
   describe('ConfigFile.find(cb)', function() {
     beforeEach(function(done) {
-      var files = this.testFiles = [
+      let files = this.testFiles = [
         FACET_CONFIG_JSON,
         'my-facet/datasources.json',
         'my-facet/model-config.json',
@@ -101,15 +106,15 @@ describe('ConfigFile', function() {
       ];
 
       files = files.map(function(file) {
-        return { path: file };
+        return {path: file};
       });
 
       async.each(files, ConfigFile.create, done);
     });
     it('should list all files in the workspace', function(done) {
-      var testFiles = this.testFiles;
+      const testFiles = this.testFiles;
       ConfigFile.find(function(err, configFiles) {
-        var fileNames = configFiles.map(function(configFile) {
+        const fileNames = configFiles.map(function(configFile) {
           return configFile.path;
         });
 
@@ -126,7 +131,7 @@ describe('ConfigFile', function() {
       expectFacetNameForPath(ConfigFile.ROOT_COMPONENT, 'config.json');
 
       function expectFacetNameForPath(facetName, path) {
-        var configFile = new ConfigFile({
+        const configFile = new ConfigFile({
           path: path,
         });
 
@@ -141,7 +146,7 @@ describe('ConfigFile', function() {
       expectDirName('baz.json', '.');
 
       function expectDirName(path, dir) {
-        var configFile = new ConfigFile({
+        const configFile = new ConfigFile({
           path: path,
         });
 
@@ -152,7 +157,7 @@ describe('ConfigFile', function() {
 
   describe('configFile.getExtension()', function() {
     it('should be the extension of the file at the given path', function() {
-      var configFile = new ConfigFile({
+      const configFile = new ConfigFile({
         path: 'foo/bar.bat.baz.json',
       });
       expect(configFile.getExtension()).to.equal('.json');
@@ -161,7 +166,7 @@ describe('ConfigFile', function() {
 
   describe('configFile.getBase()', function() {
     it('should be the extension of the file at the given path', function() {
-      var configFile = new ConfigFile({
+      const configFile = new ConfigFile({
         path: 'foo/bar.bat.baz.json',
       });
       expect(configFile.getBase()).to.equal('bar.bat.baz');
@@ -170,14 +175,14 @@ describe('ConfigFile', function() {
 
   describe('ConfigFile.toAbsolutePath(relativePath)', function() {
     it('should resolve a relative workspace path to an absolute path', function() {
-      var abs = ConfigFile.toAbsolutePath('.');
-      expect(abs).to.equal(SANDBOX);
+      const abs = ConfigFile.toAbsolutePath('.');
+      expect(abs).to.equal(support.SANDBOX);
     });
   });
 
   describe('ConfigFile.findFacetFiles(cb)', function() {
     beforeEach(function(done) {
-      var files = this.testFiles = [
+      const files = this.testFiles = [
         FACET_CONFIG_JSON,
         'app-a/datasources.json',
         'app-b/model-config.json',
@@ -188,7 +193,7 @@ describe('ConfigFile', function() {
     });
 
     beforeEach(function(done) {
-      var test = this;
+      const test = this;
       ConfigFile.findFacetFiles(function(err, facets) {
         if (err) return done(err);
         test.facets = facets;
@@ -197,8 +202,8 @@ describe('ConfigFile', function() {
     });
 
     it('should find and group files by app', function() {
-      var facets = this.facets;
-      var flattenFoundFiles = [];
+      const facets = this.facets;
+      let flattenFoundFiles = [];
       Object.keys(facets).forEach(function(name) {
         flattenFoundFiles = flattenFoundFiles
           .concat(configFilesToPaths(facets[name]));
@@ -209,9 +214,9 @@ describe('ConfigFile', function() {
 
   describe('ConfigFile.getFileByBase(configFiles, base)', function() {
     it('should find the file with the given base', function() {
-      var configFiles = [
-        new ConfigFile({ path: 'foo/bar/bat.json' }),
-        new ConfigFile({ path: 'foo/bar/baz.json' }),
+      const configFiles = [
+        new ConfigFile({path: 'foo/bar/bat.json'}),
+        new ConfigFile({path: 'foo/bar/baz.json'}),
       ];
 
       expect(ConfigFile.getFileByBase(configFiles, 'baz')).to.equal(configFiles[1]);
@@ -220,16 +225,16 @@ describe('ConfigFile', function() {
 
   describe('ConfigFile.getModelDefFiles(configFiles, facetName)', function() {
     it('should find model files in the given facet', function() {
-      var configFiles = [
-        new ConfigFile({ path: 'facet-a/models/foo.json' }),
-        new ConfigFile({ path: 'facet-a/models/bar.json' }),
-        new ConfigFile({ path: 'facet-b/models/foo.json' }),
-        new ConfigFile({ path: 'models/foo.json' }),
+      const configFiles = [
+        new ConfigFile({path: 'facet-a/models/foo.json'}),
+        new ConfigFile({path: 'facet-a/models/bar.json'}),
+        new ConfigFile({path: 'facet-b/models/foo.json'}),
+        new ConfigFile({path: 'models/foo.json'}),
       ];
 
-      var aModels = ConfigFile.getModelDefFiles(configFiles, 'facet-a');
-      var bModels = ConfigFile.getModelDefFiles(configFiles, 'facet-b');
-      var rootModels = ConfigFile.getModelDefFiles(configFiles, '.');
+      const aModels = ConfigFile.getModelDefFiles(configFiles, 'facet-a');
+      const bModels = ConfigFile.getModelDefFiles(configFiles, 'facet-b');
+      const rootModels = ConfigFile.getModelDefFiles(configFiles, '.');
 
       expect(configFilesToPaths(aModels).sort())
         .to.eql(['facet-a/models/foo.json', 'facet-a/models/bar.json'].sort());
@@ -256,7 +261,7 @@ function configFilesToPaths(configFiles) {
 
 function pathsToConfigFiles(paths) {
   return paths.map(function(path) {
-    return new ConfigFile({ path: path });
+    return new ConfigFile({path: path});
   });
 }
 

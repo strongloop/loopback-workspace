@@ -3,6 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+
 module.exports = function(ModelProperty) {
   /**
    * Represents a Property of a LoopBack `Model`.
@@ -11,7 +13,7 @@ module.exports = function(ModelProperty) {
    * @inherits WorkspaceEntity
    */
 
-  ModelProperty.validatesFormatOf('name', { with: /^[\-_a-zA-Z0-9]+$/ });
+  ModelProperty.validatesFormatOf('name', {with: /^[\-_a-zA-Z0-9]+$/});
 
   /**
    * List of built-in types that can be used for `ModelProperty.type`.
@@ -34,7 +36,7 @@ module.exports = function(ModelProperty) {
   };
 
   ModelProperty.remoteMethod('getAvailableTypes', {
-    http: { verb: 'get', path: '/available-types' },
-    returns: { type: ['string'], root: true },
+    http: {verb: 'get', path: '/available-types'},
+    returns: {type: ['string'], root: true},
   });
 };

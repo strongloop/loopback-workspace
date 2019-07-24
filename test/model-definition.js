@@ -3,24 +3,32 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var app = require('../');
-var fs = require('fs');
-var given = require('./helpers/given');
-var ModelDefinition = app.models.ModelDefinition;
-var ModelAccessControl = app.models.ModelAccessControl;
-var ModelProperty = app.models.ModelProperty;
-var ModelRelation = app.models.ModelRelation;
-var TestDataBuilder = require('./helpers/test-data-builder');
-var ref = TestDataBuilder.ref;
-var ConfigFile = app.models.ConfigFile;
-var path = require('path');
+'use strict';
+
+const app = require('../');
+const fs = require('fs');
+const given = require('./helpers/given');
+const ModelDefinition = app.models.ModelDefinition;
+const ModelAccessControl = app.models.ModelAccessControl;
+const ModelProperty = app.models.ModelProperty;
+const ModelRelation = app.models.ModelRelation;
+const TestDataBuilder = require('./helpers/test-data-builder');
+const ref = TestDataBuilder.ref;
+const ConfigFile = app.models.ConfigFile;
+const path = require('path');
+const expect = require('chai').expect;
+const support = require('./support');
+const givenBasicWorkspace = support.givenBasicWorkspace;
+const givenEmptyWorkspace = support.givenEmptyWorkspace;
+const givenFile = support.givenFile;
+const findAllEntities = support.findAllEntities;
 
 describe('ModelDefinition', function() {
   describe('CRUD', function() {
     beforeEach(givenBasicWorkspace);
 
     beforeEach(function(done) {
-      var test = this;
+      const test = this;
       test.modelName = 'TestModel';
       test.model = {
         name: test.modelName,
@@ -46,7 +54,7 @@ describe('ModelDefinition', function() {
         });
       });
       it('should create common/models/$name.js file', function(done) {
-        var script = this.modelDef.getScriptPath();
+        const script = this.modelDef.getScriptPath();
         fs.exists(script, function(exists) {
           expect(exists).to.equal(true);
           done();
@@ -65,11 +73,12 @@ describe('ModelDefinition', function() {
         }, done);
       });
       it('should remove the model definition', function(done) {
-        var id = this.modelDef.id;
+        const id = this.modelDef.id;
         ModelDefinition.removeById(id, function(err) {
           if (err) return done(err);
           ModelDefinition.findById(id, function(err, modelDef) {
             if (err) return done(err);
+            // eslint-disable-next-line no-unused-expressions
             expect(modelDef).to.not.exist;
             ModelProperty.count(function(err, count) {
               if (err) return done(err);
@@ -81,12 +90,12 @@ describe('ModelDefinition', function() {
       });
 
       it('should delete the model def js file', function(done) {
-        var id = this.modelDef.id;
-        var self = this;
+        const id = this.modelDef.id;
+        const self = this;
         ModelDefinition.removeById(id, function(err) {
           if (err) return done(err);
 
-          var script = self.modelDef.getScriptPath();
+          const script = self.modelDef.getScriptPath();
           fs.exists(script, function(exists) {
             expect(exists).to.equal(false);
             done();
@@ -103,7 +112,7 @@ describe('ModelDefinition', function() {
       given.loopBackInSandboxModules();
       ModelDefinition.find(function(err, list) {
         if (err) return done(err);
-        var entries = list.map(function(modelDef) {
+        const entries = list.map(function(modelDef) {
           return modelDef.name + (modelDef.readonly ? ' (RO)' : '');
         });
 
@@ -119,15 +128,15 @@ describe('ModelDefinition', function() {
 
   describe('ModelDefinition.getPath(app, obj)', function() {
     it('should return the configFile path if it exists', function() {
-      var configFilePath = 'foo/bar/bat/baz.json';
-      var modelPath = ModelDefinition.getPath('.', { name: 'MyModel',
-        configFile: configFilePath });
+      const configFilePath = 'foo/bar/bat/baz.json';
+      const modelPath = ModelDefinition.getPath('.', {name: 'MyModel',
+        configFile: configFilePath});
 
       expect(modelPath).to.equal(configFilePath);
     });
     it('should return construct configFile path', function() {
-      var configFilePath = 'models/my-model.json';
-      var modelPath = ModelDefinition.getPath('.', { name: 'MyModel' });
+      const configFilePath = 'models/my-model.json';
+      const modelPath = ModelDefinition.getPath('.', {name: 'MyModel'});
       expect(modelPath).to.equal(path.normalize(configFilePath));
     });
   });
@@ -136,12 +145,13 @@ describe('ModelDefinition', function() {
     before(givenBasicWorkspace);
 
     it('rejects invalid model name', function(done) {
-      var md = new ModelDefinition({
+      const md = new ModelDefinition({
         facetName: 'server',
         name: 'a name with space',
       });
 
       md.isValid(function(valid) {
+        // eslint-disable-next-line no-unused-expressions
         expect(valid, 'isValid').to.be.false;
         expect(md.errors).to.have.property('name');
         expect(md.errors.name).to.eql(['is invalid']);
@@ -160,11 +170,11 @@ describe('ModelDefinition', function() {
     given('foo-BAR').expect('foo-bar');
 
     function given(input) {
-      return { expect: function(expected) {
+      return {expect: function(expected) {
         it('given ' + input + ' expect ' + expected, function() {
           expect(ModelDefinition.toFilename(input)).to.equal(expected);
         });
-      } };
+      }};
     }
   });
 
@@ -187,8 +197,8 @@ describe('ModelDefinition', function() {
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
-          var modelDef = this.model.toObject();
-          var data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
+          const modelDef = this.model.toObject();
+          const data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
           expect(data).to.have.property('name', 'test-model');
           done();
         }.bind(this));
@@ -207,8 +217,8 @@ describe('ModelDefinition', function() {
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
-          var modelDef = this.model.toObject();
-          var data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
+          const modelDef = this.model.toObject();
+          const data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
           expect(data).to.have.property('acls');
           expect(data.acls, 'acls').to.have.length(1);
           expect(data.acls[0], 'acls[0]').to.have.property('method', 'ALL');
@@ -225,8 +235,8 @@ describe('ModelDefinition', function() {
         })
         .buildTo(this, function(err) {
           if (err) return done(err);
-          var modelDef = this.model.toObject();
-          var data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
+          const modelDef = this.model.toObject();
+          const data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
           expect(data).to.have.property('custom', 'custom');
           done();
         }.bind(this));
@@ -272,7 +282,7 @@ describe('ModelDefinition', function() {
           })
           .buildTo(this, function(err) {
             if (err) return done(err);
-            var modelDef = this.model.toObject();
+            const modelDef = this.model.toObject();
             this.data = ModelDefinition.getConfigFromCache(this.cache, modelDef);
             done();
           }.bind(this));

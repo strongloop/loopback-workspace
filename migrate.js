@@ -3,17 +3,19 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var str = require('underscore.string');
-var path = require('path');
-var sh = require('shelljs');
-var originalDir = path.join(__dirname, '..', '..');
-var modelsFile = sh.cat(originalDir + '/models.json');
-var models = JSON.parse(modelsFile);
-var modelNames = Object.keys(models);
-var modelConfig = {};
-var modelFiles = modelNames.map(function(name) {
-  var o = models[name];
-  var base = o.options && o.options.base;
+'use strict';
+
+const str = require('underscore.string');
+const path = require('path');
+const sh = require('shelljs');
+const originalDir = path.join(__dirname, '..', '..');
+const modelsFile = sh.cat(originalDir + '/models.json');
+const models = JSON.parse(modelsFile);
+const modelNames = Object.keys(models);
+const modelConfig = {};
+const modelFiles = modelNames.map(function(name) {
+  const o = models[name];
+  const base = o.options && o.options.base;
 
   modelConfig[name] = {
     public: o.public,
