@@ -824,5 +824,46 @@
       "version": "^1.0.0"
     },
     "supportedByStrongLoop": true
+  },
+  {
+    "name": "ibmi",
+    "description": "Db2 for i",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "connectionString": {
+        "type": "string",
+        "description": "ODBC connection string that overrides other settings (e.g.: 'DSN=MY_DSN;SYSTEM=my.ibmi.system;UID=USERNAME;PWD=Password;').\nA complete list of connection string keywords can be found at 'https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_74/rzaik/connectkeywords.htm'."
+      },
+      "dsn": {
+        "type": "string",
+        "description": "Specifies the name of the ODBC data source that you want to use for the connection."
+      },
+      "system": {
+        "type": "string",
+        "description": "Specifies the IBM i system name to connect."
+      },
+      "user": {
+        "type": "string",
+        "description": "Specifies the user ID for the IBM i connection."
+      },
+      "password": {
+        "type": "string",
+        "display": "password",
+        "description": "Specifies the password for the IBM i user ID for the connection."
+      },
+      "defaultLibraries": {
+        "type": "string",
+        "description": "Specifies the IBM i libraries to add to the server job's library list."
+      }
+    },
+    "package": {
+      "name": "loopback-connector-ibmi",
+      "version": "^1.0.0-beta.1"
+    },
+    "supportedByStrongLoop": true
   }
 ]
