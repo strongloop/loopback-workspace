@@ -1226,7 +1226,7 @@ function localInstall(cwd, cb) {
   const options = {
     cwd: cwd,
   };
-  const script = 'npm install';
+  const script = 'npm install --package-lock';
   debug('Running `%s` in %s', script, cwd);
   return exec(script, options, function(err, stdout, stderr) {
     debug('--npm stdout--\n%s\n--npm stderr--\n%s\n--end--',
