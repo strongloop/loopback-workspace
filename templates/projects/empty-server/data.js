@@ -26,7 +26,7 @@ template.package = {
   scripts: {
     lint: 'eslint .',
     start: 'node .',
-    posttest: 'npm run lint && npm audit',
+    posttest: 'npm run lint',
   },
   dependencies: {
     compression: '^1.0.3',
