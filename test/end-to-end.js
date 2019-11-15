@@ -136,7 +136,7 @@ describe('end-to-end', function() {
       const builtinPhases = readBuiltinPhasesFromSanbox();
 
       const middleware = fs.readJsonSync(
-        path.resolve(SANDBOX, 'server/middleware.json')
+        path.resolve(SANDBOX, 'server/middleware.json'),
       );
       const phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
 
@@ -402,7 +402,7 @@ describe('end-to-end', function() {
       const builtinPhases = readBuiltinPhasesFromSanbox();
 
       const middleware = fs.readJsonSync(
-        path.resolve(SANDBOX, 'server/middleware.json')
+        path.resolve(SANDBOX, 'server/middleware.json'),
       );
       const phaseNames = Object.keys(middleware).filter(isNameOfMainPhase);
 
@@ -646,7 +646,7 @@ describe('end-to-end', function() {
         function(err, ds) {
           db = ds;
           done(err);
-        }
+        },
       );
     });
 
@@ -700,9 +700,9 @@ describe('end-to-end', function() {
     before(function createTable(done) {
       const sql = fs.readFileSync(
         path.join(
-          __dirname, 'sql', 'create-simple-table.sql'
+          __dirname, 'sql', 'create-simple-table.sql',
         ),
-        'utf8'
+        'utf8',
       );
 
       connection.query(sql, done);
@@ -717,7 +717,7 @@ describe('end-to-end', function() {
         function(err, ds) {
           db = ds;
           done(err);
-        }
+        },
       );
     });
 
@@ -790,7 +790,7 @@ describe('end-to-end', function() {
             expect(connectionAvailable).to.be.true;
             done();
           });
-        }
+        },
       );
     });
 
@@ -811,7 +811,7 @@ describe('end-to-end', function() {
               .to.contain('connector-that-does-not-exist');
             done();
           });
-        }
+        },
       );
     });
 
@@ -853,7 +853,7 @@ describe('end-to-end', function() {
               expect(pingError.code).to.equal('ECONNREFUSED');
               done();
             });
-          }
+          },
         );
       });
 
@@ -873,7 +873,7 @@ describe('end-to-end', function() {
               expect(pingError.code).to.equal('ER_ACCESS_DENIED_ERROR');
               done();
             });
-          }
+          },
         );
       });
 
@@ -976,7 +976,7 @@ describe('end-to-end', function() {
               // localhost:3000 is the default value provided by loopback
               expectAppIsRunning('http://localhost:3000', done);
             });
-        }
+        },
       );
     });
 
@@ -1116,7 +1116,7 @@ function setupConnection(done) {
     if (err.code === 'ECONNREFUSED') {
       err = new Error(
         'Cannot connect to local MySQL database, ' +
-          'make sure you have `mysqld` running on your machine'
+          'make sure you have `mysqld` running on your machine',
       );
     } else {
       console.error();
@@ -1142,7 +1142,7 @@ function execNpm(args, options, cb) {
       HOME: process.env.HOME,
       USERPROFILE: process.env.USERPROFILE,
     },
-    options.env
+    options.env,
   );
 
   const command = 'npm ' + args.join(' ');
@@ -1182,7 +1182,7 @@ function configureMySQLDataSource(done) {
       ds.user = MYSQL_USER;
       ds.password = MYSQL_PASSWORD;
       ds.save(done);
-    }
+    },
   );
 }
 

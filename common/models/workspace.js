@@ -144,7 +144,7 @@ module.exports = function(Workspace) {
       let template;
       try {
         template = require(
-          '../../templates/projects/' + templateName + '/data'
+          '../../templates/projects/' + templateName + '/data',
         );
       } catch (e) {
         g.error('Cannot load project template %j: %s',
@@ -319,7 +319,7 @@ module.exports = function(Workspace) {
           async.each(
             template.config,
             FacetSetting.create.bind(FacetSetting),
-            next
+            next,
           );
         });
       }
@@ -525,7 +525,7 @@ module.exports = function(Workspace) {
               cwd: process.env.WORKSPACE_DIR,
               stdio: 'inherit',
               env: env,
-            }
+            },
           );
         } catch (err) {
           debug('spawn failed %s', err);
@@ -592,7 +592,7 @@ module.exports = function(Workspace) {
           });
 
           cb(null, config.host, config.port);
-        }
+        },
       );
     }
 

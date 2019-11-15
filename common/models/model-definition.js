@@ -221,7 +221,7 @@ function ready(ModelDefinition) {
 
     return path.join(
       ConfigFile.getWorkspaceDir(),
-      scriptFilePath
+      scriptFilePath,
     );
   };
 

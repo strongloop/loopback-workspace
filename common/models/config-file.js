@@ -259,7 +259,7 @@ module.exports = function(ConfigFile) {
   ConfigFile.findPackageDefinitions = function(cb) {
     this.find(
       function(name/* , definition */) { return name === 'PackageDefinition'; },
-      cb
+      cb,
     );
   };
 

@@ -12,7 +12,7 @@ const g = require('strong-globalize')();
 const template = module.exports;
 
 template.description = g.f(
-  'An empty LoopBack API, without any configured models or datasources'
+  'An empty LoopBack API, without any configured models or datasources',
 );
 
 template.supportedLBVersions = ['3.x'];

@@ -153,7 +153,7 @@ describe('DataSourceDefinition', function() {
           // eslint-disable-next-line no-unused-expressions
           expect(connectionAvailable).to.be.true;
           done();
-        }
+        },
       );
     });
 
@@ -167,7 +167,7 @@ describe('DataSourceDefinition', function() {
           // eslint-disable-next-line no-unused-expressions
           expect(err, 'err').to.be.defined;
           done();
-        }
+        },
       );
     });
   });
@@ -221,7 +221,7 @@ describe('DataSourceDefinition', function() {
             const idProp = list[0];
             expect(idProp.isId).to.be.true();
             done();
-          }
+          },
         );
       });
     });

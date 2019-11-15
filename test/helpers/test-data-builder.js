@@ -83,7 +83,7 @@ TestDataBuilder.prototype.buildTo = function(context, callback) {
   async.eachSeries(
     this._definitions,
     this._buildObject.bind(this),
-    callback
+    callback,
   );
 };
 
@@ -98,7 +98,7 @@ TestDataBuilder.prototype._buildObject = function(definition, callback) {
         'Cannot build object %j - %s\nDetails: %j',
         definition,
         err.message,
-        err.details
+        err.details,
       );
     } else {
       this._context[definition.name] = result;
@@ -136,7 +136,7 @@ TestDataBuilder.prototype._gatherDefaultPropertyValues = function(Model) {
         if (prop.length) {
           // Chop off the front part of the string so it is equal to the length
           generatedString = generatedString.substring(
-            generatedString.length - prop.length
+            generatedString.length - prop.length,
           );
         }
         result[name] = generatedString;
@@ -148,7 +148,7 @@ TestDataBuilder.prototype._gatherDefaultPropertyValues = function(Model) {
         result[name] = new Date(
           2222, 12, 12, // yyyy, mm, dd
           12, 12, 12, // hh, MM, ss
-          ++valueCounter // milliseconds
+          ++valueCounter, // milliseconds
         );
         break;
       case Boolean:
@@ -180,7 +180,7 @@ Reference.prototype.resolveFromContext = function(context) {
     function(obj, prop) {
       return obj[prop];
     },
-    context
+    context,
   );
 
   return result;

@@ -174,7 +174,7 @@ describe('Middleware', function() {
     it('should keep the order of entries', function(done) {
       const defs = this.configFile.data;
       expect(Object.keys(defs)).to.eql(
-        ['auth', 'routes:before', 'routes', 'files', 'myPhase']
+        ['auth', 'routes:before', 'routes', 'files', 'myPhase'],
       );
       const routes = defs.routes;
       expect(Object.keys(routes)).to.eql(['foo', 'bar']);
@@ -206,7 +206,7 @@ describe('Middleware', function() {
           if (err) done(err);
           const middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'phase1', 'routes:before', 'routes', 'files', 'myPhase']
+            ['auth', 'phase1', 'routes:before', 'routes', 'files', 'myPhase'],
           );
           done();
         });
@@ -221,7 +221,7 @@ describe('Middleware', function() {
           if (err) done(err);
           const middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'routes:before', 'routes', 'files', 'myPhase']
+            ['auth', 'routes:before', 'routes', 'files', 'myPhase'],
           );
           done();
         });
@@ -236,7 +236,7 @@ describe('Middleware', function() {
           if (err) done(err);
           const middlewares = configFile.data;
           expect(Object.keys(middlewares)).to.eql(
-            ['auth', 'routes:before', 'routes', 'files', 'myPhase', 'phase1']
+            ['auth', 'routes:before', 'routes', 'files', 'myPhase', 'phase1'],
           );
           done();
         });

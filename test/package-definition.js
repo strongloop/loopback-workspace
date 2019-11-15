@@ -31,7 +31,7 @@ describe('PackageDefinition', function() {
           const content = fs.readJsonSync(SANDBOX + '/package.json');
           expect(content).to.not.have.property('id');
           done();
-        }
+        },
       );
     });
   });
@@ -64,7 +64,7 @@ describe('PackageDefinition', function() {
             expect(fs.readJsonSync(MAIN_FILE)).to.eql(MAIN_DATA);
             expect(fs.readJsonSync(SUBPROJECT_FILE)).to.eql(SUBPROJECT_DATA);
             done();
-          }
+          },
         );
       });
     });

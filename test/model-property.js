@@ -136,7 +136,7 @@ describe('ModelProperty', function() {
           if (err) return done(err);
           expect(def.type).to.equal('string');
           done();
-        }
+        },
       );
     });
 
@@ -152,7 +152,7 @@ describe('ModelProperty', function() {
           if (err) return done(err);
           expect(def.type).to.eql(['string']);
           done();
-        }
+        },
       );
     });
 

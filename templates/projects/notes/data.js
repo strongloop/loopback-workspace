@@ -12,7 +12,7 @@ const g = require('strong-globalize')();
 const template = module.exports;
 
 template.description = g.f(
-  'A project containing a basic working example, including a memory database'
+  'A project containing a basic working example, including a memory database',
 );
 
 template.supportedLBVersions = ['3.x'];
