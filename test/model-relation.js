@@ -41,7 +41,7 @@ describe('ModelRelation', function() {
           if (err) return done(err);
           const json = fs.readJsonSync(
             // eslint-disable-next-line no-undef
-            path.resolve(SANDBOX, 'common/models/test-model.json')
+            path.resolve(SANDBOX, 'common/models/test-model.json'),
           );
           expect(json.relations).to.eql({
             boss: {

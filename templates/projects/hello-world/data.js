@@ -13,7 +13,7 @@ const template = module.exports;
 
 template.description = g.f(
   'A project containing a controller, \
-including a single vanilla Message and a single remote method'
+including a single vanilla Message and a single remote method',
 );
 
 template.supportedLBVersions = ['3.x'];

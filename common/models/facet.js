@@ -285,7 +285,7 @@ function ready(Facet) {
 
       const cachedModelConfigs = ModelConfig.allFromCache(cache);
       const modelConfigPath = path.join(
-        facetName, ModelConfig.settings.defaultConfigFile
+        facetName, ModelConfig.settings.defaultConfigFile,
       );
       const modelConfigFile = new ConfigFile({path: modelConfigPath}); // model-config.json
       const modelConfigJson = modelConfigFile.data = {};

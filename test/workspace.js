@@ -121,7 +121,7 @@ describe('Workspace', function() {
           // eslint-disable-next-line no-unused-expressions
           expect(calls).to.be.not.empty;
           done();
-        }
+        },
       );
     });
   });

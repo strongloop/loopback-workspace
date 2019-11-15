@@ -193,7 +193,7 @@ module.exports = function(WorkspaceEntity) {
             Entity.modelName,
             data.id,
             data.facetName,
-            model.facetName
+            model.facetName,
           );
         }
         (ctx.instance || ctx.data).facetName = model.facetName;

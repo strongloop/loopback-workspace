@@ -29,7 +29,7 @@ describe('ModelMethod', function() {
         if (err) return done(err);
         userModel = result;
         done();
-      }
+      },
     );
   });
 
@@ -78,7 +78,7 @@ describe('ModelMethod', function() {
             done();
           });
         });
-      }
+      },
     );
   });
 });
@@ -98,7 +98,7 @@ describe('ModelMethod - Loopback 3.0', function() {
         if (err) return done(err);
         userModel = result;
         done();
-      }
+      },
     );
   });
 
@@ -131,7 +131,7 @@ describe('ModelMethod - Loopback 3.0', function() {
             done();
           });
         });
-      }
+      },
     );
   });
 
@@ -164,7 +164,7 @@ describe('ModelMethod - Loopback 3.0', function() {
             done();
           });
         });
-      }
+      },
     );
   });
 
@@ -195,7 +195,7 @@ describe('ModelMethod - Loopback 3.0', function() {
             done();
           });
         });
-      }
+      },
     );
   });
 });

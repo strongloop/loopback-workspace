@@ -110,7 +110,7 @@ function ready(DataSourceDefinition) {
 
       return cb(
         new Error(g.f('Cannot connect to the data source.' +
-          ' Ensure the configuration is valid and the connector is installed.'))
+          ' Ensure the configuration is valid and the connector is installed.')),
       );
     }
   };
@@ -188,7 +188,7 @@ function ready(DataSourceDefinition) {
           return c.name === connectorName;
         })[0];
         return cb(null, meta && meta.baseModel);
-      }
+      },
     );
   };
 
@@ -370,7 +370,7 @@ function ready(DataSourceDefinition) {
         return undefined;
       }
       const match = err.message.match(
-        /LoopBack connector "(.*)" is not installed/
+        /LoopBack connector "(.*)" is not installed/,
       );
       if (match && match[1] === self.connector) {
         const msg = g.f('Connector "%s" is not installed.', self.connector);
