@@ -338,6 +338,34 @@
     "supportedByStrongLoop": true
   },
   {
+    "name": "grpc",
+    "description": "gRPC",
+    "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "package": {
+      "name": "loopback-connector-grpc",
+      "version": "^1.3.0"
+    },
+    "settings": {
+      "spec": {
+        "type": "string",
+        "description": "HTTP URL/path to gRPC spec file (file name extension .yaml/.yml or .json)"
+      },
+      "validate": {
+        "type": "boolean",
+        "description": "Validate spec against gRPC specification 2.0?"
+      },
+      "security": {
+        "type": "object",
+        "description": "Security config for making authenticated requests to API"
+      }
+    },
+    "supportedByStrongLoop": true
+  },
+  {
     "name": "kv-redis",
     "description": "Redis key-value connector",
     "baseModel": "KeyValueModel",
@@ -551,6 +579,38 @@
     "package": {
       "name": "loopback-connector-mssql",
       "version": "^3.3.0"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
+    "name": "openapi",
+    "description": "OpenAPI",
+    "baseModel": "Model",
+    "features": {
+      "discovery": false,
+      "migration": false
+    },
+    "package": {
+      "name": "loopback-connector-openapi",
+      "version": "^4.0.1"
+    },
+    "settings": {
+      "spec": {
+        "type": "string",
+        "description": "HTTP URL/path to Swagger spec file (file name extension .yaml/.yml or .json)"
+      },
+      "validate": {
+        "type": "boolean",
+        "description": "Validate spec against Swagger spec 2.0?"
+      },
+      "authorizations": {
+        "type": "object",
+        "description": "Security config for making authenticated requests to API"
+      },
+      "positional": {
+        "type": "boolean",
+        "description": "Use positional parameters instead of named parameters?"
+      }
     },
     "supportedByStrongLoop": true
   },
