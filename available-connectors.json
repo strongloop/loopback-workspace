@@ -409,12 +409,12 @@
     "settings": {
       "connectionString": {
         "type": "string",
-        "description": "Connection String (eg: DSN=MyDSN;DATABASE=MY_DB;HOSTNAME=MY_HOST;PORT=MY_PORT;PROTOCOL=TCPIP;UID=MY_UID;PWD=MY_PWD))"
+        "description": "Connection String (e.g.: DSN=MyDSN;SYSTEM=my.system;UID=MY_UID;PWD=MY_PWD))"
       }
     },
     "package": {
       "name": "loopback-connector-ibmi",
-      "version": "1.0.0"
+      "version": "^1.0.0"
     },
     "supportedByStrongLoop": true
   },
