@@ -399,6 +399,26 @@
     "supportedByStrongLoop": true
   },
   {
+    "name": "ibmi",
+    "description": "Db2 for i",
+    "baseModel": "PersistedModel",
+    "features": {
+      "discovery": true,
+      "migration": true
+    },
+    "settings": {
+      "connectionString": {
+        "type": "string",
+        "description": "Connection String (e.g.: DSN=MyDSN;SYSTEM=my.system;UID=MY_UID;PWD=MY_PWD))"
+      }
+    },
+    "package": {
+      "name": "loopback-connector-ibmi",
+      "version": "^1.0.0"
+    },
+    "supportedByStrongLoop": true
+  },
+  {
     "name": "mongodb",
     "description": "MongoDB",
     "baseModel": "PersistedModel",
