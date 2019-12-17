@@ -1,3 +1,23 @@
+2019-12-17, Version 5.1.0
+=========================
+
+ * Feedback cleanup, remove unsupported keywords (Mark Irish)
+
+ * Add loopback-connector-ibmi to connectors (Mark Irish)
+
+ * chore: improve issue and PR templates (Nora)
+
+ * feat: add openapi and grpc to available connectors (Nora)
+
+ * chore: fix eslint violations (Nora)
+
+ * Remove `npm audit` from scaffolded `posttest` (Miroslav Bajtoš)
+
+ * test: always create package-lock during install (Miroslav Bajtoš)
+
+ * update dependencies and fix eslint violations (Nora)
+
+
 2019-05-10, Version 5.0.0
 =========================
 
