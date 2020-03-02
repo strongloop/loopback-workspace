@@ -1,3 +1,13 @@
+2020-03-02, Version 5.2.0
+=========================
+
+ * feat: update LB3 LTS status (Miroslav Bajtoš)
+
+ * chore: update copyright years (Diana Lau)
+
+ * fix: security headers handling order (Moshensky Daniil)
+
+
 2019-12-17, Version 5.1.0
 =========================
 
