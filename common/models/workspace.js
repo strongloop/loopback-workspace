@@ -59,7 +59,7 @@ module.exports = function(Workspace) {
 
     Workspace.getAvailableLBVersions = function(cb) {
       const availableLBVersions = {
-        '3.x': {description: g.f('Active Long Term Support')},
+        '3.x': {description: g.f('Maintenance Long Term Support')},
       };
       cb(null, availableLBVersions);
     };
