@@ -1,10 +1,15 @@
 # LoopBack Workspace 3.0
 
-This module is in Maintenance LTS mode, new features are no longer accepted.
-(See [Module Long Term Support Policy](#module-long-term-support-policy) below.)
-LoopBack 3 users looking for new features are encouraged to upgrade to LoopBack 4. Refer to [loopback-next#1849](https://github.com/strongloop/loopback-next/issues/1849) for more information on how to upgrade.
+**⚠️ LoopBack 3 is in Maintenance LTS mode, only critical bugs and critical
+security fixes will be provided. (See
+[Module Long Term Support Policy](#module-long-term-support-policy) below.)**
 
-## About
+We urge all LoopBack 3 users to migrate their applications to LoopBack 4 as
+soon as possible. Refer to our
+[Migration Guide](https://loopback.io/doc/en/lb4/migration-overview.html)
+for more information on how to upgrade.
+
+## Overview
 
 The `loopback-workspace` module provides node.js and REST APIs for interacting
 with a set of loopback components. Components are organized in the following
