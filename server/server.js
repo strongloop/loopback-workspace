@@ -13,6 +13,7 @@ var methodOverride = require('method-override');
 var app = module.exports = loopback();
 var boot = require('loopback-boot');
 var cookieParser = require('cookie-parser');
+var debug = require('debug')('loopback:workspace:server');
 var errorHandler = require('strong-error-handler');
 
 /*
@@ -52,11 +53,29 @@ app.use(methodOverride());
 // LoopBack REST interface
 app.use(app.get('restApiRoot'), loopback.rest());
 
-// API explorer
-require('loopback-component-explorer')(app);
-app.once('started', function(baseUrl) {
-  g.log('Browse your REST API at %s%s', baseUrl, '/explorer');
-});
+// To prevent the snyk warning about swagger-ui@2.x, the explorer component
+// is moved from dependencies to devDependencies.
+// Here we try to mount the explorer component in case it's installed.
+
+var hasExplorer;
+try {
+  require.resolve('loopback-component-explorer');
+  hasExplorer = true;
+} catch (err) {
+  debug(
+    'loopback-workspace runs without API Explorer enabled due to %s. \n' +
+    'To install it, run `npm i loopback-component-explorer`.',
+    err.stack || err
+  );
+  hasExplorer = false;
+}
+
+if (hasExplorer) {
+  require('loopback-component-explorer')(app);
+  app.once('started', function(baseUrl) {
+    g.log('Browse your REST API at %s%s', baseUrl, '/explorer');
+  });
+}
 
 /*
  * EXTENSION POINT
