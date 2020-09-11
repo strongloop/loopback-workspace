@@ -1,3 +1,9 @@
+2020-09-11, Version 4.6.0
+=========================
+
+ * chore: move explorer to devdependency (jannyHou)
+
+
 2019-01-28, Version 4.5.2
 =========================
 
