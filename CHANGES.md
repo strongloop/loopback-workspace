@@ -1,3 +1,11 @@
+2020-10-16, Version 5.3.0
+=========================
+
+ * Use strong-error-handler v4 for new projects (Miroslav Bajtoš)
+
+ * chore: move explorer to devdependency (jannyHou)
+
+
 2020-03-06, Version 5.2.1
 =========================
 
